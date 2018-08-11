@@ -15,13 +15,16 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
+import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDE;
+import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDE_FQN;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDE;
-import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDE_FQN;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 
 public class AssociationOverrideSnippet implements Snippet {
 
@@ -66,38 +69,28 @@ public class AssociationOverrideSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@").append(ASSOCIATION_OVERRIDE).append("(");
+        builder.append(AT).append(ASSOCIATION_OVERRIDE).append("(");
 
         builder.append("name=\"");
         builder.append(name);
-        builder.append(ORMConverterUtil.QUOTE);
+        builder.append(QUOTE);
+        builder.append(COMMA);
 
-        if (!joinColumns.isEmpty()) {
-            builder.append(ORMConverterUtil.COMMA);
-            builder.append("joinColumns={");
-            for (JoinColumnSnippet joinColumn : joinColumns) {
-                builder.append(joinColumn.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-        }
+        builder.append(buildAnnotations("joinColumns", joinColumns));
 
         if (joinTable != null && joinTable.getSnippet() != null) {
-            builder.append(ORMConverterUtil.COMMA);
             builder.append("joinTable=");
             builder.append(joinTable.getSnippet());
+            builder.append(COMMA);
         }
         
         if (foreignKey != null) {
             builder.append("foreignKey=");
             builder.append(foreignKey.getSnippet());
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         }
 
-        builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
-
-        return builder.toString();
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override

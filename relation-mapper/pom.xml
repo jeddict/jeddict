@@ -34,6 +34,10 @@
                             <id>org.netbeans.api:org-netbeans-modules-db</id>
                             <type>impl</type>
                         </dependency>
+                        <dependency>
+                            <id>org.netbeans.modules:org-netbeans-modules-maven-embedder</id>
+                            <type>impl</type>
+                        </dependency>
                     </moduleDependencies>
                 </configuration>
             </plugin>
@@ -148,16 +152,3 @@
     </dependencies>
     
 </project>
-
-<!--[
-org.netbeans.lib.ddl.CommandNotSupportedException, 
-org.netbeans.modules.db.explorer.action.ExecuteCommandAction, 
-org.netbeans.lib.ddl.util.CommandBuffer, 
-org.netbeans.modules.db.explorer.node.TableNode, 
-org.netbeans.modules.db.explorer.DatabaseConnection, 
-org.netbeans.lib.ddl.impl.RenameTable, 
-org.netbeans.modules.db.explorer.action.ViewDataAction, 
-org.netbeans.lib.ddl.impl.Specification, 
-org.netbeans.modules.db.explorer.DatabaseConnector, 
-org.netbeans.lib.ddl.DDLException
-]-->

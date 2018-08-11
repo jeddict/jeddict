@@ -6,11 +6,11 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import io.github.jeddict.source.JavaSourceParserUtil;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  * <p>
@@ -45,6 +45,7 @@ public enum DiscriminatorType {
         return valueOf(v);
     }
 
+    @Deprecated
     public static DiscriminatorType load(Element element, AnnotationMirror annotationMirror) {
         DiscriminatorType discriminatorType = null;
         if (annotationMirror != null) {

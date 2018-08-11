@@ -15,27 +15,32 @@
  */
 package io.github.jeddict.jpa.spec;
 
+import io.github.jeddict.jpa.spec.extend.IPersistenceAttributes;
+import io.github.jeddict.jpa.spec.extend.JavaClass;
+import io.github.jeddict.source.ClassExplorer;
 import java.util.Set;
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAttribute;
-import io.github.jeddict.jpa.spec.extend.IPersistenceAttributes;
-import io.github.jeddict.jpa.spec.extend.JavaClass;
 
 public abstract class ManagedClass<T extends IPersistenceAttributes> extends JavaClass<T> {
 
     @XmlAttribute
     protected AccessType access;
 
-    @XmlAttribute(name = "metadata-complete")
-    protected Boolean metadataComplete;//REVENG PENDING
-
     @Override
+    @Deprecated
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         super.load(entityMappings, element, fieldAccess);
         this.getAttributes().load(entityMappings, element, fieldAccess);
         this.access = AccessType.load(element);
-//      this.metadataComplete = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "metadataComplete");
-            
+
+    }
+
+    @Override
+    public void load(ClassExplorer clazz) {
+        super.load(clazz);
+        this.getAttributes().load(clazz);
+        this.access = AccessType.load(clazz);
     }
 
     /**
@@ -56,26 +61,6 @@ public abstract class ManagedClass<T extends IPersistenceAttributes> extends Jav
      */
     public void setAccess(AccessType value) {
         this.access = value;
-    }
-
-    /**
-     * Gets the value of the metadataComplete property.
-     *
-     * @return possible object is {@link Boolean }
-     *
-     */
-    public Boolean isMetadataComplete() {
-        return metadataComplete;
-    }
-
-    /**
-     * Sets the value of the metadataComplete property.
-     *
-     * @param value allowed object is {@link Boolean }
-     *
-     */
-    public void setMetadataComplete(Boolean value) {
-        this.metadataComplete = value;
     }
 
     public Set<String> getAllConvert(){

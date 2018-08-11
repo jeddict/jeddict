@@ -6,8 +6,17 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.NAMED_ENTITY_GRAPHS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_ENTITY_GRAPH_FQN;
+import io.github.jeddict.jpa.spec.extend.DataMapping;
+import io.github.jeddict.source.AnnotatedMember;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -15,10 +24,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.JPAConstants.NAMED_ENTITY_GRAPHS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.NAMED_ENTITY_GRAPH_FQN;
-import io.github.jeddict.jpa.spec.extend.DataMapping;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -119,6 +124,52 @@ public class NamedEntityGraph extends DataMapping {
         }
         return namedEntityGraphs;
     }
+
+    private static NamedEntityGraph load(AnnotationExplorer annotation) {
+        NamedEntityGraph namedEntityGraph = new NamedEntityGraph();
+        annotation.getString("name").ifPresent(namedEntityGraph::setName);
+        annotation.getBoolean("includeAllAttributes").ifPresent(namedEntityGraph::setIncludeAllAttributes);
+
+        namedEntityGraph.namedAttributeNode
+                = annotation.getAnnotationList("attributeNodes")
+                        .map(NamedAttributeNode::load)
+                        .collect(toList());
+
+        namedEntityGraph.subgraph
+                = annotation.getAnnotationList("subgraphs")
+                        .map(NamedSubgraph::load)
+                        .collect(toList());
+
+        namedEntityGraph.subclassSubgraph
+                = annotation.getAnnotationList("subclassSubgraphs")
+                        .map(NamedSubgraph::load)
+                        .collect(toList());
+
+        return namedEntityGraph;
+    }
+
+    public static List<NamedEntityGraph> load(AnnotatedMember member) {
+        List<NamedEntityGraph> namedEntityGraphs = new ArrayList<>();
+
+        Optional<AnnotationExplorer> namedEntityGraphsOpt = member.getAnnotation(javax.persistence.NamedEntityGraphs.class);
+        if (namedEntityGraphsOpt.isPresent()) {
+            namedEntityGraphs.addAll(
+                    namedEntityGraphsOpt.get()
+                            .getAnnotationList("value")
+                            .map(NamedEntityGraph::load)
+                            .collect(toSet())
+            );
+        }
+
+        namedEntityGraphs.addAll(
+                member.getRepeatableAnnotations(javax.persistence.NamedEntityGraph.class)
+                        .map(NamedEntityGraph::load)
+                        .collect(toSet())
+        );
+
+        return namedEntityGraphs;
+    }
+
 
     /**
      * Gets the value of the namedAttributeNode property.

@@ -15,13 +15,14 @@
  */
 package io.github.jeddict.orm.generator.service.staticmetamodel;
 
-import io.github.jeddict.collaborate.issues.ExceptionUtils;
-import java.util.Collection;
-import static io.github.jeddict.jcode.util.AttributeType.isArray;
 import static io.github.jeddict.jcode.JPAConstants.PERSISTENCE_METAMODEL_PACKAGE;
+import static io.github.jeddict.jcode.util.AttributeType.getWrapperType;
+import static io.github.jeddict.jcode.util.AttributeType.isArray;
+import static io.github.jeddict.jcode.util.AttributeType.isPrimitive;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
 import io.github.jeddict.orm.generator.util.ImportSet;
+import java.util.Collection;
 
 public class MetamodelVariableDefSnippet extends VariableDefSnippet {
 
@@ -57,12 +58,7 @@ public class MetamodelVariableDefSnippet extends VariableDefSnippet {
             type = type.substring(0, length - 2);
         }
         if (isPrimitive(type)) {
-            try {
-                return this.getWrapper(type).getSimpleName();
-            } catch (ClassNotFoundException ex) {
-                ExceptionUtils.printStackTrace(ex);
-                throw new RuntimeException("No Wrapper Class found for " + type + " : " + ex.getMessage());
-            }
+            return getWrapperType(type);
         } else {
             return type;
         }

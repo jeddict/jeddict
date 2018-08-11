@@ -6,17 +6,6 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
 import static io.github.jeddict.jcode.JPAConstants.BASIC_FQN;
 import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION_FQN;
 import static io.github.jeddict.jcode.JPAConstants.EMBEDDED_FQN;
@@ -28,8 +17,23 @@ import static io.github.jeddict.jcode.JPAConstants.TRANSIENT_FQN;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.PersistenceAttributes;
 import io.github.jeddict.jpa.spec.workspace.WorkSpace;
+import io.github.jeddict.source.ClassExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
 import static io.github.jeddict.source.JavaSourceParserUtil.getElements;
+import io.github.jeddict.source.MemberExplorer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import static java.util.Objects.nonNull;
+import java.util.function.Predicate;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
 
 /**
  * <p>
@@ -65,6 +69,7 @@ import static io.github.jeddict.source.JavaSourceParserUtil.getElements;
 public class EmbeddableAttributes extends PersistenceAttributes<Embeddable> {
 
     @Override
+    @Deprecated
     public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
         List<Element> elements = getElements(typeElement, fieldAccess);
 
@@ -108,6 +113,47 @@ public class EmbeddableAttributes extends PersistenceAttributes<Embeddable> {
             }
         }
 
+    }
+
+    @Override
+    public void load(ClassExplorer clazz) {
+        Collection<MemberExplorer> members = clazz.getMembers();
+
+        for (MemberExplorer member : members) {
+            if (member.isAnnotationPresent(javax.persistence.Basic.class)) {
+                this.addBasic(Basic.load(member));
+            } else if (member.isAnnotationPresent(javax.persistence.Transient.class)) {
+                this.addTransient(Transient.load(member));
+            } else if (member.isAnnotationPresent(javax.persistence.ElementCollection.class)) {
+                ElementCollection elementCollection = ElementCollection.load(member);
+                if (nonNull(elementCollection)) {
+                    this.addElementCollection(elementCollection);
+                }
+            } else if (member.isAnnotationPresent(javax.persistence.OneToOne.class)) {
+                OneToOne oneToOneObj = new OneToOne();
+                this.addOneToOne(oneToOneObj);
+                oneToOneObj.load(member);
+            } else if (member.isAnnotationPresent(javax.persistence.ManyToOne.class)) {
+                ManyToOne manyToOneObj = new ManyToOne();
+                this.addManyToOne(manyToOneObj);
+                manyToOneObj.load(member);
+            } else if (member.isAnnotationPresent(javax.persistence.OneToMany.class)) {
+                OneToMany oneToManyObj = new OneToMany();
+                this.addOneToMany(oneToManyObj);
+                oneToManyObj.load(member);
+            } else if (member.isAnnotationPresent(javax.persistence.ManyToMany.class)) {
+                ManyToMany manyToManyObj = new ManyToMany();
+                this.addManyToMany(manyToManyObj);
+                manyToManyObj.load(member);
+            } else if (member.isAnnotationPresent(javax.persistence.Embedded.class)) {
+                Embedded embedded = Embedded.load(member);
+                if (nonNull(embedded)) {
+                    this.addEmbedded(embedded);
+                }
+            } else {
+                this.addBasic(Basic.load(member)); //Default Annotation
+            }
+        }
     }
 
     @Override

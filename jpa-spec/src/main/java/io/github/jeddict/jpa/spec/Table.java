@@ -6,10 +6,15 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.TABLE_FQN;
+import io.github.jeddict.jpa.spec.validator.table.TableValidator;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -20,9 +25,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.tables.TableMetadata;
-import static io.github.jeddict.jcode.JPAConstants.TABLE_FQN;
-import io.github.jeddict.jpa.spec.validator.table.TableValidator;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -89,7 +91,7 @@ public class Table {
                     table.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
                 }
             }
-            
+
             List indexesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "indexes");
             if (indexesAnnot != null) {
                 for (Object indexObj : indexesAnnot) {
@@ -103,6 +105,25 @@ public class Table {
         }
         return table;
 
+    }
+
+    public static Table load(AnnotationExplorer annotation) {
+        Table table = new Table();
+
+        annotation.getString("name").ifPresent(table::setName);
+        annotation.getString("catalog").ifPresent(table::setCatalog);
+        annotation.getString("schema").ifPresent(table::setSchema);
+
+        table.uniqueConstraint
+                = annotation.getAnnotationList("uniqueConstraints")
+                        .map(UniqueConstraint::load)
+                        .collect(toCollection(LinkedHashSet::new));
+
+        table.index
+                = annotation.getAnnotationList("indexes")
+                        .map(Index::load)
+                        .collect(toList());
+        return table;
     }
 
     /**

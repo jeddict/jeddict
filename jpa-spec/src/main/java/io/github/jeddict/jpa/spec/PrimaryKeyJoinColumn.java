@@ -6,8 +6,18 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.PRIMARY_KEY_JOIN_COLUMNS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.PRIMARY_KEY_JOIN_COLUMN_FQN;
+import io.github.jeddict.jpa.spec.extend.IJoinColumn;
+import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
+import io.github.jeddict.jpa.spec.validator.column.PrimaryKeyJoinColumnValidator;
+import io.github.jeddict.source.AnnotatedMember;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -18,12 +28,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.PrimaryKeyJoinColumnMetadata;
-import static io.github.jeddict.jcode.JPAConstants.PRIMARY_KEY_JOIN_COLUMNS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.PRIMARY_KEY_JOIN_COLUMN_FQN;
-import io.github.jeddict.jpa.spec.extend.IJoinColumn;
-import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
-import io.github.jeddict.jpa.spec.validator.column.PrimaryKeyJoinColumnValidator;
-import io.github.jeddict.source.JavaSourceParserUtil;
 /**
  *
  *
@@ -70,7 +74,7 @@ public class PrimaryKeyJoinColumn implements IJoinColumn {
     @XmlElement(name = "fk")
     private ForeignKey foreignKey;
     
-    private static PrimaryKeyJoinColumn loadAttribute(Element element, AnnotationMirror annotationMirror) {
+    private static PrimaryKeyJoinColumn load(Element element, AnnotationMirror annotationMirror) {
         PrimaryKeyJoinColumn primaryKeyJoinColumn = null;
         if (annotationMirror != null) {
             primaryKeyJoinColumn = new PrimaryKeyJoinColumn();
@@ -94,19 +98,48 @@ public class PrimaryKeyJoinColumn implements IJoinColumn {
             List attributeOverridesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(attributeOverridesMirror, "value");
             if (attributeOverridesMirrorList != null) {
                 for (Object attributeOverrideObj : attributeOverridesMirrorList) {
-                    primaryKeyJoinColumns.add(PrimaryKeyJoinColumn.loadAttribute(element, (AnnotationMirror) attributeOverrideObj));
+                    primaryKeyJoinColumns.add(PrimaryKeyJoinColumn.load(element, (AnnotationMirror) attributeOverrideObj));
                 }
             }
         } else {
             attributeOverridesMirror = JavaSourceParserUtil.findAnnotation(element, PRIMARY_KEY_JOIN_COLUMN_FQN);
             if (attributeOverridesMirror != null) {
-                primaryKeyJoinColumns.add(PrimaryKeyJoinColumn.loadAttribute(element, attributeOverridesMirror));
+                primaryKeyJoinColumns.add(PrimaryKeyJoinColumn.load(element, attributeOverridesMirror));
             }
         }
 
         return primaryKeyJoinColumns;
     }
 
+    private static PrimaryKeyJoinColumn load(AnnotationExplorer annotation) {
+        PrimaryKeyJoinColumn primaryKeyJoinColumn = new PrimaryKeyJoinColumn();
+        annotation.getString("name").ifPresent(primaryKeyJoinColumn::setName);
+        annotation.getString("referencedColumnName").ifPresent(primaryKeyJoinColumn::setReferencedColumnName);
+        annotation.getString("columnDefinition").ifPresent(primaryKeyJoinColumn::setColumnDefinition);
+        annotation.getAnnotation("foreignKey").map(ForeignKey::load).ifPresent(primaryKeyJoinColumn::setForeignKey);
+        return primaryKeyJoinColumn;
+    }
+
+    public static List<PrimaryKeyJoinColumn> load(AnnotatedMember member) {
+        List<PrimaryKeyJoinColumn> primaryKeyJoinColumns = new ArrayList<>();
+
+        Optional<AnnotationExplorer> primaryKeyJoinColumnsOpt = member.getAnnotation(javax.persistence.PrimaryKeyJoinColumns.class);
+        if (primaryKeyJoinColumnsOpt.isPresent()) {
+            primaryKeyJoinColumns.addAll(
+                    primaryKeyJoinColumnsOpt.get()
+                            .getAnnotationList("value")
+                            .map(PrimaryKeyJoinColumn::load)
+                            .collect(toList())
+            );
+        } else {
+            primaryKeyJoinColumns.addAll(
+                    member.getRepeatableAnnotations(javax.persistence.PrimaryKeyJoinColumn.class)
+                            .map(PrimaryKeyJoinColumn::load)
+                            .collect(toList())
+            );
+        }
+        return primaryKeyJoinColumns;
+    }
     
     
     /**

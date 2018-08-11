@@ -86,8 +86,7 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
 
     @Override
     protected void finish() {
-        modelerFile.getModelerUtil().saveModelerFile(modelerFile);
-        modelerFile.getModelerScene().getModelerPanelTopComponent().changePersistenceState(true);
+        modelerFile.save(true);
         if (afterExecution != null) {
             RequestProcessor.getDefault().post(afterExecution);
         }

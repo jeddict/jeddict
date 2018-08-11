@@ -27,6 +27,7 @@ import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.EntityResult;
 import io.github.jeddict.jpa.spec.FieldResult;
 import io.github.jeddict.jpa.spec.GeneratedValue;
+import io.github.jeddict.jpa.spec.GenerationType;
 import io.github.jeddict.jpa.spec.Id;
 import io.github.jeddict.jpa.spec.IdClass;
 import io.github.jeddict.jpa.spec.IdentifiableClass;
@@ -496,16 +497,15 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
             }
             GeneratedValue parsedGeneratedValue = parsedId.getGeneratedValue();
             if (parsedGeneratedValue != null && parsedGeneratedValue.getStrategy() != null) {
+                
                 GeneratedValueSnippet generatedValue = new GeneratedValueSnippet();
-
                 generatedValue.setGenerator(parsedGeneratedValue.getGenerator());
-                generatedValue.setStrategy("GenerationType." + parsedGeneratedValue.getStrategy().value());
-
+                if (parsedGeneratedValue.getStrategy() != GenerationType.DEFAULT) {
+                    generatedValue.setStrategy("GenerationType." + parsedGeneratedValue.getStrategy().value());
+                }
                 variableDef.setGeneratedValue(generatedValue);
 
-                SequenceGenerator parsedSequenceGenerator
-                        = parsedId.getSequenceGenerator();
-
+                SequenceGenerator parsedSequenceGenerator = parsedId.getSequenceGenerator();
                 if (parsedSequenceGenerator != null) {
                     SequenceGeneratorSnippet sequenceGenerator = processSequenceGenerator(parsedSequenceGenerator);
                     variableDef.setSequenceGenerator(sequenceGenerator);

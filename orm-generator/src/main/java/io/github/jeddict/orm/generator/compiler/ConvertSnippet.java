@@ -26,7 +26,7 @@ import static io.github.jeddict.settings.code.CodePanel.isGenerateDefaultValue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 public class ConvertSnippet implements Snippet {
 

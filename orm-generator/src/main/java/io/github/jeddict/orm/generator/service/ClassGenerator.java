@@ -63,7 +63,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 public abstract class ClassGenerator<T extends ClassDefSnippet> {
 

@@ -15,16 +15,16 @@
  */
 package io.github.jeddict.jcode.util;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import static io.github.jeddict.jcode.util.AttributeType.Type.ARRAY;
 import static io.github.jeddict.jcode.util.AttributeType.Type.OTHER;
 import static io.github.jeddict.jcode.util.AttributeType.Type.PRIMITIVE;
 import static io.github.jeddict.jcode.util.AttributeType.Type.PRIMITIVE_ARRAY;
 import static io.github.jeddict.jcode.util.AttributeType.Type.WRAPPER;
-import org.apache.commons.lang3.StringUtils;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -137,6 +137,21 @@ public class AttributeType {
         PRIMITIVE, WRAPPER, ARRAY, PRIMITIVE_ARRAY, STRING, OTHER;
     }
 
+    public static boolean isJavaType(String type) {
+        if (isArray(type)) {
+            type = getArrayType(type);
+        }
+        return isPrimitive(type)
+                || isWrapper(type)
+                || type.startsWith("java.lang")
+                || type.startsWith("java.math")
+                || type.startsWith("java.net")
+                || type.startsWith("java.nio")
+                || type.startsWith("java.util")
+                || type.startsWith("java.sql")
+                || type.startsWith("java.time");
+    }
+
     public static Type getType(String type) {
         if (isWrapper(type)) {
             return WRAPPER;
@@ -225,7 +240,13 @@ public class AttributeType {
     }
 
     public static boolean isPrimitiveArray(String type) {
-        return PRIMITIVE_DATA_TYPES.containsKey(getArrayType(type)) && isArray(type);
+        int length = type.length();
+        if (isArray(type)) {
+            String premitiveType = type.substring(0, length - 2);
+            return isPrimitive(premitiveType);
+        } else {
+            return false;
+        }
     }
 
     public static boolean isWrapperArray(String type) {
@@ -237,11 +258,12 @@ public class AttributeType {
     }
 
     public static boolean isArray(String type) {
-        if(StringUtils.isEmpty(type)){
+        if (StringUtils.isEmpty(type) || type.length() < 3) {
             return false;
         }
         return type.charAt(type.length() - 2) == '[' && type.charAt(type.length() - 1) == ']';
     }
+
 
     public static boolean isPrecision(String type) {
         return isDouble(type) || isFloat(type);

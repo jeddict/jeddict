@@ -15,14 +15,16 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
+import static io.github.jeddict.jcode.JPAConstants.JOIN_TABLE;
+import static io.github.jeddict.jcode.JPAConstants.JOIN_TABLE_FQN;
+import io.github.jeddict.orm.generator.util.ImportSet;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static io.github.jeddict.jcode.JPAConstants.JOIN_TABLE;
-import static io.github.jeddict.jcode.JPAConstants.JOIN_TABLE_FQN;
-import io.github.jeddict.orm.generator.util.ImportSet;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 
 public class JoinTableSnippet implements Snippet {
 
@@ -110,98 +112,21 @@ public class JoinTableSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@").append(JOIN_TABLE).append("(");
+        builder.append(AT).append(JOIN_TABLE).append(OPEN_PARANTHESES);
 
-        if (name != null && !name.trim().isEmpty()) {
-            builder.append("name=\"");
-            builder.append(name);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
+        builder.append(buildString("name", name));
+        builder.append(buildString("schema", schema));
+        builder.append(buildString("catalog", catalog));
 
-        if (schema != null && !schema.trim().isEmpty()) {
-            builder.append("schema=\"");
-            builder.append(schema);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
+        builder.append(buildAnnotations("uniqueConstraints", uniqueConstraints));
+        builder.append(buildAnnotations("indexes", indices));
+        builder.append(buildAnnotations("joinColumns", joinColumns));
+        builder.append(buildAnnotations("inverseJoinColumns", inverseJoinColumns));
 
-        if (catalog != null && !catalog.trim().isEmpty()) {
-            builder.append("catalog=\"");
-            builder.append(catalog);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
+        builder.append(buildAnnotation("foreignKey", foreignKey));
+        builder.append(buildAnnotation("inverseForeignKey", inverseForeignKey));
 
-        if (!uniqueConstraints.isEmpty()) {
-            builder.append("uniqueConstraints={");
-
-            for (UniqueConstraintSnippet uniqueConstraint : uniqueConstraints) {
-                builder.append(uniqueConstraint.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-        
-         if (!indices.isEmpty()) {
-            builder.append("indexes={");
-
-            for (IndexSnippet snippet : indices) {
-                builder.append(snippet.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (!joinColumns.isEmpty()) {
-            builder.append("joinColumns={");
-
-            for (JoinColumnSnippet joinColumn : joinColumns) {
-                builder.append(joinColumn.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (!inverseJoinColumns.isEmpty()) {
-            builder.append("inverseJoinColumns={");
-
-            for (JoinColumnSnippet joinColumn : inverseJoinColumns) {
-                builder.append(joinColumn.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-        
-                
-        if (foreignKey != null) {
-            builder.append("foreignKey=");
-            builder.append(foreignKey.getSnippet());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-        
-        if (inverseForeignKey != null) {
-            builder.append("inverseForeignKey=");
-            builder.append(inverseForeignKey.getSnippet());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override

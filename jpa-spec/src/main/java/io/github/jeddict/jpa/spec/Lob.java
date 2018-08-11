@@ -6,14 +6,15 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.LOB_FQN;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import io.github.jeddict.source.MemberExplorer;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.JPAConstants.LOB_FQN;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -44,6 +45,7 @@ import io.github.jeddict.source.JavaSourceParserUtil;
 @XmlType(name = "lob")
 public class Lob {
 
+    @Deprecated
     public static Lob load(Element element, VariableElement variableElement) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, LOB_FQN);
         Lob lob = null;
@@ -51,6 +53,10 @@ public class Lob {
             lob = new Lob();
         }
         return lob;
+    }
+
+    public static Lob load(MemberExplorer member) {
+        return member.isAnnotationPresent(javax.persistence.Lob.class) ? new Lob() : null;
     }
 
 }

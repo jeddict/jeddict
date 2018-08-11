@@ -6,11 +6,12 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  * <p>
@@ -38,6 +39,7 @@ public enum FetchType {
 
     private final String value;
 
+    @Deprecated
     public static FetchType load(Element element, AnnotationMirror annotationMirror) {
         FetchType fetchType = null;
         if (annotationMirror != null) {
@@ -47,6 +49,10 @@ public enum FetchType {
             }
         }
         return fetchType;
+    }
+
+    public static FetchType load(AnnotationExplorer annotation) {
+        return annotation.getEnum("fetch").map(FetchType::valueOf).orElse(null);
     }
 
     FetchType(String v) {
@@ -65,11 +71,5 @@ public enum FetchType {
         }
         throw new IllegalArgumentException(v);
     }
-//    public String value() {
-//        return name();
-//    }
 
-//    public static FetchType fromValue(String v) {
-//        return valueOf(v);
-//    }
 }

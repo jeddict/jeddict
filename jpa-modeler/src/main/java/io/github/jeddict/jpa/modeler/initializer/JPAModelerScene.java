@@ -15,21 +15,23 @@
  */
 package io.github.jeddict.jpa.modeler.initializer;
 
-import java.awt.event.InputEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
-import org.netbeans.api.project.Project;
+import io.github.jeddict.collaborate.enhancement.EnhancementRequestHandler;
 import io.github.jeddict.jcode.util.JavaSourceHelper;
 import io.github.jeddict.jcode.util.StringHelper;
 import static io.github.jeddict.jcode.util.StringHelper.getNext;
-import io.github.jeddict.collaborate.enhancement.EnhancementRequestHandler;
-import io.github.jeddict.network.social.LinkedInSocialNetwork;
+import io.github.jeddict.jpa.modeler.external.jpqleditor.JPQLExternalEditorController;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.GENERATE_SRC;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.PERSISTENCE_UNIT;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.RUN_JPQL_ICON;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.SEARCH_ICON;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.SOCIAL_NETWORK_SHARING;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.VIEW_DB;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.VIEW_JSONB;
+import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getClassSnippet;
+import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getConverterProperties;
+import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
+import io.github.jeddict.jpa.modeler.specification.model.event.JPAEventListener;
+import io.github.jeddict.jpa.modeler.specification.model.workspace.WorkSpaceManager;
 import io.github.jeddict.jpa.modeler.widget.EmbeddableWidget;
 import io.github.jeddict.jpa.modeler.widget.EntityWidget;
 import io.github.jeddict.jpa.modeler.widget.FlowNodeWidget;
@@ -45,25 +47,26 @@ import io.github.jeddict.jpa.modeler.widget.flow.association.AssociationFlowWidg
 import io.github.jeddict.jpa.modeler.widget.flow.association.BidirectionalAssociation;
 import io.github.jeddict.jpa.modeler.widget.flow.association.DirectionalAssociation;
 import io.github.jeddict.jpa.modeler.widget.flow.association.UnidirectionalAssociation;
+import io.github.jeddict.jpa.modeler.widget.flow.relation.BidirectionalRelation;
+import io.github.jeddict.jpa.modeler.widget.flow.relation.DirectionalRelation;
 import io.github.jeddict.jpa.modeler.widget.flow.relation.RelationFlowWidget;
-import io.github.jeddict.jpa.modeler.external.jpqleditor.JPQLExternalEditorController;
-import io.github.jeddict.network.social.TwitterSocialNetwork;
-import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getClassSnippet;
-import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getConverterProperties;
-import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
+import io.github.jeddict.jpa.modeler.widget.flow.relation.UnidirectionalRelation;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.ManagedClass;
 import io.github.jeddict.jpa.spec.extend.IPersistenceAttributes;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
-import io.github.jeddict.jpa.modeler.specification.model.event.JPAEventListener;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.GENERATE_SRC;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.PERSISTENCE_UNIT;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.RUN_JPQL_ICON;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.SEARCH_ICON;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.SOCIAL_NETWORK_SHARING;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.VIEW_DB;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.VIEW_JSONB;
-import io.github.jeddict.jpa.modeler.specification.model.workspace.WorkSpaceManager;
+import io.github.jeddict.network.social.LinkedInSocialNetwork;
+import io.github.jeddict.network.social.TwitterSocialNetwork;
+import java.awt.event.InputEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
+import org.netbeans.api.project.Project;
 import org.netbeans.modeler.actions.IEventListener;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
 import org.netbeans.modeler.core.ModelerFile;
@@ -88,9 +91,6 @@ import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.util.NbBundle;
-import io.github.jeddict.jpa.modeler.widget.flow.relation.BidirectionalRelation;
-import io.github.jeddict.jpa.modeler.widget.flow.relation.UnidirectionalRelation;
-import io.github.jeddict.jpa.modeler.widget.flow.relation.DirectionalRelation;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
@@ -98,6 +98,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
     public JPAModelerScene() {
         workSpaceManager = new WorkSpaceManager(this);
+        addWidgetDropListener(new WidgetDropListenerImpl());
     }
     
     @Override
@@ -107,7 +108,6 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         set.put("BASIC_PROP", getConverterProperties(this, entityMappings.getConverter()));
         set.put("GLOBAL_CONFIG", getClassSnippet(this, entityMappings.getSnippets()));
         set.put("GLOBAL_CONFIG", getCustomArtifact(this, entityMappings.getInterfaces(), "Interface"));
-
     }
    
     public List<EntityWidget> getEntityWidgets() {
@@ -353,9 +353,8 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         ModelerFile file = this.getModelerFile();
         EntityMappings entityMappings = (EntityMappings) file.getDefinitionElement();
         if (SoftwareVersion.getInstance(entityMappings.getVersion()).compareTo(file.getArchitectureVersion()) < 0) {
-            file.getModelerUtil().saveModelerFile(file);
+            file.save(true);
         }
-        
         getWorkSpaceManager().loadWorkspaceUI();
     }
 

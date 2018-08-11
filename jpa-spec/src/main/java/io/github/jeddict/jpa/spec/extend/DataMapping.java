@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.jcode.util.StringHelper;
 import io.github.jeddict.settings.code.CodePanel;
 import static io.github.jeddict.jpa.spec.NamedQuery.FIND_BY;

@@ -13,15 +13,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.jeddict.source;
+package io.github.jeddict.bv.constraints;
 
-import javax.lang.model.element.AnnotationMirror;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *Java Class Reverse Engineering Bean validation Loader
+ *
  * @author Gaurav Gupta
  */
-public interface JCREBVLoader {
+@XmlRootElement(name = "va")
+public class Valid extends Constraint {
 
-    void load(AnnotationMirror annotationMirror);
+    public Valid() {
+    }
+    
+    @Override
+    public boolean isEmpty(){
+        return false;
+    }
+    
+    @Override
+    protected void clearConstraint(){
+        
+    }
 }

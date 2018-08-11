@@ -22,7 +22,7 @@ import java.util.Optional;
 import javax.lang.model.element.TypeElement;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;

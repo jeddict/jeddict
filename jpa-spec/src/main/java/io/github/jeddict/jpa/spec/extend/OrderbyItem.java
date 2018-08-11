@@ -15,11 +15,13 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
+import io.github.jeddict.jpa.spec.OrderType;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import io.github.jeddict.jpa.spec.OrderType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OrderbyItem {
@@ -28,6 +30,22 @@ public class OrderbyItem {
     private String property;//column, attribute
     @XmlAttribute(name="o")
     private OrderType orderType;
+
+    public static Set<OrderbyItem> process(String value) {
+        Set<OrderbyItem> processedList = new LinkedHashSet<>();
+        String[] valueParts = value.trim().split(",");
+        if (valueParts.length > 0) {
+            for (String valuePart : valueParts) {
+                String[] valueSubPart = valuePart.trim().split(" ");
+                if (valueSubPart.length == 1) {
+                    processedList.add(new OrderbyItem(valueSubPart[0], null));
+                } else if (valueSubPart.length == 2) {
+                    processedList.add(new OrderbyItem(valueSubPart[0], OrderType.valueOf(valueSubPart[1])));
+                }
+            }
+        }
+        return processedList;
+    }
 
     public OrderbyItem() {
     }

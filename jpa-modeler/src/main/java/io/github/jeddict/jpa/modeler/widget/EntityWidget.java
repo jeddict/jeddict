@@ -23,6 +23,8 @@ import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getConv
 import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getEntityDisplayProperty;
 import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getInheritanceProperty;
 import io.github.jeddict.jpa.modeler.rules.entity.ClassValidator;
+import static io.github.jeddict.jpa.modeler.rules.entity.ClassValidator.MANY_PRIMARYKEY_GEN_EXIST;
+import static io.github.jeddict.jpa.modeler.rules.entity.ClassValidator.NO_PRIMARYKEY_EXIST;
 import static io.github.jeddict.jpa.modeler.widget.InheritanceStateType.BRANCH;
 import static io.github.jeddict.jpa.modeler.widget.InheritanceStateType.LEAF;
 import static io.github.jeddict.jpa.modeler.widget.InheritanceStateType.ROOT;
@@ -40,7 +42,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.WARNING;
@@ -172,9 +174,9 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
                     : this.getManyToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey());
             List<Id> ids = this.getBaseElementSpec().getAttributes().getSuperId();
             if (ids.isEmpty() && this.isCompositePKPropertyAllow() == CompositePKProperty.NONE && !relationKey) {
-                getSignalManager().fire(ERROR, ClassValidator.NO_PRIMARYKEY_EXIST);
+                getSignalManager().fire(ERROR, NO_PRIMARYKEY_EXIST);
             } else {
-                getSignalManager().clear(ERROR, ClassValidator.NO_PRIMARYKEY_EXIST);
+                getSignalManager().clear(ERROR, NO_PRIMARYKEY_EXIST);
             }
             List<String> idGenList = ids.stream()
                     .filter(idAttr -> idAttr.getGeneratedValue() != null)
@@ -182,9 +184,9 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
                     .map(Id::getName)
                     .collect(toList());
             if (idGenList.size() > 1) {
-                getSignalManager().fire(ERROR, ClassValidator.MANY_PRIMARYKEY_GEN_EXIST, idGenList.toString());
+                getSignalManager().fire(ERROR, MANY_PRIMARYKEY_GEN_EXIST, idGenList.toString());
             } else {
-                getSignalManager().clear(ERROR, ClassValidator.MANY_PRIMARYKEY_GEN_EXIST);
+                getSignalManager().clear(ERROR, MANY_PRIMARYKEY_GEN_EXIST);
             }
         } else {
             getSignalManager().clear(ERROR, ClassValidator.NO_PRIMARYKEY_EXIST);

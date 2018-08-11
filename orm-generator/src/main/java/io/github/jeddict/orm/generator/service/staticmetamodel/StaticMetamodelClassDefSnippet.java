@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.orm.generator.service.staticmetamodel;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.compiler.def.ClassDefSnippet;
 import io.github.jeddict.orm.generator.util.ClassHelper;

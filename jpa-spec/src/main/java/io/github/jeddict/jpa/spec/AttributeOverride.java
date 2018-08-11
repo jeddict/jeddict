@@ -6,9 +6,16 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.ATTRIBUTE_OVERRIDES_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ATTRIBUTE_OVERRIDE_FQN;
+import io.github.jeddict.source.AnnotatedMember;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import static java.util.stream.Collectors.toSet;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -16,9 +23,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.JPAConstants.ATTRIBUTE_OVERRIDES_FQN;
-import static io.github.jeddict.jcode.JPAConstants.ATTRIBUTE_OVERRIDE_FQN;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -65,7 +69,8 @@ public class AttributeOverride implements Comparable<AttributeOverride> {
     @XmlAttribute(required = true)
     protected String name;
 
-    private static AttributeOverride loadAttribute(Element element, AnnotationMirror annotationMirror) {
+    @Deprecated
+    private static AttributeOverride load(Element element, AnnotationMirror annotationMirror) {
         AttributeOverride attributeOverride = null;
         if (annotationMirror != null) {
             attributeOverride = new AttributeOverride();
@@ -79,6 +84,7 @@ public class AttributeOverride implements Comparable<AttributeOverride> {
         return attributeOverride;
     }
 
+    @Deprecated
     public static Set<AttributeOverride> load(Element element) {
         Set<AttributeOverride> attributeOverrides = new TreeSet<>();
 
@@ -87,15 +93,44 @@ public class AttributeOverride implements Comparable<AttributeOverride> {
             List attributeOverridesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(attributeOverridesMirror, "value");
             if (attributeOverridesMirrorList != null) {
                 for (Object attributeOverrideObj : attributeOverridesMirrorList) {
-                    attributeOverrides.add(AttributeOverride.loadAttribute(element, (AnnotationMirror) attributeOverrideObj));
+                    attributeOverrides.add(AttributeOverride.load(element, (AnnotationMirror) attributeOverrideObj));
                 }
             }
         } else {
             attributeOverridesMirror = JavaSourceParserUtil.findAnnotation(element, ATTRIBUTE_OVERRIDE_FQN);
             if (attributeOverridesMirror != null) {
-                attributeOverrides.add(AttributeOverride.loadAttribute(element, attributeOverridesMirror));
+                attributeOverrides.add(AttributeOverride.load(element, attributeOverridesMirror));
             }
         }
+
+        return attributeOverrides;
+    }
+
+    private static AttributeOverride load(AnnotationExplorer annotation) {
+        AttributeOverride attributeOverride = new AttributeOverride();
+        annotation.getString("name").ifPresent(attributeOverride::setName);
+        annotation.getAnnotation("column").map(Column::load).ifPresent(attributeOverride::setColumn);
+        return attributeOverride;
+    }
+
+    public static Set<AttributeOverride> load(AnnotatedMember member) {
+        Set<AttributeOverride> attributeOverrides = new TreeSet<>();
+
+        Optional<AnnotationExplorer> attrOverridesOpt = member.getAnnotation(javax.persistence.AttributeOverrides.class);
+        if (attrOverridesOpt.isPresent()) {
+            attributeOverrides.addAll(
+                    attrOverridesOpt.get()
+                            .getAnnotationList("value")
+                            .map(AttributeOverride::load)
+                            .collect(toSet())
+            );
+        }
+
+        attributeOverrides.addAll(
+                member.getRepeatableAnnotations(javax.persistence.AttributeOverride.class)
+                        .map(AttributeOverride::load)
+                        .collect(toSet())
+        );
 
         return attributeOverrides;
     }

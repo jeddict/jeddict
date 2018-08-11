@@ -15,10 +15,6 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.CASCADE_TYPE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.FETCH_TYPE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.ID;
@@ -27,8 +23,18 @@ import static io.github.jeddict.jcode.JPAConstants.MAPS_ID;
 import static io.github.jeddict.jcode.JPAConstants.MAPS_ID_FQN;
 import static io.github.jeddict.jcode.JPAConstants.ONE_TO_ONE;
 import static io.github.jeddict.jcode.JPAConstants.ONE_TO_ONE_FQN;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.getCommaSeparatedString;
 import io.github.jeddict.settings.code.CodePanel;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class OneToOneSnippet extends SingleRelationAttributeSnippet {
 
@@ -66,48 +72,53 @@ public class OneToOneSnippet extends SingleRelationAttributeSnippet {
             }
         }
 
-        builder.append("(");
+        builder.append(OPEN_PARANTHESES);
 
-        if (CodePanel.isGenerateDefaultValue() || optional == false) {
-            builder.append("optional=").append(optional).append(",");
-        }
-        
-        if (CodePanel.isGenerateDefaultValue() || orphanRemoval == true) {
-            builder.append("orphanRemoval=").append(orphanRemoval).append(",");
-        }
-
-        if (!getCascadeTypes().isEmpty()) {
-            builder.append("cascade={");
-
-            String encodedString = ORMConverterUtil.getCommaSeparatedString(
-                    getCascadeTypes());
-
-            builder.append(encodedString);
-            builder.append("},");
+        if (getMappedBy() != null) {
+            builder.append("mappedBy = ")
+                    .append(QUOTE)
+                    .append(getMappedBy())
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
         if (getFetchType() != null) {
-            builder.append("fetch = ");
-            builder.append(getFetchType());
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append("fetch = ")
+                    .append(getFetchType())
+                    .append(COMMA);
+        }
+
+        if (CodePanel.isGenerateDefaultValue() || optional == false) {
+            builder.append("optional = ")
+                    .append(optional)
+                    .append(COMMA);
+        }
+        
+        if (CodePanel.isGenerateDefaultValue() || orphanRemoval == true) {
+            builder.append("orphanRemoval = ")
+                    .append(orphanRemoval)
+                    .append(COMMA);
         }
 
         if (CodePanel.isGenerateDefaultValue() && getTargetEntity() != null) {
-            builder.append("targetEntity = ");
-            builder.append(getTargetEntity());
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append("targetEntity = ")
+                    .append(getTargetEntity())
+                    .append(COMMA);
         }
 
-        if (getMappedBy() != null) {
-            builder.append("mappedBy = ");
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(getMappedBy());
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        if (!getCascadeTypes().isEmpty()) {
+            builder.append("cascade = ");
+            if (getCascadeTypes().size() > 1) {
+                builder.append(OPEN_BRACES)
+                        .append(getCommaSeparatedString(getCascadeTypes()))
+                        .append(CLOSE_BRACES);
+            } else {
+                builder.append(getCascadeTypes().get(0));
+            }
+            builder.append(COMMA);
         }
 
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override

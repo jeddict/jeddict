@@ -30,4 +30,5 @@ public enum OrderType {
     ASC,
     @XmlEnumValue("D")
     DESC;
+
 }

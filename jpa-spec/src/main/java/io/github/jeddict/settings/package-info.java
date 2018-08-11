@@ -14,15 +14,15 @@
  * the License.
  */
 @OptionsPanelController.ContainerRegistration(
-        id = "JPAModeler", 
-        categoryName = "#OptionsCategory_Name_JPAModeler", 
+        id = "Jeddict", 
+        categoryName = "#OptionsCategory_Name_Jeddict", 
         iconBase = "io/github/jeddict/settings/icon.png", 
-        keywords = "#OptionsCategory_Keywords_JPAModeler", 
-        keywordsCategory = "JPAModeler"
+        keywords = "#OptionsCategory_Keywords_Jeddict", 
+        keywordsCategory = "Jeddict"
 )
 @NbBundle.Messages({
-    "OptionsCategory_Name_JPAModeler=Jeddict", 
-    "OptionsCategory_Keywords_JPAModeler=Jeddict"
+    "OptionsCategory_Name_Jeddict=Jeddict", 
+    "OptionsCategory_Keywords_Jeddict=Jeddict"
 })
 package io.github.jeddict.settings;
 

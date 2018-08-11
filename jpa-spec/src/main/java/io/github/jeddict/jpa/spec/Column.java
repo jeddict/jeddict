@@ -6,6 +6,14 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.COLUMN_FQN;
+import io.github.jeddict.jpa.spec.extend.BaseElement;
+import io.github.jeddict.jpa.spec.validator.column.ColumnValidator;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JAREAnnotationLoader;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import io.github.jeddict.source.MemberExplorer;
+import java.util.Optional;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -14,11 +22,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.ColumnMetadata;
-import static io.github.jeddict.jcode.JPAConstants.COLUMN_FQN;
-import io.github.jeddict.jpa.spec.extend.BaseElement;
-import io.github.jeddict.jpa.spec.validator.column.ColumnValidator;
-import io.github.jeddict.source.JAREAnnotationLoader;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -87,6 +90,7 @@ public class Column extends BaseElement implements JAREAnnotationLoader {
     protected Integer scale;
 
     @Override
+    @Deprecated
     public Column load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
             annotationMirror = JavaSourceParserUtil.findAnnotation(element, COLUMN_FQN);
@@ -108,11 +112,35 @@ public class Column extends BaseElement implements JAREAnnotationLoader {
         return column;
     }
 
+    @Deprecated
     public Column load(Element element) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, COLUMN_FQN);
         return load(element, annotationMirror);
     }
 
+    public static Column load(MemberExplorer member) {
+        Column column = null;
+        Optional<AnnotationExplorer> annotationOpt = member.getAnnotation(javax.persistence.Column.class);
+        if (annotationOpt.isPresent()) {
+            column = load(annotationOpt.get());
+        }
+        return column;
+    }
+
+    public static Column load(AnnotationExplorer annotation) {
+        Column column = new Column();
+        annotation.getString("name").ifPresent(column::setName);
+        annotation.getBoolean("unique").ifPresent(column::setUnique);
+        annotation.getBoolean("nullable").ifPresent(column::setNullable);
+        annotation.getBoolean("insertable").ifPresent(column::setInsertable);
+        annotation.getBoolean("updatable").ifPresent(column::setUpdatable);
+        annotation.getString("columnDefinition").ifPresent(column::setColumnDefinition);
+        annotation.getString("table").ifPresent(column::setTable);
+        annotation.getInt("length").ifPresent(column::setLength);
+        annotation.getInt("precision").ifPresent(column::setPrecision);
+        annotation.getInt("scale").ifPresent(column::setScale);
+        return column;
+    }
 
     /**
      * Gets the value of the name property.
@@ -140,7 +168,7 @@ public class Column extends BaseElement implements JAREAnnotationLoader {
      * @return possible object is {@link Boolean }
      *
      */
-    public Boolean getUnique() {//isUnique
+    public Boolean getUnique() {
         if(unique == null){
             unique = false;
         }
@@ -163,7 +191,7 @@ public class Column extends BaseElement implements JAREAnnotationLoader {
      * @return possible object is {@link Boolean }
      *
      */
-    public Boolean getNullable() {//isNullable
+    public Boolean getNullable() {
         if(nullable == null){
             nullable = true;
         }
@@ -186,7 +214,7 @@ public class Column extends BaseElement implements JAREAnnotationLoader {
      * @return possible object is {@link Boolean }
      *
      */
-    public Boolean getInsertable() {//isInsertable
+    public Boolean getInsertable() {
         if(insertable == null){
             insertable = true;
         }
@@ -209,7 +237,7 @@ public class Column extends BaseElement implements JAREAnnotationLoader {
      * @return possible object is {@link Boolean }
      *
      */
-    public Boolean getUpdatable() {//isUpdatable
+    public Boolean getUpdatable() {
         if(updatable == null){
             updatable = true;
         }

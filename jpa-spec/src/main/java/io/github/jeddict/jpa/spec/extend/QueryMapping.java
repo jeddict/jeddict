@@ -17,7 +17,7 @@ package io.github.jeddict.jpa.spec.extend;
 
 import java.util.regex.Pattern;
 import javax.xml.bind.annotation.XmlElement;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.settings.code.CodePanel;
 
 /**

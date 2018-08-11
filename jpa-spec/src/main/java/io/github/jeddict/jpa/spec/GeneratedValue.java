@@ -6,6 +6,11 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.GENERATED_VALUE_FQN;
+import io.github.jeddict.source.AnnotatedMember;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import java.util.Optional;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
@@ -14,8 +19,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.internal.jpa.metadata.sequencing.GeneratedValueMetadata;
-import static io.github.jeddict.jcode.JPAConstants.GENERATED_VALUE_FQN;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -54,6 +57,7 @@ public class GeneratedValue {
     @XmlAttribute
     protected String generator;
 
+    @Deprecated
     public static GeneratedValue load(Element element, VariableElement variableElement) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, GENERATED_VALUE_FQN);
         GeneratedValue generatedValue = null;
@@ -67,6 +71,22 @@ public class GeneratedValue {
         }
         return generatedValue;
 
+    }
+
+    public static GeneratedValue load(AnnotatedMember member) {
+        GeneratedValue generatedValue = null;
+        Optional<AnnotationExplorer> generatedValueOpt = member.getAnnotation(javax.persistence.GeneratedValue.class);
+        if (generatedValueOpt.isPresent()) {
+            generatedValue = new GeneratedValue();
+            AnnotationExplorer annotation = generatedValueOpt.get();
+            annotation.getString("generator").ifPresent(generatedValue::setGenerator);
+            generatedValue.setStrategy(
+                    annotation.getEnum("strategy")
+                    .map(GenerationType::valueOf)
+                    .orElse(GenerationType.DEFAULT)
+            );
+        }
+        return generatedValue;
     }
 
     /**

@@ -6,8 +6,16 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import io.github.jeddict.source.AnnotatedMember;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -16,7 +24,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlType;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -100,6 +107,49 @@ public class SqlResultSetMapping {
             }
         }
         return sqlResultSetMapping;
+    }
+
+    public static SqlResultSetMapping load(AnnotationExplorer annotation) {
+        SqlResultSetMapping sqlResultSetMapping = new SqlResultSetMapping();
+        annotation.getString("name").ifPresent(sqlResultSetMapping::setName);
+        annotation.getString("description").ifPresent(sqlResultSetMapping::setDescription);
+
+        sqlResultSetMapping.entityResult
+                = annotation.getAnnotationList("entities")
+                        .map(EntityResult::load)
+                        .collect(toList());
+
+        sqlResultSetMapping.constructorResult
+                = annotation.getAnnotationList("classes")
+                        .map(ConstructorResult::load)
+                        .collect(toList());
+
+        sqlResultSetMapping.columnResult
+                = annotation.getAnnotationList("columns")
+                        .map(ColumnResult::load)
+                        .collect(toList());
+
+        return sqlResultSetMapping;
+    }
+
+    public static Set<SqlResultSetMapping> load(AnnotatedMember member) {
+        Set<SqlResultSetMapping> sqlResultSetMappings = new LinkedHashSet<>();
+        Optional<AnnotationExplorer> sqlResultSetMappingsOpt = member.getAnnotation(javax.persistence.SqlResultSetMappings.class);
+        if (sqlResultSetMappingsOpt.isPresent()) {
+            sqlResultSetMappings.addAll(
+                    sqlResultSetMappingsOpt.get()
+                            .getAnnotationList("value")
+                            .map(SqlResultSetMapping::load)
+                            .collect(toCollection(LinkedHashSet::new))
+            );
+        }
+
+        sqlResultSetMappings.addAll(
+                member.getRepeatableAnnotations(javax.persistence.SqlResultSetMapping.class)
+                        .map(SqlResultSetMapping::load)
+                        .collect(toCollection(LinkedHashSet::new))
+        );
+        return sqlResultSetMappings;
     }
 
     @Override

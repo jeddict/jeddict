@@ -17,7 +17,7 @@ package io.github.jeddict.orm.generator.compiler;
 
 import java.util.Collection;
 import java.util.Collections;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import static io.github.jeddict.jcode.JPAConstants.INDEX;
 import static io.github.jeddict.jcode.JPAConstants.INDEX_FQN;
 import io.github.jeddict.jpa.spec.Index;

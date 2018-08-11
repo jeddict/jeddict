@@ -25,6 +25,7 @@
         <root.dir>${basedir}</root.dir>
         <nbm.cluster>jeddict</nbm.cluster>
         <nbm.build.dir>${root.dir}/../jeddict-cluster</nbm.build.dir>
+        <nbm.maven.plugin.version>4.1</nbm.maven.plugin.version>
     </properties>
     
     <build>
@@ -32,7 +33,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
-                <version>4.1</version>
+                <version>${nbm.maven.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <author>Jeddict team</author>
@@ -84,6 +85,11 @@
             <artifactId>modeler-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!--        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-maven-embedder</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>-->
     </dependencies>
     
     <repositories>

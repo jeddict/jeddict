@@ -15,10 +15,11 @@
  */
 package io.github.jeddict.jpa.spec.bean;
 
+import io.github.jeddict.jpa.spec.extend.BaseAttribute;
+import io.github.jeddict.source.MemberExplorer;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import io.github.jeddict.jpa.spec.extend.BaseAttribute;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanAttribute extends BaseAttribute {
@@ -26,12 +27,17 @@ public class BeanAttribute extends BaseAttribute {
     @XmlAttribute(name = "attribute-type")
     private String attributeType;
 
-    public BeanAttribute() {
+    public static BeanAttribute load(MemberExplorer member) {
+        BeanAttribute attribute = new BeanAttribute();
+        attribute.loadAttribute(member);
+        attribute.setAttributeType(member.getType());
+        return attribute;
     }
 
     /**
      * @return the attributeType
      */
+    @Override
     public String getAttributeType() {
         return attributeType;
     }

@@ -15,15 +15,15 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.Collection;
-import java.util.Collections;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static io.github.jeddict.jcode.JPAConstants.COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.COLUMN_FQN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_COLUMN_FQN;
-import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import io.github.jeddict.settings.code.CodePanel;
+import java.util.Collection;
+import java.util.Collections;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 
 public class ColumnDefSnippet implements Snippet {
 
@@ -154,12 +154,6 @@ public class ColumnDefSnippet implements Snippet {
             builder.append("\",");
         }
 
-        if (columnDefinition != null) {
-            builder.append("columnDefinition=\"");
-            builder.append(columnDefinition);
-            builder.append("\",");
-        }
-
         if (table != null) {
             builder.append("table=\"");
             builder.append(table);
@@ -174,16 +168,6 @@ public class ColumnDefSnippet implements Snippet {
             }
         } else if (unique == true) {
             builder.append("unique=true,");
-        }
-
-        if (CodePanel.isGenerateDefaultValue()) {
-            if (updatable == true) {
-                builder.append("updatable=true,");
-            } else {
-                builder.append("updatable=false,");
-            }
-        } else if (updatable == false) {
-            builder.append("updatable=false,");
         }
 
         if (CodePanel.isGenerateDefaultValue()) {
@@ -206,6 +190,16 @@ public class ColumnDefSnippet implements Snippet {
             builder.append("nullable=false,");
         }
 
+        if (CodePanel.isGenerateDefaultValue()) {
+            if (updatable == true) {
+                builder.append("updatable=true,");
+            } else {
+                builder.append("updatable=false,");
+            }
+        } else if (updatable == false) {
+            builder.append("updatable=false,");
+        }
+
         if (CodePanel.isGenerateDefaultValue() || length != 255) {
             builder.append("length=");
             builder.append(length);
@@ -222,6 +216,12 @@ public class ColumnDefSnippet implements Snippet {
             builder.append("precision=");
             builder.append(precision);
             builder.append(ORMConverterUtil.COMMA);
+        }
+
+        if (columnDefinition != null) {
+            builder.append("columnDefinition=\"");
+            builder.append(columnDefinition);
+            builder.append("\",");
         }
         
         return "@" + (mapKey? MAP_KEY_COLUMN : COLUMN) + ORMConverterUtil.OPEN_PARANTHESES + 

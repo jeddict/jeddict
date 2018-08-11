@@ -17,7 +17,6 @@ package io.github.jeddict.orm.generator.compiler.constraints;
 
 import io.github.jeddict.bv.constraints.Email;
 import io.github.jeddict.bv.constraints.Flag;
-import static io.github.jeddict.jcode.BeanVaildationConstants.BEAN_VAILDATION_PACKAGE;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
@@ -27,7 +26,8 @@ import java.util.Collections;
 import java.util.List;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
+import static io.github.jeddict.jcode.BeanVaildationConstants.BV_CONSTRAINTS_PACKAGE;
 
 /**
  *
@@ -87,10 +87,9 @@ public class EmailSnippet extends ConstraintSnippet<Email> {
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         Collection<String> imports = super.getImportSnippets();
-        imports.addAll(
-                flags.stream()
+        imports.addAll(flags.stream()
                         .map(Flag::name)
-                        .map(flag -> "static " + BEAN_VAILDATION_PACKAGE + ".Email.Flag." + flag)
+                        .map(flag -> "static " + BV_CONSTRAINTS_PACKAGE + ".Email.Flag." + flag)
                         .collect(toList())
         );
         return imports;

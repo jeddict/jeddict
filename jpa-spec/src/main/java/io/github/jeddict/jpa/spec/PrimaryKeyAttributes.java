@@ -6,22 +6,9 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.lang3.StringUtils;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
+import io.github.jeddict.db.accessor.EmbeddedIdSpecAccessor;
+import io.github.jeddict.db.accessor.IdSpecAccessor;
+import io.github.jeddict.db.accessor.VersionSpecAccessor;
 import static io.github.jeddict.jcode.JPAConstants.BASIC_FQN;
 import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION_FQN;
 import static io.github.jeddict.jcode.JPAConstants.EMBEDDED_FQN;
@@ -33,16 +20,35 @@ import static io.github.jeddict.jcode.JPAConstants.ONE_TO_MANY_FQN;
 import static io.github.jeddict.jcode.JPAConstants.ONE_TO_ONE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.TRANSIENT_FQN;
 import static io.github.jeddict.jcode.JPAConstants.VERSION_FQN;
-import io.github.jeddict.db.accessor.EmbeddedIdSpecAccessor;
-import io.github.jeddict.db.accessor.IdSpecAccessor;
-import io.github.jeddict.db.accessor.VersionSpecAccessor;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.IPrimaryKeyAttributes;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.jpa.spec.extend.PersistenceAttributes;
 import io.github.jeddict.jpa.spec.workspace.WorkSpace;
+import io.github.jeddict.source.ClassExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
 import static io.github.jeddict.source.JavaSourceParserUtil.getElements;
+import io.github.jeddict.source.MemberExplorer;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import static java.util.Objects.nonNull;
+import java.util.Optional;
+import java.util.Set;
+import static java.util.stream.Collectors.toList;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
 
 /**
  *
@@ -104,6 +110,7 @@ public class PrimaryKeyAttributes extends PersistenceAttributes<IdentifiableClas
     protected List<Version> version;
 
     @Override
+    @Deprecated
     public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
         Set<String> mapsId = new HashSet<>();
         VariableElement embeddedIdVariableElement = null;
@@ -177,6 +184,83 @@ public class PrimaryKeyAttributes extends PersistenceAttributes<IdentifiableClas
             }
         }
 
+    }
+
+    @Override
+    public void load(ClassExplorer clazz) {
+        Collection<MemberExplorer> members = clazz.getMembers();
+        Set<String> mapsId = new HashSet<>();
+        MemberExplorer embeddedIdMember = null;
+
+        for (MemberExplorer member : members) {
+            if (member.isAnnotationPresent(javax.persistence.Id.class)
+                    && !(member.isAnnotationPresent(javax.persistence.OneToOne.class)
+                    || member.isAnnotationPresent(javax.persistence.ManyToOne.class))) {
+                this.addId(Id.load(member));
+            } else if (member.isAnnotationPresent(javax.persistence.EmbeddedId.class)) {
+                this.setEmbeddedId(EmbeddedId.load(member));
+                embeddedIdMember = member;
+            } else if (member.isAnnotationPresent(javax.persistence.Basic.class)) {
+                this.addBasic(Basic.load(member));
+            } else if (member.isAnnotationPresent(javax.persistence.Transient.class)) {
+                this.addTransient(Transient.load(member));
+            } else if (member.isAnnotationPresent(javax.persistence.Version.class)) {
+                this.addVersion(Version.load(member));
+            } else if (member.isAnnotationPresent(javax.persistence.ElementCollection.class)) {
+                ElementCollection elementCollection = ElementCollection.load(member);
+                if (nonNull(elementCollection)) {
+                    this.addElementCollection(elementCollection);
+                }
+            } else if (member.isAnnotationPresent(javax.persistence.OneToOne.class)) {
+                OneToOne oneToOneObj = new OneToOne();
+                this.addOneToOne(oneToOneObj);
+                oneToOneObj.load(member);
+                if (isNotBlank(oneToOneObj.getMapsId())) {
+                    mapsId.add(oneToOneObj.getMapsId());
+                } else {
+                    mapsId.add(oneToOneObj.getName());
+                }
+            } else if (member.isAnnotationPresent(javax.persistence.ManyToOne.class)) {
+                ManyToOne manyToOneObj = new ManyToOne();
+                this.addManyToOne(manyToOneObj);
+                manyToOneObj.load(member);
+                if (isNotBlank(manyToOneObj.getMapsId())) {
+                    mapsId.add(manyToOneObj.getMapsId());
+                } else {
+                    mapsId.add(manyToOneObj.getName());
+                }
+            } else if (member.isAnnotationPresent(javax.persistence.OneToMany.class)) {
+                OneToMany oneToManyObj = new OneToMany();
+                this.addOneToMany(oneToManyObj);
+                oneToManyObj.load(member);
+            } else if (member.isAnnotationPresent(javax.persistence.ManyToMany.class)) {
+                ManyToMany manyToManyObj = new ManyToMany();
+                this.addManyToMany(manyToManyObj);
+                manyToManyObj.load(member);
+            } else if (member.isAnnotationPresent(javax.persistence.Embedded.class)) {
+                Embedded embedded = Embedded.load(member);
+                if (nonNull(embedded)) {
+                    this.addEmbedded(embedded);
+                }
+            } else {
+                this.addBasic(Basic.load(member)); //Default Annotation
+            }
+        }
+
+        if (this.getEmbeddedId() != null) {
+            String embeddableClassFQN = null;
+            try {
+                embeddableClassFQN = embeddedIdMember.getType();
+                ClassExplorer embeddableClass = clazz.getSource().createClass(embeddableClassFQN);
+                for (MemberExplorer member : embeddableClass.getMembers()) {
+                    if (!mapsId.contains(member.getFieldName())) {
+                        this.addId(Id.load(member));
+                    }
+                }
+            } catch (FileNotFoundException ex) {
+                throw new IllegalStateException("Unable to load class " + embeddableClassFQN);
+            }
+        }
     }
 
     /**

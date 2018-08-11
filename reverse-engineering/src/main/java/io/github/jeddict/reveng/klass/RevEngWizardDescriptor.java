@@ -15,8 +15,9 @@
  */
 package io.github.jeddict.reveng.klass;
 
+import com.github.javaparser.ParseProblemException;
+import com.github.javaparser.resolution.UnsolvedSymbolException;
 import io.github.jeddict.analytics.JeddictLogger;
-import io.github.jeddict.collaborate.issues.ExceptionUtils;
 import static io.github.jeddict.jcode.util.Constants.JAVA_EXT_SUFFIX;
 import static io.github.jeddict.jcode.util.ProjectHelper.findSourceGroupForFile;
 import static io.github.jeddict.jcode.util.ProjectHelper.getFolderSourceGroup;
@@ -34,13 +35,13 @@ import io.github.jeddict.jpa.spec.extend.RelationAttribute;
 import io.github.jeddict.reveng.BaseWizardDescriptor;
 import io.github.jeddict.reveng.JCREProcessor;
 import static io.github.jeddict.reveng.settings.RevengPanel.isIncludeReferencedClasses;
+import io.github.jeddict.source.ClassExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
-import static io.github.jeddict.source.JavaSourceParserUtil.isEmbeddable;
-import static io.github.jeddict.source.JavaSourceParserUtil.isEntity;
-import static io.github.jeddict.source.JavaSourceParserUtil.isMappedSuperclass;
+import io.github.jeddict.source.SourceExplorer;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import static java.util.Collections.singleton;
@@ -49,22 +50,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import static java.util.Objects.nonNull;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.INFO;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import javax.lang.model.element.TypeElement;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.showInputDialog;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import org.netbeans.api.java.source.ClasspathInfo;
-import org.netbeans.api.java.source.JavaSource;
+import static org.apache.commons.lang.StringUtils.isEmpty;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.AggregateProgressHandle;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
@@ -338,12 +338,21 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
                         includeReference, softWrite, true
                 );
                 progressContributor.progress(progressStepCount);
-            } catch (IOException ioe) {
-                LOG.log(INFO, null, ioe);
-                NotifyDescriptor nd = new NotifyDescriptor.Message(ioe.getLocalizedMessage(), ERROR_MESSAGE);
+            } catch (IOException | UnsolvedSymbolException ex) {
+                LOG.log(INFO, null, ex);
+                NotifyDescriptor nd = new NotifyDescriptor.Message(ex.getLocalizedMessage(), ERROR_MESSAGE);
                 DialogDisplayer.getDefault().notify(nd);
-            } catch (ProcessInterruptedException ce) {
-                LOG.log(INFO, null, ce);
+            } catch (ParseProblemException ex) {
+                LOG.log(INFO, null, ex);
+                String message = ex.getLocalizedMessage().substring(0, ex.getLocalizedMessage().indexOf("Problem stacktrace"));
+                NotifyDescriptor nd = new NotifyDescriptor.Message(message, ERROR_MESSAGE);
+                DialogDisplayer.getDefault().notify(nd);
+            } catch (UnsupportedOperationException ex) {
+                LOG.log(INFO, null, ex);
+                NotifyDescriptor nd = new NotifyDescriptor.Message("uncompilable source code detected", ERROR_MESSAGE);
+                DialogDisplayer.getDefault().notify(nd);
+            } catch (ProcessInterruptedException ex) {
+                LOG.log(INFO, null, ex);
             } finally {
                 progressContributor.finish();
                 SwingUtilities.invokeLater(progressPanel::close);
@@ -387,26 +396,21 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
         reporter.progress(progressMsg, progressIndex++);
 
         List<String> missingEntities = new ArrayList<>();
-        for (String entityClass : entities) {
-            progressMsg = getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Class_Parsing", entityClass + JAVA_EXT_SUFFIX);//NOI18N
-            reporter.progress(progressMsg, progressIndex++);
-            parseJavaClass(entityMappings, sourcePackage, entityClass, missingEntities);
+        SourceExplorer source = new SourceExplorer(sourcePackage, entityMappings, entities, includeReference);
+        for (String entityClassFQN : entities) {
+            try {
+                source.createClass(entityClassFQN);
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+                missingEntities.add(entityClassFQN);
+            }
         }
 
-        if (includeReference) {
-            // manageSiblingAttribute for MappedSuperClass and Embeddable is not required for (DBRE) DB REV ENG CASE
-            for (ManagedClass<IPersistenceAttributes> managedClass : entityMappings.getAllManagedClass()) {
-                for (RelationAttribute attribute : new ArrayList<>(managedClass.getAttributes().getRelationAttributes())) {
-                    String entityClass = attribute.getTargetEntity();
-                    String entityClassFQN = attribute.getTargetEntityFQN();
-                    if (entityMappings.findAllJavaClass(entityClass).isEmpty()) {
-                        progressMsg = getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Class_Parsing", entityClass + JAVA_EXT_SUFFIX);//NOI18N
-                        reporter.progress(progressMsg, progressIndex++);
-                        parseJavaClass(entityMappings, sourcePackage, entityClassFQN, missingEntities);
-                        entities.add(entityClassFQN);
-                    }
-                }
-            }
+        progressIndex = loadJavaClasses(reporter, progressIndex, source.getClasses(), entityMappings);
+        List<ClassExplorer> classes = checkReferencedClasses(source, missingEntities, includeReference);
+        while (!classes.isEmpty()) {
+            progressIndex = loadJavaClasses(reporter, progressIndex, classes, entityMappings);
+            classes = checkReferencedClasses(source, missingEntities, includeReference);
         }
 
         if (!missingEntities.isEmpty()) {
@@ -468,52 +472,91 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
         throw new ProcessInterruptedException();
     }
 
-    private void parseJavaClass(
-            final EntityMappings entityMappings,
-            final FileObject sourcePackage,
-            final String entityClass,
-            final List<String> missingEntities) throws IOException {
+    private int loadJavaClasses(
+            final ProgressReporter reporter,
+            int progressIndex,
+            final List<ClassExplorer> selectedClasses,
+            final EntityMappings entityMappings) {
 
-        final ClasspathInfo classpathInfo = ClasspathInfo.create(sourcePackage);
-        JavaSource javaSource = JavaSource.create(classpathInfo);
-        javaSource.runUserActionTask(controller -> {
-            try {
-                controller.toPhase(JavaSource.Phase.ELEMENTS_RESOLVED);
-                TypeElement jc = controller.getElements().getTypeElement(entityClass);
-                if (jc != null) {
-                    String className = jc.getSimpleName().toString();
-                    boolean fieldAccess = JavaSourceParserUtil.isFieldAccess(jc);
-                    if (isEntity(jc)) {
-                        if (!entityMappings.findEntity(className).isPresent()) {
-                            Entity entity = new Entity();
-                            entity.load(entityMappings, jc, fieldAccess);
-                            entityMappings.addEntity(entity);
+        List<ClassExplorer> classes = new CopyOnWriteArrayList<>(selectedClasses);
+        classes.sort((c1, c2) -> c1.isEntity() || c1.isMappedSuperclass() ? -1 : 1);
+
+        for (ClassExplorer clazz : classes) {
+            String progressMsg = getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Class_Parsing", clazz.getName() + JAVA_EXT_SUFFIX);//NOI18N
+            reporter.progress(progressMsg, progressIndex++);
+            parseJavaClass(entityMappings, clazz);
+        }
+        return progressIndex;
+    }
+
+    private List<ClassExplorer> checkReferencedClasses(SourceExplorer source, List<String> missingEntities, boolean includeReference) {
+        List<ClassExplorer> newReferencedClass = new ArrayList<>();
+        EntityMappings entityMappings = source.getEntityMappings();
+        if (includeReference) {
+            // manageSiblingAttribute for MappedSuperClass and Embeddable is not required for (DBRE) DB REV ENG CASE
+            for (ManagedClass<IPersistenceAttributes> managedClass : entityMappings.getAllManagedClass()) {
+                for (RelationAttribute attribute : new ArrayList<>(managedClass.getAttributes().getRelationAttributes())) {
+                    String entityClass = attribute.getTargetEntity();
+                    String entityClassFQN = attribute.getTargetEntityFQN();
+                    if (entityMappings.findAllJavaClass(entityClass).isEmpty()) {
+                        ClassExplorer clazz;
+                        try {
+                            clazz = source.createClass(entityClassFQN);
+                            newReferencedClass.add(clazz);
+                        } catch (FileNotFoundException ex) {
+                            ex.printStackTrace();
+                            missingEntities.add(entityClassFQN);
                         }
-                    } else if (isMappedSuperclass(jc)) {
-                        if (!entityMappings.findMappedSuperclass(className).isPresent()) {
-                            MappedSuperclass mappedSuperclass = new MappedSuperclass();
-                            mappedSuperclass.load(entityMappings, jc, fieldAccess);
-                            entityMappings.addMappedSuperclass(mappedSuperclass);
-                        }
-                    } else if (isEmbeddable(jc)) {
-                        if (!entityMappings.findEmbeddable(className).isPresent()) {
-                            Embeddable embeddable = new Embeddable();
-                            embeddable.load(entityMappings, jc, fieldAccess);
-                            entityMappings.addEmbeddable(embeddable);
-                        }
-                    } else if (!jc.getSuperclass().toString().startsWith(Enum.class.getName())
-                            && !jc.getSuperclass().toString().equals("none")) { //ignore enum & interface
-                        BeanClass beanClass = new BeanClass();
-                        beanClass.load(entityMappings, jc, fieldAccess);
-                        entityMappings.addBeanClass(beanClass);
                     }
-                } else {
-                    missingEntities.add(entityClass);
                 }
-            } catch (IOException t) {
-                ExceptionUtils.printStackTrace(t);
             }
-        }, true);
+
+        }
+        return newReferencedClass;
+    }
+
+    private Optional<JavaClass> parseJavaClass(
+            final EntityMappings entityMappings,
+            final ClassExplorer clazz) {
+
+        JavaClass javaClass = null;
+        String className = clazz.getName();
+
+        if (clazz.isEntity()) {
+            if (!entityMappings.findEntity(className).isPresent()) {
+                Entity entity;
+                javaClass = entity = new Entity();
+                entity.load(clazz);
+                entityMappings.addEntity(entity);
+            }
+        } else if (clazz.isMappedSuperclass()) {
+            if (!entityMappings.findMappedSuperclass(className).isPresent()) {
+                MappedSuperclass mappedSuperclass;
+                javaClass = mappedSuperclass = new MappedSuperclass();
+                mappedSuperclass.load(clazz);
+                entityMappings.addMappedSuperclass(mappedSuperclass);
+            }
+        } else if (clazz.isEmbeddable()) {
+
+            if (!entityMappings.isCompositePrimaryKeyClass(clazz.getName())
+                    && !entityMappings.findEmbeddable(className).isPresent()) {
+                Embeddable embeddable;
+                javaClass = embeddable = new Embeddable();
+                embeddable.load(clazz);
+                entityMappings.addEmbeddable(embeddable);
+            }
+        } else if (!clazz.isEnum() && !clazz.isInterface()) {
+
+            if (!entityMappings.isCompositePrimaryKeyClass(clazz.getName())
+                    && !entityMappings.findBeanClass(className).isPresent()) {
+                BeanClass beanClass;
+                javaClass = beanClass = new BeanClass();
+                beanClass.load(clazz);
+                entityMappings.addBeanClass(beanClass);
+            }
+        }
+
+        return Optional.ofNullable(javaClass);
     }
 
     @Override

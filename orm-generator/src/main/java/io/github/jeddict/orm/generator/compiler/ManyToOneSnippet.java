@@ -15,9 +15,6 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.CASCADE_TYPE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.FETCH_TYPE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.ID;
@@ -26,8 +23,17 @@ import static io.github.jeddict.jcode.JPAConstants.MANY_TO_ONE;
 import static io.github.jeddict.jcode.JPAConstants.MANY_TO_ONE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.MAPS_ID;
 import static io.github.jeddict.jcode.JPAConstants.MAPS_ID_FQN;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.getCommaSeparatedString;
 import io.github.jeddict.settings.code.CodePanel;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
 
@@ -35,7 +41,7 @@ public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
         if (isPrimaryKey()) {
-            builder.append("@");
+            builder.append(AT);
             if (mapsId == null) {
                 builder.append(ID);
             } else if (mapsId.trim().isEmpty()) {
@@ -44,7 +50,7 @@ public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
                 builder.append(MAPS_ID).append("(\"").append(mapsId).append("\")");
             }
         }
-        builder.append("@").append(MANY_TO_ONE);
+        builder.append(AT).append(MANY_TO_ONE);
 
         if (!CodePanel.isGenerateDefaultValue()) {
             if (optional == true
@@ -54,36 +60,39 @@ public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
             }
         }
 
-        builder.append("(");
-
-        if (CodePanel.isGenerateDefaultValue() || optional == false) {
-            builder.append("optional=").append(optional).append(",");
-        }
-
-        if (!getCascadeTypes().isEmpty()) {
-            builder.append("cascade={");
-
-            String encodedString = ORMConverterUtil.getCommaSeparatedString(
-                    getCascadeTypes());
-
-            builder.append(encodedString);
-            builder.append("},");
-        }
+        builder.append(OPEN_PARANTHESES);
 
         if (getFetchType() != null) {
             builder.append("fetch = ");
             builder.append(getFetchType());
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
+        }
+
+        if (CodePanel.isGenerateDefaultValue() || optional == false) {
+            builder.append("optional = ")
+                    .append(optional)
+                    .append(COMMA);
         }
 
         if (CodePanel.isGenerateDefaultValue() && getTargetEntity() != null) {
             builder.append("targetEntity = ");
             builder.append(getTargetEntity());
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         }
 
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        if (!getCascadeTypes().isEmpty()) {
+            builder.append("cascade = ");
+            if (getCascadeTypes().size() > 1) {
+                builder.append(OPEN_BRACES)
+                        .append(getCommaSeparatedString(getCascadeTypes()))
+                        .append(CLOSE_BRACES);
+            } else {
+                builder.append(getCascadeTypes().get(0));
+            }
+            builder.append(COMMA);
+        }
+
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override

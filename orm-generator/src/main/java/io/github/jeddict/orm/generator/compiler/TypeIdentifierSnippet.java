@@ -19,7 +19,7 @@ import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.jcode.util.AttributeType;
 import io.github.jeddict.orm.generator.util.ClassHelper;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;

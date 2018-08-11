@@ -6,6 +6,8 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import io.github.jeddict.jpa.spec.extend.PersistenceBaseAttribute;
+import io.github.jeddict.source.MemberExplorer;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
@@ -14,8 +16,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.lang3.StringUtils;
-import io.github.jeddict.jpa.spec.extend.PersistenceBaseAttribute;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -67,13 +68,22 @@ public class Id extends PersistenceBaseAttribute {
     @XmlElement(name = "sequence-generator")
     protected SequenceGenerator sequenceGenerator;
 
-
+    @Deprecated
     public static Id load(Element element, VariableElement variableElement, ExecutableElement getterElement) {
         Id id = new Id();
         id.loadAttribute(element, variableElement, getterElement);
         id.generatedValue = GeneratedValue.load(element, variableElement);
         id.tableGenerator = TableGenerator.load(element);
         id.sequenceGenerator = SequenceGenerator.load(element);
+        return id;
+    }
+
+    public static Id load(MemberExplorer member) {
+        Id id = new Id();
+        id.loadAttribute(member);
+        id.generatedValue = GeneratedValue.load(member);
+        id.tableGenerator = TableGenerator.load(member);
+        id.sequenceGenerator = SequenceGenerator.load(member);
         return id;
     }
 
@@ -88,7 +98,7 @@ public class Id extends PersistenceBaseAttribute {
     }
     
     public boolean isGeneratedValue() {
-        if(generatedValue==null || generatedValue.getStrategy()==null){
+        if (generatedValue == null || generatedValue.getStrategy() == null) {
             return false;
         }
         return true;

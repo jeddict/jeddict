@@ -34,8 +34,7 @@
                         <publicPackage>javax.persistence.*</publicPackage>
                         <publicPackage>javax.validation.*</publicPackage>
                         <publicPackage>org.eclipse.persistence.*</publicPackage>
-                        <publicPackage>com.github.javaparser.*</publicPackage>
-                        <publicPackage>com.github.javaparser.symbolsolver.*</publicPackage>
+                        <publicPackage>com.github.javaparser.*</publicPackage>                      
                     </publicPackages>
                     <moduleDependencies>
                         <dependency>
@@ -46,6 +45,10 @@
                             <id>org.netbeans.modules:org-netbeans-libs-jaxb</id>
                             <type>impl</type>
                          </dependency>
+                         <dependency>
+                             <id>org.netbeans.modules:org-netbeans-modules-maven-embedder</id>
+                             <type>impl</type>
+                         </dependency>
                     </moduleDependencies>
                 </configuration>
             </plugin>
@@ -53,15 +56,21 @@
     </build>
    
     <dependencies>
-<!--        <dependency>
-            <groupId>com.github.javaparser</groupId>
-            <artifactId>javaparser-core</artifactId>
-            <version>3.6.14</version>
-        </dependency>-->
+        <dependency>
+            <groupId>backport-util-concurrent</groupId>
+            <artifactId>backport-util-concurrent</artifactId>
+            <version>3.1</version>
+        </dependency>
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-symbol-solver-core</artifactId>
-            <version>3.6.14</version>
+            <version>3.6.15</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>backport-util-concurrent</groupId>
+                    <artifactId>backport-util-concurrent</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
@@ -165,6 +174,6 @@
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-websvc-jaxws21api</artifactId>
             <version>${netbeans.version}</version>
-        </dependency>
+         </dependency>
     </dependencies>
 </project>

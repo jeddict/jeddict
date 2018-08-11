@@ -6,12 +6,13 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.TEMPORAL_FQN;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import io.github.jeddict.source.MemberExplorer;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.JPAConstants.TEMPORAL_FQN;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  * <p>
@@ -59,6 +60,13 @@ public enum TemporalType {
         }
         return temporalType;
 
+    }
+
+    public static TemporalType load(MemberExplorer member) {
+        return member
+                .getEnumAttribute(javax.persistence.Temporal.class, "value")
+                .map(TemporalType::valueOf)
+                .orElse(null);
     }
 
 }

@@ -37,7 +37,11 @@
                         <dependency>
                             <id>org.netbeans.modules:org-netbeans-modules-j2ee-persistenceapi</id>
                             <type>impl</type>
-                         </dependency>
+                        </dependency>
+                        <dependency>
+                            <id>org.netbeans.modules:org-netbeans-modules-maven-embedder</id>
+                            <type>impl</type>
+                        </dependency>
                     </moduleDependencies>
                 </configuration>
             </plugin>
@@ -195,7 +199,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-options-api</artifactId>
-            <version>RELEASE82</version>
+            <version>${netbeans.version}</version>
         </dependency>
     </dependencies>
 </project>

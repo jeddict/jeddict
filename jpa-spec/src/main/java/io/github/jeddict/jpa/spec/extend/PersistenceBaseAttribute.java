@@ -15,25 +15,21 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.VariableElement;
-import javax.xml.bind.annotation.XmlAttribute;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import static io.github.jeddict.jcode.util.Constants.LANG_PACKAGE;
 import io.github.jeddict.jpa.spec.AccessType;
 import io.github.jeddict.jpa.spec.Column;
 import io.github.jeddict.jpa.spec.TemporalType;
-import io.github.jeddict.source.JavaSourceParserUtil;
+import io.github.jeddict.source.MemberExplorer;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.VariableElement;
+import javax.xml.bind.annotation.XmlAttribute;
 
 /**
  *
  * @author Gaurav Gupta
  */
-//@XmlType(propOrder = {
-//    "column",
-//    "temporal"
-//})
 public abstract class PersistenceBaseAttribute extends BaseAttribute implements ColumnHandler, TemporalTypeHandler, AccessTypeHandler {
 
     @XmlAttribute(name = "attribute-type", required = true)
@@ -50,7 +46,15 @@ public abstract class PersistenceBaseAttribute extends BaseAttribute implements 
         this.access = AccessType.load(element);
         this.temporal = TemporalType.load(element, null);
         this.setAttributeType(variableElement.asType().toString());
-        this.setAttributeConstraints(JavaSourceParserUtil.getBeanValidation(element));
+    }
+
+    @Override
+    protected void loadAttribute(MemberExplorer member) {
+        super.loadAttribute(member);
+        this.column = Column.load(member);
+        this.access = AccessType.load(member);
+        this.temporal = TemporalType.load(member);
+        this.setAttributeType(member.getType());
     }
 
     @Override

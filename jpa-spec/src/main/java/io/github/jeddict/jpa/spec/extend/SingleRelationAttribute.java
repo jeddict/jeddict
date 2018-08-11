@@ -15,8 +15,25 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import io.github.jeddict.bv.constraints.Constraint;
+import static io.github.jeddict.jcode.JPAConstants.ID_FQN;
+import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMNS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMN_FQN;
+import static io.github.jeddict.jcode.JPAConstants.MAPS_ID_FQN;
+import static io.github.jeddict.jcode.util.JavaSourceHelper.getPackageName;
+import static io.github.jeddict.jcode.util.JavaSourceHelper.getSimpleClassName;
+import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.jpa.spec.ForeignKey;
+import io.github.jeddict.jpa.spec.IdClass;
+import io.github.jeddict.jpa.spec.IdentifiableClass;
+import io.github.jeddict.jpa.spec.JoinColumn;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -27,18 +44,6 @@ import javax.lang.model.type.ErrorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import io.github.jeddict.bv.constraints.Constraint;
-import static io.github.jeddict.jcode.util.JavaSourceHelper.getSimpleClassName;
-import static io.github.jeddict.jcode.JPAConstants.ID_FQN;
-import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMNS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMN_FQN;
-import static io.github.jeddict.jcode.JPAConstants.MAPS_ID_FQN;
-import io.github.jeddict.jpa.spec.EntityMappings;
-import io.github.jeddict.jpa.spec.ForeignKey;
-import io.github.jeddict.jpa.spec.IdClass;
-import io.github.jeddict.jpa.spec.IdentifiableClass;
-import io.github.jeddict.jpa.spec.JoinColumn;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -64,6 +69,7 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
     
 
     @Override
+    @Deprecated
     public void loadAttribute(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement, AnnotationMirror annotationMirror) {
         super.loadAttribute(entityMappings, element, variableElement, getterElement, annotationMirror);
         if (JavaSourceParserUtil.isAnnotatedWith(element, ID_FQN)) {
@@ -105,11 +111,45 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
             if (variableElement.asType() instanceof ErrorType) { //variable => "<any>"
                 throw new TypeNotPresentException(this.name + " type not found", null);
             }
-           this.targetEntity = getSimpleClassName(variableElement.asType().toString());
+            String fqn = variableElement.asType().toString();
+            this.targetEntityPackage = getPackageName(fqn);
+            this.targetEntity = getSimpleClassName(fqn);
         } else {
-            this.targetEntity = declaredType.asElement().getSimpleName().toString();
+            String fqn = declaredType.asElement().asType().toString();
+            this.targetEntityPackage = getPackageName(fqn);
+            this.targetEntity = getSimpleClassName(fqn);
         }
         
+    }
+
+    @Override
+    public void loadAttribute(MemberExplorer member, AnnotationExplorer annotation) {
+        super.loadAttribute(member, annotation);
+
+        this.getJoinColumn().addAll(JoinColumn.load(member));
+        annotation.getBoolean("optional").ifPresent(this::setOptional);
+
+        Optional<AnnotationExplorer> idAnnotationOpt = member.getAnnotation(javax.persistence.Id.class);
+        Optional<AnnotationExplorer> mapsIdAnnotationOpt = member.getAnnotation(javax.persistence.MapsId.class);
+        this.primaryKey = idAnnotationOpt.isPresent() || mapsIdAnnotationOpt.isPresent();
+
+        if (mapsIdAnnotationOpt.isPresent()) {
+            mapsIdAnnotationOpt.get().getString("value").ifPresent(this::setMapsId);
+        }
+
+        annotation.getAnnotation("foreignKey").map(ForeignKey::load).ifPresent(this::setForeignKey);
+
+        Optional<ResolvedReferenceTypeDeclaration> targetEntityOpt = annotation.getResolvedClass("targetEntity");
+        ResolvedReferenceTypeDeclaration type;
+        if (targetEntityOpt.isPresent()) {
+            type = targetEntityOpt.get();
+        } else {
+            type = member.getTypeDeclaration();
+        }
+
+        this.targetEntityPackage = type.getPackageName();
+        this.targetEntity = type.getClassName();
+
     }
 
     /**

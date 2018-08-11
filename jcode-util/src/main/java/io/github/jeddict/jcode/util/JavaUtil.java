@@ -19,9 +19,8 @@ import static io.github.jeddict.jcode.util.Constants.JAVA_EXT;
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNoneBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import org.openide.filesystems.FileObject;
 
 /**
@@ -150,7 +149,7 @@ public class JavaUtil {
     }
 
     public static String mergePackage(String package1, String package2) {
-        if (isNoneBlank(package1, package2)) {
+        if (isNotBlank(package1) && isNotBlank(package2)) {
             return package1 + '.' + package2;
         } else if (isNotBlank(package1)) {
             return package1;

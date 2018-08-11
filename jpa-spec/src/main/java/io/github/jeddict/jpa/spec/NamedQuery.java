@@ -6,18 +6,22 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import io.github.jeddict.jcode.util.StringHelper;
+import io.github.jeddict.jpa.spec.extend.Attribute;
+import io.github.jeddict.jpa.spec.extend.QueryMapping;
+import io.github.jeddict.source.AnnotatedMember;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import io.github.jeddict.jcode.util.StringHelper;
-import io.github.jeddict.jpa.spec.extend.Attribute;
-import io.github.jeddict.jpa.spec.extend.QueryMapping;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -91,7 +95,36 @@ public class NamedQuery extends QueryMapping {
         return namedQuery;
     }
 
+    public static NamedQuery load(AnnotationExplorer annotation) {
+        NamedQuery namedQuery = new NamedQuery();
+        annotation.getString("name").ifPresent(namedQuery::setName);
+        annotation.getString("query").ifPresent(namedQuery::setQuery);
+        annotation.getEnum("lockMode").map(LockModeType::valueOf).ifPresent(namedQuery::setLockMode);
+        namedQuery.hint = annotation.getAnnotationList("hints")
+                .map(hint -> QueryHint.load(hint))
+                .collect(toList());
+        return namedQuery;
+    }
 
+    public static List<NamedQuery> load(AnnotatedMember member) {
+        List<NamedQuery> namedQueries = new ArrayList<>();
+        Optional<AnnotationExplorer> namedQueriesOpt = member.getAnnotation(javax.persistence.NamedQueries.class);
+        if (namedQueriesOpt.isPresent()) {
+            namedQueries.addAll(
+                    namedQueriesOpt.get()
+                            .getAnnotationList("value")
+                            .map(NamedQuery::load)
+                            .collect(toList())
+            );
+        }
+
+        namedQueries.addAll(
+                member.getRepeatableAnnotations(javax.persistence.NamedQuery.class)
+                        .map(NamedQuery::load)
+                        .collect(toList())
+        );
+        return namedQueries;
+    }
 
     /**
      * Gets the value of the lockMode property.

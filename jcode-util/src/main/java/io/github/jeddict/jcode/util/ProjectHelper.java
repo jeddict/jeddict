@@ -38,6 +38,7 @@ import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.project.JavaProjectConstants;
+import static org.netbeans.api.java.project.JavaProjectConstants.SOURCES_TYPE_JAVA;
 import org.netbeans.api.java.queries.UnitTestForSourceQuery;
 import org.netbeans.api.java.source.ClassIndex;
 import org.netbeans.api.java.source.ClasspathInfo;
@@ -233,8 +234,8 @@ public class ProjectHelper {
     }
 
     public static SourceGroup[] getJavaSourceGroups(Project project) {
-        Parameters.notNull("project", project); //NOI18N
-        SourceGroup[] sourceGroups = ProjectUtils.getSources(project).getSourceGroups(JavaProjectConstants.SOURCES_TYPE_JAVA);
+        Parameters.notNull("project", project);
+        SourceGroup[] sourceGroups = ProjectUtils.getSources(project).getSourceGroups(SOURCES_TYPE_JAVA);
         Set<SourceGroup> testGroups = getTestSourceGroups(sourceGroups);
         List<SourceGroup> result = new ArrayList<>();
         for (SourceGroup sourceGroup : sourceGroups) {
@@ -354,6 +355,34 @@ public class ProjectHelper {
         for (SourceGroup sourceGroup : getJavaSourceGroups(project)) {
             if (org.openide.filesystems.FileUtil.isParentOf(sourceGroup.getRootFolder(), file)) {
                 return sourceGroup;
+            }
+        }
+        return null;
+    }
+
+    public static SourceGroup getFolderSourceGroup(FileObject folder) {
+        Project project = FileOwnerQuery.getOwner(folder);
+        return getFolderSourceGroup(
+                ProjectUtils.getSources(project).getSourceGroups(SOURCES_TYPE_JAVA),
+                folder
+        );
+    }
+
+    /**
+     * Gets the {@link SourceGroup} of the given <code>folder</code>.
+     *
+     * @param sourceGroups the source groups to search; must not be null.
+     * @param folder the folder whose source group is to be get; must not be
+     * null.
+     * @return the source group containing the given <code>folder</code> or null
+     * if not found.
+     */
+    public static SourceGroup getFolderSourceGroup(SourceGroup[] sourceGroups, FileObject folder) {
+        Parameters.notNull("sourceGroups", sourceGroups); //NOI18N
+        Parameters.notNull("folder", folder); //NOI18N
+        for (int i = 0; i < sourceGroups.length; i++) {
+            if (org.openide.filesystems.FileUtil.isParentOf(sourceGroups[i].getRootFolder(), folder)) {
+                return sourceGroups[i];
             }
         }
         return null;
@@ -731,28 +760,5 @@ public class ProjectHelper {
         return null;
     }
 
-    /**
-     * Gets the {@link SourceGroup} of the given <code>folder</code>.
-     *
-     * @param sourceGroups the source groups to search; must not be null.
-     * @param folder the folder whose source group is to be get; must not be
-     * null.
-     * @return the source group containing the given <code>folder</code> or null
-     * if not found.
-     */
-    public static SourceGroup getFolderSourceGroup(SourceGroup[] sourceGroups, FileObject folder) {
-        Parameters.notNull("sourceGroups", sourceGroups); //NOI18N
-        Parameters.notNull("folder", folder); //NOI18N
-        for (int i = 0; i < sourceGroups.length; i++) {
-            if (org.openide.filesystems.FileUtil.isParentOf(sourceGroups[i].getRootFolder(), folder)) {
-                return sourceGroups[i];
-            }
-        }
-        return null;
-    }
 
-    public static SourceGroup getFolderSourceGroup(FileObject folder) {
-        Project project = FileOwnerQuery.getOwner(folder);
-        return getFolderSourceGroup(ProjectUtils.getSources(project).getSourceGroups(JavaProjectConstants.SOURCES_TYPE_JAVA), folder);
-    }
 }

@@ -6,13 +6,18 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE_FQN;
+import io.github.jeddict.jpa.spec.extend.ReferenceClass;
+import io.github.jeddict.source.ClassExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import java.io.FileNotFoundException;
+import java.util.Optional;
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import io.github.jeddict.jpa.spec.extend.ReferenceClass;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -62,14 +67,45 @@ public class Embeddable extends ManagedClass<EmbeddableAttributes> {
     protected EmbeddableAttributes attributes;
 
     @Override
+    @Deprecated
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
-        if (!entityMappings.findMappedSuperclass(element.getSimpleName().toString()).isPresent()) { // BUG : https://java.net/bugzilla/show_bug.cgi?id=6192 NullPointerException when reverse engineering from JPA classes revisited
-            TypeElement superClassElement = JavaSourceParserUtil.getSuperclassTypeElement(element);
-            if (!superClassElement.getQualifiedName().toString().equals("java.lang.Object")) {
-                this.setSuperclassRef(new ReferenceClass(superClassElement.toString()));
-            }
-            super.load(entityMappings, element, fieldAccess);
+        TypeElement superClassElement = JavaSourceParserUtil.getSuperclassTypeElement(element);
+        if (!superClassElement.getQualifiedName().toString().equals("java.lang.Object")) {
+            this.setSuperclassRef(new ReferenceClass(superClassElement.toString()));
         }
+        super.load(entityMappings, element, fieldAccess);
+    }
+
+    public void load(ClassExplorer clazz) {
+        EntityMappings entityMappings = clazz.getEntityMappings();
+        Optional<ResolvedReferenceTypeDeclaration> superClassTypeOpt = clazz.getSuperClass();
+        if (superClassTypeOpt.isPresent()) {
+            ResolvedReferenceTypeDeclaration superClassType = superClassTypeOpt.get();
+            if (superClassType.hasAnnotation(EMBEDDABLE_FQN)) {
+                Optional<Embeddable> superClassOpt = entityMappings.findEmbeddable(superClassType.getClassName());
+                Embeddable superClass = null;
+                if (superClassOpt.isPresent()) {
+                    superClass = superClassOpt.get();
+                } else if (clazz.isIncludeReference()
+                        || clazz.getSource().isSelectedClass(superClassType.getClassName())) {
+                    try {
+                        ClassExplorer superClazz = clazz.getSource().createClass(superClassType.getQualifiedName());
+                        superClass = new Embeddable();
+                        superClass.load(superClazz);
+                        superClass.getAttributes().load(superClazz);
+                        entityMappings.addEmbeddable(superClass);
+                    } catch (FileNotFoundException ex) {
+                        clazz.getSource().addMissingClass(superClassType.getQualifiedName());
+                    }
+                }
+                if (superClass != null) {
+                    super.addSuperclass(superClass);
+                }
+            } else {
+                this.setSuperclassRef(new ReferenceClass(superClassType.getQualifiedName()));
+            }
+        }
+        super.load(clazz);
     }
 
     /**

@@ -1,14 +1,17 @@
 //added by gaurav gupta
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.COLLECTION_TABLE;
 import static io.github.jeddict.jcode.JPAConstants.COLLECTION_TABLE_FQN;
 import io.github.jeddict.orm.generator.util.ImportSet;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import static java.util.Collections.singletonList;
+import java.util.List;
 
 public class CollectionTableSnippet implements Snippet {
 
@@ -74,84 +77,24 @@ public class CollectionTableSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
         if (isEmpty()) {
             return null;
         }
 
         StringBuilder builder = new StringBuilder();
+        builder.append(AT).append(COLLECTION_TABLE).append(OPEN_PARANTHESES);
 
-        builder.append("@").append(COLLECTION_TABLE).append("(");
+        builder.append(buildString("name", name));
+        builder.append(buildString("schema", schema));
+        builder.append(buildString("catalog", catalog));
 
-        if (name != null && !name.trim().isEmpty()) {
-            builder.append("name=\"");
-            builder.append(name);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
+        builder.append(buildAnnotations("uniqueConstraints", uniqueConstraints));
+        builder.append(buildAnnotations("indexes", indices));
+        builder.append(buildAnnotations("joinColumns", joinColumns));
 
-        if (schema != null && !schema.trim().isEmpty()) {
-            builder.append("schema=\"");
-            builder.append(schema);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
+        builder.append(buildAnnotation("foreignKey", foreignKey));
 
-        if (catalog != null && !catalog.trim().isEmpty()) {
-            builder.append("catalog=\"");
-            builder.append(catalog);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (!uniqueConstraints.isEmpty()) {
-            builder.append("uniqueConstraints={");
-
-            for (UniqueConstraintSnippet uniqueConstraint : uniqueConstraints) {
-                builder.append(uniqueConstraint.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-        
-        if (!indices.isEmpty()) {
-            builder.append("indexes={");
-
-            for (IndexSnippet snippet : indices) {
-                builder.append(snippet.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-        
-        if (!joinColumns.isEmpty()) {
-            builder.append("joinColumns={");
-
-            for (JoinColumnSnippet joinColumn : joinColumns) {
-                builder.append(joinColumn.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-        
-        if (foreignKey != null) {
-            builder.append("foreignKey=");
-            builder.append(foreignKey.getSnippet());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
@@ -162,7 +105,7 @@ public class CollectionTableSnippet implements Snippet {
         }
 
         if (joinColumns.isEmpty() && uniqueConstraints == null && foreignKey == null) {
-            return Collections.singletonList(COLLECTION_TABLE_FQN);
+            return singletonList(COLLECTION_TABLE_FQN);
         }
 
         ImportSet importSnippets = new ImportSet();
@@ -186,8 +129,6 @@ public class CollectionTableSnippet implements Snippet {
         if (!indices.isEmpty()) {
             importSnippets.addAll(indices.get(0).getImportSnippets());
         }
-        
-        
 
         return importSnippets;
     }

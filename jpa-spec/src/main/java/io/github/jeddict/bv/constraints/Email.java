@@ -15,11 +15,12 @@
  */
 package io.github.jeddict.bv.constraints;
 
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -43,9 +44,15 @@ public class Email extends Constraint {
     }
 
     @Override
-    public void load(AnnotationMirror annotationMirror) {
-        super.load(annotationMirror);
-        this.regexp = JavaSourceParserUtil.findAnnotationValueAsString(annotationMirror, "regexp");
+    public void load(AnnotationMirror annotation) {
+        super.load(annotation);
+        this.regexp = JavaSourceParserUtil.findAnnotationValueAsString(annotation, "regexp");
+    }
+
+    @Override
+    public void load(AnnotationExplorer annotation) {
+        super.load(annotation);
+        annotation.getString("regexp").ifPresent(this::setRegexp);
     }
 
     @Override

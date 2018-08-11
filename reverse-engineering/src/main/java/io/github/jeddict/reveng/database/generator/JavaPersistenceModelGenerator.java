@@ -460,7 +460,7 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
 
                     if (m.isAutoIncrement()) {
                         io.github.jeddict.jpa.spec.GeneratedValue generatedValue = new io.github.jeddict.jpa.spec.GeneratedValue();
-                        generatedValue.setStrategy(GenerationType.AUTO);
+                        generatedValue.setStrategy(GenerationType.DEFAULT);
                         idSpec.setGeneratedValue(generatedValue);
                     }
 

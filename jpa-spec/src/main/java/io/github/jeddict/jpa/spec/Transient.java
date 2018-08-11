@@ -6,6 +6,9 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.util.Constants.LANG_PACKAGE;
+import io.github.jeddict.jpa.spec.extend.BaseAttribute;
+import io.github.jeddict.source.MemberExplorer;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
@@ -14,9 +17,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.util.Constants.LANG_PACKAGE;
-import io.github.jeddict.jpa.spec.extend.BaseAttribute;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -72,7 +72,13 @@ public class Transient extends BaseAttribute {
         Transient _transient = new Transient();
         _transient.loadAttribute(element, variableElement, getterElement);
         _transient.setAttributeType(variableElement.asType().toString());
-        _transient.setAttributeConstraints(JavaSourceParserUtil.getBeanValidation(element));
+        return _transient;
+    }
+
+    public static Transient load(MemberExplorer member) {
+        Transient _transient = new Transient();
+        _transient.loadAttribute(member);
+        _transient.setAttributeType(member.getType());
         return _transient;
     }
 

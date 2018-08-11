@@ -6,13 +6,14 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -74,6 +75,14 @@ public class NamedAttributeNode {
             namedAttributeNode.subgraph = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "subgraph");
             namedAttributeNode.keySubgraph = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "keySubgraph");
         }
+        return namedAttributeNode;
+    }
+
+    public static NamedAttributeNode load(AnnotationExplorer annotation) {
+        NamedAttributeNode namedAttributeNode = new NamedAttributeNode();
+        annotation.getString("value").ifPresent(namedAttributeNode::setName);
+        annotation.getString("subgraph").ifPresent(namedAttributeNode::setSubgraph);
+        annotation.getString("keySubgraph").ifPresent(namedAttributeNode::setKeySubgraph);
         return namedAttributeNode;
     }
 

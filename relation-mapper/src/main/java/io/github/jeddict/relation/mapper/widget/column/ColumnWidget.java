@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JMenuItem;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.relation.mapper.widget.flow.ReferenceFlowWidget;
 import io.github.jeddict.relation.mapper.widget.table.TableWidget;
 import io.github.jeddict.relation.mapper.spec.DBColumn;

@@ -15,6 +15,7 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
+import io.github.jeddict.jcode.util.JavaSourceHelper;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -39,7 +40,15 @@ public class ReferenceClass implements Serializable {
     public ReferenceClass(String name) {
         this.name = name;
     }
-  
+
+    public String getSimpleClassName() {
+        return JavaSourceHelper.getSimpleClassName(name);
+    }
+
+    public String getPackage() {
+        return JavaSourceHelper.getPackageName(name);
+    }
+
     /**
      * @return the enable
      */

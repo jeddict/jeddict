@@ -16,7 +16,7 @@
 package io.github.jeddict.jpa.modeler.rules.attribute;
 
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.jcode.util.JavaUtil;
 import io.github.jeddict.jpa.modeler.widget.EntityWidget;
 import static io.github.jeddict.jpa.modeler.widget.InheritanceStateType.ROOT;

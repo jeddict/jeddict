@@ -6,8 +6,17 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.COLLECTION_TABLE_FQN;
+import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
+import io.github.jeddict.jpa.spec.validator.table.CollectionTableValidator;
+import io.github.jeddict.source.AnnotatedMember;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
+import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -18,10 +27,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.tables.CollectionTableMetadata;
-import static io.github.jeddict.jcode.JPAConstants.COLLECTION_TABLE_FQN;
-import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
-import io.github.jeddict.jpa.spec.validator.table.CollectionTableValidator;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -77,6 +82,7 @@ public class CollectionTable extends Table {
     @XmlElement(name = "fk")
     protected ForeignKey foreignKey;
 
+    @Deprecated
     public static CollectionTable load(Element element, VariableElement variableElement) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, COLLECTION_TABLE_FQN);
 
@@ -97,7 +103,7 @@ public class CollectionTable extends Table {
                     collectionTable.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
                 }
             }
-           
+
             List indexesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "indexes");
             if (indexesAnnot != null) {
                 for (Object indexObj : indexesAnnot) {
@@ -105,16 +111,46 @@ public class CollectionTable extends Table {
                 }
             }
 
-
             collectionTable.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
             collectionTable.catalog = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "catalog");
             collectionTable.schema = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "schema");
-        
+
             AnnotationMirror foreignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKey");
             if (foreignKeyValue != null) {
                 collectionTable.foreignKey = ForeignKey.load(element, foreignKeyValue);
             }
-        
+
+        }
+        return collectionTable;
+
+    }
+
+    public static CollectionTable load(AnnotatedMember member) {
+        CollectionTable collectionTable = null;
+        Optional<AnnotationExplorer> collectionTableOpt = member.getAnnotation(javax.persistence.CollectionTable.class);
+        if (collectionTableOpt.isPresent()) {
+            collectionTable = new CollectionTable();
+            AnnotationExplorer annotation = collectionTableOpt.get();
+
+            annotation.getString("name").ifPresent(collectionTable::setName);
+            annotation.getString("catalog").ifPresent(collectionTable::setCatalog);
+            annotation.getString("schema").ifPresent(collectionTable::setSchema);
+
+            collectionTable.joinColumn
+                    = annotation.getAnnotationList("joinColumns")
+                            .map(JoinColumn::load)
+                            .collect(toList());
+
+            collectionTable.uniqueConstraint = annotation.getAnnotationList("uniqueConstraints")
+                    .map(UniqueConstraint::load)
+                    .collect(toCollection(LinkedHashSet::new));
+
+            collectionTable.index
+                    = annotation.getAnnotationList("indexes")
+                            .map(Index::load)
+                            .collect(toList());
+
+            annotation.getAnnotation("foreignKey").map(ForeignKey::load).ifPresent(collectionTable::setForeignKey);
         }
         return collectionTable;
 

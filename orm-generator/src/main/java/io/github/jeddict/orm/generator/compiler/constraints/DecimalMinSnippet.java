@@ -15,12 +15,12 @@
  */
 package io.github.jeddict.orm.generator.compiler.constraints;
 
-import io.github.jeddict.orm.generator.compiler.InvalidDataException;
-import static java.lang.Boolean.FALSE;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.bv.constraints.DecimalMin;
-import io.github.jeddict.settings.code.CodePanel;
+import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import io.github.jeddict.settings.code.CodePanel;
+import static java.lang.Boolean.FALSE;
 
 /**
  *

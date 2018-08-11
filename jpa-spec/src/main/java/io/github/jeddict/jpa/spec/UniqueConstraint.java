@@ -6,6 +6,9 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.UNIQUE_CONSTRAINT_FQN;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -18,8 +21,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.internal.jpa.metadata.tables.UniqueConstraintMetadata;
-import static io.github.jeddict.jcode.JPAConstants.UNIQUE_CONSTRAINT_FQN;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -88,6 +89,13 @@ public class UniqueConstraint {
             }
             uniqueConstraint.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
         }
+        return uniqueConstraint;
+    }
+
+    public static UniqueConstraint load(AnnotationExplorer annotation) {
+        UniqueConstraint uniqueConstraint = new UniqueConstraint();
+        annotation.getString("name").ifPresent(uniqueConstraint::setName);
+        uniqueConstraint.getColumnName().addAll(annotation.getStringList("columnNames"));
         return uniqueConstraint;
     }
 

@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.relation.mapper.widget.column;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.relation.mapper.spec.DBDiscriminatorColumn;
 import io.github.jeddict.relation.mapper.initializer.RelationMapperScene;
 import io.github.jeddict.jpa.spec.DiscriminatorColumn;

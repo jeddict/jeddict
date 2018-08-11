@@ -6,6 +6,18 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMN_FQN;
+import io.github.jeddict.jpa.spec.extend.IJoinColumn;
+import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
+import io.github.jeddict.jpa.spec.validator.column.JoinColumnValidator;
+import io.github.jeddict.source.AnnotatedMember;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JAREAnnotationLoader;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -16,12 +28,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.JoinColumnMetadata;
-import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMN_FQN;
-import io.github.jeddict.jpa.spec.extend.IJoinColumn;
-import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
-import io.github.jeddict.jpa.spec.validator.column.JoinColumnValidator;
-import io.github.jeddict.source.JAREAnnotationLoader;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -87,7 +93,8 @@ public class JoinColumn implements JAREAnnotationLoader, IJoinColumn {
     @XmlElement(name = "fk")
     private ForeignKey foreignKey;
 
-       @Override
+    @Override
+    @Deprecated
     public JoinColumn load(Element element, AnnotationMirror annotationMirror) {
        if (annotationMirror == null) {
             annotationMirror = JavaSourceParserUtil.findAnnotation(element, JOIN_COLUMN_FQN);
@@ -110,6 +117,41 @@ public class JoinColumn implements JAREAnnotationLoader, IJoinColumn {
             }
         }
         return joinColumn;
+    }
+
+    public static JoinColumn load(AnnotationExplorer annotation) {
+        JoinColumn joinColumn = new JoinColumn();
+        annotation.getString("name").ifPresent(joinColumn::setName);
+        annotation.getString("referencedColumnName").ifPresent(joinColumn::setReferencedColumnName);
+        annotation.getBoolean("unique").ifPresent(joinColumn::setUnique);
+        annotation.getBoolean("nullable").ifPresent(joinColumn::setNullable);
+        annotation.getBoolean("insertable").ifPresent(joinColumn::setInsertable);
+        annotation.getBoolean("updatable").ifPresent(joinColumn::setUpdatable);
+        annotation.getString("columnDefinition").ifPresent(joinColumn::setColumnDefinition);
+        annotation.getString("table").ifPresent(joinColumn::setTable);
+        annotation.getAnnotation("foreignKey").map(ForeignKey::load).ifPresent(joinColumn::setForeignKey);
+        return joinColumn;
+    }
+
+    public static List<JoinColumn> load(AnnotatedMember member) {
+        List<JoinColumn> joinColumns = new ArrayList<>();
+        Optional<AnnotationExplorer> joinColumnsOpt = member.getAnnotation(javax.persistence.JoinColumns.class);
+        if (joinColumnsOpt.isPresent()) {
+            joinColumns.addAll(
+                    joinColumnsOpt.get()
+                            .getAnnotationList("value")
+                            .map(JoinColumn::load)
+                            .collect(toList())
+            );
+        }
+
+        joinColumns.addAll(
+                member.getRepeatableAnnotations(javax.persistence.JoinColumn.class)
+                        .map(JoinColumn::load)
+                        .collect(toList())
+        );
+
+        return joinColumns;
     }
 
 

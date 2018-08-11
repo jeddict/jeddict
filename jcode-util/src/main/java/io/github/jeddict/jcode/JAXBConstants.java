@@ -15,6 +15,10 @@
  */
 package io.github.jeddict.jcode;
 
+import static java.util.Arrays.asList;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  *
  * @author Gaurav Gupta
@@ -34,6 +38,15 @@ public class JAXBConstants {
     public static final String JAXB_XML_ATTRIBUTE = "XmlAttribute";
     public static final String JAXB_XML_INVERSE_REFERENCE = "XmlInverseReference";
 
-
+    public static final Set<String> JAXB_ANNOTATIONS = new HashSet<>(asList(
+            JAXB_XML_ELEMENT,
+            JAXB_XML_LIST,
+            JAXB_XML_VALUE,
+            JAXB_XML_TRANSIENT,
+            JAXB_XML_ELEMENT_REF,
+            JAXB_XML_ELEMENT_WRAPPER,
+            JAXB_XML_ATTRIBUTE,
+            JAXB_XML_INVERSE_REFERENCE
+    ));
 
 }

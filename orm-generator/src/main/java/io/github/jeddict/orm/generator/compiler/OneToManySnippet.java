@@ -15,8 +15,15 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.getCommaSeparatedString;
+import io.github.jeddict.settings.code.CodePanel;
 
 public class OneToManySnippet extends MultiRelationAttributeSnippet {
 
@@ -42,41 +49,47 @@ public class OneToManySnippet extends MultiRelationAttributeSnippet {
                     .append(ORMConverterUtil.TAB);
         }
 
-        builder.append("@").append(getType()).append("(");
+        builder.append("@").append(getType()).append(OPEN_PARANTHESES);
 
-        if (!getCascadeTypes().isEmpty()) {
-            builder.append("cascade={");
-            String encodedString = ORMConverterUtil.getCommaSeparatedString(getCascadeTypes());
-            builder.append(encodedString);
-            builder.append("},");
+        if (mappedBy != null) {
+            builder.append("mappedBy = ")
+                    .append(QUOTE)
+                    .append(mappedBy)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
         if (getFetchType() != null) {
-            builder.append("fetch = ");
-            builder.append(getFetchType());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (CodePanel.isGenerateDefaultValue() && getTargetEntity() != null) {
-            builder.append("targetEntity = ");
-            builder.append(getTargetEntity());
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append("fetch = ")
+                    .append(getFetchType())
+                    .append(COMMA);
         }
 
         if (CodePanel.isGenerateDefaultValue() || orphanRemoval == true) {
-            builder.append("orphanRemoval=").append(orphanRemoval).append(",");
-        }
-        
-        if (mappedBy != null) {
-            builder.append("mappedBy = ");
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(mappedBy);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append("orphanRemoval = ")
+                    .append(orphanRemoval)
+                    .append(COMMA);
         }
 
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        if (CodePanel.isGenerateDefaultValue() && getTargetEntity() != null) {
+            builder.append("targetEntity = ")
+                    .append(getTargetEntity())
+                    .append(COMMA);
+        }
+        
+        if (!getCascadeTypes().isEmpty()) {
+            builder.append("cascade = ");
+            if (getCascadeTypes().size() > 1) {
+                builder.append(OPEN_BRACES)
+                        .append(getCommaSeparatedString(getCascadeTypes()))
+                        .append(CLOSE_BRACES);
+            } else {
+                builder.append(getCascadeTypes().get(0));
+            }
+            builder.append(COMMA);
+        }
+
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
        @Override

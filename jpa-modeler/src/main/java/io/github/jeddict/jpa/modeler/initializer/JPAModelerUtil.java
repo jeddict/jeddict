@@ -124,7 +124,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
-import io.github.common.lang.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.modeler.config.document.IModelerDocument;
 import org.netbeans.modeler.config.document.ModelerDocumentFactory;

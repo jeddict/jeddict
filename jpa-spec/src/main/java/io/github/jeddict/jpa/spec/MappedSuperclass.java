@@ -8,7 +8,6 @@ package io.github.jeddict.jpa.spec;
 
 import java.util.Collections;
 import java.util.List;
-import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -64,28 +63,9 @@ import javax.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "mapped-superclass", propOrder = { //    "description",
-//    "excludeDefaultListeners",
-//    "excludeSuperclassListeners",
-//    "entityListeners",
-//    "prePersist",
-//    "postPersist",
-//    "preRemove",
-//    "postRemove",
-//    "preUpdate",
-//    "postUpdate",
-//    "postLoad",
-//    "attributes"
-})
+@XmlType(name = "mapped-superclass")
 @XmlRootElement
 public class MappedSuperclass extends IdentifiableClass {
-
-    @Override
-    public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
-        if (!entityMappings.findMappedSuperclass(element.getSimpleName().toString()).isPresent()) {
-            super.load(entityMappings, element, fieldAccess);
-        }
-    }
 
     @Override
     public List<NamedQuery> getNamedQuery() {

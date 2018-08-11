@@ -127,20 +127,11 @@ $n#end
 $varDef.getPropertyJavaDoc()
 #end
 #####################var - jpa annotations ###############################
-#if ($varDef.getConverts())
-    $varDef.getConverts().getSnippet()
-#end
-#if($varDef.getColumnDef())
-    $varDef.getColumnDef().getSnippet()
-#end
 #if($varDef.isTranzient())
     @Transient
 #end
 #if($varDef.isPrimaryKey())
     @Id
-#end
-#if($varDef.isAutoGenerate())
-    @GeneratedValue(strategy = GenerationType.AUTO)
 #end
 #if($varDef.getRelationDef())
     $varDef.getRelationDef().getSnippet()
@@ -163,6 +154,18 @@ $varDef.getPropertyJavaDoc()
 #if($varDef.getBasic())
     $varDef.getBasic().getSnippet()
 #end
+#if($varDef.getGeneratedValue())
+    $varDef.getGeneratedValue().getSnippet()
+#end
+#if($varDef.getTableGenerator())
+    $varDef.getTableGenerator().getSnippet()
+#end
+#if($varDef.getSequenceGenerator())
+    $varDef.getSequenceGenerator().getSnippet()
+#end
+#if($varDef.getColumnDef())
+    $varDef.getColumnDef().getSnippet()
+#end
 #if($varDef.getOrderBy())
     $varDef.getOrderBy().getSnippet()
 #end
@@ -181,20 +184,14 @@ $varDef.getPropertyJavaDoc()
 #if($varDef.getCollectionTable() && !$varDef.getCollectionTable().isEmpty())
     $varDef.getCollectionTable().getSnippet()
 #end
-#if($varDef.getGeneratedValue())
-    $varDef.getGeneratedValue().getSnippet()
-#end
-#if($varDef.getTableGenerator())
-    $varDef.getTableGenerator().getSnippet()
-#end
-#if($varDef.getSequenceGenerator())
-    $varDef.getSequenceGenerator().getSnippet()
-#end
 #if($varDef.getEnumerated())
     $varDef.getEnumerated().getSnippet()
 #end
 #if($varDef.getTemporal())
     $varDef.getTemporal().getSnippet()
+#end
+#if ($varDef.getConverts())
+    $varDef.getConverts().getSnippet()
 #end
 #if ($varDef.getAssociationOverrides())
 $varDef.getAssociationOverrides().getSnippet()

@@ -34,7 +34,8 @@ public enum GenerationType {
     TABLE,
     SEQUENCE,
     IDENTITY,
-    AUTO;
+    AUTO,
+    DEFAULT;
 
     public String value() {
         return name();

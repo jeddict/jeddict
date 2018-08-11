@@ -15,11 +15,11 @@
  */
 package io.github.jeddict.jpa.spec.bean;
 
-import io.github.jeddict.jcode.util.AttributeType;
 import static io.github.jeddict.jcode.util.AttributeType.Type.OTHER;
 import static io.github.jeddict.jcode.util.AttributeType.getArrayType;
 import static io.github.jeddict.jcode.util.AttributeType.getType;
 import static io.github.jeddict.jcode.util.AttributeType.isArray;
+import static io.github.jeddict.jcode.util.AttributeType.isJavaType;
 import io.github.jeddict.jcode.util.JavaIdentifiers;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.ManagedClass;
@@ -28,18 +28,20 @@ import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.Attributes;
 import io.github.jeddict.jpa.spec.extend.BaseAttribute;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
+import io.github.jeddict.source.ClassExplorer;
+import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanAttributes extends Attributes<BeanClass> {
@@ -59,6 +61,58 @@ public class BeanAttributes extends Attributes<BeanClass> {
     private List<OneToOneAssociation> oneToOne;
     @XmlElement(name = "many-to-many")
     private List<ManyToManyAssociation> manyToMany;
+
+    @Override
+    public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
+    }
+
+    @Override
+    public void load(ClassExplorer clazz) {
+        Collection<MemberExplorer> members = clazz.getMembers();
+
+        for (MemberExplorer member : members) {
+            boolean collectionType = member.isCollectionType();
+            boolean mapType = member.isMapType();
+            String type = member.getType();
+
+            boolean elementCollectionType = false;
+            boolean relationType = false;
+            String typeArgument = null;
+            if (collectionType || mapType) {
+                typeArgument = member.getTypeArguments().get(mapType ? 1 : 0);
+                if (isJavaType(typeArgument)) {
+                    elementCollectionType = true;
+                } else {
+                    relationType = true;
+                }
+            } else {
+                if (!isJavaType(type)) {
+                    relationType = true;
+                }
+            }
+
+
+            if (member.isTransient()) {
+                this.addTransient(Transient.load(member));
+            } else if (elementCollectionType) {
+                this.addElementCollection(BeanCollectionAttribute.load(member, typeArgument));
+            } else if (relationType) {
+                if (collectionType || mapType) {
+//                    member.getTypeDeclaration()
+//                      ManyToManyAssociation
+//                      ManyToOneAssociation
+                } else {
+//                      OneToManyAssociation
+//                      OneToOneAssociation
+                }
+                System.out.println("");
+//                this.addElementCollection(BeanCollectionAttribute.load(member, typeArgument));
+            } else {
+                this.addBasic(BeanAttribute.load(member));
+            }
+        }
+
+    }
 
     @Override
     public List<Attribute> getAllAttribute(boolean includeParentClassAttibute) {
@@ -279,56 +333,19 @@ public class BeanAttributes extends Attributes<BeanClass> {
         return javaClasses;
     }
 
-//    public Set<String> getAssociationConnectedClass(Set<String> javaClasses) {
-//        Map<ManagedClass, String> releationClasses = getAssociationAttributes().stream()
-//                .map(AssociationAttribute::getConnectedEntity)
-//                .distinct()
-//                .filter(jc -> !javaClasses.contains(jc.getFQN()))
-//                .collect(toMap(identity(), JavaClass::getFQN));
-//        javaClasses.addAll(releationClasses.values());
-//        for (ManagedClass releationClass : releationClasses.keySet()) {
-//            javaClasses.addAll(releationClass.getAttributes().getConnectedClass(javaClasses));
-//        }
-//        return javaClasses;
-//    }
-//    public Set<Entity> getAssociationConnectedClassRef() {
-//        Set<Entity> javaClasses = getAssociationAttributes().stream()
-//                .map(AssociationAttribute::getConnectedEntity)
-//                .collect(toSet());
-//        javaClasses.addAll(getEmbedded().stream()
-//                .map(Embedded::getConnectedClass)
-//                .flatMap(c -> c.getAttributes().getAssociationConnectedClassRef().stream())
-//                .collect(toSet()));
-//        return javaClasses;
-//    }
-//    public Set<String> getElementCollectionConnectedClass(Set<String> javaClasses) {
-//        Map<ManagedClass, String> elementCollectionClasses = getElementCollection().stream()
-//                .filter(ec -> ec.getConnectedClass() != null)
-//                .map(BeanCollectionAttribute::getConnectedClass)
-//                .distinct()
-//                .filter(jc -> !javaClasses.contains(jc.getFQN()))
-//                .collect(toMap(identity(), JavaClass::getFQN));
-//        javaClasses.addAll(elementCollectionClasses.values());
-//        for (ManagedClass elementCollectionClass : elementCollectionClasses.keySet()) {
-//            javaClasses.addAll(elementCollectionClass.getAttributes().getConnectedClass(javaClasses));
-//        }
-//        return javaClasses;
-//    }
     public Set<String> getBasicConnectedClass(Set<String> javaClasses) {
         List<String> basicClasses = getBasic().stream()
                 .map(BaseAttribute::getDataTypeLabel)
+                .filter(StringUtils::isNotEmpty)
                 .filter(dataType -> {
-                    if (StringUtils.isNotEmpty(dataType)) {
-                        dataType = isArray(dataType) ? getArrayType(dataType) : dataType;
-                        AttributeType.Type type = getType(dataType);
-                        if (type == OTHER) {
-                            return !JavaIdentifiers.getPackageName(dataType).startsWith("java");
-                        }
+                    dataType = isArray(dataType) ? getArrayType(dataType) : dataType;
+                    if (getType(dataType) == OTHER) {
+                        return !JavaIdentifiers.getPackageName(dataType).startsWith("java");
                     }
                     return false;
                 })
                 .distinct()
-                .collect(Collectors.toList());
+                .collect(toList());
         javaClasses.addAll(basicClasses);
         return javaClasses;
     }
@@ -402,11 +419,6 @@ public class BeanAttributes extends Attributes<BeanClass> {
                         .filter(filterOwner)
                         .collect(toList())
         );
-    }
-
-    @Override
-    public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

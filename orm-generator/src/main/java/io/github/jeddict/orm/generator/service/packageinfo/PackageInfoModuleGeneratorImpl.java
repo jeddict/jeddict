@@ -18,7 +18,7 @@ package io.github.jeddict.orm.generator.service.packageinfo;
 import io.github.jeddict.collaborate.issues.ExceptionUtils;
 import java.io.File;
 import java.io.IOException;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import io.github.jeddict.jcode.task.ITaskSupervisor;

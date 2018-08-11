@@ -23,6 +23,7 @@ import javax.lang.model.element.Element;
  * Attribute Annotation Rev-Eng Loader
  * @author Gaurav Gupta
  */
+@Deprecated
 public interface JAREAnnotationLoader<T> {
 
     T load(Element element, AnnotationMirror annotationMirror);

@@ -24,10 +24,10 @@ import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
 @OptionsPanelController.SubRegistration(
-        location = "JEDDICT",
+        location = "Jeddict",
         displayName = "#DISPLAYNAME_REVENG",
         keywords = "#KEYWORDS_REVENG",
-        keywordsCategory = "JEDDICT/REVENG"
+        keywordsCategory = "Jeddict/Reveng"
 )
 @org.openide.util.NbBundle.Messages({"DISPLAYNAME_REVENG=Reverse Engineering", "KEYWORDS_REVENG=Jeddict Reverse Engineering"})
 public final class RevengOptionsPanelController extends OptionsPanelController {

@@ -15,12 +15,7 @@
  */
 package io.github.jeddict.jsonb.spec;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import static io.github.jeddict.jcode.JSONBConstants.JSONB_DATE_FORMAT_FQN;
 import static io.github.jeddict.jcode.util.AttributeType.CALENDAR;
 import static io.github.jeddict.jcode.util.AttributeType.DATE;
 import static io.github.jeddict.jcode.util.AttributeType.DURATION;
@@ -37,9 +32,17 @@ import static io.github.jeddict.jcode.util.AttributeType.TIME_ZONE;
 import static io.github.jeddict.jcode.util.AttributeType.ZONED_DATE_TIME;
 import static io.github.jeddict.jcode.util.AttributeType.ZONE_ID;
 import static io.github.jeddict.jcode.util.AttributeType.ZONE_OFFSET;
-import static io.github.jeddict.jcode.JSONBConstants.JSONB_DATE_FORMAT_FQN;
 import io.github.jeddict.jpa.spec.validator.JsonbDateFormatValidator;
+import io.github.jeddict.source.AnnotatedMember;
+import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -73,5 +76,18 @@ public class JsonbDateFormat extends JsonbFormat {
         }
         return jsonbDateFormat;
     }
+
+    public static JsonbDateFormat load(AnnotatedMember member) {
+        JsonbDateFormat jsonbDateFormat = null;
+        Optional<AnnotationExplorer> annotationOpt = member.getAnnotation(javax.json.bind.annotation.JsonbDateFormat.class);
+        if (annotationOpt.isPresent()) {
+            AnnotationExplorer annotation = annotationOpt.get();
+            jsonbDateFormat = new JsonbDateFormat();
+            annotation.getString("value").ifPresent(jsonbDateFormat::setValue);
+            annotation.getString("locale").ifPresent(jsonbDateFormat::setLocale);
+        }
+        return jsonbDateFormat;
+    }
+
     
 }

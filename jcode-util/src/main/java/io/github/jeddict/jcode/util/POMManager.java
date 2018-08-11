@@ -28,7 +28,7 @@ import java.util.function.BiFunction;
 import static java.util.stream.Collectors.toSet;
 import javax.swing.SwingUtilities;
 import javax.xml.namespace.QName;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.model.Model;
 import org.netbeans.modules.maven.model.pom.Resource;
 import org.apache.maven.model.io.ModelReader;

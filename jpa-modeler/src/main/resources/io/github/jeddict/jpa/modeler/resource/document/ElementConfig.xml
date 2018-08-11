@@ -511,6 +511,16 @@
                         && ((node.getAttributeConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("NotNull").selected==false)
                     ]]></visible>
         </element>
+        <element id="Valid" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="io.github.jeddict.bv.constraints.Valid">
+            <attributes>
+                <attribute id="valid.selected" class="java.lang.Boolean" name="selected">
+                    <display-name>@Valid</display-name>
+                    <description>
+                        Marks a property for validation cascading.
+                    </description>
+                </attribute>
+            </attributes>
+        </element>
         <element id="AssertFalse" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="io.github.jeddict.bv.constraints.AssertFalse">
             <attributes>
                 <attribute id="assertFalse.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
@@ -703,11 +713,11 @@
                         The size of the field or property must be between the specified boundaries (included).
                     </description>
                 </attribute>
-                <attribute id="size.min" class="java.lang.Integer" name="min">
+                <attribute id="size.min" class="java.lang.String" name="min">
                     <display-name>      Min size</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
-                <attribute id="size.max" class="java.lang.Integer" name="max">
+                <attribute id="size.max" class="java.lang.String" name="max">
                     <display-name>      Max size</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
@@ -796,11 +806,11 @@
                         The value of the field or property must be a number within a specified range. The integer element specifies the maximum integral digits for the number, and the fraction element specifies the maximum fractional digits for the number.
                     </description>
                 </attribute>
-                <attribute id="digits.fraction" class="java.lang.Integer" name="fraction">
+                <attribute id="digits.fraction" class="java.lang.String" name="fraction">
                     <display-name>      Fraction</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
-                <attribute id="digits.integer" class="java.lang.Integer" name="integer">
+                <attribute id="digits.integer" class="java.lang.String" name="integer">
                     <display-name>      Integer</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
@@ -819,7 +829,7 @@
                         The value of the field or property must be an integer value greater than or equal to the number in the value element.
                     </description>
                 </attribute>
-                <attribute id="min.value" class="java.lang.Long" name="value">
+                <attribute id="min.value" class="java.lang.String" name="value">
                     <display-name>      value</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
@@ -838,7 +848,7 @@
                         The value of the field or property must be an integer value lower than or equal to the number in the value element.
                     </description>
                 </attribute>
-                <attribute id="max.value" class="java.lang.Long" name="value">
+                <attribute id="max.value" class="java.lang.String" name="value">
                     <display-name>      value</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
@@ -978,6 +988,16 @@
             <visible><![CDATA[node.getKeyConstraintsMap().get("Null") != null                        
                         && ((node.getKeyConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("NotNull").selected==false)
                     ]]></visible>
+        </element>
+        <element id="Key.Valid" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="io.github.jeddict.bv.constraints.Valid">
+            <attributes>
+                <attribute id="Key.valid.selected" class="java.lang.Boolean" name="selected">
+                    <display-name>@Valid</display-name>
+                    <description>
+                        Marks a property for validation cascading.
+                    </description>
+                </attribute>
+            </attributes>
         </element>
         <element id="Key.AssertFalse" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="io.github.jeddict.bv.constraints.AssertFalse">
             <attributes>
@@ -1171,11 +1191,11 @@
                         The size of the field or property must be between the specified boundaries (included).
                     </description>
                 </attribute>
-                <attribute id="Key.size.min" class="java.lang.Integer" name="min">
+                <attribute id="Key.size.min" class="java.lang.String" name="min">
                     <display-name>      Min size</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
-                <attribute id="Key.size.max" class="java.lang.Integer" name="max">
+                <attribute id="Key.size.max" class="java.lang.String" name="max">
                     <display-name>      Max size</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
@@ -1264,11 +1284,11 @@
                         The value of the field or property must be a number within a specified range. The integer element specifies the maximum integral digits for the number, and the fraction element specifies the maximum fractional digits for the number.
                     </description>
                 </attribute>
-                <attribute id="Key.digits.fraction" class="java.lang.Integer" name="fraction">
+                <attribute id="Key.digits.fraction" class="java.lang.String" name="fraction">
                     <display-name>      Fraction</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
-                <attribute id="Key.digits.integer" class="java.lang.Integer" name="integer">
+                <attribute id="Key.digits.integer" class="java.lang.String" name="integer">
                     <display-name>      Integer</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
@@ -1287,7 +1307,7 @@
                         The value of the field or property must be an integer value greater than or equal to the number in the value element.
                     </description>
                 </attribute>
-                <attribute id="Key.min.value" class="java.lang.Long" name="value">
+                <attribute id="Key.min.value" class="java.lang.String" name="value">
                     <display-name>      value</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
@@ -1306,7 +1326,7 @@
                         The value of the field or property must be an integer value lower than or equal to the number in the value element.
                     </description>
                 </attribute>
-                <attribute id="Key.max.value" class="java.lang.Long" name="value">
+                <attribute id="Key.max.value" class="java.lang.String" name="value">
                     <display-name>      value</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
@@ -1446,6 +1466,16 @@
             <visible><![CDATA[node.getValueConstraintsMap().get("Null") != null                        
                         && ((node.getValueConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("NotNull").selected==false)
                     ]]></visible>
+        </element>
+        <element id="Value.Valid" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="io.github.jeddict.bv.constraints.Valid">
+            <attributes>
+                <attribute id="Value.valid.selected" class="java.lang.Boolean" name="selected">
+                    <display-name>@Valid</display-name>
+                    <description>
+                        Marks a property for validation cascading.
+                    </description>
+                </attribute>
+            </attributes>
         </element>
         <element id="Value.AssertFalse" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="io.github.jeddict.bv.constraints.AssertFalse">
             <attributes>
@@ -1639,11 +1669,11 @@
                         The size of the field or property must be between the specified boundaries (included).
                     </description>
                 </attribute>
-                <attribute id="Value.size.min" class="java.lang.Integer" name="min">
+                <attribute id="Value.size.min" class="java.lang.String" name="min">
                     <display-name>      Min size</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
-                <attribute id="Value.size.max" class="java.lang.Integer" name="max">
+                <attribute id="Value.size.max" class="java.lang.String" name="max">
                     <display-name>      Max size</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
@@ -1732,11 +1762,11 @@
                         The value of the field or property must be a number within a specified range. The integer element specifies the maximum integral digits for the number, and the fraction element specifies the maximum fractional digits for the number.
                     </description>
                 </attribute>
-                <attribute id="Value.digits.fraction" class="java.lang.Integer" name="fraction">
+                <attribute id="Value.digits.fraction" class="java.lang.String" name="fraction">
                     <display-name>      Fraction</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
-                <attribute id="Value.digits.integer" class="java.lang.Integer" name="integer">
+                <attribute id="Value.digits.integer" class="java.lang.String" name="integer">
                     <display-name>      Integer</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
@@ -1755,7 +1785,7 @@
                         The value of the field or property must be an integer value greater than or equal to the number in the value element.
                     </description>
                 </attribute>
-                <attribute id="Value.min.value" class="java.lang.Long" name="value">
+                <attribute id="Value.min.value" class="java.lang.String" name="value">
                     <display-name>      value</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
@@ -1774,7 +1804,7 @@
                         The value of the field or property must be an integer value lower than or equal to the number in the value element.
                     </description>
                 </attribute>
-                <attribute id="Value.max.value" class="java.lang.Long" name="value">
+                <attribute id="Value.max.value" class="java.lang.String" name="value">
                     <display-name>      value</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>

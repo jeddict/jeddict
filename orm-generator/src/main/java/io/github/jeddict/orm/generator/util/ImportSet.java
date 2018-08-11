@@ -18,7 +18,7 @@ package io.github.jeddict.orm.generator.util;
 import java.util.Collection;
 import java.util.TreeSet;
 import static java.util.stream.Collectors.toSet;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import static io.github.jeddict.jcode.util.Constants.LANG_PACKAGE;
 
 public class ImportSet extends TreeSet<String> {

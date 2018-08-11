@@ -24,12 +24,12 @@ import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
 @OptionsPanelController.SubRegistration(
-        location = "JPAModeler",
-        displayName = "#AdvancedOption_DisplayName_View",
-        keywords = "#AdvancedOption_Keywords_View",
-        keywordsCategory = "JPAModeler/View"
+        location = "Jeddict",
+        displayName = "#DISPLAYNAME_VIEW",
+        keywords = "#KEYWORDS_VIEW",
+        keywordsCategory = "Jeddict/View"
 )
-@org.openide.util.NbBundle.Messages({"AdvancedOption_DisplayName_View=View", "AdvancedOption_Keywords_View=JPA Modeler View"})
+@org.openide.util.NbBundle.Messages({"DISPLAYNAME_VIEW=View", "KEYWORDS_VIEW=Jeddict View"})
 public final class ViewOptionsPanelController extends OptionsPanelController {
 
     private ViewPanel panel;

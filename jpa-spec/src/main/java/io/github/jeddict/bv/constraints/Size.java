@@ -15,10 +15,11 @@
  */
 package io.github.jeddict.bv.constraints;
 
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -28,44 +29,51 @@ import io.github.jeddict.source.JavaSourceParserUtil;
 public class Size extends Constraint {
 
     @XmlAttribute(name = "mi")
-    private Integer min;
+    private String min;
 
     @XmlAttribute(name = "ma")
-    private Integer max;
+    private String max;
 
     /**
      * @return the min
      */
-    public Integer getMin() {
+    public String getMin() {
         return min;
     }
 
     /**
      * @param min the min to set
      */
-    public void setMin(Integer min) {
+    public void setMin(String min) {
         this.min = min;
     }
 
     /**
      * @return the max
      */
-    public Integer getMax() {
+    public String getMax() {
         return max;
     }
 
     /**
      * @param max the max to set
      */
-    public void setMax(Integer max) {
+    public void setMax(String max) {
         this.max = max;
     }
 
     @Override
-    public void load(AnnotationMirror annotationMirror) {
-        super.load(annotationMirror);
-        this.min = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "min");
-        this.max = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "max");
+    public void load(AnnotationMirror annotation) {
+        super.load(annotation);
+        this.min = (String) JavaSourceParserUtil.findAnnotationValue(annotation, "min");
+        this.max = (String) JavaSourceParserUtil.findAnnotationValue(annotation, "max");
+    }
+
+    @Override
+    public void load(AnnotationExplorer annotation) {
+        super.load(annotation);
+        annotation.getString("min").ifPresent(this::setMin);
+        annotation.getString("max").ifPresent(this::setMax);
     }
 
     @Override

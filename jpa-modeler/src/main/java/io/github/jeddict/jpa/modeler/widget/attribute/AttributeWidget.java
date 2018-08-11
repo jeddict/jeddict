@@ -15,28 +15,25 @@
  */
 package io.github.jeddict.jpa.modeler.widget.attribute;
 
-import java.awt.Cursor;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-import javax.lang.model.SourceVersion;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import org.apache.commons.lang3.StringUtils;
-import org.atteo.evo.inflector.English;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import io.github.jeddict.jaxb.spec.JaxbVariableTypeHandler;
 import io.github.jeddict.jcode.util.JavaSourceHelper;
-import io.github.jeddict.jpa.modeler.widget.FlowPinWidget;
-import io.github.jeddict.jpa.modeler.widget.JavaClassWidget;
-import io.github.jeddict.jpa.modeler.widget.OpenSourceCodeAction;
+import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.DELETE_ICON;
 import io.github.jeddict.jpa.modeler.properties.PropertiesHandler;
 import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getAttributeAnnoation;
 import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getAttributeSnippet;
 import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getFieldTypeProperty;
 import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getJaxbVarTypeProperty;
 import io.github.jeddict.jpa.modeler.rules.attribute.AttributeValidator;
+import static io.github.jeddict.jpa.modeler.rules.attribute.AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD;
+import static io.github.jeddict.jpa.modeler.rules.attribute.AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD;
+import static io.github.jeddict.jpa.modeler.rules.attribute.AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD;
+import static io.github.jeddict.jpa.modeler.rules.attribute.AttributeValidator.INVALID_ATTRIBUTE_NAME;
 import io.github.jeddict.jpa.modeler.rules.entity.SQLKeywords;
-import io.github.jeddict.settings.view.AttributeViewAs;
-import io.github.jeddict.settings.view.ViewPanel;
+import io.github.jeddict.jpa.modeler.widget.FlowPinWidget;
+import io.github.jeddict.jpa.modeler.widget.JavaClassWidget;
+import io.github.jeddict.jpa.modeler.widget.OpenSourceCodeAction;
 import io.github.jeddict.jpa.spec.EmbeddedId;
 import io.github.jeddict.jpa.spec.IdentifiableClass;
 import io.github.jeddict.jpa.spec.NamedNativeQuery;
@@ -45,10 +42,16 @@ import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
 import io.github.jeddict.jpa.spec.extend.MapKeyHandler;
 import io.github.jeddict.jpa.spec.extend.MapKeyType;
-import io.github.jeddict.jaxb.spec.JaxbVariableTypeHandler;
-import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.DELETE_ICON;
+import io.github.jeddict.settings.view.AttributeViewAs;
+import io.github.jeddict.settings.view.ViewPanel;
+import java.awt.Cursor;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import javax.lang.model.SourceVersion;
+import javax.swing.JMenuItem;
+import static javax.swing.JOptionPane.showMessageDialog;
+import org.atteo.evo.inflector.English;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
@@ -125,8 +128,8 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         }); 
 
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (oldValue, value) -> {
-            if (StringUtils.isBlank(value)) {
-                JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), NbBundle.getMessage(AttributeValidator.class, AttributeValidator.EMPTY_ATTRIBUTE_NAME));
+            if (isBlank(value)) {
+                showMessageDialog(WindowManager.getDefault().getMainWindow(), NbBundle.getMessage(AttributeValidator.class, AttributeValidator.EMPTY_ATTRIBUTE_NAME));
                 setName(AttributeWidget.this.getLabel());//rollback
             } else {
                 setName(value);
@@ -137,23 +140,23 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (oldValue, tableName) -> {
             if (tableName != null && !tableName.trim().isEmpty()) {
                 if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
-                    getSignalManager().fire(WARNING, AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    getSignalManager().fire(WARNING, ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 } else {
-                    getSignalManager().clear(WARNING, AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    getSignalManager().clear(WARNING, ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 }
             } else {
-                getSignalManager().clear(WARNING, AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                getSignalManager().clear(WARNING, ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
         this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (oldValue, columnName) -> {
             if (columnName != null && !columnName.trim().isEmpty()) {
                 if (SQLKeywords.isSQL99ReservedKeyword(columnName)) {
-                    getSignalManager().fire(WARNING, AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    getSignalManager().fire(WARNING, ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
                 } else {
-                    getSignalManager().clear(WARNING, AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    getSignalManager().clear(WARNING, ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
                 }
             } else {
-                getSignalManager().clear(WARNING, AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+                getSignalManager().clear(WARNING, ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
     }
@@ -197,18 +200,18 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     
     public void validateName(String previousName,String name){
         if (JavaPersistenceQLKeywords.isKeyword(name)) {
-            getSignalManager().fire(ERROR, AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
+            getSignalManager().fire(ERROR, ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
         } else {
-            getSignalManager().clear(ERROR, AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
+            getSignalManager().clear(ERROR, ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
         }
         if(SourceVersion.isName(name)){
-            getSignalManager().clear(ERROR, AttributeValidator.INVALID_ATTRIBUTE_NAME);
+            getSignalManager().clear(ERROR, INVALID_ATTRIBUTE_NAME);
         } else {
-            getSignalManager().fire(ERROR, AttributeValidator.INVALID_ATTRIBUTE_NAME);
+            getSignalManager().fire(ERROR, INVALID_ATTRIBUTE_NAME);
         }
         this.getClassWidget().scanDuplicateAttributes(previousName, name);
-
     }
+
     @Override
     public void setName(String name) {
         String previousName = this.name;
@@ -227,7 +230,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
             return;
         }
         ModelerFile modelerFile = this.getModelerScene().getModelerFile();
-        RequestProcessor.getDefault().post(() -> {
+        new RequestProcessor(previousName + " -> " + newName).post(() -> {
             try {
 
                 String singularPreName = previousName;

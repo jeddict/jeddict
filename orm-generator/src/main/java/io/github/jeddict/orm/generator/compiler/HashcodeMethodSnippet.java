@@ -18,7 +18,7 @@ package io.github.jeddict.orm.generator.compiler;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.jpa.spec.DefaultAttribute;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.BaseAttribute;

@@ -55,7 +55,7 @@ public class Converter {
     @XmlAttribute(name = "a", required = true)
     private String attributeType;
     @XmlAttribute(name = "f", required = true)
-    private String fieldType;//db
+    private String fieldType; //db
     @XmlAttribute(name = "au")
     protected Boolean autoApply;
 

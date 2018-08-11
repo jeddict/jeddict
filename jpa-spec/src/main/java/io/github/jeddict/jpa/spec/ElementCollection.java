@@ -6,11 +6,52 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import io.github.jeddict.bv.constraints.Constraint;
+import io.github.jeddict.bv.constraints.Size;
+import io.github.jeddict.jaxb.spec.JaxbVariableType;
+import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION_FQN;
+import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_COLUMN_FQN;
+import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_ENUMERATED_FQN;
+import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMNS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMN_FQN;
+import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_TEMPORAL_FQN;
+import static io.github.jeddict.jcode.util.AttributeType.STRING;
+import io.github.jeddict.jcode.util.JavaSourceHelper;
+import static io.github.jeddict.jcode.util.JavaUtil.isMap;
+import io.github.jeddict.jpa.spec.extend.AssociationOverrideHandler;
+import io.github.jeddict.jpa.spec.extend.Attribute;
+import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
+import io.github.jeddict.jpa.spec.extend.ColumnHandler;
+import io.github.jeddict.jpa.spec.extend.CompositionAttribute;
+import io.github.jeddict.jpa.spec.extend.ConvertContainerHandler;
+import io.github.jeddict.jpa.spec.extend.ConvertHandler;
+import io.github.jeddict.jpa.spec.extend.EnumTypeHandler;
+import io.github.jeddict.jpa.spec.extend.FetchTypeHandler;
+import io.github.jeddict.jpa.spec.extend.MapKeyConvertContainerHandler;
+import io.github.jeddict.jpa.spec.extend.MapKeyConvertHandler;
+import io.github.jeddict.jpa.spec.extend.MapKeyHandler;
+import io.github.jeddict.jpa.spec.extend.MapKeyType;
+import io.github.jeddict.jpa.spec.extend.SortableAttribute;
+import io.github.jeddict.jpa.spec.extend.TemporalTypeHandler;
+import io.github.jeddict.jpa.spec.validator.override.AssociationValidator;
+import io.github.jeddict.jpa.spec.validator.override.AttributeValidator;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.ClassExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import static io.github.jeddict.source.JavaSourceParserUtil.isEmbeddable;
+import static io.github.jeddict.source.JavaSourceParserUtil.isEntity;
+import static io.github.jeddict.source.JavaSourceParserUtil.loadEmbeddableClass;
+import static io.github.jeddict.source.JavaSourceParserUtil.loadEntity;
+import io.github.jeddict.source.MemberExplorer;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.lang.model.element.AnnotationMirror;
@@ -29,41 +70,7 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.lang3.StringUtils;
-import io.github.jeddict.bv.constraints.Constraint;
-import io.github.jeddict.bv.constraints.Size;
-import static io.github.jeddict.jcode.util.AttributeType.STRING;
-import io.github.jeddict.jcode.util.JavaSourceHelper;
-import static io.github.jeddict.jcode.util.JavaUtil.isMap;
-import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION_FQN;
-import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_COLUMN_FQN;
-import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_ENUMERATED_FQN;
-import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMNS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMN_FQN;
-import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_TEMPORAL_FQN;
-import io.github.jeddict.jpa.spec.extend.AssociationOverrideHandler;
-import io.github.jeddict.jpa.spec.extend.Attribute;
-import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
-import io.github.jeddict.jpa.spec.extend.ColumnHandler;
-import io.github.jeddict.jpa.spec.extend.CompositionAttribute;
-import io.github.jeddict.jpa.spec.extend.ConvertContainerHandler;
-import io.github.jeddict.jpa.spec.extend.ConvertHandler;
-import io.github.jeddict.jpa.spec.extend.EnumTypeHandler;
-import io.github.jeddict.jpa.spec.extend.FetchTypeHandler;
-import io.github.jeddict.jpa.spec.extend.MapKeyConvertContainerHandler;
-import io.github.jeddict.jpa.spec.extend.MapKeyConvertHandler;
-import io.github.jeddict.jpa.spec.extend.MapKeyHandler;
-import io.github.jeddict.jpa.spec.extend.MapKeyType;
-import io.github.jeddict.jpa.spec.extend.SortableAttribute;
-import io.github.jeddict.jpa.spec.extend.TemporalTypeHandler;
-import io.github.jeddict.jaxb.spec.JaxbVariableType;
-import io.github.jeddict.jpa.spec.validator.override.AssociationValidator;
-import io.github.jeddict.jpa.spec.validator.override.AttributeValidator;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import static io.github.jeddict.source.JavaSourceParserUtil.isEmbeddableClass;
-import static io.github.jeddict.source.JavaSourceParserUtil.isEntityClass;
-import static io.github.jeddict.source.JavaSourceParserUtil.loadEmbeddableClass;
-import static io.github.jeddict.source.JavaSourceParserUtil.loadEntityClass;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -242,6 +249,7 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
     @XmlElement(name = "mkao")
     protected Set<AttributeOverride> mapKeyAttributeOverride;
 
+    @Deprecated
     public static ElementCollection load(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, ELEMENT_COLLECTION_FQN);
         ElementCollection elementCollection = new ElementCollection();
@@ -274,7 +282,7 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
             declaredType = (DeclaredType) ((DeclaredType) variableElement.asType()).getTypeArguments().get(mapKeyExist ? 1 : 0);
         }
         if (declaredType != null) {
-            if (isEmbeddableClass(declaredType.asElement())) {
+            if (isEmbeddable(declaredType.asElement())) {
                 Embeddable embeddableClassSpec = loadEmbeddableClass(entityMappings, element, variableElement, declaredType);
                 elementCollection.setConnectedClass(embeddableClassSpec);
             } else {
@@ -283,7 +291,6 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
         } else {
             elementCollection.setTargetClass(STRING);
         }
-        elementCollection.setAttributeConstraints(JavaSourceParserUtil.getBeanValidation(element));
 
         elementCollection.convert = Convert.load(element, mapKeyExist, false);
         if (mapKeyExist) {
@@ -295,11 +302,11 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
             if (keyDeclaredType == null) {
                 keyDeclaredType = (DeclaredType) ((DeclaredType) variableElement.asType()).getTypeArguments().get(0);
             }
-            if (isEmbeddableClass(keyDeclaredType.asElement())) {
+            if (isEmbeddable(keyDeclaredType.asElement())) {
                 loadEmbeddableClass(entityMappings, element, variableElement, keyDeclaredType);
                 elementCollection.mapKeyAttributeType = JavaSourceHelper.getSimpleClassName(keyDeclaredType.toString());
-            } else if (isEntityClass(keyDeclaredType.asElement())) {
-                loadEntityClass(entityMappings, element, variableElement, keyDeclaredType);
+            } else if (isEntity(keyDeclaredType.asElement())) {
+                loadEntity(entityMappings, element, variableElement, keyDeclaredType);
                 elementCollection.mapKeyAttributeType = JavaSourceHelper.getSimpleClassName(keyDeclaredType.toString());
             } else {
                 elementCollection.mapKeyAttributeType = keyDeclaredType.toString();
@@ -327,6 +334,117 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
             elementCollection.mapKeyForeignKey = ForeignKey.load(element, null);
             elementCollection.getMapKeyAttributeOverride().addAll(AttributeOverride.load(element));
             // TODO if both side are Embeddable then how to diffrentiat MapKeyAttributeOverride and AttributeOverride 
+            // with single @AttributeOverride means there is no @MapKeyAttributeOverride  ?
+            // currently AttributeValidator will remove the invalid
+        }
+        return elementCollection;
+    }
+
+    public static ElementCollection load(MemberExplorer member) {
+        EntityMappings entityMappings = member.getEntityMapping();
+        AnnotationExplorer annotation = member.getAnnotation(javax.persistence.ElementCollection.class).get();
+        ElementCollection elementCollection = new ElementCollection();
+        elementCollection.loadAttribute(member);
+        elementCollection.column = Column.load(member);
+        elementCollection.temporal = TemporalType.load(member);
+        elementCollection.enumerated = EnumType.load(member);
+        elementCollection.lob = Lob.load(member);
+
+        elementCollection.attributeOverride = AttributeOverride.load(member);
+        elementCollection.associationOverride = AssociationOverride.load(member);
+
+        elementCollection.collectionTable = CollectionTable.load(member);
+
+        elementCollection.orderBy = OrderBy.load(member);
+        elementCollection.orderColumn = OrderColumn.load(member);
+        elementCollection.fetch = FetchType.load(annotation);
+        elementCollection.access = AccessType.load(member);
+
+        elementCollection.collectionType = member.getType(); // ?? collection ??
+        Class collectionTypeClass = null;
+        try {
+            collectionTypeClass = Class.forName(elementCollection.collectionType);
+        } catch (ClassNotFoundException ex) {
+        }
+        boolean mapKeyExist = collectionTypeClass != null && Map.class.isAssignableFrom(collectionTypeClass);
+
+        Optional<ResolvedReferenceTypeDeclaration> targetEntityOpt = annotation.getResolvedClass("targetClass");
+        ResolvedReferenceTypeDeclaration type;
+        if (targetEntityOpt.isPresent()) {
+            type = targetEntityOpt.get();
+        } else {
+            type = member.getTypeArgumentDeclarations().get(mapKeyExist ? 1 : 0);
+        }
+        if (type != null) {
+            if (type.hasAnnotation(EMBEDDABLE_FQN)) {
+                Optional<Embeddable> embeddableClassSpecOpt = entityMappings.findEmbeddable(type.getClassName());
+                Embeddable embeddableClassSpec = null;
+                if (embeddableClassSpecOpt.isPresent()) {
+                    embeddableClassSpec = embeddableClassSpecOpt.get();
+                } else if (member.isIncludeReference()
+                        || member.getSource().isSelectedClass(type.getClassName())) {
+                    try {
+                        ClassExplorer clazz = member.getSource().createClass(type.getQualifiedName());
+                        embeddableClassSpec = new Embeddable();
+                        embeddableClassSpec.load(clazz);
+                        entityMappings.addEmbeddable(embeddableClassSpec);
+                    } catch (FileNotFoundException ex) {
+                        member.getSource().addMissingClass(type.getQualifiedName());
+                    }
+                }
+                if (embeddableClassSpec == null) {
+                    return null;
+                }
+                elementCollection.setConnectedClass(embeddableClassSpec);
+            } else {
+                elementCollection.setTargetClass(type.getQualifiedName());
+            }
+        } else {
+            elementCollection.setTargetClass(STRING);
+        }
+
+        elementCollection.convert = Convert.load(member, mapKeyExist, false);
+        if (mapKeyExist) {
+            elementCollection.mapKeyConvert = Convert.load(member, mapKeyExist, true);
+            elementCollection.mapKey = MapKey.load(member);
+            elementCollection.mapKeyType = elementCollection.mapKey != null ? MapKeyType.EXT : MapKeyType.NEW;
+
+//            DeclaredType keyDeclaredType = MapKeyClass.getDeclaredType(element);
+//            if (keyDeclaredType == null) {
+//                keyDeclaredType = (DeclaredType) ((DeclaredType) variableElement.asType()).getTypeArguments().get(0);
+//            }
+//            if (isEmbeddable(keyDeclaredType.asElement())) {
+//                loadEmbeddableClass(entityMappings, element, variableElement, keyDeclaredType);
+//                elementCollection.mapKeyAttributeType = JavaSourceHelper.getSimpleClassName(keyDeclaredType.toString());
+//            } else if (isEntity(keyDeclaredType.asElement())) {
+//                loadEntity(entityMappings, element, variableElement, keyDeclaredType);
+//                elementCollection.mapKeyAttributeType = JavaSourceHelper.getSimpleClassName(keyDeclaredType.toString());
+//            } else {
+//                elementCollection.mapKeyAttributeType = keyDeclaredType.toString();
+//            }
+//
+//            elementCollection.mapKeyColumn = new Column().load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_COLUMN_FQN));
+//            elementCollection.mapKeyTemporal = TemporalType.load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_TEMPORAL_FQN));
+//            elementCollection.mapKeyEnumerated = EnumType.load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_ENUMERATED_FQN));
+//
+//            AnnotationMirror joinColumnsAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, MAP_KEY_JOIN_COLUMNS_FQN);
+//            if (joinColumnsAnnotationMirror != null) {
+//                List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(joinColumnsAnnotationMirror, "value");
+//                if (joinColumnsAnnot != null) {
+//                    for (Object joinColumnObj : joinColumnsAnnot) {
+//                        elementCollection.getMapKeyJoinColumn().add(new JoinColumn().load(element, (AnnotationMirror) joinColumnObj));
+//                    }
+//                }
+//            } else {
+//                AnnotationMirror joinColumnAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, MAP_KEY_JOIN_COLUMN_FQN);
+//                if (joinColumnAnnotationMirror != null) {
+//                    elementCollection.getMapKeyJoinColumn().add(new JoinColumn().load(element, joinColumnAnnotationMirror));
+//                }
+//            }
+//
+//            elementCollection.mapKeyForeignKey = ForeignKey.load(element, null);
+//            elementCollection.getMapKeyAttributeOverride().addAll(AttributeOverride.load(element));
+            // TODO if both side are Embeddable then how to diffrentiat MapKeyAttributeOverride and AttributeOverride
             // with single @AttributeOverride means there is no @MapKeyAttributeOverride  ?
             // currently AttributeValidator will remove the invalid
         }
@@ -406,25 +524,6 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
         this.mapKey = value;
     }
 
-//    /**
-//     * Gets the value of the mapKeyClass property.
-//     *
-//     * @return possible object is {@link MapKeyClass }
-//     *
-//     */
-//    public MapKeyClass getMapKeyClass() {
-//        return mapKeyClass;
-//    }
-//
-//    /**
-//     * Sets the value of the mapKeyClass property.
-//     *
-//     * @param value allowed object is {@link MapKeyClass }
-//     *
-//     */
-//    public void setMapKeyClass(MapKeyClass value) {
-//        this.mapKeyClass = value;
-//    }
     /**
      * Gets the value of the mapKeyTemporal property.
      *

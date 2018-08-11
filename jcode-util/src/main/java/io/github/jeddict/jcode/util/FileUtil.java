@@ -42,7 +42,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.queries.FileEncodingQuery;
 import static io.github.jeddict.jcode.util.JavaSourceHelper.reformat;
 import io.github.jeddict.jcode.task.progress.ProgressHandler;

@@ -12,7 +12,11 @@ import io.github.jeddict.jpa.spec.extend.ConvertHandler;
 import io.github.jeddict.jpa.spec.extend.EnumTypeHandler;
 import io.github.jeddict.jpa.spec.extend.FetchTypeHandler;
 import io.github.jeddict.jpa.spec.extend.PersistenceBaseAttribute;
+import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
+import io.github.jeddict.source.MemberExplorer;
+import java.util.List;
+import java.util.Optional;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -73,12 +77,13 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
 
     protected Lob lob;
     protected EnumType enumerated;
-    protected Convert convert;//RENENF PENDING
+    protected Convert convert;
     @XmlAttribute(name = "fetch")
     protected FetchType fetch;
     @XmlAttribute(name = "optional")
     protected Boolean optional;
 
+    @Deprecated
     public static Basic load(Element element, VariableElement variableElement, ExecutableElement getterElement) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, BASIC_FQN);
         Basic basic = new Basic();
@@ -88,6 +93,25 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
         basic.fetch = FetchType.load(element, annotationMirror);
         if (annotationMirror != null) {
             basic.optional = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "optional");
+        }
+        return basic;
+    }
+
+    public static Basic load(MemberExplorer member) {
+        Basic basic = new Basic();
+        basic.loadAttribute(member);
+        basic.lob = Lob.load(member);
+        basic.enumerated = EnumType.load(member);
+        List<Convert> converts = Convert.load(member);
+        if (!converts.isEmpty()) {
+            basic.convert = converts.get(0);
+        }
+
+        Optional<AnnotationExplorer> basicOpt = member.getAnnotation(javax.persistence.Basic.class);
+        if (basicOpt.isPresent()) {
+            AnnotationExplorer annotation = basicOpt.get();
+            basic.fetch = FetchType.load(annotation);
+            annotation.getBoolean("optional").ifPresent(basic::setOptional);
         }
         return basic;
     }

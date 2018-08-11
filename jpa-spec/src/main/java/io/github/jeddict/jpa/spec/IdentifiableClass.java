@@ -15,6 +15,36 @@
  */
 package io.github.jeddict.jpa.spec;
 
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import static io.github.jeddict.jcode.JPAConstants.ENTITY_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ENTITY_LISTENERS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.EXCLUDE_DEFAULT_LISTENERS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.EXCLUDE_SUPERCLASS_LISTENERS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.MAPPED_SUPERCLASS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_NATIVE_QUERIES_FQN;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_NATIVE_QUERY_FQN;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_QUERIES_FQN;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_QUERY_FQN;
+import static io.github.jeddict.jcode.JPAConstants.SQL_RESULTSET_MAPPINGS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.SQL_RESULTSET_MAPPING_FQN;
+import static io.github.jeddict.jpa.spec.NamedQuery.FIND_BY;
+import io.github.jeddict.jpa.spec.extend.Attribute;
+import io.github.jeddict.jpa.spec.extend.CompositePrimaryKeyType;
+import static io.github.jeddict.jpa.spec.extend.CompositePrimaryKeyType.EMBEDDEDID;
+import static io.github.jeddict.jpa.spec.extend.CompositePrimaryKeyType.IDCLASS;
+import io.github.jeddict.jpa.spec.extend.IPrimaryKeyAttributes;
+import io.github.jeddict.jpa.spec.extend.PrimaryKeyContainer;
+import io.github.jeddict.jpa.spec.extend.ReferenceClass;
+import io.github.jeddict.jpa.spec.extend.SingleRelationAttribute;
+import io.github.jeddict.jpa.spec.validation.adapter.CompositePrimaryKeyAdapter;
+import io.github.jeddict.settings.code.CodePanel;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.ClassExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import static io.github.jeddict.source.JavaSourceParserUtil.isEntity;
+import static io.github.jeddict.source.JavaSourceParserUtil.isMappedSuperclass;
+import io.github.jeddict.source.MemberExplorer;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -26,25 +56,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import static io.github.jeddict.jcode.JPAConstants.ENTITY_LISTENERS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.EXCLUDE_DEFAULT_LISTENERS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.EXCLUDE_SUPERCLASS_LISTENERS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.NAMED_NATIVE_QUERIES_FQN;
-import static io.github.jeddict.jcode.JPAConstants.NAMED_NATIVE_QUERY_FQN;
-import static io.github.jeddict.jcode.JPAConstants.NAMED_QUERIES_FQN;
-import static io.github.jeddict.jcode.JPAConstants.NAMED_QUERY_FQN;
-import static io.github.jeddict.jcode.JPAConstants.SQL_RESULTSET_MAPPINGS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.SQL_RESULTSET_MAPPING_FQN;
-import io.github.jeddict.settings.code.CodePanel;
-import static io.github.jeddict.jpa.spec.NamedQuery.FIND_BY;
-import io.github.jeddict.jpa.spec.extend.Attribute;
-import io.github.jeddict.jpa.spec.extend.CompositePrimaryKeyType;
-import io.github.jeddict.jpa.spec.extend.IPrimaryKeyAttributes;
-import io.github.jeddict.jpa.spec.extend.PrimaryKeyContainer;
-import io.github.jeddict.jpa.spec.extend.ReferenceClass;
-import io.github.jeddict.jpa.spec.extend.SingleRelationAttribute;
-import io.github.jeddict.jpa.spec.validation.adapter.CompositePrimaryKeyAdapter;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 public abstract class IdentifiableClass extends ManagedClass<IPrimaryKeyAttributes> implements PrimaryKeyContainer {
 
@@ -89,6 +100,7 @@ public abstract class IdentifiableClass extends ManagedClass<IPrimaryKeyAttribut
     private String compositePrimaryKeyClass;//custom added
 
     @Override
+    @Deprecated
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         super.load(entityMappings, element, fieldAccess);
         this.idClass = IdClass.load(element);
@@ -171,24 +183,122 @@ public abstract class IdentifiableClass extends ManagedClass<IPrimaryKeyAttribut
 
         TypeElement superClassElement = JavaSourceParserUtil.getSuperclassTypeElement(element);
         if (!superClassElement.getQualifiedName().toString().equals("java.lang.Object")) {
-            if (JavaSourceParserUtil.isEntityClass(superClassElement)) {
-                io.github.jeddict.jpa.spec.Entity entitySuperclassSpec = entityMappings.findEntity(superClassElement.getSimpleName().toString()).orElseGet(() -> {
-                    io.github.jeddict.jpa.spec.Entity entityspec = new io.github.jeddict.jpa.spec.Entity();
-                    entityspec.load(entityMappings, superClassElement, fieldAccess);
-                    entityMappings.addEntity(entityspec);
-                    return entityspec;
-                });
+            if (isEntity(superClassElement)) {
+                Entity entitySuperclassSpec
+                        = entityMappings
+                                .findEntity(superClassElement.getSimpleName().toString())
+                                .orElseGet(() -> {
+                                    Entity entityspec = new Entity();
+                                    entityspec.load(entityMappings, superClassElement, fieldAccess);
+                                    entityMappings.addEntity(entityspec);
+                                    return entityspec;
+                                });
                 super.addSuperclass(entitySuperclassSpec);
-            } else if (JavaSourceParserUtil.isMappedSuperClass(superClassElement)) {
-                io.github.jeddict.jpa.spec.MappedSuperclass mappedSuperclassSpec = entityMappings.findMappedSuperclass(superClassElement.getSimpleName().toString()).orElseGet(() -> {
-                    io.github.jeddict.jpa.spec.MappedSuperclass mappedSpec = new io.github.jeddict.jpa.spec.MappedSuperclass();
-                    mappedSpec.load(entityMappings, superClassElement, fieldAccess);
-                    entityMappings.addMappedSuperclass(mappedSpec);
-                    return mappedSpec;
-                });
+            } else if (isMappedSuperclass(superClassElement)) {
+                MappedSuperclass mappedSuperclassSpec
+                        = entityMappings
+                                .findMappedSuperclass(superClassElement.getSimpleName().toString())
+                                .orElseGet(() -> {
+                                    MappedSuperclass mappedSpec = new MappedSuperclass();
+                                    mappedSpec.load(entityMappings, superClassElement, fieldAccess);
+                                    entityMappings.addMappedSuperclass(mappedSpec);
+                                    return mappedSpec;
+                                });
                 super.addSuperclass(mappedSuperclassSpec);
             } else {
                 this.setSuperclassRef(new ReferenceClass(superClassElement.toString()));
+            }
+        }
+    }
+
+//    @Override
+    public void load(ClassExplorer clazz) {
+        super.load(clazz);
+        EntityMappings entityMappings = clazz.getEntityMappings();
+        this.idClass = IdClass.load(clazz);
+
+        if (this.getAttributes().getEmbeddedId() != null) {
+            String embeddedIdName = this.getAttributes().getEmbeddedId().getName();
+            Optional<MemberExplorer> memeber = clazz.getMembers()
+                    .stream()
+                    .filter(member -> member.getFieldName().equals(embeddedIdName))
+                    .findAny();
+            if (memeber.isPresent()) {
+                this.setCompositePrimaryKeyClass(memeber.get().getSimpleType());
+                this.setCompositePrimaryKeyType(EMBEDDEDID);
+            }
+        } else if (idClass != null) {
+            this.setCompositePrimaryKeyClass(this.getIdClass().getClazz());
+            this.setCompositePrimaryKeyType(IDCLASS);
+        } else {
+            this.setCompositePrimaryKeyClass(null);
+            this.setCompositePrimaryKeyType(null);
+        }
+
+        Optional<AnnotationExplorer> entityListenersOpt = clazz.getAnnotation(javax.persistence.EntityListeners.class);
+        if (entityListenersOpt.isPresent()) {
+            this.entityListeners = EntityListeners.load(entityListenersOpt.get());
+        }
+
+        Optional<AnnotationExplorer> excludeDefaultListenersOpt = clazz.getAnnotation(javax.persistence.ExcludeDefaultListeners.class);
+        if (excludeDefaultListenersOpt.isPresent()) {
+            this.excludeDefaultListeners = new EmptyType();
+        }
+
+        Optional<AnnotationExplorer> excludeSuperclassListenersOpt = clazz.getAnnotation(javax.persistence.ExcludeSuperclassListeners.class);
+        if (excludeSuperclassListenersOpt.isPresent()) {
+            this.excludeSuperclassListeners = new EmptyType();
+        }
+
+        this.namedQuery = NamedQuery.load(clazz);
+        this.namedNativeQuery = NamedNativeQuery.load(clazz);
+        this.sqlResultSetMapping = SqlResultSetMapping.load(clazz);
+        this.namedStoredProcedureQuery = NamedStoredProcedureQuery.load(clazz);
+
+        Optional<ResolvedReferenceTypeDeclaration> superClassTypeOpt = clazz.getSuperClass();
+        if (superClassTypeOpt.isPresent()) {
+            ResolvedReferenceTypeDeclaration superClassType = superClassTypeOpt.get();
+
+            if (superClassType.hasAnnotation(ENTITY_FQN)) {
+                Optional<Entity> superClassOpt = entityMappings.findEntity(superClassType.getClassName());
+                Entity superClass = null;
+                if (superClassOpt.isPresent()) {
+                    superClass = superClassOpt.get();
+                } else if (clazz.isIncludeReference()
+                        || clazz.getSource().isSelectedClass(superClassType.getClassName())) {
+                    try {
+                        ClassExplorer superClazz = clazz.getSource().createClass(superClassType.getQualifiedName());
+                        superClass = new Entity();
+                        superClass.load(superClazz);
+                        entityMappings.addEntity(superClass);
+                    } catch (FileNotFoundException ex) {
+                        clazz.getSource().addMissingClass(superClassType.getQualifiedName());
+                    }
+                }
+                if (superClass != null) {
+                    super.addSuperclass(superClass);
+                }
+            } else if (superClassType.hasAnnotation(MAPPED_SUPERCLASS_FQN)) {
+                Optional<MappedSuperclass> superClassOpt = entityMappings.findMappedSuperclass(superClassType.getClassName());//ClassName());
+                MappedSuperclass superClass = null;
+                if (superClassOpt.isPresent()) {
+                    superClass = superClassOpt.get();
+                } else if (clazz.isIncludeReference()
+                        || clazz.getSource().isSelectedClass(superClassType.getClassName())) {
+                    try {
+                        ClassExplorer superClazz = clazz.getSource().createClass(superClassType.getQualifiedName());
+                        superClass = new MappedSuperclass();
+                        superClass.load(superClazz);
+                        entityMappings.addMappedSuperclass(superClass);
+                    } catch (FileNotFoundException ex) {
+                        clazz.getSource().addMissingClass(superClassType.getQualifiedName());
+                    }
+                }
+                if (superClass != null) {
+                    super.addSuperclass(superClass);
+                }
+            } else {
+                this.setSuperclassRef(new ReferenceClass(superClassType.getQualifiedName()));
             }
         }
     }
@@ -614,7 +724,6 @@ public abstract class IdentifiableClass extends ManagedClass<IPrimaryKeyAttribut
     @Override
     public void setCompositePrimaryKeyClass(String compositePrimaryKeyClass) {
         this.compositePrimaryKeyClass = compositePrimaryKeyClass;
-//        manageCompositePrimaryKeyType();
     }
 
     private void manageCompositePrimaryKeyClass() {

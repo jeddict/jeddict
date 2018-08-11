@@ -15,13 +15,15 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.GENERATED_VALUE;
 import static io.github.jeddict.jcode.JPAConstants.GENERATED_VALUE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.GENERATION_TYPE_FQN;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class GeneratedValueSnippet implements Snippet {
 
@@ -30,7 +32,7 @@ public class GeneratedValueSnippet implements Snippet {
     public static final String SEQUENCE = "GenerationType.SEQUENCE";
     public static final String TABLE = "GenerationType.TABLE";
 
-    private static final List<String> STRATEGY_TYPES = getStrategyTypes();
+    private static final Set<String> STRATEGY_TYPES = getStrategyTypes();
 
     private String generator = null;
     private String strategy = null;
@@ -88,13 +90,15 @@ public class GeneratedValueSnippet implements Snippet {
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
-        importSnippets.add(GENERATION_TYPE_FQN);
+        if (strategy != null) {
+            importSnippets.add(GENERATION_TYPE_FQN);
+        }
         importSnippets.add(GENERATED_VALUE_FQN);
         return importSnippets;
     }
 
-    private static List<String> getStrategyTypes() {
-        List<String> strategyTypes = new ArrayList<>();
+    private static Set<String> getStrategyTypes() {
+        Set<String> strategyTypes = new HashSet<>();
 
         strategyTypes.add(AUTO);
         strategyTypes.add(IDENTITY);

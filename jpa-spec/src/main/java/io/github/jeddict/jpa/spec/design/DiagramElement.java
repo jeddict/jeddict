@@ -67,9 +67,6 @@ import javax.xml.namespace.QName;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-//@XmlType(name = "DiagramElement", propOrder = {
-//    "extension"
-//})  //JJPA
 @XmlType(name = "DiagramElement", propOrder = {
     "extension"
 })

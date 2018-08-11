@@ -6,6 +6,9 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_COLUMN_FQN;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,8 +16,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.internal.jpa.metadata.columns.DiscriminatorColumnMetadata;
-import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_COLUMN_FQN;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -60,6 +61,7 @@ public class DiscriminatorColumn {
     @XmlAttribute
     protected Integer length;
 
+    @Deprecated
     public static DiscriminatorColumn load(Element element) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, DISCRIMINATOR_COLUMN_FQN);
         DiscriminatorColumn column = null;
@@ -72,6 +74,16 @@ public class DiscriminatorColumn {
         }
         return column;
 
+    }
+
+    public static DiscriminatorColumn load(AnnotationExplorer annotation) {
+        DiscriminatorColumn column = new DiscriminatorColumn();
+        annotation.getString("name").ifPresent(column::setName);
+        annotation.getString("columnDefinition").ifPresent(column::setColumnDefinition);
+        annotation.getInt("length").ifPresent(column::setLength);
+        annotation.getEnum("discriminatorType").map(DiscriminatorType::valueOf)
+                .ifPresent(column::setDiscriminatorType);
+        return column;
     }
 
     /**

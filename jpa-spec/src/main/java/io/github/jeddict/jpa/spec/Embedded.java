@@ -6,6 +6,16 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import io.github.jeddict.jpa.spec.extend.AssociationOverrideHandler;
+import io.github.jeddict.jpa.spec.extend.CompositionAttribute;
+import io.github.jeddict.jpa.spec.extend.ConvertContainerHandler;
+import io.github.jeddict.jpa.spec.validator.override.AssociationValidator;
+import io.github.jeddict.jpa.spec.validator.override.AttributeValidator;
+import io.github.jeddict.source.ClassExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import io.github.jeddict.source.MemberExplorer;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,13 +33,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.lang3.StringUtils;
-import io.github.jeddict.jpa.spec.extend.AssociationOverrideHandler;
-import io.github.jeddict.jpa.spec.extend.CompositionAttribute;
-import io.github.jeddict.jpa.spec.extend.ConvertContainerHandler;
-import io.github.jeddict.jpa.spec.validator.override.AssociationValidator;
-import io.github.jeddict.jpa.spec.validator.override.AttributeValidator;
-import io.github.jeddict.source.JavaSourceParserUtil;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -88,7 +92,8 @@ public class Embedded extends CompositionAttribute<Embeddable> implements Associ
     public Embedded(Set<AttributeOverride> attributeOverride) {
         this.attributeOverride = attributeOverride;
     }
-    
+
+    @Deprecated
     public static Embedded load(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement) {
         Embedded embedded = new Embedded();
         embedded.loadAttribute(element, variableElement, getterElement);
@@ -97,7 +102,7 @@ public class Embedded extends CompositionAttribute<Embeddable> implements Associ
         embedded.setAccess(AccessType.load(element));
         DeclaredType declaredType = (DeclaredType) variableElement.asType();
 
-        Optional<io.github.jeddict.jpa.spec.Embeddable> embeddableClassSpecOpt = entityMappings.findEmbeddable(declaredType.asElement().getSimpleName().toString());
+        Optional<Embeddable> embeddableClassSpecOpt = entityMappings.findEmbeddable(declaredType.asElement().getSimpleName().toString());
         io.github.jeddict.jpa.spec.Embeddable embeddableClassSpec;
         if (!embeddableClassSpecOpt.isPresent()) {
             boolean fieldAccess = false;
@@ -106,7 +111,7 @@ public class Embedded extends CompositionAttribute<Embeddable> implements Associ
             }
             embeddableClassSpec = new io.github.jeddict.jpa.spec.Embeddable();
             TypeElement embeddableTypeElement = JavaSourceParserUtil.getAttributeTypeElement(variableElement);
-            if(embeddableTypeElement==null){
+            if (embeddableTypeElement == null) {
                 return null;
             }
             embeddableClassSpec.load(entityMappings, embeddableTypeElement, fieldAccess);
@@ -116,7 +121,38 @@ public class Embedded extends CompositionAttribute<Embeddable> implements Associ
         }
         embedded.setConnectedClass(embeddableClassSpec);
         embedded.setConverts(Convert.load(element));
-        embedded.setAttributeConstraints(JavaSourceParserUtil.getBeanValidation(element));
+        return embedded;
+    }
+
+    public static Embedded load(MemberExplorer member) {
+        EntityMappings entityMappings = member.getEntityMapping();
+        Embedded embedded = new Embedded();
+        embedded.loadAttribute(member);
+        embedded.getAttributeOverride().addAll(AttributeOverride.load(member));
+        embedded.getAssociationOverride().addAll(AssociationOverride.load(member));
+        embedded.setAccess(AccessType.load(member));
+
+        ResolvedReferenceTypeDeclaration type = member.getTypeDeclaration();
+        Optional<Embeddable> embeddableClassSpecOpt = entityMappings.findEmbeddable(type.getClassName());
+        Embeddable embeddableClassSpec = null;
+        if (embeddableClassSpecOpt.isPresent()) {
+            embeddableClassSpec = embeddableClassSpecOpt.get();
+        } else if (member.isIncludeReference()
+                || member.getSource().isSelectedClass(type.getClassName())) {
+            try {
+                ClassExplorer clazz = member.getSource().createClass(type.getQualifiedName());
+                embeddableClassSpec = new Embeddable();
+                embeddableClassSpec.load(clazz);
+                entityMappings.addEmbeddable(embeddableClassSpec);
+            } catch (FileNotFoundException ex) {
+                member.getSource().addMissingClass(type.getQualifiedName());
+            }
+        }
+        if (embeddableClassSpec == null) {
+            return null;
+        }
+        embedded.setConnectedClass(embeddableClassSpec);
+        embedded.setConverts(Convert.load(member));
         return embedded;
     }
 

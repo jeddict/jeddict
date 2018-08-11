@@ -24,12 +24,12 @@ import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
 @OptionsPanelController.SubRegistration(
-        location = "JPAModeler",
-        displayName = "#AdvancedOption_DisplayName_Code",
-        keywords = "#AdvancedOption_Keywords_Code",
-        keywordsCategory = "JPAModeler/Code"
+        location = "Jeddict",
+        displayName = "#DISPLAYNAME_CODE",
+        keywords = "#KEYWORDS_CODE",
+        keywordsCategory = "Jeddict/Code"
 )
-@org.openide.util.NbBundle.Messages({"AdvancedOption_DisplayName_Code=Code", "AdvancedOption_Keywords_Code=JPA Modeler Code"})
+@org.openide.util.NbBundle.Messages({"DISPLAYNAME_CODE=Code", "KEYWORDS_CODE=Jeddict Code"})
 public final class CodeOptionsPanelController extends OptionsPanelController {
 
     private CodePanel panel;

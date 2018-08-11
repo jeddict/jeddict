@@ -18,6 +18,8 @@ import io.github.jeddict.jpa.spec.extend.InheritanceHandler;
 import io.github.jeddict.jpa.spec.extend.PaginationType;
 import io.github.jeddict.jpa.spec.validator.override.AssociationValidator;
 import io.github.jeddict.jpa.spec.validator.override.AttributeValidator;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.ClassExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +37,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.lang3.StringUtils;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  *
@@ -114,37 +116,19 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "entity", propOrder = {
-    //    "description",
     "table",
     "secondaryTable",
     "primaryKeyJoinColumn",
     "primaryKeyForeignKey",
-    //    "idClass",
     "inheritance",
     "discriminatorValue",
     "discriminatorColumn",
     "sequenceGenerator",
     "tableGenerator",
-//    "namedStoredProcedureQuery",
-    //    "namedQuery",
-    //    "namedNativeQuery",
-    //    "sqlResultSetMapping",
-    //    "excludeDefaultListeners",
-    //    "excludeSuperclassListeners",
-    //    "entityListeners",
-    //    "prePersist",
-    //    "postPersist",
-    //    "preRemove",
-    //    "postRemove",
-    //    "preUpdate",
-    //    "postUpdate",
-    //    "postLoad",
     "attributeOverride",
     "associationOverride",
     "convert",
     "namedEntityGraph"
-//    "attributes",
-//    "interfaces"
 })
 @XmlRootElement
 public class Entity extends IdentifiableClass implements AccessTypeHandler, InheritanceHandler, AttributeOverrideHandler, AssociationOverrideHandler, ConvertContainerHandler {
@@ -163,9 +147,9 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     @XmlElement(name = "discriminator-column")
     protected DiscriminatorColumn discriminatorColumn;
     @XmlElement(name = "sequence-generator")
-    protected SequenceGenerator sequenceGenerator;
+    protected SequenceGenerator sequenceGenerator; //multiple support
     @XmlElement(name = "table-generator")
-    protected TableGenerator tableGenerator;
+    protected TableGenerator tableGenerator; //multiple support
 
     @XmlElement(name = "attribute-override")
     protected Set<AttributeOverride> attributeOverride;
@@ -195,6 +179,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     //ui properties end
         
     @Override
+    @Deprecated
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         super.load(entityMappings, element, fieldAccess);
         AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, ENTITY_FQN);
@@ -216,11 +201,11 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         if (annotationMirror != null) {
             this.entityName = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
         }
-        
+
         AnnotationMirror cacheableAnnotation = JavaSourceParserUtil.findAnnotation(element, CACHEABLE_FQN);
         if (cacheableAnnotation != null) {
-            Object value =  JavaSourceParserUtil.findAnnotationValue(cacheableAnnotation, "value");
-            if(value == null){
+            Object value = JavaSourceParserUtil.findAnnotationValue(cacheableAnnotation, "value");
+            if (value == null) {
                 this.cacheable = true;
             } else {
                 this.cacheable = (Boolean) value;
@@ -235,7 +220,53 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         this.attributeOverride = AttributeOverride.load(element);
         this.associationOverride = AssociationOverride.load(element);
         this.namedEntityGraph = NamedEntityGraph.load(element);
-        
+
+    }
+
+//        @Override
+    public void load(ClassExplorer clazz) {
+       super.load(clazz);
+
+        AnnotationExplorer annotation = clazz.getAnnotation(javax.persistence.Entity.class).get();
+        annotation.getString("name").ifPresent(this::setEntityName);
+
+        Optional<AnnotationExplorer> tableOpt = clazz.getAnnotation(javax.persistence.Table.class);
+        if (tableOpt.isPresent()) {
+            this.table = Table.load(tableOpt.get());
+        }
+
+        this.secondaryTable = SecondaryTable.load(clazz);
+
+        Optional<AnnotationExplorer> inheritanceOpt = clazz.getAnnotation(javax.persistence.Inheritance.class);
+        if (inheritanceOpt.isPresent()) {
+            this.inheritance = Inheritance.load(inheritanceOpt.get());
+        }
+
+        clazz.getStringAttribute(javax.persistence.DiscriminatorValue.class, "value")
+                .ifPresent(this::setDiscriminatorValue);
+
+        Optional<AnnotationExplorer> discriminatorColumnOpt = clazz.getAnnotation(javax.persistence.DiscriminatorColumn.class);
+        if (discriminatorColumnOpt.isPresent()) {
+            this.discriminatorColumn = DiscriminatorColumn.load(discriminatorColumnOpt.get());
+        }
+
+        this.tableGenerator = TableGenerator.load(clazz);
+        this.sequenceGenerator = SequenceGenerator.load(clazz);
+
+        Optional<AnnotationExplorer> cacheableOpt = clazz.getAnnotation(javax.persistence.Cacheable.class);
+        if (cacheableOpt.isPresent()) {
+            this.cacheable = cacheableOpt.get().getBoolean("value").orElse(true);
+        }
+
+        //        AnnotationMirror primaryKeyForeignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "primaryKeyForeignKeyValue");
+//            if (primaryKeyForeignKeyValue != null) {
+//                this.primaryKeyForeignKey = ForeignKey.load(element, primaryKeyForeignKeyValue);
+//            }
+        this.convert = Convert.load(clazz);
+        this.primaryKeyJoinColumn = PrimaryKeyJoinColumn.load(clazz);
+        this.attributeOverride = AttributeOverride.load(clazz);
+        this.associationOverride = AssociationOverride.load(clazz);
+        this.namedEntityGraph = NamedEntityGraph.load(clazz);
     }
 
     @Override
@@ -846,6 +877,37 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
 
     @Override
     public String toString() {
-        return "Entity{" + "description=" + description + ", table=" + table + ", secondaryTable=" + secondaryTable + ", primaryKeyJoinColumn=" + primaryKeyJoinColumn + ", idClass=" + idClass + ", inheritance=" + inheritance + ", discriminatorValue=" + discriminatorValue + ", discriminatorColumn=" + discriminatorColumn + ", sequenceGenerator=" + sequenceGenerator + ", tableGenerator=" + tableGenerator + ", namedQuery=" + namedQuery + ", namedNativeQuery=" + namedNativeQuery + ", sqlResultSetMapping=" + sqlResultSetMapping + ", excludeDefaultListeners=" + excludeDefaultListeners + ", excludeSuperclassListeners=" + excludeSuperclassListeners + ", entityListeners=" + entityListeners + ", prePersist=" + prePersist + ", postPersist=" + postPersist + ", preRemove=" + preRemove + ", postRemove=" + postRemove + ", preUpdate=" + preUpdate + ", postUpdate=" + postUpdate + ", postLoad=" + postLoad + ", attributeOverride=" + attributeOverride + ", associationOverride=" + associationOverride + ", attributes=" + attributes + ", entityName=" + entityName + ", clazz=" + clazz + ", access=" + access + ", cacheable=" + cacheable + ", metadataComplete=" + metadataComplete + '}';
+        return "Entity{"
+                + "description=" + description
+                + ", table=" + table
+                + ", secondaryTable=" + secondaryTable
+                + ", primaryKeyJoinColumn=" + primaryKeyJoinColumn
+                + ", idClass=" + idClass
+                + ", inheritance=" + inheritance
+                + ", discriminatorValue=" + discriminatorValue
+                + ", discriminatorColumn=" + discriminatorColumn
+                + ", sequenceGenerator=" + sequenceGenerator
+                + ", tableGenerator=" + tableGenerator
+                + ", namedQuery=" + namedQuery
+                + ", namedNativeQuery=" + namedNativeQuery
+                + ", sqlResultSetMapping=" + sqlResultSetMapping
+                + ", excludeDefaultListeners=" + excludeDefaultListeners
+                + ", excludeSuperclassListeners=" + excludeSuperclassListeners
+                + ", entityListeners=" + entityListeners
+                + ", prePersist=" + prePersist
+                + ", postPersist=" + postPersist
+                + ", preRemove=" + preRemove
+                + ", postRemove=" + postRemove
+                + ", preUpdate=" + preUpdate
+                + ", postUpdate=" + postUpdate
+                + ", postLoad=" + postLoad
+                + ", attributeOverride=" + attributeOverride
+                + ", associationOverride=" + associationOverride
+                + ", attributes=" + attributes
+                + ", entityName=" + entityName
+                + ", clazz=" + clazz
+                + ", access=" + access
+                + ", cacheable=" + cacheable
+                + '}';
     }
 }

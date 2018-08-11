@@ -15,10 +15,11 @@
  */
 package io.github.jeddict.bv.constraints;
 
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -28,44 +29,51 @@ import io.github.jeddict.source.JavaSourceParserUtil;
 public class Digits extends Constraint {
 
     @XmlAttribute(name = "f")
-    private Integer fraction;
+    private String fraction;
 
     @XmlAttribute(name = "i")
-    private Integer integer;
+    private String integer;
 
     /**
      * @return the fraction
      */
-    public Integer getFraction() {
+    public String getFraction() {
         return fraction;
     }
 
     /**
      * @param fraction the fraction to set
      */
-    public void setFraction(Integer fraction) {
+    public void setFraction(String fraction) {
         this.fraction = fraction;
     }
 
     /**
      * @return the integer
      */
-    public Integer getInteger() {
+    public String getInteger() {
         return integer;
     }
 
     /**
      * @param integer the integer to set
      */
-    public void setInteger(Integer integer) {
+    public void setInteger(String integer) {
         this.integer = integer;
     }
 
     @Override
-    public void load(AnnotationMirror annotationMirror) {
-        super.load(annotationMirror);
-        this.integer = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "integer");
-        this.fraction = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "fraction");
+    public void load(AnnotationMirror annotation) {
+        super.load(annotation);
+        this.integer = (String) JavaSourceParserUtil.findAnnotationValue(annotation, "integer");
+        this.fraction = (String) JavaSourceParserUtil.findAnnotationValue(annotation, "fraction");
+    }
+
+    @Override
+    public void load(AnnotationExplorer annotation) {
+        super.load(annotation);
+        annotation.getString("integer").ifPresent(this::setInteger);
+        annotation.getString("fraction").ifPresent(this::setFraction);
     }
 
     @Override

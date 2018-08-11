@@ -15,16 +15,6 @@
  */
 package io.github.jeddict.bv.constraints;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import static io.github.jeddict.jcode.util.AttributeType.BIGDECIMAL;
 import static io.github.jeddict.jcode.util.AttributeType.BIGINTEGER;
 import static io.github.jeddict.jcode.util.AttributeType.BOOLEAN;
@@ -52,6 +42,16 @@ import static io.github.jeddict.jcode.util.AttributeType.SHORT_WRAPPER;
 import static io.github.jeddict.jcode.util.AttributeType.STRING;
 import static io.github.jeddict.jcode.util.AttributeType.STRING_FQN;
 import static io.github.jeddict.jcode.util.AttributeType.UUID;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -66,8 +66,20 @@ public class ConstraintUtil {
         final int MAX_LIMIT = 5;
         int min, max;
         if (size != null) {
-            min = size.getMin() != null ? size.getMin() : 0;
-            max = size.getMax() != null ? size.getMax() : (min + MAX_LIMIT);
+            min = 0;
+            if (size.getMin() != null) {
+                try {
+                    min = Integer.valueOf(size.getMin());
+                } catch (NumberFormatException nfe) {
+                }
+            }
+            max = min + MAX_LIMIT;
+            if (size.getMin() != null) {
+                try {
+                    max = Integer.valueOf(size.getMax());
+                } catch (NumberFormatException nfe) {
+                }
+            }
         } else {
             min = 0;
             max = MAX_LIMIT;
@@ -81,8 +93,21 @@ public class ConstraintUtil {
     private static final BiFunction<Map<String, Constraint>, Long, String> NUMBER_VALUE = (cm, packet) -> {
         Min minCons = (Min) cm.get(Min.class.getSimpleName());
         Max maxCons = (Max) cm.get(Max.class.getSimpleName());
-        Long min = minCons != null? minCons.getValue() : null;
-        Long max = maxCons != null? maxCons.getValue() : null;
+        Long min = null;
+        Long max = null;
+        if (minCons != null) {
+            try {
+                min = Long.valueOf(minCons.getValue());
+            } catch (NumberFormatException nfe) {
+            }
+        }
+        if (maxCons != null) {
+            try {
+                max = Long.valueOf(maxCons.getValue());
+            } catch (NumberFormatException nfe) {
+            }
+        }
+
         Long result;
         if (min == null && max != null) {
             result = max - packet;

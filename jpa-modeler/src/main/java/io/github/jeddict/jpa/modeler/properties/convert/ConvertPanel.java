@@ -30,7 +30,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.persistence.AttributeConverter;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.java.source.ClasspathInfo;
 import org.netbeans.api.java.source.JavaSource;
 import org.netbeans.modeler.core.ModelerFile;

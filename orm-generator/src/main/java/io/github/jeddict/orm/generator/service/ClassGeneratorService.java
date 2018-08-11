@@ -16,6 +16,7 @@
 package io.github.jeddict.orm.generator.service;
 
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
@@ -32,6 +33,7 @@ import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.MappedSuperclass;
 import io.github.jeddict.jpa.spec.bean.BeanClass;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
+import io.github.jeddict.jpa.spec.sync.JavaClassSyncHandler;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.compiler.def.ClassDefSnippet;
 import io.github.jeddict.orm.generator.compiler.def.ManagedClassDefSnippet;
@@ -203,7 +205,7 @@ public class ClassGeneratorService implements ModuleGenerator {
         JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
         JavaParser.getStaticConfiguration().setSymbolResolver(symbolSolver);
     }
-    
+
     private void loadExistingSnippet(JavaClass javaClass) {
         String pathTemplate = javaClass.getRootPackage().replace(".", "/") + "/%s" + JAVA_EXT_SUFFIX;
         FileObject root = sourceGroup.getRootFolder();
@@ -216,7 +218,10 @@ public class ClassGeneratorService implements ModuleGenerator {
         }
         if (existingFile != null) {
             try {
-                javaClass.loadExistingSnippet(JavaParser.parse(FileUtil.toFile(existingFile)));
+                CompilationUnit existingSource = JavaParser.parse(FileUtil.toFile(existingFile));
+                JavaClassSyncHandler
+                        .getInstance(javaClass)
+                        .syncExistingSnippet(existingSource);
             } catch (FileNotFoundException ex) {
             }
         }

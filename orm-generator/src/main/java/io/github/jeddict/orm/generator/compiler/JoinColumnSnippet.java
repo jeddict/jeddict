@@ -15,16 +15,16 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMN_FQN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMN_FQN;
-import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import io.github.jeddict.settings.code.CodePanel;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class JoinColumnSnippet implements Snippet {
 
@@ -139,13 +139,6 @@ public class JoinColumnSnippet implements Snippet {
 
         builder.append(OPEN_PARANTHESES);
 
-        if (columnDefinition != null && !columnDefinition.trim().isEmpty()) {
-            builder.append("columnDefinition=\"");
-            builder.append(columnDefinition);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
         if (name != null) {
             builder.append("name=\"");
             builder.append(name);
@@ -164,6 +157,16 @@ public class JoinColumnSnippet implements Snippet {
             builder.append("table=\"");
             builder.append(table);
             builder.append(ORMConverterUtil.QUOTE);
+            builder.append(ORMConverterUtil.COMMA);
+        }
+
+        if (CodePanel.isGenerateDefaultValue()) {
+            builder.append("unique=");
+            builder.append(unique);
+            builder.append(ORMConverterUtil.COMMA);
+        } else if (unique == true) {
+            builder.append("unique=");
+            builder.append(unique);
             builder.append(ORMConverterUtil.COMMA);
         }
 
@@ -188,16 +191,6 @@ public class JoinColumnSnippet implements Snippet {
         }
 
         if (CodePanel.isGenerateDefaultValue()) {
-            builder.append("unique=");
-            builder.append(unique);
-            builder.append(ORMConverterUtil.COMMA);
-        } else if (unique == true) {
-            builder.append("unique=");
-            builder.append(unique);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (CodePanel.isGenerateDefaultValue()) {
             builder.append("updatable=");
             builder.append(updatable);
             builder.append(ORMConverterUtil.COMMA);
@@ -210,6 +203,13 @@ public class JoinColumnSnippet implements Snippet {
         if (foreignKey != null) {
             builder.append("foreignKey=");
             builder.append(foreignKey.getSnippet());
+            builder.append(ORMConverterUtil.COMMA);
+        }
+
+        if (columnDefinition != null && !columnDefinition.trim().isEmpty()) {
+            builder.append("columnDefinition=\"");
+            builder.append(columnDefinition);
+            builder.append(ORMConverterUtil.QUOTE);
             builder.append(ORMConverterUtil.COMMA);
         }
         

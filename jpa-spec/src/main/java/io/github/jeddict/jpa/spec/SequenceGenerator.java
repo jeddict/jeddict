@@ -6,6 +6,12 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.SEQUENCE_GENERATOR_FQN;
+import io.github.jeddict.jpa.spec.validator.SequenceGeneratorValidator;
+import io.github.jeddict.source.AnnotatedMember;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import java.util.Optional;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -14,9 +20,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.sequencing.SequenceGeneratorMetadata;
-import static io.github.jeddict.jcode.JPAConstants.SEQUENCE_GENERATOR_FQN;
-import io.github.jeddict.jpa.spec.validator.SequenceGeneratorValidator;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -91,6 +94,23 @@ public class SequenceGenerator {
         }
         return sequenceGenerator;
 
+    }
+
+    public static SequenceGenerator load(AnnotatedMember member) {
+        SequenceGenerator sequenceGenerator = null;
+        Optional<AnnotationExplorer> sequenceGeneratorOpt = member.getAnnotation(javax.persistence.SequenceGenerator.class);
+        if (sequenceGeneratorOpt.isPresent()) {
+            sequenceGenerator = new SequenceGenerator();
+            AnnotationExplorer annotation = sequenceGeneratorOpt.get();
+            annotation.getString("name").ifPresent(sequenceGenerator::setName);
+            annotation.getString("description").ifPresent(sequenceGenerator::setDescription);
+            annotation.getString("sequenceName").ifPresent(sequenceGenerator::setSequenceName);
+            annotation.getString("catalog").ifPresent(sequenceGenerator::setCatalog);
+            annotation.getString("schema").ifPresent(sequenceGenerator::setSchema);
+            annotation.getInt("initialValue").ifPresent(sequenceGenerator::setInitialValue);
+            annotation.getInt("allocationSize").ifPresent(sequenceGenerator::setAllocationSize);
+        }
+        return sequenceGenerator;
     }
 
     /**

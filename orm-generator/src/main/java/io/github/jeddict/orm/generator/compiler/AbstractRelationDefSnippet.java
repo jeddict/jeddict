@@ -15,10 +15,10 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLASS_SUFFIX;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 
 public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
 
@@ -33,18 +33,13 @@ public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
 
     @Override
     public List<String> getCascadeTypes() {
-
-        if (cascadeTypes.isEmpty()) {
-            return cascadeTypes;
-        }
-
-        return processedCascadeTypes();
+        return cascadeTypes;
     }
 
     @Override
     public void setCascadeTypes(List<String> cascadeTypes) {
         if (cascadeTypes != null) {
-            this.cascadeTypes = cascadeTypes;
+            this.cascadeTypes = processedCascadeTypes(cascadeTypes);
         }
     }
 
@@ -66,18 +61,18 @@ public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
     public String getTargetEntity() {
 
         if (targetEntity == null
-                || targetEntity.endsWith(ORMConverterUtil.CLASS_SUFFIX)) {
+                || targetEntity.endsWith(CLASS_SUFFIX)) {
             return targetEntity;
         }
 
-        return targetEntity + ORMConverterUtil.CLASS_SUFFIX;
+        return targetEntity + CLASS_SUFFIX;
     }
     
     @Override
     public String getTargetEntityName() {
 
-        if (targetEntity.endsWith(ORMConverterUtil.CLASS_SUFFIX)) {
-            return targetEntity.substring(0, targetEntity.lastIndexOf(ORMConverterUtil.CLASS_SUFFIX));
+        if (targetEntity.endsWith(CLASS_SUFFIX)) {
+            return targetEntity.substring(0, targetEntity.lastIndexOf(CLASS_SUFFIX));
         }
 
         return targetEntity;
@@ -88,7 +83,7 @@ public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
         this.targetEntity = targetEntity;
     }
 
-    private List<String> processedCascadeTypes() {
+    private List<String> processedCascadeTypes(List<String> cascadeTypes) {
         List<String> processedCascadeTypes = new ArrayList<>();
         for (String cascadeType : cascadeTypes) {
             if (!cascadeType.startsWith(CASCADE_PREFIX)) {

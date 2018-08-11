@@ -15,12 +15,13 @@
  */
 package io.github.jeddict.bv.constraints;
 
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import static java.lang.Boolean.FALSE;
 import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.apache.commons.lang3.StringUtils;
-import io.github.jeddict.source.JavaSourceParserUtil;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
  *
@@ -36,15 +37,22 @@ public class DecimalMax extends Constraint {
     private Boolean inclusive = true;
 
     @Override
-    public void load(AnnotationMirror annotationMirror) {
-        super.load(annotationMirror);
-        this.value = JavaSourceParserUtil.findAnnotationValueAsString(annotationMirror, "value");
-        this.inclusive = (Boolean)JavaSourceParserUtil.findAnnotationValue(annotationMirror, "inclusive");
+    public void load(AnnotationMirror annotation) {
+        super.load(annotation);
+        this.value = JavaSourceParserUtil.findAnnotationValueAsString(annotation, "value");
+        this.inclusive = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotation, "inclusive");
+    }
+
+    @Override
+    public void load(AnnotationExplorer annotation) {
+        super.load(annotation);
+        annotation.getString("value").ifPresent(this::setValue);
+        annotation.getBoolean("inclusive").ifPresent(this::setInclusive);
     }
 
     @Override
     public boolean isEmpty() {
-        return StringUtils.isBlank(value) && !FALSE.equals(inclusive);
+        return isBlank(value) && !FALSE.equals(inclusive);
     }
     
     @Override

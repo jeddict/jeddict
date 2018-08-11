@@ -18,7 +18,7 @@ package io.github.jeddict.orm.generator.compiler;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import static io.github.jeddict.jcode.JPAConstants.ORDER_BY;
 import static io.github.jeddict.jcode.JPAConstants.ORDER_BY_FQN;
 import io.github.jeddict.settings.code.CodePanel;

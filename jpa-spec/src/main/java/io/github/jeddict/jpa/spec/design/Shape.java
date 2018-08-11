@@ -34,11 +34,7 @@ import javax.xml.namespace.QName;
  */
 @XmlRootElement(name = "JPAShape")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Shape
-        extends LabeledShape {
-//    @XmlElementWrapper( name="extensionElements" )
-//    @XmlElement(name = "extension")
-//    private JPAShapeDesign jpaShapeDesign;
+public class Shape extends LabeledShape {
 
     @XmlElement
     protected Label label;

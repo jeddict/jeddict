@@ -6,12 +6,15 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.ENUMERATED_FQN;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import io.github.jeddict.source.MemberExplorer;
+import java.util.Optional;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.JPAConstants.ENUMERATED_FQN;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  * <p>
@@ -46,6 +49,7 @@ public enum EnumType {
         return valueOf(v);
     }
 
+    @Deprecated
     public static EnumType load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
             annotationMirror = JavaSourceParserUtil.findAnnotation(element, ENUMERATED_FQN);
@@ -61,5 +65,16 @@ public enum EnumType {
         }
         return enumType;
 
+    }
+
+    public static EnumType load(MemberExplorer member) {
+        Optional<AnnotationExplorer> enumeratedOpt = member.getAnnotation(javax.persistence.Enumerated.class);
+        if (enumeratedOpt.isPresent()) {
+            AnnotationExplorer annotation = enumeratedOpt.get();
+            return annotation.getEnum("value")
+                    .map(EnumType::valueOf)
+                    .orElse(DEFAULT);
+        }
+        return null;
     }
 }

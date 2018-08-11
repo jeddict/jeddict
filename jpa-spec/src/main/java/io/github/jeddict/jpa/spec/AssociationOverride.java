@@ -6,10 +6,19 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDES_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDE_FQN;
+import io.github.jeddict.jpa.spec.extend.JoinColumnHandler;
+import io.github.jeddict.source.AnnotatedMember;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -17,10 +26,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDES_FQN;
-import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDE_FQN;
-import io.github.jeddict.jpa.spec.extend.JoinColumnHandler;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -67,7 +72,6 @@ import io.github.jeddict.source.JavaSourceParserUtil;
     "foreignKey",
     "joinTable"
 })
-//@XmlJavaTypeAdapter(value=AssociationValidator.class)
 public class AssociationOverride implements Comparable<AssociationOverride>, JoinColumnHandler {
 
     protected String description;
@@ -80,7 +84,8 @@ public class AssociationOverride implements Comparable<AssociationOverride>, Joi
     @XmlAttribute(name = "name", required = true)
     protected String name;
 
-    private static AssociationOverride loadAssociation(Element element, AnnotationMirror annotationMirror) {
+    @Deprecated
+    private static AssociationOverride load(Element element, AnnotationMirror annotationMirror) {
         AssociationOverride associationOverride = null;
         if (annotationMirror != null) {
             associationOverride = new AssociationOverride();
@@ -107,6 +112,7 @@ public class AssociationOverride implements Comparable<AssociationOverride>, Joi
         return associationOverride;
     }
 
+    @Deprecated
     public static Set<AssociationOverride> load(Element element) {
         Set<AssociationOverride> associationOverrides = new TreeSet<>();
 
@@ -115,15 +121,53 @@ public class AssociationOverride implements Comparable<AssociationOverride>, Joi
             List associationOverridesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(associationOverridesMirror, "value");
             if (associationOverridesMirrorList != null) {
                 for (Object associationOverrideObj : associationOverridesMirrorList) {
-                    associationOverrides.add(AssociationOverride.loadAssociation(element, (AnnotationMirror) associationOverrideObj));
+                    associationOverrides.add(AssociationOverride.load(element, (AnnotationMirror) associationOverrideObj));
                 }
             }
         } else {
             associationOverridesMirror = JavaSourceParserUtil.findAnnotation(element, ASSOCIATION_OVERRIDE_FQN);
             if (associationOverridesMirror != null) {
-                associationOverrides.add(AssociationOverride.loadAssociation(element, associationOverridesMirror));
+                associationOverrides.add(AssociationOverride.load(element, associationOverridesMirror));
             }
         }
+
+        return associationOverrides;
+    }
+
+    private static AssociationOverride load(AnnotationExplorer annotation) {
+        AssociationOverride associationOverride = new AssociationOverride();
+        annotation.getString("name").ifPresent(associationOverride::setName);
+
+        associationOverride.getJoinColumn().addAll(
+                annotation.getAnnotationList("joinColumns")
+                        .map(JoinColumn::load)
+                        .collect(toList())
+        );
+
+        annotation.getAnnotation("joinTable").map(JoinTable::load).ifPresent(associationOverride::setJoinTable);
+        annotation.getAnnotation("foreignKey").map(ForeignKey::load).ifPresent(associationOverride::setForeignKey);
+
+        return associationOverride;
+    }
+
+    public static Set<AssociationOverride> load(AnnotatedMember member) {
+        Set<AssociationOverride> associationOverrides = new TreeSet<>();
+
+        Optional<AnnotationExplorer> assocOverridesOpt = member.getAnnotation(javax.persistence.AssociationOverrides.class);
+        if (assocOverridesOpt.isPresent()) {
+            associationOverrides.addAll(
+                    assocOverridesOpt.get()
+                            .getAnnotationList("value")
+                            .map(AssociationOverride::load)
+                            .collect(toSet())
+            );
+        }
+
+        associationOverrides.addAll(
+                member.getRepeatableAnnotations(javax.persistence.AssociationOverride.class)
+                        .map(AssociationOverride::load)
+                        .collect(toSet())
+        );
 
         return associationOverrides;
     }

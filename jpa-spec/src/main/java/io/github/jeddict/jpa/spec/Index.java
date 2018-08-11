@@ -6,6 +6,10 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.INDEX_FQN;
+import io.github.jeddict.jpa.spec.extend.OrderbyItem;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,11 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.tables.IndexMetadata;
-import static io.github.jeddict.jcode.JPAConstants.INDEX_FQN;
-import io.github.jeddict.jpa.spec.extend.OrderbyItem;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -77,6 +78,7 @@ public class Index {
         this.name = name;
     }
 
+    @Deprecated
     public static Index load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
             annotationMirror = JavaSourceParserUtil.findAnnotation(element, INDEX_FQN);
@@ -98,6 +100,15 @@ public class Index {
             index.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
             index.unique = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "unique");
         }
+        return index;
+    }
+
+    public static Index load(AnnotationExplorer annotation) {
+        Index index = new Index();
+        annotation.getString("name").ifPresent(index::setName);
+        annotation.getBoolean("unique").ifPresent(index::setUnique);
+        annotation.getString("columnList")
+                .ifPresent(value -> index.getColumnList().addAll(OrderbyItem.process(value)));
         return index;
     }
 

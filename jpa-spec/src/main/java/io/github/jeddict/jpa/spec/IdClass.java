@@ -6,6 +6,11 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import static io.github.jeddict.jcode.JPAConstants.ID_CLASS_FQN;
+import io.github.jeddict.source.ClassExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import java.util.Optional;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.DeclaredType;
@@ -13,8 +18,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.JPAConstants.ID_CLASS_FQN;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -50,6 +53,7 @@ public class IdClass {
     @XmlAttribute(name = "class", required = true)
     protected String clazz;
 
+    @Deprecated
     public static IdClass load(Element element) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, ID_CLASS_FQN);
         IdClass idClass = null;
@@ -57,6 +61,17 @@ public class IdClass {
             idClass = new IdClass();
             DeclaredType declaredType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
             idClass.clazz = declaredType.asElement().getSimpleName().toString();
+        }
+        return idClass;
+    }
+
+    public static IdClass load(ClassExplorer clazz) {
+        IdClass idClass = null;
+        Optional<ResolvedReferenceTypeDeclaration> idClazzNameOpt = clazz
+                .getResolvedClassAttribute(javax.persistence.IdClass.class, "value");
+        if (idClazzNameOpt.isPresent()) {
+            idClass = new IdClass();
+            idClass.clazz = idClazzNameOpt.get().getClassName();
         }
         return idClass;
     }

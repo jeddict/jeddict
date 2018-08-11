@@ -30,7 +30,6 @@ import java.io.ObjectStreamClass;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.prefs.Preferences;
-import org.apache.commons.lang3.SerializationException;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.openide.util.Exceptions;
@@ -63,7 +62,7 @@ public class PreferenceUtils {
             out.writeObject(obj);
 
         } catch (IOException ex) {
-            throw new SerializationException(ex);
+            throw new IllegalStateException(ex);
         } finally {
             try {
                 if (out != null) {
@@ -92,11 +91,11 @@ public class PreferenceUtils {
             return in.readObject();
 
         } catch (ClassNotFoundException ex) {
-            throw new SerializationException(ex);
+            throw new IllegalStateException(ex);
         } catch (InvalidClassException ex) {
             throw ex;
         } catch (IOException ex) {
-            throw new SerializationException(ex);
+            throw new IllegalStateException(ex);
         } finally {
             try {
                 if (in != null) {

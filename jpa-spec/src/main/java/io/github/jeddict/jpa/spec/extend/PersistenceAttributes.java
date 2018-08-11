@@ -15,6 +15,8 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
+import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import io.github.jeddict.db.accessor.BasicSpecAccessor;
 import io.github.jeddict.db.accessor.ElementCollectionSpecAccessor;
 import io.github.jeddict.db.accessor.EmbeddedSpecAccessor;
@@ -55,7 +57,6 @@ import static java.util.stream.Collectors.toSet;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
 
 /**
@@ -595,19 +596,19 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
         Set<String> converts = new HashSet();
         for (Basic bc : getBasic()) {
             Convert convert = bc.getConvert();
-            if (StringUtils.isNotBlank(convert.getConverter())) {
+            if (isNotBlank(convert.getConverter())) {
                 converts.add(convert.getConverter());
             }
         }
         for (ElementCollection ec : getElementCollection()) {
             converts.addAll(ec.getConverts()
                     .stream()
-                    .filter(con -> StringUtils.isNotBlank(con.getConverter()))
+                    .filter(con -> isNotBlank(con.getConverter()))
                     .map(Convert::getConverter)
                     .collect(toSet()));
             converts.addAll(ec.getMapKeyConverts()
                     .stream()
-                    .filter(con -> StringUtils.isNotBlank(con.getConverter()))
+                    .filter(con -> isNotBlank(con.getConverter()))
                     .map(Convert::getConverter)
                     .collect(toSet()));
         }

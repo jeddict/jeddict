@@ -1,5 +1,5 @@
 /**
- * Copyright [2017  ] Gaurav Gupta
+ * Copyright 2013-2018 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,18 +15,15 @@
  */
 package io.github.jeddict.jpa.modeler.initializer;
 
-import java.util.Date;
-import javax.swing.JOptionPane;
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.ERROR_ICON;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.workspace.WorkSpace;
-import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.ERROR_ICON;
+import io.github.jeddict.jsonb.modeler.JSONBModeler;
+import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import org.netbeans.modeler.core.ModelerFile;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
-import io.github.jeddict.jsonb.modeler.JSONBModeler;
 
 /**
  *

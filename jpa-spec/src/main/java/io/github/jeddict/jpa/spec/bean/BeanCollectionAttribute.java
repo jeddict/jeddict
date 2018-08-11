@@ -15,9 +15,10 @@
  */
 package io.github.jeddict.jpa.spec.bean;
 
+import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
+import io.github.jeddict.source.MemberExplorer;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
-import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
 
 public class BeanCollectionAttribute extends BeanAttribute implements CollectionTypeHandler {
 
@@ -26,7 +27,14 @@ public class BeanCollectionAttribute extends BeanAttribute implements Collection
     @XmlAttribute(name = "cit")
     private String collectionImplType;
 
-    public BeanCollectionAttribute() {
+    public static BeanCollectionAttribute load(MemberExplorer member, String typeArgument) {
+
+        BeanCollectionAttribute attribute = new BeanCollectionAttribute();
+        attribute.loadAttribute(member);
+        attribute.setCollectionType(member.getType());
+        attribute.setAttributeType(typeArgument);
+        // collectionImplType, 1st arg in map type ??
+        return attribute;
     }
 
     /**

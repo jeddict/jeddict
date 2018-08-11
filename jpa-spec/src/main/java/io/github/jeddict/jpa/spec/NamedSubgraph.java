@@ -6,8 +6,11 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.DeclaredType;
@@ -16,7 +19,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -87,6 +89,17 @@ public class NamedSubgraph {
             }
 
         }
+        return namedSubgraph;
+    }
+
+    public static NamedSubgraph load(AnnotationExplorer annotation) {
+        NamedSubgraph namedSubgraph = new NamedSubgraph();
+        annotation.getString("name").ifPresent(namedSubgraph::setName);
+        annotation.getClassName("type").ifPresent(namedSubgraph::setClazz);
+        namedSubgraph.namedAttributeNode
+                = annotation.getAnnotationList("attributeNodes")
+                        .map(NamedAttributeNode::load)
+                        .collect(toList());
         return namedSubgraph;
     }
 

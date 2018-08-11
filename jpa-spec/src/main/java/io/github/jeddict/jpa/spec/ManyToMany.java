@@ -6,6 +6,11 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.MANY_TO_MANY_FQN;
+import io.github.jeddict.jpa.spec.extend.MultiRelationAttribute;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import io.github.jeddict.source.MemberExplorer;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -14,9 +19,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.JPAConstants.MANY_TO_MANY_FQN;
-import io.github.jeddict.jpa.spec.extend.MultiRelationAttribute;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -90,6 +92,13 @@ public class ManyToMany extends MultiRelationAttribute {
             annotationMirror = JavaSourceParserUtil.findAnnotation(element, MANY_TO_MANY_FQN);
         }
         super.loadAttribute(entityMappings, element, variableElement, getterElement, annotationMirror);
+        return this;
+    }
+
+//        @Override
+    public ManyToMany load(MemberExplorer member) {
+        AnnotationExplorer annotation = member.getAnnotation(javax.persistence.ManyToMany.class).get();
+        super.loadAttribute(member, annotation);
         return this;
     }
 

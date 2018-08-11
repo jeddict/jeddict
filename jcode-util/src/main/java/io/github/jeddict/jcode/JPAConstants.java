@@ -15,6 +15,10 @@
  */
 package io.github.jeddict.jcode;
 
+import static java.util.Arrays.asList;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  *
  * @author Gaurav Gupta
@@ -27,12 +31,13 @@ public class JPAConstants {
     public static final String PERSISTENCE_METAMODEL_PACKAGE = PERSISTENCE_PACKAGE_PREFIX + "metamodel.";
 
     public static final String QUERY_TYPE = "Query";
-    public static final String ENTITY_MANAGER_TYPE = "EntityManager";
+    public static final String ENTITY_MANAGER = "EntityManager";
     public static final String ENTITY_MANAGER_FACTORY = "EntityManagerFactory";
     public static final String ENTITY_TRANSACTION = "EntityTransaction";
     public static final String PERSISTENCE = "Persistence";
     public static final String PERSISTENCE_CONTEXT_ANNOTATION = "PersistenceContext";
     public static final String PERSISTENCE_CONTEXT = PERSISTENCE_PACKAGE_PREFIX + PERSISTENCE_CONTEXT_ANNOTATION;
+    public static final String NO_RESULT_EXCEPTION = "NoResultException";
 
     public static final String EXCLUDE_DEFAULT_LISTENERS = "ExcludeDefaultListeners";
     public static final String EXCLUDE_DEFAULT_LISTENERS_FQN = PERSISTENCE_PACKAGE_PREFIX + EXCLUDE_DEFAULT_LISTENERS;
@@ -44,8 +49,8 @@ public class JPAConstants {
     public static final String CONVERTS_FQN = PERSISTENCE_PACKAGE_PREFIX + CONVERTS;
     public static final String CONVERT = "Convert";
     public static final String CONVERT_FQN = PERSISTENCE_PACKAGE_PREFIX + CONVERT;
-
-    public static final String NO_RESULT_EXCEPTION = "NoResultException";
+    public static final String CONVERTER = "Converter";
+    public static final String CONVERTER_FQN = PERSISTENCE_PACKAGE_PREFIX + CONVERTER;
 
     //Class
     public static final String ENTITY = "Entity";
@@ -68,7 +73,7 @@ public class JPAConstants {
 
     public static final String ACCESS = "Access";
     public static final String ACCESS_FQN = PERSISTENCE_PACKAGE_PREFIX + ACCESS;
-    
+
     public static final String UNIQUE_CONSTRAINT = "UniqueConstraint";
     public static final String UNIQUE_CONSTRAINT_FQN = PERSISTENCE_PACKAGE_PREFIX + UNIQUE_CONSTRAINT;
 
@@ -105,6 +110,10 @@ public class JPAConstants {
     public static final String TABLE_GENERATOR_FQN = PERSISTENCE_PACKAGE_PREFIX + TABLE_GENERATOR;
     public static final String SEQUENCE_GENERATOR = "SequenceGenerator";
     public static final String SEQUENCE_GENERATOR_FQN = PERSISTENCE_PACKAGE_PREFIX + SEQUENCE_GENERATOR;
+    public static final String TABLE_GENERATORS = "TableGenerators";
+    public static final String TABLE_GENERATORS_FQN = PERSISTENCE_PACKAGE_PREFIX + TABLE_GENERATORS;
+    public static final String SEQUENCE_GENERATORS = "SequenceGenerators";
+    public static final String SEQUENCE_GENERATORS_FQN = PERSISTENCE_PACKAGE_PREFIX + SEQUENCE_GENERATORS;
 
     public static final String PRIMARY_KEY_JOIN_COLUMNS = "PrimaryKeyJoinColumns";
     public static final String PRIMARY_KEY_JOIN_COLUMNS_FQN = PERSISTENCE_PACKAGE_PREFIX + PRIMARY_KEY_JOIN_COLUMNS;
@@ -273,4 +282,100 @@ public class JPAConstants {
     public static final String JAVA_GLOBAL_DATASOURCE_PREFIX = "java:global/";
     public static final String DATABASE_ACTION = PERSISTENCE_PACKAGE_PREFIX + "schema-generation.database.action";
 
+    public static final Set<String> JPA_ANNOTATIONS = new HashSet<>(asList(
+            ENTITY,
+            EMBEDDABLE,
+            MAPPED_SUPERCLASS,
+            TABLE,
+            ID_CLASS,
+            CACHEABLE,
+            ACCESS,
+            UNIQUE_CONSTRAINT,
+            SECONDARY_TABLE,
+            SECONDARY_TABLES,
+            DISCRIMINATOR_COLUMN,
+            DISCRIMINATOR_TYPE,
+            DISCRIMINATOR_VALUE,
+            INHERITANCE,
+            EXCLUDE_DEFAULT_LISTENERS,
+            EXCLUDE_SUPERCLASS_LISTENERS,
+            ENTITY_LISTENERS,
+            CONVERTS,
+            CONVERT,
+            CONVERTER,
+            ID,
+            EMBEDDED_ID,
+            GENERATED_VALUE,
+            TABLE_GENERATOR,
+            SEQUENCE_GENERATOR,
+            TABLE_GENERATORS,
+            SEQUENCE_GENERATORS,
+            PRIMARY_KEY_JOIN_COLUMNS,
+            PRIMARY_KEY_JOIN_COLUMN,
+            MAPS_ID,
+            MAP_KEY,
+            MAP_KEY_CLASS,
+            MAP_KEY_TEMPORAL,
+            MAP_KEY_ENUMERATED,
+            MAP_KEY_ATTRIBUTE_OVERRIDE,
+            MAP_KEY_COLUMN,
+            MAP_KEY_JOIN_COLUMNS,
+            MAP_KEY_JOIN_COLUMN,
+            BASIC,
+            COLLECTION_TABLE,
+            ORDER_BY,
+            ORDER_COLUMN,
+            ELEMENT_COLLECTION,
+            COLUMN,
+            ENUMERATED,
+            TEMPORAL,
+            LOB,
+            TRANSIENT,
+            VERSION,
+            JOIN_TABLE,
+            MANY_TO_ONE,
+            ONE_TO_ONE,
+            MANY_TO_MANY,
+            ONE_TO_MANY,
+            JOIN_COLUMNS,
+            JOIN_COLUMN,
+            INDEX,
+            FOREIGN_KEY,
+            CONSTRAINT_MODE,
+            EMBEDDED,
+            ATTRIBUTE_OVERRIDES,
+            ATTRIBUTE_OVERRIDE,
+            ASSOCIATION_OVERRIDES,
+            ASSOCIATION_OVERRIDE,
+            NAMED_ENTITY_GRAPHS,
+            NAMED_ENTITY_GRAPH,
+            NAMED_SUBGRAPH,
+            NAMED_ATTRIBUTE_NODE,
+            NAMED_NATIVE_QUERIES,
+            NAMED_NATIVE_QUERY,
+            NAMED_QUERIES,
+            NAMED_QUERY,
+            QUERY_HINT,
+            SQL_RESULTSET_MAPPINGS,
+            SQL_RESULTSET_MAPPING,
+            NAMED_STORED_PROCEDURE_QUERIES,
+            NAMED_STORED_PROCEDURE_QUERY,
+            STORED_PROCEDURE_PARAMETER,
+            FIELD_RESULT,
+            ENTITY_RESULT,
+            COLUMN_RESULT,
+            CONSTRUCTOR_RESULT
+    ));
+
+//javax.persistence.PreUpdate (implements java.lang.annotation.Annotation)
+//javax.persistence.PreRemove (implements java.lang.annotation.Annotation)
+//javax.persistence.PrePersist (implements java.lang.annotation.Annotation)
+//javax.persistence.PostUpdate (implements java.lang.annotation.Annotation)
+//javax.persistence.PostRemove (implements java.lang.annotation.Annotation)
+//javax.persistence.PostPersist (implements java.lang.annotation.Annotation)
+//javax.persistence.PostLoad (implements java.lang.annotation.Annotation)
+//javax.persistence.PersistenceUnits (implements java.lang.annotation.Annotation)
+//javax.persistence.PersistenceUnit (implements java.lang.annotation.Annotation)
+//javax.persistence.PersistenceProperty (implements java.lang.annotation.Annotation)
+//javax.persistence.PersistenceContexts (implements java.lang.annotation.Annotation)
 }

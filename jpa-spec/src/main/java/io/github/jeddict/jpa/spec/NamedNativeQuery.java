@@ -6,16 +6,20 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import io.github.jeddict.jpa.spec.extend.QueryMapping;
+import io.github.jeddict.source.AnnotatedMember;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import io.github.jeddict.jpa.spec.extend.QueryMapping;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -55,8 +59,6 @@ import io.github.jeddict.source.JavaSourceParserUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "named-native-query", propOrder = {
-//    "description",
-//    "query",
     "hint"
 })
 public class NamedNativeQuery extends QueryMapping {
@@ -86,6 +88,38 @@ public class NamedNativeQuery extends QueryMapping {
             }
         }
         return namedNativeQuery;
+    }
+
+    public static NamedNativeQuery load(AnnotationExplorer annotation) {
+        NamedNativeQuery namedNativeQuery = new NamedNativeQuery();
+        annotation.getString("name").ifPresent(namedNativeQuery::setName);
+        annotation.getString("query").ifPresent(namedNativeQuery::setQuery);
+        annotation.getClassName("resultClass").ifPresent(namedNativeQuery::setResultClass);
+        annotation.getString("resultSetMapping").ifPresent(namedNativeQuery::setResultSetMapping);
+        namedNativeQuery.hint = annotation.getAnnotationList("hints")
+                .map(hint -> QueryHint.load(hint))
+                .collect(toList());
+        return namedNativeQuery;
+    }
+
+    public static List<NamedNativeQuery> load(AnnotatedMember member) {
+        List<NamedNativeQuery> namedNativeQueries = new ArrayList<>();
+        Optional<AnnotationExplorer> namedNativeQueriesOpt = member.getAnnotation(javax.persistence.NamedNativeQueries.class);
+        if (namedNativeQueriesOpt.isPresent()) {
+            namedNativeQueries.addAll(
+                    namedNativeQueriesOpt.get()
+                            .getAnnotationList("value")
+                            .map(NamedNativeQuery::load)
+                            .collect(toList())
+            );
+        }
+
+        namedNativeQueries.addAll(
+                member.getRepeatableAnnotations(javax.persistence.NamedNativeQuery.class)
+                        .map(NamedNativeQuery::load)
+                        .collect(toList())
+        );
+        return namedNativeQueries;
     }
 
     /**

@@ -15,16 +15,16 @@
  */
 package io.github.jeddict.jpa.modeler.widget.attribute.base;
 
-import java.awt.Image;
-import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getGeneratorProperty;
-import io.github.jeddict.jpa.spec.Id;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.ID_ATTRIBUTE_ICON;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.ID_ATTRIBUTE_ICON_PATH;
+import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getGeneratorProperty;
+import io.github.jeddict.jpa.modeler.widget.EntityWidget;
+import io.github.jeddict.jpa.spec.Id;
+import java.awt.Image;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.ID_ATTRIBUTE_ICON;
 
 /**
  *
@@ -41,7 +41,14 @@ public class IdAttributeWidget extends BaseAttributeWidget<Id> {
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         set.put("JPA_PROP", getGeneratorProperty(this));
+    }
 
+    @Override
+    public void validateName(String previousName, String name) {
+        super.validateName(previousName, name);
+        if (this.getClassWidget() instanceof EntityWidget) {
+            ((EntityWidget) this.getClassWidget()).scanKeyError();
+        }
     }
 
     @Override

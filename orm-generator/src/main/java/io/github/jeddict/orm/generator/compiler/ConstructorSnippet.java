@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.jpa.spec.extend.AccessModifierType;
 import io.github.jeddict.jpa.spec.extend.Constructor;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;

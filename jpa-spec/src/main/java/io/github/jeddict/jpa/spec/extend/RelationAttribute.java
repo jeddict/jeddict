@@ -17,6 +17,7 @@ package io.github.jeddict.jpa.spec.extend;
 
 import io.github.jeddict.jaxb.spec.JaxbVariableType;
 import static io.github.jeddict.jcode.JPAConstants.CASCADE_TYPE_FQN;
+import static io.github.jeddict.jcode.util.JavaUtil.mergePackage;
 import io.github.jeddict.jpa.spec.AccessType;
 import io.github.jeddict.jpa.spec.CascadeType;
 import io.github.jeddict.jpa.spec.EmptyType;
@@ -24,8 +25,10 @@ import io.github.jeddict.jpa.spec.Entity;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.FetchType;
 import io.github.jeddict.jpa.spec.JoinTable;
+import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.JARELoader;
 import io.github.jeddict.source.JavaSourceParserUtil;
+import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
@@ -37,7 +40,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -60,7 +63,9 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
     @XmlElement(name = "join-table")
     protected JoinTable joinTable;
     protected CascadeType cascade;
-    @XmlTransient//(name = "target-entity")
+    @XmlTransient
+    protected String targetEntityPackage;
+    @XmlTransient
     protected String targetEntity;
     @XmlAttribute(name = "fetch")
     protected FetchType fetch;
@@ -68,7 +73,8 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
     @XmlAttribute(name = "access")
     protected AccessType access;
 
-    protected void loadAttribute(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement,AnnotationMirror relationAnnotationMirror) {
+    @Deprecated
+    protected void loadAttribute(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement, AnnotationMirror relationAnnotationMirror) {
         super.loadAttribute(element, variableElement, getterElement);
         this.joinTable = JoinTable.load(element);
         if (StringUtils.isNotBlank((String) JavaSourceParserUtil.findAnnotationValue(relationAnnotationMirror, "mappedBy"))) {
@@ -105,27 +111,47 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
                 }
             }
         }
-
-//        DeclaredType declaredType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(relationAnnotationMirror, "targetEntity");
-//        if (declaredType == null) { // Issue Fix #5925 Start
-////            declaredType = (DeclaredType) variableElement.asType();
-//            String variable = variableElement.asType().toString();
-//            if (variableElement.asType() instanceof ErrorType) { //variable => "<any>"
-//                throw new TypeNotPresentException(this.name + " type not found", null);
-//            }
-//            if (variable.charAt(variable.length() - 1) != '>') { //instanceof SingleRelationAttribute
-//                this.targetEntity = variable.substring(variable.lastIndexOf('.') + 1); // com.jpa.Entity1
-//            } else { //or instanceof MultiRelationAttribute  //java.util.Set<com.jpa.Entity1>
-//                //Detect map or collection => Collection.class.isAssignableFrom(Class.forName(((DeclaredType) variableElement.asType()).asElement().toString()))) 
-//                variable = ((DeclaredType) variableElement.asType()).getTypeArguments().get(0).toString();//TODO 0
-//                this.targetEntity = variable.substring(variable.lastIndexOf('.') + 1);
-//            }
-//
-//        } else {
-//            this.targetEntity = declaredType.asElement().getSimpleName().toString();
-//        }
         this.fetch = FetchType.load(element, relationAnnotationMirror);
         this.access = AccessType.load(element);
+    }
+
+    protected void loadAttribute(MemberExplorer member, AnnotationExplorer annotation) {
+        super.loadAttribute(member);
+        this.joinTable = JoinTable.load(member);
+        setOwner(!annotation.getString("mappedBy").isPresent());
+
+        List<String> cascadeList = annotation.getEnumList("cascade");
+
+        if (cascadeList != null) {
+            CascadeType cascadeType = new CascadeType();
+            this.cascade = cascadeType;
+            for (String cascadeValue : cascadeList) {
+                switch (cascadeValue) {
+                    case "ALL":
+                        cascadeType.setCascadeAll(new EmptyType());
+                        break;
+                    case "PERSIST":
+                        cascadeType.setCascadePersist(new EmptyType());
+                        break;
+                    case "MERGE":
+                        cascadeType.setCascadeMerge(new EmptyType());
+                        break;
+                    case "REMOVE":
+                        cascadeType.setCascadeRemove(new EmptyType());
+                        break;
+                    case "REFRESH":
+                        cascadeType.setCascadeRefresh(new EmptyType());
+                        break;
+                    case "DETACH":
+                        cascadeType.setCascadeDetach(new EmptyType());
+                        break;
+                    default:
+                        throw new IllegalStateException("Unknown Cascade Type : " + cascadeValue);
+                }
+            }
+        }
+        this.fetch = FetchType.load(annotation);
+        this.access = AccessType.load(member);
     }
 
     /**
@@ -171,6 +197,10 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
      */
     public void setCascade(CascadeType value) {
         this.cascade = value;
+    }
+
+    public String getTargetEntityFQN() {
+        return mergePackage(targetEntityPackage, getTargetEntity());
     }
 
     /**

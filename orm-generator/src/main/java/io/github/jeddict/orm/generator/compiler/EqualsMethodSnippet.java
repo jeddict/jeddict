@@ -17,7 +17,7 @@ package io.github.jeddict.orm.generator.compiler;
 
 import java.util.Collection;
 import java.util.Collections;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.BaseAttribute;
 import io.github.jeddict.jpa.spec.extend.ClassMembers;

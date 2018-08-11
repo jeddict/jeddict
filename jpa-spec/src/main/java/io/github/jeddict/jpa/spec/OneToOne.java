@@ -6,6 +6,11 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.ONE_TO_ONE_FQN;
+import io.github.jeddict.jpa.spec.extend.SingleRelationAttribute;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
@@ -19,10 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.lang3.StringUtils;
-import static io.github.jeddict.jcode.JPAConstants.ONE_TO_ONE_FQN;
-import io.github.jeddict.jpa.spec.extend.SingleRelationAttribute;
-import io.github.jeddict.source.JavaSourceParserUtil;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -96,6 +98,7 @@ public class OneToOne extends SingleRelationAttribute {
     protected Boolean orphanRemoval;
 
     @Override
+    @Deprecated
     public OneToOne load(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement, AnnotationMirror annotationMirror) {
         if(annotationMirror==null){
           annotationMirror = JavaSourceParserUtil.findAnnotation(element, ONE_TO_ONE_FQN);
@@ -104,6 +107,13 @@ public class OneToOne extends SingleRelationAttribute {
         this.mappedBy = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "mappedBy");
         this.orphanRemoval = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "orphanRemoval");
         return this;
+    }
+
+    public void load(MemberExplorer member) {
+        AnnotationExplorer annotation = member.getAnnotation(javax.persistence.OneToOne.class).get();
+        super.loadAttribute(member, annotation);
+        annotation.getString("mappedBy").ifPresent(this::setMappedBy);
+        annotation.getBoolean("orphanRemoval").ifPresent(this::setOrphanRemoval);
     }
 
     /**

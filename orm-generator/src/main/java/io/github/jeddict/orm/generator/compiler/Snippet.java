@@ -15,11 +15,61 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import java.util.Collection;
+import java.util.List;
 
 public interface Snippet {
 
     public String getSnippet() throws InvalidDataException;
 
     public Collection<String> getImportSnippets() throws InvalidDataException;
+
+    default String buildAnnotations(String key, List<? extends Snippet> snippets) throws InvalidDataException {
+        StringBuilder builder = new StringBuilder();
+        if (!snippets.isEmpty()) {
+            builder.append(key).append(" =");
+            if (snippets.size() > 1) {
+                builder.append(OPEN_BRACES);
+            }
+
+            for (Snippet joinColumn : snippets) {
+                builder.append(joinColumn.getSnippet()).append(COMMA);
+            }
+            builder.deleteCharAt(builder.length() - 1);
+
+            if (snippets.size() > 1) {
+                builder.append(CLOSE_BRACES);
+            }
+            builder.append(COMMA);
+        }
+        return builder.toString();
+    }
+
+    default String buildAnnotation(String key, Snippet snippet) throws InvalidDataException {
+        StringBuilder builder = new StringBuilder();
+        String snippetValue;
+        if (snippet != null && (snippetValue = snippet.getSnippet()) != null) {
+            builder.append(key).append(" =");
+            builder.append(snippetValue);
+            builder.append(COMMA);
+        }
+        return builder.toString();
+    }
+
+    default String buildString(String key, String value) throws InvalidDataException {
+        StringBuilder builder = new StringBuilder();
+        if (value != null && !value.trim().isEmpty()) {
+            builder.append(key)
+                    .append("=")
+                    .append(QUOTE)
+                    .append(value)
+                    .append(QUOTE)
+                    .append(COMMA);
+        }
+        return builder.toString();
+    }
 }

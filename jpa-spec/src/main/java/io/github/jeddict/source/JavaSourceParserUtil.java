@@ -37,11 +37,10 @@ import io.github.jeddict.bv.constraints.PastOrPresent;
 import io.github.jeddict.bv.constraints.Positive;
 import io.github.jeddict.bv.constraints.PositiveOrZero;
 import io.github.jeddict.bv.constraints.Size;
-import static io.github.jeddict.jcode.BeanVaildationConstants.BEAN_VAILDATION_PACKAGE;
+import io.github.jeddict.bv.constraints.Valid;
 import static io.github.jeddict.jcode.JPAConstants.BASIC_FQN;
 import static io.github.jeddict.jcode.JPAConstants.COLUMN_FQN;
 import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION_FQN;
-import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.EMBEDDED_FQN;
 import static io.github.jeddict.jcode.JPAConstants.EMBEDDED_ID_FQN;
 import static io.github.jeddict.jcode.JPAConstants.ENTITY_FQN;
@@ -59,10 +58,10 @@ import static io.github.jeddict.jcode.JPAConstants.TRANSIENT_FQN;
 import static io.github.jeddict.jcode.JPAConstants.VERSION_FQN;
 import static io.github.jeddict.jcode.util.JavaSourceHelper.getSimpleClassName;
 import io.github.jeddict.jcode.util.StringHelper;
-import io.github.jeddict.jcode.util.StringHelper;
 import io.github.jeddict.jpa.spec.Embeddable;
 import io.github.jeddict.jpa.spec.Entity;
 import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.annotation.Annotation;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -77,6 +76,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import static java.util.Objects.nonNull;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
@@ -101,6 +101,7 @@ import org.netbeans.api.java.source.WorkingCopy;
 import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Utilities;
+import static io.github.jeddict.jcode.BeanVaildationConstants.BV_CONSTRAINTS_PACKAGE;
 
 /**
  *
@@ -109,6 +110,7 @@ import org.openide.util.Utilities;
 public class JavaSourceParserUtil {
     
     private static final String CONSTANT_VAR = "^[A-Z_$][A-Z_$0-9]*$";
+    private static final Logger LOG = Logger.getLogger(JavaSourceParserUtil.class.getName());
 
     public static String simpleClassName(String fqn) {
         int lastDot = fqn.lastIndexOf('.');
@@ -186,24 +188,26 @@ public class JavaSourceParserUtil {
 
     //"javax.persistence|javax.xml.bind.annotation"
     private static final Pattern JPA_PACKAGE_PATTERN = Pattern.compile(PERSISTENCE_PACKAGE);
-    private static final Class[] BEAN_VALIDATION_REVENG_CLASS_LIST = new Class[]{
-        AssertFalse.class, AssertTrue.class, 
+    public static final Class[] BEAN_VALIDATION_REVENG_CLASS_LIST = new Class[]{
+        Valid.class,
+        AssertFalse.class, AssertTrue.class,
         Null.class, NotNull.class, NotEmpty.class, NotBlank.class,
         Size.class, Pattern.class, Email.class,
         DecimalMax.class, DecimalMin.class,
         Max.class, Min.class, Digits.class, 
         Positive.class, PositiveOrZero.class, Negative.class, NegativeOrZero.class,
-        Future.class, Past.class, FutureOrPresent.class, PastOrPresent.class,};
+        Future.class, Past.class, FutureOrPresent.class, PastOrPresent.class};
+
     private static final Map<String, Class<? extends Constraint>> SUPPORTED_BV_REVENG_CLASS_SET = new HashMap<>();
 
     static {
         for (Class<? extends Constraint> bvClass : BEAN_VALIDATION_REVENG_CLASS_LIST) {
-            SUPPORTED_BV_REVENG_CLASS_SET.put(BEAN_VAILDATION_PACKAGE + "." + bvClass.getSimpleName(), bvClass);
+            SUPPORTED_BV_REVENG_CLASS_SET.put(BV_CONSTRAINTS_PACKAGE + "." + bvClass.getSimpleName(), bvClass);
         }
     }
 
     public static Set<Constraint> getBeanValidation(Element element) {
-        Set<Constraint> constraints = io.github.jeddict.jpa.spec.extend.Attribute.CONSTRAINTS_SUPPLIER.get();
+        Set<Constraint> constraints = Attribute.CONSTRAINTS_SUPPLIER.get();
         for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
             String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
             Class<? extends Constraint> bvClass = SUPPORTED_BV_REVENG_CLASS_SET.get(annotationQualifiedName);
@@ -451,13 +455,6 @@ public class JavaSourceParserUtil {
                 .anyMatch(annot -> annot.contains("@lombok.Getter"));
     }
 
-    public static boolean isEmbeddableClass(Element typeElement) {//TypeElement
-        if (JavaSourceParserUtil.isAnnotatedWith(typeElement, EMBEDDABLE_FQN)) {
-            return true;
-        }
-        return false;
-    }
-    
     public static Embeddable loadEmbeddableClass(EntityMappings entityMappings, Element element, VariableElement variableElement, DeclaredType embeddableClass) {
         Embeddable embeddableClassSpec;
         Optional<Embeddable> embeddableClassSpecOpt = entityMappings.findEmbeddable(getSimpleClassName(embeddableClass.toString()));
@@ -473,21 +470,19 @@ public class JavaSourceParserUtil {
         return embeddableClassSpec;
     }
 
-    public static boolean isMappedSuperClass(Element typeElement) {//TypeElement
-        if (JavaSourceParserUtil.isAnnotatedWith(typeElement, MAPPED_SUPERCLASS_FQN)) {
-            return true;
-        }
-        return false;
+    public static boolean isMappedSuperclass(Element typeElement) {
+        return nonNull(typeElement.getAnnotation(javax.persistence.MappedSuperclass.class));
     }
 
-    public static boolean isEntityClass(Element typeElement) {//TypeElement
-        if (JavaSourceParserUtil.isAnnotatedWith(typeElement, ENTITY_FQN)) {
-            return true;
-        }
-        return false;
+    public static boolean isEntity(Element typeElement) {
+        return nonNull(typeElement.getAnnotation(javax.persistence.Entity.class));
+    }
+
+    public static boolean isEmbeddable(Element typeElement) {
+        return nonNull(typeElement.getAnnotation(javax.persistence.Embeddable.class));
     }
     
-    public static Entity loadEntityClass(EntityMappings entityMappings, Element element, VariableElement variableElement, DeclaredType entityClass) {
+    public static Entity loadEntity(EntityMappings entityMappings, Element element, VariableElement variableElement, DeclaredType entityClass) {
         Entity entityClassSpec;
         Optional<Entity> entityClassSpecOpt = entityMappings.findEntity(getSimpleClassName(entityClass.toString()));
         if (!entityClassSpecOpt.isPresent()) {
@@ -503,7 +498,7 @@ public class JavaSourceParserUtil {
     }
 
     public static boolean isNonEntityClass(TypeElement typeElement) {
-        return !isEntityClass(typeElement) && !isMappedSuperClass(typeElement) && !isEmbeddableClass(typeElement);
+        return !isEntity(typeElement) && !isMappedSuperclass(typeElement) && !isEmbeddable(typeElement);
     }
 
     public static int isRelationship(ExecutableElement method, boolean isFieldAccess) {

@@ -6,6 +6,10 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import io.github.jeddict.jpa.spec.extend.Attribute;
+import io.github.jeddict.jpa.spec.extend.CompositionAttribute;
+import io.github.jeddict.jpa.spec.validator.EmbeddedIdValidator;
+import io.github.jeddict.source.MemberExplorer;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.lang.model.element.Element;
@@ -19,11 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.apache.commons.lang3.StringUtils;
-import io.github.jeddict.jpa.spec.extend.Attribute;
-import io.github.jeddict.jpa.spec.extend.CompositionAttribute;
-import io.github.jeddict.jpa.spec.validator.EmbeddedIdValidator;
-import io.github.jeddict.source.JavaSourceParserUtil;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -71,6 +71,7 @@ public class EmbeddedId extends CompositionAttribute<DefaultClass> {
     private Attribute connectedAttribute;// To connect with relation attribute in case of derived entity Ex.5.b
     //No need to set connectedClassId because it is mapped to virtual(hidden) Embeddable not Visual Embaddable
 
+    @Deprecated
     public static EmbeddedId load(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement) {
         EmbeddedId embeddedId = new EmbeddedId();
         embeddedId.loadAttribute(element, variableElement, getterElement);
@@ -97,7 +98,14 @@ public class EmbeddedId extends CompositionAttribute<DefaultClass> {
         
 //        embeddedId.setConnectedClass(embeddableClassSpec);//TODO Priority
 
-        embeddedId.setAttributeConstraints(JavaSourceParserUtil.getBeanValidation(element));
+        return embeddedId;
+    }
+
+    public static EmbeddedId load(MemberExplorer member) {
+        EmbeddedId embeddedId = new EmbeddedId();
+        embeddedId.loadAttribute(member);
+        embeddedId.getAttributeOverride().addAll(AttributeOverride.load(member));
+        embeddedId.access = AccessType.load(member);
         return embeddedId;
     }
 

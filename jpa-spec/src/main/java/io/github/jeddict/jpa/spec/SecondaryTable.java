@@ -6,8 +6,17 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.SECONDARY_TABLES_FQN;
+import static io.github.jeddict.jcode.JPAConstants.SECONDARY_TABLE_FQN;
+import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
+import io.github.jeddict.source.AnnotatedMember;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
+import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -17,10 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.internal.jpa.metadata.columns.PrimaryKeyForeignKeyMetadata;
 import org.eclipse.persistence.internal.jpa.metadata.tables.SecondaryTableMetadata;
-import static io.github.jeddict.jcode.JPAConstants.SECONDARY_TABLES_FQN;
-import static io.github.jeddict.jcode.JPAConstants.SECONDARY_TABLE_FQN;
-import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -65,8 +70,6 @@ import io.github.jeddict.source.JavaSourceParserUtil;
 @XmlType(name = "secondary-table", propOrder = {
     "primaryKeyJoinColumn",
     "primaryKeyForeignKey",
-//    "uniqueConstraint",
-//    "index",
     "foreignKey"
 })
 public class SecondaryTable extends Table {
@@ -122,7 +125,48 @@ public class SecondaryTable extends Table {
         }
         return secondaryTables;
     }
-    
+
+    public static SecondaryTable load(AnnotationExplorer annotation) {
+        SecondaryTable secondaryTable = new SecondaryTable();
+
+        annotation.getString("name").ifPresent(secondaryTable::setName);
+        annotation.getString("catalog").ifPresent(secondaryTable::setCatalog);
+        annotation.getString("schema").ifPresent(secondaryTable::setSchema);
+
+        secondaryTable.uniqueConstraint
+                = annotation.getAnnotationList("uniqueConstraints")
+                        .map(UniqueConstraint::load)
+                        .collect(toCollection(LinkedHashSet::new));
+
+        secondaryTable.index
+                = annotation.getAnnotationList("indexes")
+                        .map(Index::load)
+                        .collect(toList());
+
+        return secondaryTable;
+    }
+
+    public static List<SecondaryTable> load(AnnotatedMember member) {
+        List<SecondaryTable> secondaryTables = new ArrayList<>();
+        Optional<AnnotationExplorer> secondaryTablesOpt = member.getAnnotation(javax.persistence.SecondaryTables.class);
+        if (secondaryTablesOpt.isPresent()) {
+            secondaryTables.addAll(
+                    secondaryTablesOpt.get()
+                            .getAnnotationList("value")
+                            .map(SecondaryTable::load)
+                            .collect(toList())
+            );
+        }
+
+        secondaryTables.addAll(
+                member.getRepeatableAnnotations(javax.persistence.SecondaryTable.class)
+                        .map(SecondaryTable::load)
+                        .collect(toList())
+        );
+        return secondaryTables;
+    }
+
+
 
     /**
      * Gets the value of the primaryKeyJoinColumn property.

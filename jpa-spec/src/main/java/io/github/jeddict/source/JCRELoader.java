@@ -15,8 +15,8 @@
  */
 package io.github.jeddict.source;
 
-import javax.lang.model.element.TypeElement;
 import io.github.jeddict.jpa.spec.EntityMappings;
+import javax.lang.model.element.TypeElement;
 
 /**
  *
@@ -25,4 +25,6 @@ import io.github.jeddict.jpa.spec.EntityMappings;
 public interface JCRELoader {
 
     void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess);
+
+    void load(ClassExplorer clazz);
 }

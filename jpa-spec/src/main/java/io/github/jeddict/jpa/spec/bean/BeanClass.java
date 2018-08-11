@@ -15,11 +15,14 @@
  */
 package io.github.jeddict.jpa.spec.bean;
 
+import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.jpa.spec.extend.JavaClass;
+import io.github.jeddict.source.ClassExplorer;
+import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import io.github.jeddict.jpa.spec.extend.JavaClass;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
@@ -29,6 +32,18 @@ public class BeanClass extends JavaClass<BeanAttributes> {
 
     @XmlElement(name = "attributes")
     private BeanAttributes attributes;
+
+    @Override
+    public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
+        super.load(entityMappings, element, fieldAccess);
+        this.getAttributes().load(entityMappings, element, fieldAccess);
+    }
+//
+    @Override
+    public void load(ClassExplorer clazz) {
+        super.load(clazz);
+        this.getAttributes().load(clazz);
+    }
 
     public BeanClass() {
     }

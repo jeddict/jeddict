@@ -28,8 +28,6 @@ import static io.github.jeddict.jcode.JAXBConstants.JAXB_XML_VALUE;
 import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION_FQN;
 import static io.github.jeddict.jcode.JPAConstants.EMBEDDED_FQN;
 import static io.github.jeddict.jcode.JPAConstants.EMBEDDED_ID_FQN;
-import static io.github.jeddict.jcode.JPAConstants.GENERATED_VALUE_FQN;
-import static io.github.jeddict.jcode.JPAConstants.GENERATION_TYPE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.ID_FQN;
 import static io.github.jeddict.jcode.JPAConstants.LOB_FQN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY;
@@ -104,8 +102,7 @@ import java.util.Optional;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openide.util.Exceptions;
 
 public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {
@@ -121,7 +118,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private JaxbMetadata jaxbWrapperMetadata;
     private JaxbMetadata jaxbMetadata;
 
-    private boolean autoGenerate;
     private boolean embedded;
     private boolean embeddedId;
     private boolean lob;
@@ -267,7 +263,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     }
 
     public String getReturnValue() {
-        String value = "this." + getName();
+        String value = getName();
         if ((this.getTypeIdentifier() == null || getRelationDef() instanceof SingleRelationAttributeSnippet) && functionalType) {
             value = "Optional.ofNullable(" + value + ')';
         }
@@ -335,14 +331,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
     public void setPrimaryKey(boolean primaryKey) {
         this.primaryKey = primaryKey;
-    }
-
-    public boolean isAutoGenerate() {
-        return autoGenerate;
-    }
-
-    public void setAutoGenerate(boolean autoGenerate) {
-        this.autoGenerate = autoGenerate;
     }
 
     /**
@@ -527,11 +515,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             importSnippets.add(MAP_KEY_FQN);
         }
 
-        if (autoGenerate) {
-            importSnippets.add(GENERATION_TYPE_FQN);
-            importSnippets.add(GENERATED_VALUE_FQN);
-        }
-
         if (elementCollection != null) {
             importSnippets.add(ELEMENT_COLLECTION_FQN);
         }
@@ -621,27 +604,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      */
     public void setElementCollection(ElementCollectionSnippet elementCollection) {
         this.elementCollection = elementCollection;
-    }
-
-    public boolean isPrimitive(String type) {
-        return "boolean".equals(type) || "byte".equals(type)
-                || "short".equals(type) || "char".equals(type)
-                || "int".equals(type) || "long".equals(type)
-                || "float".equals(type) || "double".equals(type);
-    }
-
-    public boolean isPrimitiveArray(String type) {
-        int length = type.length();
-        if (isArray(type)) {
-            String premitiveType = type.substring(0, length - 2);
-            return isPrimitive(premitiveType);
-        } else {
-            return false;
-        }
-    }
-
-    public Class getWrapper(String premitive) throws ClassNotFoundException {
-        return ClassUtils.primitiveToWrapper(ClassUtils.getClass(premitive));
     }
 
     /**
@@ -792,8 +754,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      * @return the jaxbVariableType
      */
     public JaxbVariableType getJaxbVariableType() {
-//        System.out.println("jaxbVariableType==null?\"\":jaxbVariableType.getType() : " + jaxbVariableType==null?"":jaxbVariableType.getType());
-        return jaxbVariableType;//==null?"":jaxbVariableType.getType();
+        return jaxbVariableType;
     }
 
     /**

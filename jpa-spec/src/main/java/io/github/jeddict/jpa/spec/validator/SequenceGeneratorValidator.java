@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.jpa.spec.validator;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.jpa.spec.SequenceGenerator;
 
 /**

@@ -15,9 +15,12 @@
  */
 package io.github.jeddict.orm.generator.compiler.constraints;
 
-import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.bv.constraints.Max;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import io.github.jeddict.orm.generator.compiler.InvalidDataException;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 
 /**
  *
@@ -40,22 +43,24 @@ public class MaxSnippet extends ConstraintSnippet<Max> {
             return "@" + getAPI();
         }
         StringBuilder builder = new StringBuilder();
-        builder.append("@").append(getAPI()).append(ORMConverterUtil.OPEN_PARANTHESES);
+        builder.append("@").append(getAPI()).append(OPEN_PARANTHESES);
 
         if (constraint.getValue() != null) {
-            builder.append("value=");
+            if (constraint.getMessage() != null) {
+                builder.append("value=");
+            }
             builder.append(constraint.getValue());
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         }
         
          if (constraint.getMessage() != null) {
             builder.append("message=\"");
             builder.append(constraint.getMessage());
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+             builder.append(QUOTE);
+             builder.append(COMMA);
         }
 
-        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
 }

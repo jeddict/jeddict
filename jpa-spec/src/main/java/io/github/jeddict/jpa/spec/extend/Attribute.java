@@ -15,14 +15,6 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
-import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.comments.JavadocComment;
-import com.github.javaparser.ast.expr.AnnotationExpr;
-import com.github.javaparser.ast.stmt.BlockStmt;
-import com.github.javaparser.ast.type.ReferenceType;
 import io.github.jeddict.bv.constraints.AssertFalse;
 import io.github.jeddict.bv.constraints.AssertTrue;
 import io.github.jeddict.bv.constraints.Constraint;
@@ -47,13 +39,10 @@ import io.github.jeddict.bv.constraints.Pattern;
 import io.github.jeddict.bv.constraints.Positive;
 import io.github.jeddict.bv.constraints.PositiveOrZero;
 import io.github.jeddict.bv.constraints.Size;
+import io.github.jeddict.bv.constraints.Valid;
 import io.github.jeddict.jaxb.spec.JaxbMetadata;
 import io.github.jeddict.jaxb.spec.JaxbVariableType;
 import io.github.jeddict.jaxb.spec.JaxbVariableTypeHandler;
-import static io.github.jeddict.jcode.BeanVaildationConstants.BEAN_VAILDATION_PACKAGE;
-import static io.github.jeddict.jcode.JAXBConstants.JAXB_PACKAGE;
-import static io.github.jeddict.jcode.JPAConstants.PERSISTENCE_PACKAGE;
-import static io.github.jeddict.jcode.JSONBConstants.JSONB_PACKAGE;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_PROPERTY_FQN;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_TYPE_ADAPTER_FQN;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_TYPE_DESERIALIZER_FQN;
@@ -95,29 +84,14 @@ import static io.github.jeddict.jcode.util.AttributeType.YEAR_MONTH;
 import static io.github.jeddict.jcode.util.AttributeType.ZONED_DATE_TIME;
 import static io.github.jeddict.jcode.util.AttributeType.getArrayType;
 import static io.github.jeddict.jcode.util.AttributeType.isArray;
-import static io.github.jeddict.jcode.util.JavaIdentifiers.isFQN;
-import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualify;
-import static io.github.jeddict.jcode.util.JavaUtil.isGetterMethod;
-import static io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType.GETTER;
-import static io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType.PROPERTY;
-import static io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType.SETTER;
 import io.github.jeddict.jsonb.spec.JsonbDateFormat;
 import io.github.jeddict.jsonb.spec.JsonbNumberFormat;
 import io.github.jeddict.jsonb.spec.JsonbTypeHandler;
 import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.snippet.AttributeSnippet;
-import io.github.jeddict.snippet.AttributeSnippetLocationType;
-import static io.github.jeddict.snippet.AttributeSnippetLocationType.GETTER_JAVADOC;
-import static io.github.jeddict.snippet.AttributeSnippetLocationType.GETTER_THROWS;
-import static io.github.jeddict.snippet.AttributeSnippetLocationType.IMPORT;
-import static io.github.jeddict.snippet.AttributeSnippetLocationType.POST_GETTER;
-import static io.github.jeddict.snippet.AttributeSnippetLocationType.POST_SETTER;
-import static io.github.jeddict.snippet.AttributeSnippetLocationType.PRE_GETTER;
-import static io.github.jeddict.snippet.AttributeSnippetLocationType.PRE_SETTER;
-import static io.github.jeddict.snippet.AttributeSnippetLocationType.PROPERTY_JAVADOC;
-import static io.github.jeddict.snippet.AttributeSnippetLocationType.SETTER_JAVADOC;
-import static io.github.jeddict.snippet.AttributeSnippetLocationType.SETTER_THROWS;
+import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
+import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -144,8 +118,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlTransient;
-import org.apache.commons.lang3.StringUtils;
-import static org.apache.commons.lang3.StringUtils.deleteWhitespace;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.type.Embedded;
 import org.openide.util.Exceptions;
@@ -248,6 +221,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     //Jsonb support end
     @XmlElementWrapper(name = "bv")
     @XmlElements({
+        @XmlElement(name = "va", type = Valid.class),
         @XmlElement(name = "nu", type = Null.class),
         @XmlElement(name = "nn", type = NotNull.class),
         @XmlElement(name = "nb", type = NotBlank.class),
@@ -280,6 +254,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
 
     @XmlElementWrapper(name = "kbv")
     @XmlElements({
+        @XmlElement(name = "va", type = Valid.class),
         @XmlElement(name = "nu", type = Null.class),
         @XmlElement(name = "nn", type = NotNull.class),
         @XmlElement(name = "nb", type = NotBlank.class),
@@ -312,6 +287,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
 
     @XmlElementWrapper(name = "vbv")
     @XmlElements({
+        @XmlElement(name = "va", type = Valid.class),
         @XmlElement(name = "nu", type = Null.class),
         @XmlElement(name = "nn", type = NotNull.class),
         @XmlElement(name = "nb", type = NotBlank.class),
@@ -352,6 +328,8 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
         this.setId(NBModelerUtil.getAutoGeneratedStringId());
         this.name = variableElement.getSimpleName().toString();
         this.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element, AttributeAnnotation.class));
+        this.setAttributeConstraints(JavaSourceParserUtil.getBeanValidation(element));
+
         if (getterElement != null) {
             this.setFunctionalType(getterElement.getReturnType().toString().startsWith(Optional.class.getCanonicalName()));
         }
@@ -390,96 +368,35 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
         }
     }
 
-    public void loadExistingSnippet(String name, FieldDeclaration field, Map<String, ImportDeclaration> imports) {
-        loadJavadoc(field.getJavadocComment(), PROPERTY_JAVADOC);
-        loadAnnotation(field.getAnnotations(), PROPERTY, imports);
-    }
+    protected void loadAttribute(MemberExplorer member) {
+        this.setId(NBModelerUtil.getAutoGeneratedStringId());
+        this.name = member.getFieldName();
+        this.defaultValue = member.getDefaultValue();
 
-    public void loadExistingSnippet(String name, MethodDeclaration method, Map<String, ImportDeclaration> imports) {
-        String methodName = method.getNameAsString();
-        boolean getterMethod = isGetterMethod(methodName);
+        this.setAttributeConstraints(member.getBeanValidationConstraints());
 
-        for (ReferenceType thrownException : method.getThrownExceptions()) {
-            String value = thrownException.toString();
-            this.addRuntimeSnippet(new AttributeSnippet(value, getterMethod ? GETTER_THROWS : SETTER_THROWS));
-            addImportSnippet(value, imports);
+//        this.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element, AttributeAnnotation.class));
+//        if (getterElement != null) {
+//            this.setFunctionalType(getterElement.getReturnType().toString().startsWith(Optional.class.getCanonicalName()));
+//        }
+        Optional<AnnotationExplorer> jsonbPropertyOptional
+                = member.getAnnotation(javax.json.bind.annotation.JsonbProperty.class);
+        if (jsonbPropertyOptional.isPresent()) {
+            AnnotationExplorer jsonbPropertyAnnotation = jsonbPropertyOptional.get();
+            jsonbPropertyAnnotation.getBoolean("nillable").ifPresent(this::setJsonbNillable);
+            jsonbPropertyAnnotation.getString("value").ifPresent(this::setJsonbProperty);
         }
 
-        if (method.getBody().isPresent()) {
-            BlockStmt block = method.getBody().get();
+        this.jsonbTransient = member.isAnnotationPresent(javax.json.bind.annotation.JsonbTransient.class);
+        this.jsonbDateFormat = JsonbDateFormat.load(member);
+        this.jsonbNumberFormat = JsonbNumberFormat.load(member);
 
-            AttributeSnippetLocationType locationType = getterMethod ? PRE_GETTER : PRE_SETTER;
-            String bridgeLine = deleteWhitespace(String.format(getterMethod ? "return this.%s;" : "this.%s = %s;", name, name));
-            for (Node node : block.getChildNodes()) {
-                String[] statements = node.toString().split("\n");
-                for (String statement : statements) {
-                    if (StringUtils.equals(bridgeLine, deleteWhitespace(statement))) {
-                        locationType = getterMethod ? POST_GETTER : POST_SETTER;
-                    } else {
-                        this.addRuntimeSnippet(new AttributeSnippet(statement, locationType));
-                        addImportSnippet(statement, imports);
-                    }
-                }
-            }
-        }
-
-        loadJavadoc(method.getJavadocComment(), getterMethod ? GETTER_JAVADOC : SETTER_JAVADOC);
-        loadAnnotation(method.getAnnotations(), getterMethod ? GETTER : SETTER, imports);
-
-    }
-
-    private void loadJavadoc(Optional<JavadocComment> docOptional, AttributeSnippetLocationType locationType) {
-        if (docOptional.isPresent()) {
-            JavadocComment doc = docOptional.get();
-            AttributeSnippet attributeSnippet = new AttributeSnippet();
-            attributeSnippet.setLocationType(locationType);
-            attributeSnippet.setValue(doc.toString());
-            if (description == null || !attributeSnippet.getValue().contains(description)) {
-                this.addRuntimeSnippet(attributeSnippet);
-            }
-        }
-    }
-
-    private void loadAnnotation(List<AnnotationExpr> annotationExprs, AttributeAnnotationLocationType locationType, Map<String, ImportDeclaration> imports) {
-        for (AnnotationExpr annotationExpr : annotationExprs) {
-            String annotationExprName = annotationExpr.getNameAsString();
-            String annotationName;
-            String annotationFQN;
-            if (isFQN(annotationExprName)) {
-                annotationFQN = annotationExprName;
-                annotationName = unqualify(annotationExprName);
-            } else {
-                annotationFQN = imports.containsKey(annotationExprName)
-                        ? imports.get(annotationExprName).getNameAsString() : annotationExprName;
-                annotationName = annotationExprName;
-            }
-
-            if (!annotationFQN.startsWith(PERSISTENCE_PACKAGE)
-                    && !annotationFQN.startsWith(BEAN_VAILDATION_PACKAGE)
-                    && !annotationFQN.startsWith(JSONB_PACKAGE)
-                    && !annotationFQN.startsWith(JAXB_PACKAGE)) {
-                String value = annotationExpr.toString();
-                if (!getAnnotation()
-                        .stream()
-                        .filter(anot -> anot.getLocationType() == locationType)
-                        .filter(anot -> anot.getName().contains(annotationName))
-                        .findAny()
-                        .isPresent()) {
-                    this.addRuntimeAnnotation(new AttributeAnnotation(value, locationType));
-                    addImportSnippet(value, imports);
-                }
-            }
-
-        }
-    }
-
-    private void addImportSnippet(String snippet, Map<String, ImportDeclaration> imports) {
-        imports.keySet()
-                .stream()
-                .filter(snippet::contains)
-                .map(imports::get)
-                .map(importClass -> new AttributeSnippet(importClass.getNameAsString(), IMPORT))
-                .forEach(importSnippet -> this.addRuntimeSnippet(importSnippet));
+        member.getReferenceClassAttribute(javax.json.bind.annotation.JsonbTypeAdapter.class, "value")
+                .ifPresent(this::setJsonbTypeAdapter);
+        member.getReferenceClassAttribute(javax.json.bind.annotation.JsonbTypeSerializer.class, "value")
+                .ifPresent(this::setJsonbTypeSerializer);
+        member.getReferenceClassAttribute(javax.json.bind.annotation.JsonbTypeDeserializer.class, "value")
+                .ifPresent(this::setJsonbTypeDeserializer);
     }
 
     public void beforeMarshal(Marshaller marshaller) {

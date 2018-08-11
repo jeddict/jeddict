@@ -6,18 +6,20 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import io.github.jeddict.jpa.spec.extend.ReferenceClass;
+import io.github.jeddict.jpa.spec.validator.EntityListenersValidator;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import static java.util.stream.Collectors.toCollection;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import io.github.jeddict.jpa.spec.extend.ReferenceClass;
-import io.github.jeddict.jpa.spec.validator.EntityListenersValidator;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -55,6 +57,7 @@ public class EntityListeners {
     @XmlElement(name = "ln")
     private Set<ReferenceClass> entityListener;
 
+    @Deprecated
     public static EntityListeners load(Element element, AnnotationMirror annotationMirror) {
         EntityListeners entityListeners = null;
         List entityListenersMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
@@ -66,6 +69,13 @@ public class EntityListeners {
         }
         return entityListeners;
     }
+
+    public static EntityListeners load(AnnotationExplorer annotation) {
+        EntityListeners entityListeners = new EntityListeners();
+        entityListeners.entityListener = annotation.getClassList("value").collect(toCollection(LinkedHashSet::new));
+        return entityListeners;
+    }
+
 
     /**
      * Gets the value of the entityListener property.

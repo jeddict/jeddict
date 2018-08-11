@@ -29,7 +29,7 @@ import io.github.jeddict.orm.generator.compiler.DiscriminatorValueSnippet;
 import io.github.jeddict.orm.generator.compiler.InheritanceSnippet;
 import io.github.jeddict.orm.generator.compiler.InheritanceSnippet.Type;
 import io.github.jeddict.orm.generator.compiler.def.EntityDefSnippet;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 public class EntityGenerator extends IdentifiableClassGenerator<EntityDefSnippet> {
 

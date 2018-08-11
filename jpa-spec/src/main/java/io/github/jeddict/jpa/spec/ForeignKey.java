@@ -6,6 +6,10 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.FOREIGN_KEY_FQN;
+import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -14,9 +18,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.ForeignKeyMetadata;
-import static io.github.jeddict.jcode.JPAConstants.FOREIGN_KEY_FQN;
-import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -71,6 +72,7 @@ public class ForeignKey {
     @XmlAttribute(name = "foreign-key-definition")
     protected String foreignKeyDefinition;
 
+    @Deprecated
     public static ForeignKey load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
             annotationMirror = JavaSourceParserUtil.findAnnotation(element, FOREIGN_KEY_FQN);
@@ -85,6 +87,15 @@ public class ForeignKey {
         }
         return foreignKey;
 
+    }
+
+    public static ForeignKey load(AnnotationExplorer annotation) {
+        ForeignKey foreignKey = new ForeignKey();
+        annotation.getString("name").ifPresent(foreignKey::setName);
+        annotation.getString("description").ifPresent(foreignKey::setDescription);
+        annotation.getString("foreignKeyDefinition").ifPresent(foreignKey::setForeignKeyDefinition);
+        foreignKey.constraintMode = ConstraintMode.load(annotation);
+        return foreignKey;
     }
 
     /**

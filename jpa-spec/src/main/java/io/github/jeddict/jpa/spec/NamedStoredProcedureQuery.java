@@ -6,8 +6,15 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.NAMED_STORED_PROCEDURE_QUERIES_FQN;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_STORED_PROCEDURE_QUERY_FQN;
+import io.github.jeddict.source.AnnotatedMember;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -15,9 +22,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.JPAConstants.NAMED_STORED_PROCEDURE_QUERIES_FQN;
-import static io.github.jeddict.jcode.JPAConstants.NAMED_STORED_PROCEDURE_QUERY_FQN;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -98,8 +102,8 @@ public class NamedStoredProcedureQuery {//TODO extend to DataMapping and remove 
             if (resultClassesAnnot != null) {
                 for (Object resultClassObj : resultClassesAnnot) {
                     String _class = resultClassObj.toString();
-                    if(_class.contains("class")){
-                        _class = _class.substring(0,_class.length()-6);//remove .class
+                    if (_class.contains("class")) {
+                        _class = _class.substring(0, _class.length() - 6);//remove .class
                     }
                     namedStoredProcedureQuery.getResultClass().add(_class);
                 }
@@ -137,6 +141,41 @@ public class NamedStoredProcedureQuery {//TODO extend to DataMapping and remove 
                 namedStoredProcedureQueries.add(NamedStoredProcedureQuery.loadStoredProcedureQuery(element, namedStoredProcedureQueriesMirror));
             }
         }
+        return namedStoredProcedureQueries;
+    }
+
+    public static NamedStoredProcedureQuery load(AnnotationExplorer annotation) {
+        NamedStoredProcedureQuery namedStoredProcedureQuery = new NamedStoredProcedureQuery();
+        annotation.getString("name").ifPresent(namedStoredProcedureQuery::setName);
+        annotation.getString("procedureName").ifPresent(namedStoredProcedureQuery::setProcedureName);
+        namedStoredProcedureQuery.resultClass = annotation.getClassNameList("resultClasses");
+        namedStoredProcedureQuery.resultSetMapping = annotation.getStringList("resultSetMappings"); // replaceAll("^\"|\"$", "")//TODO , removing /n from end of the line
+        namedStoredProcedureQuery.hint = annotation.getAnnotationList("hints")
+                .map(QueryHint::load)
+                .collect(toList());
+        namedStoredProcedureQuery.parameter = annotation.getAnnotationList("parameters")
+                .map(StoredProcedureParameter::load)
+                .collect(toList());
+        return namedStoredProcedureQuery;
+    }
+
+    public static List<NamedStoredProcedureQuery> load(AnnotatedMember member) {
+        List<NamedStoredProcedureQuery> namedStoredProcedureQueries = new ArrayList<>();
+        Optional<AnnotationExplorer> namedStoredProcedureQueriesOpt = member.getAnnotation(javax.persistence.NamedStoredProcedureQueries.class);
+        if (namedStoredProcedureQueriesOpt.isPresent()) {
+            namedStoredProcedureQueries.addAll(
+                    namedStoredProcedureQueriesOpt.get()
+                            .getAnnotationList("value")
+                            .map(NamedStoredProcedureQuery::load)
+                            .collect(toList())
+            );
+        }
+
+        namedStoredProcedureQueries.addAll(
+                member.getRepeatableAnnotations(javax.persistence.NamedStoredProcedureQuery.class)
+                        .map(NamedStoredProcedureQuery::load)
+                        .collect(toList())
+        );
         return namedStoredProcedureQueries;
     }
 
@@ -216,8 +255,8 @@ public class NamedStoredProcedureQuery {//TODO extend to DataMapping and remove 
         }
         return this.resultClass;
     }
-    
-    public void addResultClass(Entity entity){
+
+    public void addResultClass(Entity entity) {
         getResultClass().add("{" + entity.getId() + "}");
     }
 

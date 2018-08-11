@@ -15,6 +15,8 @@
  */
 package io.github.jeddict.reveng;
 
+import java.io.File;
+import java.util.List;
 import org.netbeans.modeler.core.ModelerFile;
 
 /**
@@ -23,5 +25,18 @@ import org.netbeans.modeler.core.ModelerFile;
  */
 public interface JCREProcessor {
 
-    void process(ModelerFile file);
+    /**
+     * Update the complete existing diagram with existing class
+     *
+     * @param modelerFile
+     */
+    void syncExistingDiagram(ModelerFile modelerFile);
+
+    /**
+     * Drop classes in existing diagram
+     *
+     * @param modelerFile
+     * @param entityFiles
+     */
+    void processDropedClasses(ModelerFile modelerFile, List<File> entityFiles);
 }

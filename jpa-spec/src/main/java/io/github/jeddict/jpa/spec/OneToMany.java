@@ -6,6 +6,14 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMNS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMN_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ONE_TO_MANY_FQN;
+import io.github.jeddict.jpa.spec.extend.JoinColumnHandler;
+import io.github.jeddict.jpa.spec.extend.MultiRelationAttribute;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
@@ -18,12 +26,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMNS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMN_FQN;
-import static io.github.jeddict.jcode.JPAConstants.ONE_TO_MANY_FQN;
-import io.github.jeddict.jpa.spec.extend.JoinColumnHandler;
-import io.github.jeddict.jpa.spec.extend.MultiRelationAttribute;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -109,9 +111,9 @@ public class OneToMany extends MultiRelationAttribute implements JoinColumnHandl
     protected Boolean orphanRemoval;
 
     @Override
-    public OneToMany load(EntityMappings entityMappings,Element element, VariableElement variableElement, ExecutableElement getterElement, AnnotationMirror annotationMirror) {
-        if(annotationMirror==null){
-           annotationMirror = JavaSourceParserUtil.findAnnotation(element, ONE_TO_MANY_FQN);
+    public OneToMany load(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement, AnnotationMirror annotationMirror) {
+        if (annotationMirror == null) {
+            annotationMirror = JavaSourceParserUtil.findAnnotation(element, ONE_TO_MANY_FQN);
         }
         super.loadAttribute(entityMappings, element, variableElement, getterElement, annotationMirror);
 
@@ -135,6 +137,17 @@ public class OneToMany extends MultiRelationAttribute implements JoinColumnHandl
         if (foreignKeyValue != null) {
             this.foreignKey = ForeignKey.load(element, foreignKeyValue);
         }
+        return this;
+    }
+
+//  @Override
+    public OneToMany load(MemberExplorer member) {
+        AnnotationExplorer annotation = member.getAnnotation(javax.persistence.OneToMany.class).get();
+        super.loadAttribute(member, annotation);
+
+        this.getJoinColumn().addAll(JoinColumn.load(member));
+        annotation.getBoolean("orphanRemoval").ifPresent(this::setOrphanRemoval);
+        annotation.getAnnotation("foreignKey").map(ForeignKey::load).ifPresent(this::setForeignKey);
         return this;
     }
 

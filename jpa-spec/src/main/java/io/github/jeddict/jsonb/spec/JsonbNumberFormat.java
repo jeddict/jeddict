@@ -15,12 +15,7 @@
  */
 package io.github.jeddict.jsonb.spec;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import static io.github.jeddict.jcode.JSONBConstants.JSONB_NUMBER_FORMAT_FQN;
 import static io.github.jeddict.jcode.util.AttributeType.BIGDECIMAL;
 import static io.github.jeddict.jcode.util.AttributeType.BIGINTEGER;
 import static io.github.jeddict.jcode.util.AttributeType.DOUBLE;
@@ -33,9 +28,17 @@ import static io.github.jeddict.jcode.util.AttributeType.LONG;
 import static io.github.jeddict.jcode.util.AttributeType.LONG_WRAPPER;
 import static io.github.jeddict.jcode.util.AttributeType.SHORT;
 import static io.github.jeddict.jcode.util.AttributeType.SHORT_WRAPPER;
-import static io.github.jeddict.jcode.JSONBConstants.JSONB_NUMBER_FORMAT_FQN;
 import io.github.jeddict.jpa.spec.validator.JsonbNumberFormatValidator;
+import io.github.jeddict.source.AnnotatedMember;
+import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -67,6 +70,18 @@ public class JsonbNumberFormat extends JsonbFormat {
             }
         }
         return jsonbDateFormat;
+    }
+
+    public static JsonbNumberFormat load(AnnotatedMember member) {
+        JsonbNumberFormat jsonbNumberFormat = null;
+        Optional<AnnotationExplorer> annotationOpt = member.getAnnotation(javax.json.bind.annotation.JsonbNumberFormat.class);
+        if (annotationOpt.isPresent()) {
+            AnnotationExplorer annotation = annotationOpt.get();
+            jsonbNumberFormat = new JsonbNumberFormat();
+            annotation.getString("value").ifPresent(jsonbNumberFormat::setValue);
+            annotation.getString("locale").ifPresent(jsonbNumberFormat::setLocale);
+        }
+        return jsonbNumberFormat;
     }
 
 }

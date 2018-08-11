@@ -19,7 +19,7 @@ import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.compiler.Snippet;
 import java.util.Collection;
 import java.util.Collections;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_NUMBER_FORMAT;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_NUMBER_FORMAT_FQN;
 import static io.github.jeddict.settings.code.CodePanel.isGenerateDefaultValue;

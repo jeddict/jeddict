@@ -44,7 +44,7 @@ import java.util.Map;
 import static java.util.stream.Collectors.toList;
 import javax.lang.model.SourceVersion;
 import javax.swing.JOptionPane;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.atteo.evo.inflector.English;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.modeler.core.ModelerFile;

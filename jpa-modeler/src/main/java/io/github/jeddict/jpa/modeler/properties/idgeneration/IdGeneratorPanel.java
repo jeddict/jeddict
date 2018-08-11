@@ -39,6 +39,7 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
         strategy_ComboBox.removeAllItems();
         Property[] strategyProperties = new Property[]{
             new Property(null, "None"),
+            new Property(GenerationType.DEFAULT, "Default"),
             new Property(GenerationType.AUTO, "Auto"),
             new Property(GenerationType.IDENTITY, "Identity"),
             new Property(GenerationType.SEQUENCE, "Sequence"),
@@ -748,13 +749,11 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(main_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 557, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 22, Short.MAX_VALUE))
+            .addComponent(main_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 557, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(main_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
+            .addComponent(main_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 

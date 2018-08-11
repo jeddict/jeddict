@@ -1,0 +1,27 @@
+
+===========================================================================
+Jeddict Notice
+===========================================================================
+
+Copyright 2013-2017 the original authors from the Jeddict project.
+
+For more information on the Jeddict project, see https://jeddict.github.io/
+
+
+===========================================================================
+EclipseLink Notice
+===========================================================================
+
+Eclipse Public License - v 2.0
+https://github.com/eclipse-ee4j/eclipselink
+
+
+===========================================================================
+Apache NetBeans Notice
+===========================================================================
+
+Copyright 2017-2018 The Apache Software Foundation
+https://github.com/apache/incubator-netbeans/
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).

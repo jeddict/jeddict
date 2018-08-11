@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.orm.generator.compiler.def;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import static io.github.jeddict.jcode.JPAConstants.ENTITY;
 import static io.github.jeddict.jcode.JPAConstants.ENTITY_FQN;
 import io.github.jeddict.orm.generator.compiler.DiscriminatorColumnSnippet;

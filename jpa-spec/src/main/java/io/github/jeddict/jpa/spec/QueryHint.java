@@ -6,14 +6,15 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.QUERY_HINT_FQN;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.JPAConstants.QUERY_HINT_FQN;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -69,7 +70,13 @@ public class QueryHint {
             queryHint.value = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
         }
         return queryHint;
+    }
 
+    public static QueryHint load(AnnotationExplorer annotation) {
+        QueryHint queryHint = new QueryHint();
+        annotation.getString("name").ifPresent(queryHint::setName);
+        annotation.getString("value").ifPresent(queryHint::setValue);
+        return queryHint;
     }
 
     /**

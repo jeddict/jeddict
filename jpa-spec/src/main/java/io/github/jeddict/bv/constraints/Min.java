@@ -15,10 +15,11 @@
  */
 package io.github.jeddict.bv.constraints;
 
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -28,29 +29,35 @@ import io.github.jeddict.source.JavaSourceParserUtil;
 public class Min extends Constraint {
 
     @XmlAttribute(name = "v")
-    private Long value;
+    private String value;
 
-    public Long getValue() {
+    @Override
+    public void load(AnnotationMirror annotation) {
+        super.load(annotation);
+        this.value = (String) JavaSourceParserUtil.findAnnotationValue(annotation, "value");
+    }
+
+    @Override
+    public void load(AnnotationExplorer annotation) {
+        super.load(annotation);
+        annotation.getString("value").ifPresent(this::setValue);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return value == null;
+    }
+
+    @Override
+    protected void clearConstraint() {
+        value = null;
+    }
+
+    public String getValue() {
         return value;
     }
 
-    public void setValue(Long value) {
+    public void setValue(String value) {
         this.value = value;
-    }
-
-    @Override
-    public void load(AnnotationMirror annotationMirror) {
-        super.load(annotationMirror);
-        this.value = (Long) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
-    }
-
-    @Override
-    public boolean isEmpty(){
-        return value == null;
-    }
-    
-    @Override
-    protected void clearConstraint(){
-        value = null;
     }
 }

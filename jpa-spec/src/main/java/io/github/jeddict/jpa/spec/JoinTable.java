@@ -6,10 +6,18 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.JOIN_TABLE_FQN;
+import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
+import io.github.jeddict.jpa.spec.validator.table.JoinTableValidator;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -21,10 +29,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.tables.JoinTableMetadata;
-import static io.github.jeddict.jcode.JPAConstants.JOIN_TABLE_FQN;
-import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
-import io.github.jeddict.jpa.spec.validator.table.JoinTableValidator;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -103,12 +107,14 @@ public class JoinTable {
 
     @XmlTransient
     private String generatedName;
-    
+
+    @Deprecated
     public static JoinTable load(Element element) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, JOIN_TABLE_FQN);
         return JoinTable.load(element, annotationMirror);
     }
 
+    @Deprecated
     public static JoinTable load(Element element, AnnotationMirror annotationMirror) {
 
         JoinTable joinTable = null;
@@ -133,7 +139,7 @@ public class JoinTable {
                     joinTable.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
                 }
             }
-            
+
             List indexesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "indexes");
             if (indexesAnnot != null) {
                 for (Object indexObj : indexesAnnot) {
@@ -158,6 +164,47 @@ public class JoinTable {
         }
         return joinTable;
 
+    }
+
+    public static JoinTable load(MemberExplorer member) {
+        Optional<AnnotationExplorer> annotationOpt = member.getAnnotation(javax.persistence.JoinTable.class);
+        if (annotationOpt.isPresent()) {
+            return load(annotationOpt.get());
+        }
+        return null;
+    }
+
+    public static JoinTable load(AnnotationExplorer annotation) {
+        JoinTable joinTable = new JoinTable();
+
+        annotation.getString("name").ifPresent(joinTable::setName);
+        annotation.getString("catalog").ifPresent(joinTable::setCatalog);
+        annotation.getString("schema").ifPresent(joinTable::setSchema);
+
+        joinTable.joinColumn
+                = annotation.getAnnotationList("joinColumns")
+                        .map(JoinColumn::load)
+                        .collect(toList());
+
+        joinTable.inverseJoinColumn
+                = annotation.getAnnotationList("inverseJoinColumns")
+                        .map(JoinColumn::load)
+                        .collect(toList());
+
+        joinTable.uniqueConstraint
+                = annotation.getAnnotationList("uniqueConstraints")
+                        .map(UniqueConstraint::load)
+                        .collect(toCollection(LinkedHashSet::new));
+
+        joinTable.index
+                = annotation.getAnnotationList("indexes")
+                        .map(Index::load)
+                        .collect(toList());
+
+        annotation.getAnnotation("foreignKey").map(ForeignKey::load).ifPresent(joinTable::setForeignKey);
+        annotation.getAnnotation("inverseForeignKey").map(ForeignKey::load).ifPresent(joinTable::setInverseForeignKey);
+
+        return joinTable;
     }
 
     /**
@@ -248,7 +295,7 @@ public class JoinTable {
      *
      */
     public ForeignKey getInverseForeignKey() {
-        if(inverseForeignKey==null){
+        if (inverseForeignKey == null) {
             inverseForeignKey = new ForeignKey();
         }
         return inverseForeignKey;

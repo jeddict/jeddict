@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.orm.generator.service;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.MappedSuperclass;
 import io.github.jeddict.jpa.spec.extend.IPrimaryKeyAttributes;

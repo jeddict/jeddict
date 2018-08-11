@@ -15,6 +15,10 @@
  */
 package io.github.jeddict.jcode;
 
+import static java.util.Arrays.asList;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  *
  * @author Gaurav Gupta
@@ -30,6 +34,8 @@ public class JSONBConstants {
 
     public static final String JSONB_PROPERTY_ORDER = "JsonbPropertyOrder";
     public static final String JSONB_PROPERTY_ORDER_FQN = JSONB_ANNOTATION_PACKAGE_PREFIX + JSONB_PROPERTY_ORDER;
+    public static final String JSONB_CREATOR = "JsonbCreator";
+    public static final String JSONB_CREATOR_FQN = JSONB_ANNOTATION_PACKAGE_PREFIX + JSONB_CREATOR;
     public static final String JSONB_PROPERTY = "JsonbProperty";
     public static final String JSONB_PROPERTY_FQN = JSONB_ANNOTATION_PACKAGE_PREFIX + JSONB_PROPERTY;
     public static final String JSONB_DATE_FORMAT = "JsonbDateFormat";
@@ -48,5 +54,19 @@ public class JSONBConstants {
     public static final String JSONB_VISIBILITY_FQN = JSONB_ANNOTATION_PACKAGE_PREFIX + JSONB_VISIBILITY;
     public static final String JSONB_NILLABLE = "JsonbNillable";
     public static final String JSONB_NILLABLE_FQN = JSONB_ANNOTATION_PACKAGE_PREFIX + JSONB_NILLABLE;
+
+    public static final Set<String> JSONB_ANNOTATIONS = new HashSet<>(asList(
+            JSONB_PROPERTY_ORDER,
+            JSONB_CREATOR,
+            JSONB_PROPERTY,
+            JSONB_DATE_FORMAT,
+            JSONB_NUMBER_FORMAT,
+            JSONB_TRANSIENT,
+            JSONB_TYPE_ADAPTER,
+            JSONB_TYPE_DESERIALIZER,
+            JSONB_TYPE_SERIALIZER,
+            JSONB_VISIBILITY,
+            JSONB_NILLABLE
+    ));
 
 }

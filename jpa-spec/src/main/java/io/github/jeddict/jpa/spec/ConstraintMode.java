@@ -6,11 +6,12 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import org.netbeans.modeler.properties.type.Enumy;
 
 /**
@@ -44,6 +45,7 @@ public enum ConstraintMode implements Enumy {
         this.display = display;
     }
 
+    @Deprecated
     public static ConstraintMode load(Element element, AnnotationMirror annotationMirror) {
         ConstraintMode constraintMode = null;
         if (annotationMirror != null) {
@@ -53,6 +55,12 @@ public enum ConstraintMode implements Enumy {
             }
         }
         return constraintMode;
+    }
+
+    public static ConstraintMode load(AnnotationExplorer annotation) {
+        return annotation.getEnum("value")
+                .map(ConstraintMode::valueOf)
+                .orElse(null);
     }
 
     public String value() {

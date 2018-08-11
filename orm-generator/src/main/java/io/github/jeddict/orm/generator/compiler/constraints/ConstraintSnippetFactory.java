@@ -38,6 +38,7 @@ import io.github.jeddict.bv.constraints.Pattern;
 import io.github.jeddict.bv.constraints.Positive;
 import io.github.jeddict.bv.constraints.PositiveOrZero;
 import io.github.jeddict.bv.constraints.Size;
+import io.github.jeddict.bv.constraints.Valid;
 
 /**
  *
@@ -46,7 +47,9 @@ import io.github.jeddict.bv.constraints.Size;
 public class ConstraintSnippetFactory {
 
     public static ConstraintSnippet getInstance(Constraint constraint) {
-        if (constraint instanceof NotNull) {
+        if (constraint instanceof Valid) {
+            return new ValidSnippet((Valid) constraint);
+        } else if (constraint instanceof NotNull) {
             return new NotNullSnippet((NotNull) constraint);
         } else if (constraint instanceof Null) {
             return new NullSnippet((Null) constraint);

@@ -15,16 +15,20 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import org.apache.commons.lang3.StringUtils;
 import static io.github.jeddict.jcode.JPAConstants.CONSTRAINT_MODE;
 import static io.github.jeddict.jcode.JPAConstants.CONSTRAINT_MODE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.FOREIGN_KEY;
 import static io.github.jeddict.jcode.JPAConstants.FOREIGN_KEY_FQN;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import io.github.jeddict.settings.code.CodePanel;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 public class ForeignKeySnippet implements Snippet {
 
@@ -37,30 +41,30 @@ public class ForeignKeySnippet implements Snippet {
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@").append(FOREIGN_KEY).append("(");
+        builder.append(AT).append(FOREIGN_KEY).append(OPEN_PARANTHESES);
         if (StringUtils.isNotBlank(name)) {
             builder.append("name=\"");
             builder.append(name);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(QUOTE);
+            builder.append(COMMA);
         }
 
         if (StringUtils.isNotBlank(constraintMode)) {
             builder.append("value=").append(CONSTRAINT_MODE).append(".");
             builder.append(constraintMode);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         } else if (CodePanel.isGenerateDefaultValue()) {
             builder.append("value=").append(CONSTRAINT_MODE).append(".");
             builder.append("PROVIDER_DEFAULT");
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         }
         if (StringUtils.isNotBlank(foreignKeyDefinition)) {
             builder.append("foreignKeyDefinition=\"");
             builder.append(foreignKeyDefinition);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(QUOTE);
+            builder.append(COMMA);
         }
-        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override

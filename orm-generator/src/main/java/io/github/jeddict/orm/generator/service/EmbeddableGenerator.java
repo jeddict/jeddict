@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.orm.generator.service;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.jpa.spec.Embeddable;
 import io.github.jeddict.jpa.spec.EmbeddableAttributes;
 import io.github.jeddict.orm.generator.compiler.def.EmbeddableDefSnippet;

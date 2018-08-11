@@ -6,6 +6,11 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.JPAConstants.ORDER_COLUMN_FQN;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import io.github.jeddict.source.MemberExplorer;
+import java.util.Optional;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
@@ -14,8 +19,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.internal.jpa.metadata.columns.OrderColumnMetadata;
-import static io.github.jeddict.jcode.JPAConstants.ORDER_COLUMN_FQN;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -75,6 +78,21 @@ public class OrderColumn {
             orderColumn.insertable = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "insertable");
             orderColumn.updatable = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "updatable");
             orderColumn.columnDefinition = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columnDefinition");
+        }
+        return orderColumn;
+    }
+
+    public static OrderColumn load(MemberExplorer member) {
+        OrderColumn orderColumn = null;
+        Optional<AnnotationExplorer> orderColumnOpt = member.getAnnotation(javax.persistence.OrderColumn.class);
+        if (orderColumnOpt.isPresent()) {
+            orderColumn = new OrderColumn();
+            AnnotationExplorer annotation = orderColumnOpt.get();
+            annotation.getString("name").ifPresent(orderColumn::setName);
+            annotation.getBoolean("nullable").ifPresent(orderColumn::setNullable);
+            annotation.getBoolean("insertable").ifPresent(orderColumn::setInsertable);
+            annotation.getBoolean("updatable").ifPresent(orderColumn::setUpdatable);
+            annotation.getString("columnDefinition").ifPresent(orderColumn::setColumnDefinition);
         }
         return orderColumn;
     }

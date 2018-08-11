@@ -15,6 +15,8 @@
  */
 package io.github.jeddict.bv.constraints;
 
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.Objects;
 import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.Unmarshaller;
@@ -23,8 +25,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import io.github.jeddict.source.JCREBVLoader;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -32,7 +32,7 @@ import io.github.jeddict.source.JavaSourceParserUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlJavaTypeAdapter(value = ConstraintsValidator.class)
-public abstract class Constraint implements JCREBVLoader {
+public abstract class Constraint {
 
     @XmlTransient
     private Boolean selected = false;
@@ -92,11 +92,14 @@ public abstract class Constraint implements JCREBVLoader {
     }
     
     
-    @Override
-    public void load(AnnotationMirror annotationMirror) {
+    public void load(AnnotationMirror annotation) {
         this.setSelected(true);
-        this.message = JavaSourceParserUtil.findAnnotationValueAsString(annotationMirror, "message");
+        this.message = JavaSourceParserUtil.findAnnotationValueAsString(annotation, "message");
     }
-    
-    
+
+    public void load(AnnotationExplorer annotation) {
+        this.setSelected(true);
+        annotation.getString("message").ifPresent(this::setMessage);
+    }
+
 }

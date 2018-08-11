@@ -54,7 +54,10 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.specification.model.document.IDefinitionElement;
@@ -194,7 +197,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     protected List<MappedSuperclass> mappedSuperclass;
     protected List<Entity> entity;
     protected List<Embeddable> embeddable;
-    private List<BeanClass> beanClass;
+    protected List<BeanClass> beanClass;
     protected List<Converter> converter;//NREVENG 
     @XmlAttribute(name = "v", required = true)
     protected String version;
@@ -740,7 +743,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     public Stream<Entity> getGeneratedEntity() {
         return getEntity().stream()
                 .filter(e -> Boolean.FALSE.equals(e.getAbstract()))
-                .filter(e -> e.getGenerateSourceCode());
+                .filter(Entity::getGenerateSourceCode);
     }
 
     public void setEntity(List<Entity> entity) {
@@ -986,7 +989,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public Entity getEntity(String id) {
-        if (StringUtils.isBlank(id)) {
+        if (isBlank(id)) {
             return null;
         }
         if (entity != null) {
@@ -1000,7 +1003,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public Embeddable getEmbeddable(String id) {
-        if (StringUtils.isBlank(id)) {
+        if (isBlank(id)) {
             return null;
         }
         if (embeddable != null) {
@@ -1014,7 +1017,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public List<Entity> findAllEntity(String entityName) {
-        if (StringUtils.isBlank(entityName)) {
+        if (isBlank(entityName)) {
             return null;
         }
         List<Entity> entities = new ArrayList<>();
@@ -1052,7 +1055,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public Optional<MappedSuperclass> findMappedSuperclass(String mappedSuperclassName) {
-        if (StringUtils.isBlank(mappedSuperclassName)) {
+        if (isBlank(mappedSuperclassName)) {
             return Optional.empty();
         }
         if (mappedSuperclass != null) {
@@ -1097,7 +1100,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public Optional<Embeddable> findEmbeddable(String embeddableName) {
-        if (StringUtils.isBlank(embeddableName)) {
+        if (isBlank(embeddableName)) {
             return Optional.empty();
         }
         if (embeddable != null) {
@@ -1126,7 +1129,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public Optional<BeanClass> findBeanClass(String className) {
-        if (StringUtils.isBlank(className)) {
+        if (isBlank(className)) {
             return Optional.empty();
         }
         if (getBeanClass() != null) {
@@ -1201,7 +1204,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public DefaultClass addDefaultClass(String subPackage, String _class) {
-        if (StringUtils.isBlank(_class)) {
+        if (isBlank(_class)) {
             throw new IllegalStateException("Class name can't empty");
         }
         DefaultClass existDefaultClass;
@@ -1265,18 +1268,13 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     public void manageRefId() {
         EntityMappings entityMappingsSpec = this;
 
-        getNamedStoredProcedureQuery().forEach(q -> manageStoredProcedureQuery(q));
+        getNamedStoredProcedureQuery().forEach(this::manageStoredProcedureQuery);
 
-        List<ManagedClass> classes = new ArrayList<>(entityMappingsSpec.getEntity());
         // manageSiblingAttribute for MappedSuperClass and Embeddable is not required for (DBRE) DB REV ENG CASE
-        classes.addAll(entityMappingsSpec.getMappedSuperclass());
-        classes.addAll(entityMappingsSpec.getEmbeddable());
-
-        for (ManagedClass<? extends IPersistenceAttributes> managedClass : classes) {
+        for (ManagedClass<? extends IPersistenceAttributes> managedClass : entityMappingsSpec.getAllManagedClass()) {
 
             if (managedClass instanceof Entity) {
-                ((Entity) managedClass).getNamedStoredProcedureQuery()
-                        .forEach(q -> manageStoredProcedureQuery(q));
+                ((Entity) managedClass).getNamedStoredProcedureQuery().forEach(this::manageStoredProcedureQuery);
             }
 
             for (ManyToMany manyToMany : new ArrayList<>(managedClass.getAttributes().getManyToMany())) {
@@ -1308,7 +1306,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 
             // If Include Referenced Classed Checkbox is Uncheked then remove attribute
             for (RelationAttribute relationAttribute : new ArrayList<>(managedClass.getAttributes().getRelationAttributes())) {
-                Optional<io.github.jeddict.jpa.spec.Entity> targetEntity = entityMappingsSpec.findEntity(relationAttribute.getTargetEntity());
+                Optional<Entity> targetEntity = entityMappingsSpec.findEntity(relationAttribute.getTargetEntity());
                 if (!targetEntity.isPresent()) {
                     managedClass.getAttributes().removeRelationAttribute(relationAttribute);
                 }
@@ -1340,7 +1338,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     private void loadMapKeyAttribute(ManagedClass managedClass, MapKeyHandler mapKeyHandler) {
         if (mapKeyHandler.getMapKeyType() == MapKeyType.NEW) {
             //Search in Entity
-            Optional<io.github.jeddict.jpa.spec.Entity> entity = this.findEntity(mapKeyHandler.getMapKeyAttributeType());
+            Optional<Entity> entity = this.findEntity(mapKeyHandler.getMapKeyAttributeType());
             if (entity.isPresent()) {
                 mapKeyHandler.setMapKeyEntity(entity.get());
                 return;
@@ -1354,7 +1352,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             }
         } else {
             //find Existing Attribute in current and connected class based on the instance
-            if (mapKeyHandler.getMapKey() != null && StringUtils.isNotBlank(mapKeyHandler.getMapKey().getName())) {
+            if (mapKeyHandler.getMapKey() != null && isNotBlank(mapKeyHandler.getMapKey().getName())) {
                 ManagedClass attributeContainerClass = null;
                 if (mapKeyHandler instanceof ElementCollection) {
                     attributeContainerClass = managedClass;
@@ -1373,15 +1371,16 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     // Issue Fix #5949 Start
-    private void manageSiblingAttribute(JavaClass sourceJavaClass, RelationAttribute relationAttribute_Owner) {
-        Optional<io.github.jeddict.jpa.spec.Entity> targetEntityOptional = this.findEntity(relationAttribute_Owner.getTargetEntity());
+    private void manageSiblingAttribute(JavaClass sourceJavaClass, RelationAttribute relationAttributeOwner) {
+        Optional<Entity> targetEntityOptional = this.findEntity(relationAttributeOwner.getTargetEntity());
         if (targetEntityOptional.isPresent()) {
-            io.github.jeddict.jpa.spec.Entity targetEntity = targetEntityOptional.get();
-            if (relationAttribute_Owner instanceof ManyToMany) {
-                ManyToMany sourceAttribute = (ManyToMany) relationAttribute_Owner;
+            Entity targetEntity = targetEntityOptional.get();
+            if (relationAttributeOwner instanceof ManyToMany) {
+                ManyToMany sourceAttribute = (ManyToMany) relationAttributeOwner;
                 ManyToMany targetAttribute = null;
                 for (ManyToMany targetManyToMany : targetEntity.getAttributes().getManyToMany()) {
-                    if (sourceAttribute.getName().equals(targetManyToMany.getMappedBy()) && sourceJavaClass.getClazz().equals(targetManyToMany.getTargetEntity())) {
+                    if (sourceAttribute.getName().equals(targetManyToMany.getMappedBy())
+                            && sourceJavaClass.getClazz().equals(targetManyToMany.getTargetEntity())) {
                         targetAttribute = targetManyToMany;
                         break;
                     }
@@ -1392,11 +1391,11 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
                     sourceAttribute.setConnectedAttribute(targetAttribute);
                 }
                 sourceAttribute.setConnectedEntity(targetEntity);
-            } else if (relationAttribute_Owner instanceof OneToMany) {
-                OneToMany sourceAttribute = (OneToMany) relationAttribute_Owner;
+            } else if (relationAttributeOwner instanceof OneToMany) {
+                OneToMany sourceAttribute = (OneToMany) relationAttributeOwner;
                 sourceAttribute.setConnectedEntity(targetEntity);
-            } else if (relationAttribute_Owner instanceof ManyToOne) {
-                ManyToOne sourceAttribute = (ManyToOne) relationAttribute_Owner;
+            } else if (relationAttributeOwner instanceof ManyToOne) {
+                ManyToOne sourceAttribute = (ManyToOne) relationAttributeOwner;
                 OneToMany targetAttribute = null;
                 for (OneToMany targetOneToMany : targetEntity.getAttributes().getOneToMany()) {
                     if (sourceAttribute.getName().equals(targetOneToMany.getMappedBy()) && sourceJavaClass.getClazz().equals(targetOneToMany.getTargetEntity())) {
@@ -1411,8 +1410,8 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
                 }
                 sourceAttribute.setConnectedEntity(targetEntity);
 
-            } else if (relationAttribute_Owner instanceof OneToOne) {
-                OneToOne sourceAttribute = (OneToOne) relationAttribute_Owner;
+            } else if (relationAttributeOwner instanceof OneToOne) {
+                OneToOne sourceAttribute = (OneToOne) relationAttributeOwner;
                 OneToOne targetAttribute = null;
                 for (OneToOne targetOneToOne : targetEntity.getAttributes().getOneToOne()) {
                     if (sourceAttribute.getName().equals(targetOneToOne.getMappedBy()) && sourceJavaClass.getClazz().equals(targetOneToOne.getTargetEntity())) {
@@ -1430,18 +1429,13 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             }
         }
     }
-//
-//    public void repairDefinition(boolean manageSiblingAttribute) {
-//        repairDefinition(null, manageSiblingAttribute);
-//    }
 
     public void repairDefinition(InputOutput IO) {
         repairDefinition(IO, false);
     }
 
     /**
-     * Helps in compatibility support, helps to repair wrong jpa relation in
-     * JCRE
+     * Helps in compatibility support to repair wrong jpa relation in JCRE
      *
      * @param IO
      * @param manageSiblingAttribute
@@ -1540,7 +1534,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public JavaClass getJavaClass(String classId) {
-        if (StringUtils.isBlank(classId)) {
+        if (isBlank(classId)) {
             return null;
         }
         for (JavaClass javaClass : getJavaClass()) {
@@ -1562,14 +1556,20 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public List<JavaClass> findAllJavaClass(String className) {
-        return getAllJavaClass().stream().filter((_class) -> (className.equals(_class.getClazz()))).collect(toList());
+        return getAllJavaClass()
+                .stream()
+                .filter(_class -> _class.getClazz().equals(className))
+                .collect(toList());
     }
 
     public List<JavaClass> getSubClass(String classId) {
         List<JavaClass> javaClassList = new ArrayList<>(this.getEntity());
-        this.getJavaClass().stream().filter((javaClass) -> (classId.equals(javaClass.getSuperclass().getId()))).forEach((javaClass) -> {
-            javaClassList.add(javaClass);
-        });
+        javaClassList.addAll(
+                this.getJavaClass()
+                        .stream()
+                        .filter(javaClass -> classId.equals(javaClass.getSuperclass().getId()))
+                        .collect(toList())
+        );
         return javaClassList;
     }
 
@@ -1624,9 +1624,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         List<IdentifiableClass> identifiableClasses = new ArrayList<>(this.getEntity());
         identifiableClasses.addAll(this.getMappedSuperclass());
         List<SqlResultSetMapping> sqlResultSetMappings = new ArrayList<>();
-        identifiableClasses.forEach((identifiableClass) -> {
-            sqlResultSetMappings.addAll(identifiableClass.getSqlResultSetMapping());
-        });
+        identifiableClasses.forEach(identifiableClass -> sqlResultSetMappings.addAll(identifiableClass.getSqlResultSetMapping()));
         return sqlResultSetMappings;
     }
 
@@ -1649,7 +1647,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 
     void afterUnmarshal(Unmarshaller u, Object parent) {
         setPreviousVersion(version);
-        if(StringUtils.isEmpty(entityPackage) && !StringUtils.isEmpty(_package)){
+        if (isEmpty(entityPackage) && !isEmpty(_package)) {
             entityPackage = _package;
             _package = null;
         }
@@ -1659,7 +1657,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
      * @param previousVersion the previousVersion to set
      */
     public void setPreviousVersion(String previousVersion) {
-        if (StringUtils.isBlank(previousVersion)) {
+        if (isBlank(previousVersion)) {
             previousVersion = "0.0";
         }
         this.previousVersion = new SoftwareVersion(previousVersion);
@@ -1784,6 +1782,14 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
      */
     public void setInterfaces(Set<ReferenceClass> interfaces) {
         this.interfaces = interfaces;
+    }
+
+    public boolean isCompositePrimaryKeyClass(String className) {
+        return getEntity()
+                .stream()
+                .filter(entity -> className.equals(entity.getCompositePrimaryKeyClass()))
+                .findAny()
+                .isPresent();
     }
 
     public Set<String> getAllConvert() {
@@ -2027,7 +2033,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
                 (jsonbNillable != null && jsonbNillable != false)
                 || (jsonbDateFormat != null && !jsonbDateFormat.isEmpty())
                 || (jsonbNumberFormat != null && !jsonbNumberFormat.isEmpty())
-                || (jsonbVisibility != null && StringUtils.isNotBlank(jsonbVisibility.getName()));
+                || (jsonbVisibility != null && isNotBlank(jsonbVisibility.getName()));
     }
 
     /**

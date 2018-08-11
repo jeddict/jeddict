@@ -18,6 +18,7 @@ package io.github.jeddict.jpa.spec.extend;
 import io.github.jeddict.jpa.spec.DefaultAttribute;
 import io.github.jeddict.jpa.spec.DefaultClass;
 import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.source.ClassExplorer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,7 +37,17 @@ public class DefaultAttributes extends Attributes<DefaultClass> {
 
     @XmlElement(name = "attr")
     private List<DefaultAttribute> defaultAttributes;
-        
+
+    @Override
+    public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void load(ClassExplorer clazz) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     @Override
     public List<Attribute> getAllAttribute(boolean includeParentClassAttibute) {
         List<Attribute> attributes = super.getAllAttribute(includeParentClassAttibute);
@@ -69,11 +80,6 @@ public class DefaultAttributes extends Attributes<DefaultClass> {
     public void removeDefaultAttribute(DefaultAttribute attribute) {
         getDefaultAttributes().remove(attribute);
         attribute.setAttributes(null);
-    }
-
-    @Override
-    public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
