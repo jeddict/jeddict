@@ -47,6 +47,7 @@ import io.github.jeddict.jpa.spec.Table;
 import io.github.jeddict.jpa.spec.TableGenerator;
 import io.github.jeddict.jpa.spec.TemporalType;
 import io.github.jeddict.jpa.spec.Version;
+import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.ReferenceClass;
 import io.github.jeddict.jpa.spec.validator.SequenceGeneratorValidator;
 import io.github.jeddict.jpa.spec.validator.TableGeneratorValidator;
@@ -108,6 +109,20 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
 
     public IdentifiableClassGenerator(T classDef) {
         super(classDef);
+    }
+
+    @Override
+    protected VariableDefSnippet processVariable(Attribute attr) {
+        if (attr instanceof Id) {
+            return processId((Id) attr);
+        } else if (attr instanceof Version) {
+            return processVersion((Version) attr);
+        } else if (attr instanceof EmbeddedId
+                && attr.getJavaClass() instanceof IdentifiableClass) {
+            return processEmbeddedId((IdentifiableClass) attr.getJavaClass(), (EmbeddedId) attr);
+        } else {
+            return super.processVariable(attr);
+        }
     }
 
     protected void processIdClass(IdClass parsedIdClass) {
@@ -312,8 +327,6 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
         return fieldResults;
     }
 
-  
-
     protected List<PrimaryKeyJoinColumnSnippet> getPrimaryKeyJoinColumns(
             List<PrimaryKeyJoinColumn> parsedPrimaryKeyJoinColumns) {
 
@@ -438,7 +451,6 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
         classDef.getEntityListeners().setEntityListeners(entityListeners);
     }
 
-
     protected void processDefaultExcludeListeners(
             EmptyType parsedEmptyType) {
 
@@ -455,10 +467,9 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
         }
     }
 
-
-    protected void processEmbeddedId(IdentifiableClass identifiableClass, EmbeddedId parsedEmbeddedId) {
+    protected VariableDefSnippet processEmbeddedId(IdentifiableClass identifiableClass, EmbeddedId parsedEmbeddedId) {
         if (parsedEmbeddedId == null || !identifiableClass.isEmbeddedIdType()) {
-            return;
+            return null;
         }
 
         VariableDefSnippet variableDef = getVariableDef(parsedEmbeddedId);
@@ -474,81 +485,67 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
         }
 
         processInternalAttributeOverride(variableDef, parsedEmbeddedId.getAttributeOverride());
+        return variableDef;
     }
 
-    protected void processId(List<Id> parsedIds) {
+    protected VariableDefSnippet processId(Id parsedId) {
+        VariableDefSnippet variableDef = getVariableDef(parsedId);
+        variableDef.setType(parsedId.getAttributeType());
+        variableDef.setPrimaryKey(true);
 
-//        if (parsedAttributes == null) {
-//            return;
-//        }
-//
-//        List<ParsedId> parsedIds = parsedAttributes.getId();
-        for (Id parsedId : parsedIds) {
-            VariableDefSnippet variableDef = getVariableDef(parsedId);
-            variableDef.setType(parsedId.getAttributeType());
-            variableDef.setFunctionalType(parsedId.isOptionalReturnType());
-            variableDef.setPrimaryKey(true);
+        Column parsedColumn = parsedId.getColumn();
 
-            Column parsedColumn = parsedId.getColumn();
-
-            if (parsedColumn != null) {
-                ColumnDefSnippet columnDef = getColumnDef(parsedColumn);
-                variableDef.setColumnDef(columnDef);
-            }
-            GeneratedValue parsedGeneratedValue = parsedId.getGeneratedValue();
-            if (parsedGeneratedValue != null && parsedGeneratedValue.getStrategy() != null) {
-                
-                GeneratedValueSnippet generatedValue = new GeneratedValueSnippet();
-                generatedValue.setGenerator(parsedGeneratedValue.getGenerator());
-                if (parsedGeneratedValue.getStrategy() != GenerationType.DEFAULT) {
-                    generatedValue.setStrategy("GenerationType." + parsedGeneratedValue.getStrategy().value());
-                }
-                variableDef.setGeneratedValue(generatedValue);
-
-                SequenceGenerator parsedSequenceGenerator = parsedId.getSequenceGenerator();
-                if (parsedSequenceGenerator != null) {
-                    SequenceGeneratorSnippet sequenceGenerator = processSequenceGenerator(parsedSequenceGenerator);
-                    variableDef.setSequenceGenerator(sequenceGenerator);
-                }
-
-                TableGenerator parsedTableGenerator = parsedId.getTableGenerator();
-                if (parsedTableGenerator != null) {
-                    variableDef.setTableGenerator(processTableGenerator(parsedTableGenerator));
-                }
-            }
-
-            TemporalType parsedTemporalType = parsedId.getTemporal();
-            TemporalSnippet temporal = null;
-            if (parsedTemporalType != null) {
-                temporal = new TemporalSnippet();
-                temporal.setValue(parsedTemporalType);
-            }
-            variableDef.setTemporal(temporal);
-        }
-    }
-
-
-    protected void processVersion(List<Version> parsedVersions) {
-        if (parsedVersions == null) {
-            return;
-        }
-        for (Version parsedVersion : parsedVersions) {
-            VariableDefSnippet variableDef = getVariableDef(parsedVersion);
-
-            ColumnDefSnippet columnDef = getColumnDef(parsedVersion.getColumn());
-            variableDef.setType(parsedVersion.getAttributeType());
-            variableDef.setFunctionalType(parsedVersion.isOptionalReturnType());
-            variableDef.setVersion(true);
+        if (parsedColumn != null) {
+            ColumnDefSnippet columnDef = getColumnDef(parsedColumn);
             variableDef.setColumnDef(columnDef);
-
-            TemporalType parsedTemporalType = parsedVersion.getTemporal();
-            TemporalSnippet temporal = null;
-            if (parsedTemporalType != null) {
-                temporal = new TemporalSnippet();
-                temporal.setValue(parsedTemporalType);
-            }
-            variableDef.setTemporal(temporal);
         }
+        GeneratedValue parsedGeneratedValue = parsedId.getGeneratedValue();
+        if (parsedGeneratedValue != null && parsedGeneratedValue.getStrategy() != null) {
+
+            GeneratedValueSnippet generatedValue = new GeneratedValueSnippet();
+            generatedValue.setGenerator(parsedGeneratedValue.getGenerator());
+            if (parsedGeneratedValue.getStrategy() != GenerationType.DEFAULT) {
+                generatedValue.setStrategy("GenerationType." + parsedGeneratedValue.getStrategy().value());
+            }
+            variableDef.setGeneratedValue(generatedValue);
+
+            SequenceGenerator parsedSequenceGenerator = parsedId.getSequenceGenerator();
+            if (parsedSequenceGenerator != null) {
+                SequenceGeneratorSnippet sequenceGenerator = processSequenceGenerator(parsedSequenceGenerator);
+                variableDef.setSequenceGenerator(sequenceGenerator);
+            }
+
+            TableGenerator parsedTableGenerator = parsedId.getTableGenerator();
+            if (parsedTableGenerator != null) {
+                variableDef.setTableGenerator(processTableGenerator(parsedTableGenerator));
+            }
+        }
+
+        TemporalType parsedTemporalType = parsedId.getTemporal();
+        TemporalSnippet temporal = null;
+        if (parsedTemporalType != null) {
+            temporal = new TemporalSnippet();
+            temporal.setValue(parsedTemporalType);
+        }
+        variableDef.setTemporal(temporal);
+        return variableDef;
+    }
+
+    protected VariableDefSnippet processVersion(Version parsedVersion) {
+        VariableDefSnippet variableDef = getVariableDef(parsedVersion);
+        variableDef.setType(parsedVersion.getAttributeType());
+        variableDef.setVersion(true);
+        ColumnDefSnippet columnDef = getColumnDef(parsedVersion.getColumn());
+        variableDef.setColumnDef(columnDef);
+
+        TemporalType parsedTemporalType = parsedVersion.getTemporal();
+        TemporalSnippet temporal = null;
+        if (parsedTemporalType != null) {
+            temporal = new TemporalSnippet();
+            temporal.setValue(parsedTemporalType);
+        }
+        variableDef.setTemporal(temporal);
+        return variableDef;
     }
 
     protected void processPrimaryKeyJoinColumns(List<PrimaryKeyJoinColumnSnippet> primaryKeyJoinColumns, ForeignKeySnippet primaryKeyForeignKey) {
@@ -765,8 +762,6 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
             logger.log(Level.WARNING, "Ignoring : Cannot find variable for Table generator :{0}", tableGenerator.getName());
         }
     }
-
-
 
     protected List<ColumnResultSnippet> getColumnResults(
             List<ColumnResult> parsedColumnResults) {

@@ -39,6 +39,7 @@ import io.github.jeddict.jpa.spec.OneToOne;
 import io.github.jeddict.jpa.spec.TemporalType;
 import io.github.jeddict.jpa.spec.Transient;
 import io.github.jeddict.jpa.spec.UniqueConstraint;
+import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.JoinColumnHandler;
 import io.github.jeddict.jpa.spec.extend.MapKeyHandler;
 import io.github.jeddict.jpa.spec.extend.MapKeyType;
@@ -79,6 +80,7 @@ import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
 import io.github.jeddict.settings.code.CodePanel;
 import java.util.ArrayList;
 import java.util.Collections;
+import static java.util.Collections.singletonList;
 import java.util.List;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
@@ -89,320 +91,300 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
         super(classDef);
     }
 
-    protected void processTransient(List<Transient> parsedTransients) {
-        for (Transient parsedTransient : parsedTransients) {
-            VariableDefSnippet variableDef = getVariableDef(parsedTransient);
-            variableDef.setType(parsedTransient.getAttributeType());
-            variableDef.setTranzient(true);
-            variableDef.setFunctionalType(parsedTransient.isOptionalReturnType());
+    @Override
+    protected VariableDefSnippet processVariable(Attribute attr) {
+        if (attr instanceof Basic) {
+            return processBasic((Basic) attr);
+        } else if (attr instanceof Transient) {
+            return processTransient((Transient) attr);
+        } else if (attr instanceof Embedded) {
+            return processEmbedded((Embedded) attr);
+        } else if (attr instanceof ElementCollection) {
+            return processElementCollection((ElementCollection) attr);
+        } else if (attr instanceof OneToOne) {
+            return processOneToOne((OneToOne) attr);
+        } else if (attr instanceof ManyToOne) {
+            return processManyToOne((ManyToOne) attr);
+        } else if (attr instanceof OneToMany) {
+            return processOneToMany((OneToMany) attr);
+        } else if (attr instanceof ManyToMany) {
+            return processManyToMany((ManyToMany) attr);
+        } else {
+            throw new IllegalStateException("Invalid Attribute Type");
         }
     }
 
-    protected void processManyToMany(List<ManyToMany> parsedManyToManys) {
+    protected VariableDefSnippet processBasic(Basic parsedBasic) {
+        ColumnDefSnippet columnDef = getColumnDef(parsedBasic.getColumn());
 
-        if (parsedManyToManys == null) {
-            return;
+        EnumType parsedEnumType = parsedBasic.getEnumerated();
+        EnumeratedSnippet enumerated = null;
+        if (parsedEnumType != null) {
+            enumerated = new EnumeratedSnippet();
+            enumerated.setValue(parsedEnumType);
         }
-        for (ManyToMany parsedManyToMany : parsedManyToManys) {
-            List<String> cascadeTypes = getCascadeTypes(parsedManyToMany.getCascade());
 
-            JoinTableSnippet joinTable = getJoinTable(parsedManyToMany.getJoinTable());
-
-            ManyToManySnippet manyToMany = new ManyToManySnippet();
-            manyToMany.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedManyToMany));
-            manyToMany.setMappedBy(parsedManyToMany.getMappedBy());
-            manyToMany.setTargetEntity(parsedManyToMany.getTargetEntity());
-            manyToMany.setTargetEntityPackage(parsedManyToMany.getConnectedEntity().getAbsolutePackage(rootPackageName));
-            manyToMany.setTargetField(parsedManyToMany.getConnectedAttributeName());
-            manyToMany.setCascadeTypes(cascadeTypes);
-
-            if (parsedManyToMany.getFetch() != null) {
-                manyToMany.setFetchType(parsedManyToMany.getFetch().value());
-            }
-            //TODO: Checked this error - The ORM.xsd has this but NOT the
-            //http://www.oracle.com/technology/products/ias/toplink/jpa/resources/toplink-jpa-annotations.html
-//            manyToMany.setOrderBy(parsedManyToMany.getOrderBy());
-
-            VariableDefSnippet variableDef = getVariableDef(parsedManyToMany);
-            variableDef.setType(rootPackageName, parsedManyToMany.getConnectedEntity());
-            variableDef.setCollectionType(parsedManyToMany.getCollectionType());
-            variableDef.setCollectionImplType(parsedManyToMany.getCollectionImplType());
-
-            variableDef.setRelationDef(manyToMany);
-            variableDef.setJoinTable(joinTable);
-            if (parsedManyToMany.getOrderBy() != null) {
-                variableDef.setOrderBy(new OrderBySnippet(parsedManyToMany.getOrderBy()));
-            } else if (parsedManyToMany.getOrderColumn() != null) {
-                variableDef.setOrderColumn(new OrderColumnSnippet(parsedManyToMany.getOrderColumn()));
-            }
-            if (parsedManyToMany.getMapKey() != null) {
-                variableDef.setMapKey(parsedManyToMany.getMapKey().getName());
-            }
-            variableDef.setConverts(processConverts(parsedManyToMany.getMapKeyConverts()));
+        TemporalType parsedTemporalType = parsedBasic.getTemporal();
+        TemporalSnippet temporal = null;
+        if (parsedTemporalType != null) {
+            temporal = new TemporalSnippet();
+            temporal.setValue(parsedTemporalType);
         }
+
+        FetchType parsedFetchType = parsedBasic.getFetch();
+        BasicSnippet basic = new BasicSnippet();
+
+        if (parsedFetchType != null) {
+            basic.setFetchType(parsedFetchType.value());
+        }
+        if (parsedBasic.getOptional() != null) {
+            basic.setOptional(parsedBasic.getOptional());
+        }
+
+        Lob parsedLob = parsedBasic.getLob();
+
+        VariableDefSnippet variableDef = getVariableDef(parsedBasic);
+        variableDef.setType(parsedBasic.getAttributeType());
+        variableDef.setBasic(basic);
+        variableDef.setColumnDef(columnDef);
+        variableDef.setEnumerated(enumerated);
+        variableDef.setTemporal(temporal);
+        variableDef.setConverts(processConverts(singletonList(parsedBasic.getConvert())));
+        variableDef.setLob(parsedLob != null);
+        return variableDef;
     }
 
-    protected void processOneToMany(List<OneToMany> parsedOneToManys) {
-
-        if (parsedOneToManys == null) {
-            return;
-        }
-        for (OneToMany parsedOneToMany : parsedOneToManys) {
-            List<String> cascadeTypes = getCascadeTypes(
-                    parsedOneToMany.getCascade());
-
-            JoinTableSnippet joinTable = getJoinTable(parsedOneToMany.getJoinTable());
-
-            OneToManySnippet oneToMany = new OneToManySnippet();
-
-            oneToMany.setCascadeTypes(cascadeTypes);
-            oneToMany.setTargetEntity(parsedOneToMany.getTargetEntity());
-            oneToMany.setTargetEntityPackage(parsedOneToMany.getConnectedEntity().getAbsolutePackage(rootPackageName));
-            oneToMany.setTargetField(parsedOneToMany.getConnectedAttributeName());
-            oneToMany.setMappedBy(parsedOneToMany.getMappedBy());
-            oneToMany.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedOneToMany));
-            if (parsedOneToMany.getFetch() != null) {
-                oneToMany.setFetchType(parsedOneToMany.getFetch().value());
-            }
-            oneToMany.setOrphanRemoval(parsedOneToMany.getOrphanRemoval());
-
-            VariableDefSnippet variableDef = getVariableDef(parsedOneToMany);
-            variableDef.setType(rootPackageName, parsedOneToMany.getConnectedEntity());
-            variableDef.setCollectionType(parsedOneToMany.getCollectionType());
-            variableDef.setCollectionImplType(parsedOneToMany.getCollectionImplType());
-            variableDef.setRelationDef(oneToMany);
-            variableDef.setJoinTable(joinTable);
-            variableDef.setJoinColumns(getJoinColumnsSnippet(parsedOneToMany, false));
-            if (parsedOneToMany.getOrderBy() != null) {
-                variableDef.setOrderBy(new OrderBySnippet(parsedOneToMany.getOrderBy()));
-            } else if (parsedOneToMany.getOrderColumn() != null) {
-                variableDef.setOrderColumn(new OrderColumnSnippet(parsedOneToMany.getOrderColumn()));
-            }
-
-            if (parsedOneToMany.getMapKey() != null) {
-                variableDef.setMapKey(parsedOneToMany.getMapKey().getName());
-            }
-            variableDef.setConverts(processConverts(parsedOneToMany.getMapKeyConverts()));
-        }
+    protected VariableDefSnippet processTransient(Transient parsedTransient) {
+        VariableDefSnippet variableDef = getVariableDef(parsedTransient);
+        variableDef.setType(parsedTransient.getAttributeType());
+        variableDef.setTranzient(true);
+        return variableDef;
     }
 
-    protected void processOneToOne(List<OneToOne> parsedOneToOnes) {
-
-        if (parsedOneToOnes == null) {
-            return;
-        }
-        for (OneToOne parsedOneToOne : parsedOneToOnes) {
-            List<String> cascadeTypes = getCascadeTypes(
-                    parsedOneToOne.getCascade());
-
-            JoinTableSnippet joinTable = getJoinTable(parsedOneToOne.getJoinTable());
-
-            OneToOneSnippet oneToOne = new OneToOneSnippet();
-
-            oneToOne.setCascadeTypes(cascadeTypes);
-            oneToOne.setTargetEntity(parsedOneToOne.getTargetEntity());
-            oneToOne.setTargetEntityPackage(parsedOneToOne.getConnectedEntity().getAbsolutePackage(rootPackageName));
-            oneToOne.setTargetField(parsedOneToOne.getConnectedAttributeName());
-            oneToOne.setMappedBy(parsedOneToOne.getMappedBy());
-            if (parsedOneToOne.getOptional() != null) {
-                oneToOne.setOptional(parsedOneToOne.getOptional());
-            }
-
-            if (parsedOneToOne.getFetch() != null) {
-                oneToOne.setFetchType(parsedOneToOne.getFetch().value());
-            } else if (CodePanel.isLazyDefaultTypeForSingleAssociation()) {
-                oneToOne.setFetchType(FetchType.LAZY.value());
-            }
-
-            oneToOne.setOrphanRemoval(parsedOneToOne.getOrphanRemoval());
-
-            oneToOne.setPrimaryKey(parsedOneToOne.isPrimaryKey());
-            oneToOne.setMapsId(parsedOneToOne.getMapsId());
-
-            VariableDefSnippet variableDef = getVariableDef(parsedOneToOne);
-            variableDef.setType(rootPackageName, parsedOneToOne.getConnectedEntity());
-
-            variableDef.setRelationDef(oneToOne);
-            variableDef.setJoinTable(joinTable);
-            variableDef.setJoinColumns(getJoinColumnsSnippet(parsedOneToOne, false));
-            variableDef.setFunctionalType(parsedOneToOne.isOptionalReturnType());
-        }
+    protected VariableDefSnippet processEmbedded(Embedded parsedEmbeded) {
+        VariableDefSnippet variableDef = getVariableDef(parsedEmbeded);
+        variableDef.setType(rootPackageName, parsedEmbeded.getConnectedClass());
+        variableDef.setEmbedded(true);
+        variableDef.setConverts(processConverts(parsedEmbeded.getConverts()));
+        processInternalAttributeOverride(variableDef, parsedEmbeded.getAttributeOverride());
+        processInternalAssociationOverride(variableDef, parsedEmbeded.getAssociationOverride());
+        return variableDef;
     }
 
-    protected void processManyToOne(List<ManyToOne> parsedManyToOnes) {
-        if (parsedManyToOnes == null) {
-            return;
+    protected VariableDefSnippet processElementCollection(ElementCollection parsedElementCollection) {
+        CollectionTableSnippet collectionTable = getCollectionTable(parsedElementCollection.getCollectionTable());
+
+        FetchType parsedFetchType = parsedElementCollection.getFetch();
+        ElementCollectionSnippet elementCollection = new ElementCollectionSnippet();
+        elementCollection.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedElementCollection));
+        elementCollection.setTargetClass(parsedElementCollection.getAttributeType());
+        if (parsedElementCollection.getConnectedClass() != null) {
+            elementCollection.setTargetClassPackage(parsedElementCollection.getConnectedClass().getAbsolutePackage(rootPackageName));
         }
 
-        for (ManyToOne parsedManyToOne : parsedManyToOnes) {
-            List<String> cascadeTypes = getCascadeTypes(
-                    parsedManyToOne.getCascade());
-
-            JoinTableSnippet joinTable = getJoinTable(parsedManyToOne.getJoinTable());
-
-            ManyToOneSnippet manyToOne = new ManyToOneSnippet();
-
-            manyToOne.setTargetEntity(parsedManyToOne.getTargetEntity());
-            manyToOne.setTargetEntityPackage(parsedManyToOne.getConnectedEntity().getAbsolutePackage(rootPackageName));
-            manyToOne.setTargetField(parsedManyToOne.getConnectedAttributeName());
-            manyToOne.setCascadeTypes(cascadeTypes);
-
-            if (parsedManyToOne.getOptional() != null) {
-                manyToOne.setOptional(parsedManyToOne.getOptional());
-            }
-
-            if (parsedManyToOne.getFetch() != null) {
-                manyToOne.setFetchType(parsedManyToOne.getFetch().value());
-            } else if (CodePanel.isLazyDefaultTypeForSingleAssociation()) {
-                manyToOne.setFetchType(FetchType.LAZY.value());
-            }
-
-            manyToOne.setPrimaryKey(parsedManyToOne.isPrimaryKey());
-            manyToOne.setMapsId(parsedManyToOne.getMapsId());
-
-            VariableDefSnippet variableDef = getVariableDef(parsedManyToOne);
-            variableDef.setType(rootPackageName, parsedManyToOne.getConnectedEntity());
-
-            variableDef.setRelationDef(manyToOne);
-            variableDef.setJoinTable(joinTable);
-            variableDef.setJoinColumns(getJoinColumnsSnippet(parsedManyToOne, false));
-            variableDef.setFunctionalType(parsedManyToOne.isOptionalReturnType());
+        if (parsedFetchType != null) {
+            elementCollection.setFetchType(parsedFetchType.value());
         }
-    }
+        Lob parsedLob = parsedElementCollection.getLob();
 
-    protected void processEmbedded(List<Embedded> parsedEmbeddeds) {
-
-        if (parsedEmbeddeds == null) {
-            return;
+        VariableDefSnippet variableDef = getVariableDef(parsedElementCollection);
+        if (parsedElementCollection.getConnectedClass() != null) {
+            variableDef.setType(rootPackageName, parsedElementCollection.getConnectedClass());
+        } else {
+            variableDef.setType(parsedElementCollection.getAttributeType());
         }
-        for (Embedded parsedEmbeded : parsedEmbeddeds) {
-            VariableDefSnippet variableDef = getVariableDef(parsedEmbeded);
-            variableDef.setType(rootPackageName, parsedEmbeded.getConnectedClass());
+        variableDef.setCollectionType(parsedElementCollection.getCollectionType());
+        variableDef.setCollectionImplType(parsedElementCollection.getCollectionImplType());
+        variableDef.setElementCollection(elementCollection);
+        variableDef.setCollectionTable(collectionTable);
 
-            variableDef.setEmbedded(true);
-            variableDef.setFunctionalType(parsedEmbeded.isOptionalReturnType());
-            variableDef.setConverts(processConverts(parsedEmbeded.getConverts()));
-            processInternalAttributeOverride(variableDef, parsedEmbeded.getAttributeOverride());
-            processInternalAssociationOverride(variableDef, parsedEmbeded.getAssociationOverride());
+        if (parsedElementCollection.getOrderBy() != null) {
+            variableDef.setOrderBy(new OrderBySnippet(parsedElementCollection.getOrderBy()));
+        } else if (parsedElementCollection.getOrderColumn() != null) {
+            variableDef.setOrderColumn(new OrderColumnSnippet(parsedElementCollection.getOrderColumn()));
         }
-    }
 
-    protected void processElementCollection(List<ElementCollection> parsedElementCollections) {
-        if (parsedElementCollections == null) {
-            return;
+        if (parsedLob != null) {
+            variableDef.setLob(true);
         }
-        for (ElementCollection parsedElementCollection : parsedElementCollections) {
 
-            CollectionTableSnippet collectionTable = getCollectionTable(parsedElementCollection.getCollectionTable());
-
-            FetchType parsedFetchType = parsedElementCollection.getFetch();
-            ElementCollectionSnippet elementCollection = new ElementCollectionSnippet();
-            elementCollection.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedElementCollection));
-            elementCollection.setTargetClass(parsedElementCollection.getAttributeType());
-            if (parsedElementCollection.getConnectedClass() != null) {
-                elementCollection.setTargetClassPackage(parsedElementCollection.getConnectedClass().getAbsolutePackage(rootPackageName));
-            }
-
-            if (parsedFetchType != null) {
-                elementCollection.setFetchType(parsedFetchType.value());
-            }
-            Lob parsedLob = parsedElementCollection.getLob();
-
-            VariableDefSnippet variableDef = getVariableDef(parsedElementCollection);
-            if (parsedElementCollection.getConnectedClass() != null) {
-                variableDef.setType(rootPackageName, parsedElementCollection.getConnectedClass());
-            } else {
-                variableDef.setType(parsedElementCollection.getAttributeType());
-            }
-            variableDef.setCollectionType(parsedElementCollection.getCollectionType());
-            variableDef.setCollectionImplType(parsedElementCollection.getCollectionImplType());
-            variableDef.setElementCollection(elementCollection);
-            variableDef.setCollectionTable(collectionTable);
-
-            if (parsedElementCollection.getOrderBy() != null) {
-                variableDef.setOrderBy(new OrderBySnippet(parsedElementCollection.getOrderBy()));
-            } else if (parsedElementCollection.getOrderColumn() != null) {
-                variableDef.setOrderColumn(new OrderColumnSnippet(parsedElementCollection.getOrderColumn()));
-            }
-
-            if (parsedLob != null) {
-                variableDef.setLob(true);
-            }
-
-            if (parsedElementCollection.getConnectedClass() == null) {//if not embeddable
-                EnumType parsedEnumType = parsedElementCollection.getEnumerated();
-                EnumeratedSnippet enumerated = null;
-                if (parsedEnumType != null) {
-                    enumerated = new EnumeratedSnippet();
-                    enumerated.setValue(parsedEnumType);
-                }
-
-                TemporalType parsedTemporalType = parsedElementCollection.getTemporal();
-                TemporalSnippet temporal = null;
-                if (parsedTemporalType != null) {
-                    temporal = new TemporalSnippet();
-                    temporal.setValue(parsedTemporalType);
-                }
-                variableDef.setEnumerated(enumerated);
-                variableDef.setTemporal(temporal);
-                variableDef.setColumnDef(getColumnDef(parsedElementCollection.getColumn()));
-            } else {
-                processInternalAttributeOverride(variableDef, parsedElementCollection.getAttributeOverride());
-                processInternalAssociationOverride(variableDef, parsedElementCollection.getAssociationOverride());
-            }
-
-            List<Convert> converts = new ArrayList<>();
-            converts.addAll(parsedElementCollection.getMapKeyConverts());
-            converts.addAll(parsedElementCollection.getConverts());
-            variableDef.setConverts(processConverts(converts));
-        }
-    }
-
-    protected void processBasic(List<Basic> parsedBasics) {
-        if (parsedBasics == null) {
-            return;
-        }
-        for (Basic parsedBasic : parsedBasics) {
-            ColumnDefSnippet columnDef = getColumnDef(parsedBasic.getColumn());
-
-            EnumType parsedEnumType = parsedBasic.getEnumerated();
+        if (parsedElementCollection.getConnectedClass() == null) {//if not embeddable
+            EnumType parsedEnumType = parsedElementCollection.getEnumerated();
             EnumeratedSnippet enumerated = null;
             if (parsedEnumType != null) {
                 enumerated = new EnumeratedSnippet();
                 enumerated.setValue(parsedEnumType);
             }
 
-            TemporalType parsedTemporalType = parsedBasic.getTemporal();
+            TemporalType parsedTemporalType = parsedElementCollection.getTemporal();
             TemporalSnippet temporal = null;
             if (parsedTemporalType != null) {
                 temporal = new TemporalSnippet();
                 temporal.setValue(parsedTemporalType);
             }
-
-            FetchType parsedFetchType = parsedBasic.getFetch();
-            BasicSnippet basic = new BasicSnippet();
-
-            if (parsedFetchType != null) {
-                basic.setFetchType(parsedFetchType.value());
-            }
-            if (parsedBasic.getOptional() != null) {
-                basic.setOptional(parsedBasic.getOptional());
-            }
-
-            Lob parsedLob = parsedBasic.getLob();
-
-            VariableDefSnippet variableDef = getVariableDef(parsedBasic);
-
-            variableDef.setBasic(basic);
-            variableDef.setColumnDef(columnDef);
             variableDef.setEnumerated(enumerated);
             variableDef.setTemporal(temporal);
-            variableDef.setType(parsedBasic.getAttributeType());
-            variableDef.setFunctionalType(parsedBasic.isOptionalReturnType());
-            variableDef.setConverts(processConverts(Collections.singletonList(parsedBasic.getConvert())));
-            variableDef.setLob(parsedLob != null);
+            variableDef.setColumnDef(getColumnDef(parsedElementCollection.getColumn()));
+        } else {
+            processInternalAttributeOverride(variableDef, parsedElementCollection.getAttributeOverride());
+            processInternalAssociationOverride(variableDef, parsedElementCollection.getAssociationOverride());
         }
+
+        List<Convert> converts = new ArrayList<>();
+        converts.addAll(parsedElementCollection.getMapKeyConverts());
+        converts.addAll(parsedElementCollection.getConverts());
+        variableDef.setConverts(processConverts(converts));
+        return variableDef;
     }
+
+    protected VariableDefSnippet processOneToOne(OneToOne parsedOneToOne) {
+        List<String> cascadeTypes = getCascadeTypes(parsedOneToOne.getCascade());
+
+        JoinTableSnippet joinTable = getJoinTable(parsedOneToOne.getJoinTable());
+
+        OneToOneSnippet oneToOne = new OneToOneSnippet();
+
+        oneToOne.setCascadeTypes(cascadeTypes);
+        oneToOne.setTargetEntity(parsedOneToOne.getTargetEntity());
+        oneToOne.setTargetEntityPackage(parsedOneToOne.getConnectedEntity().getAbsolutePackage(rootPackageName));
+        oneToOne.setTargetField(parsedOneToOne.getConnectedAttributeName());
+        oneToOne.setMappedBy(parsedOneToOne.getMappedBy());
+        if (parsedOneToOne.getOptional() != null) {
+            oneToOne.setOptional(parsedOneToOne.getOptional());
+        }
+
+        if (parsedOneToOne.getFetch() != null) {
+            oneToOne.setFetchType(parsedOneToOne.getFetch().value());
+        } else if (CodePanel.isLazyDefaultTypeForSingleAssociation()) {
+            oneToOne.setFetchType(FetchType.LAZY.value());
+        }
+
+        oneToOne.setOrphanRemoval(parsedOneToOne.getOrphanRemoval());
+
+        oneToOne.setPrimaryKey(parsedOneToOne.isPrimaryKey());
+        oneToOne.setMapsId(parsedOneToOne.getMapsId());
+
+        VariableDefSnippet variableDef = getVariableDef(parsedOneToOne);
+        variableDef.setType(rootPackageName, parsedOneToOne.getConnectedEntity());
+
+        variableDef.setRelationDef(oneToOne);
+        variableDef.setJoinTable(joinTable);
+        variableDef.setJoinColumns(getJoinColumnsSnippet(parsedOneToOne, false));
+        return variableDef;
+    }
+
+    protected VariableDefSnippet processManyToOne(ManyToOne parsedManyToOne) {
+        List<String> cascadeTypes = getCascadeTypes(parsedManyToOne.getCascade());
+
+        JoinTableSnippet joinTable = getJoinTable(parsedManyToOne.getJoinTable());
+
+        ManyToOneSnippet manyToOne = new ManyToOneSnippet();
+
+        manyToOne.setTargetEntity(parsedManyToOne.getTargetEntity());
+        manyToOne.setTargetEntityPackage(parsedManyToOne.getConnectedEntity().getAbsolutePackage(rootPackageName));
+        manyToOne.setTargetField(parsedManyToOne.getConnectedAttributeName());
+        manyToOne.setCascadeTypes(cascadeTypes);
+
+        if (parsedManyToOne.getOptional() != null) {
+            manyToOne.setOptional(parsedManyToOne.getOptional());
+        }
+
+        if (parsedManyToOne.getFetch() != null) {
+            manyToOne.setFetchType(parsedManyToOne.getFetch().value());
+        } else if (CodePanel.isLazyDefaultTypeForSingleAssociation()) {
+            manyToOne.setFetchType(FetchType.LAZY.value());
+        }
+
+        manyToOne.setPrimaryKey(parsedManyToOne.isPrimaryKey());
+        manyToOne.setMapsId(parsedManyToOne.getMapsId());
+
+        VariableDefSnippet variableDef = getVariableDef(parsedManyToOne);
+        variableDef.setType(rootPackageName, parsedManyToOne.getConnectedEntity());
+
+        variableDef.setRelationDef(manyToOne);
+        variableDef.setJoinTable(joinTable);
+        variableDef.setJoinColumns(getJoinColumnsSnippet(parsedManyToOne, false));
+        return variableDef;
+    }
+
+    protected VariableDefSnippet processOneToMany(OneToMany parsedOneToMany) {
+        List<String> cascadeTypes = getCascadeTypes(
+                parsedOneToMany.getCascade());
+
+        JoinTableSnippet joinTable = getJoinTable(parsedOneToMany.getJoinTable());
+
+        OneToManySnippet oneToMany = new OneToManySnippet();
+
+        oneToMany.setCascadeTypes(cascadeTypes);
+        oneToMany.setTargetEntity(parsedOneToMany.getTargetEntity());
+        oneToMany.setTargetEntityPackage(parsedOneToMany.getConnectedEntity().getAbsolutePackage(rootPackageName));
+        oneToMany.setTargetField(parsedOneToMany.getConnectedAttributeName());
+        oneToMany.setMappedBy(parsedOneToMany.getMappedBy());
+        oneToMany.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedOneToMany));
+        if (parsedOneToMany.getFetch() != null) {
+            oneToMany.setFetchType(parsedOneToMany.getFetch().value());
+        }
+        oneToMany.setOrphanRemoval(parsedOneToMany.getOrphanRemoval());
+
+        VariableDefSnippet variableDef = getVariableDef(parsedOneToMany);
+        variableDef.setType(rootPackageName, parsedOneToMany.getConnectedEntity());
+        variableDef.setCollectionType(parsedOneToMany.getCollectionType());
+        variableDef.setCollectionImplType(parsedOneToMany.getCollectionImplType());
+        variableDef.setRelationDef(oneToMany);
+        variableDef.setJoinTable(joinTable);
+        variableDef.setJoinColumns(getJoinColumnsSnippet(parsedOneToMany, false));
+        if (parsedOneToMany.getOrderBy() != null) {
+            variableDef.setOrderBy(new OrderBySnippet(parsedOneToMany.getOrderBy()));
+        } else if (parsedOneToMany.getOrderColumn() != null) {
+            variableDef.setOrderColumn(new OrderColumnSnippet(parsedOneToMany.getOrderColumn()));
+        }
+
+        if (parsedOneToMany.getMapKey() != null) {
+            variableDef.setMapKey(parsedOneToMany.getMapKey().getName());
+        }
+        variableDef.setConverts(processConverts(parsedOneToMany.getMapKeyConverts()));
+        return variableDef;
+    }
+
+    protected VariableDefSnippet processManyToMany(ManyToMany parsedManyToMany) {
+        List<String> cascadeTypes = getCascadeTypes(parsedManyToMany.getCascade());
+
+        JoinTableSnippet joinTable = getJoinTable(parsedManyToMany.getJoinTable());
+
+        ManyToManySnippet manyToMany = new ManyToManySnippet();
+        manyToMany.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedManyToMany));
+        manyToMany.setMappedBy(parsedManyToMany.getMappedBy());
+        manyToMany.setTargetEntity(parsedManyToMany.getTargetEntity());
+        manyToMany.setTargetEntityPackage(parsedManyToMany.getConnectedEntity().getAbsolutePackage(rootPackageName));
+        manyToMany.setTargetField(parsedManyToMany.getConnectedAttributeName());
+        manyToMany.setCascadeTypes(cascadeTypes);
+
+        if (parsedManyToMany.getFetch() != null) {
+            manyToMany.setFetchType(parsedManyToMany.getFetch().value());
+        }
+        //TODO: Checked this error - The ORM.xsd has this but NOT the
+        //http://www.oracle.com/technology/products/ias/toplink/jpa/resources/toplink-jpa-annotations.html
+//            manyToMany.setOrderBy(parsedManyToMany.getOrderBy());
+
+        VariableDefSnippet variableDef = getVariableDef(parsedManyToMany);
+        variableDef.setType(rootPackageName, parsedManyToMany.getConnectedEntity());
+        variableDef.setCollectionType(parsedManyToMany.getCollectionType());
+        variableDef.setCollectionImplType(parsedManyToMany.getCollectionImplType());
+
+        variableDef.setRelationDef(manyToMany);
+        variableDef.setJoinTable(joinTable);
+        if (parsedManyToMany.getOrderBy() != null) {
+            variableDef.setOrderBy(new OrderBySnippet(parsedManyToMany.getOrderBy()));
+        } else if (parsedManyToMany.getOrderColumn() != null) {
+            variableDef.setOrderColumn(new OrderColumnSnippet(parsedManyToMany.getOrderColumn()));
+        }
+        if (parsedManyToMany.getMapKey() != null) {
+            variableDef.setMapKey(parsedManyToMany.getMapKey().getName());
+        }
+        variableDef.setConverts(processConverts(parsedManyToMany.getMapKeyConverts()));
+        return variableDef;
+    }
+
     protected ConvertsSnippet processConverts(List<Convert> parsedConverts) {
 
         if (parsedConverts == null || parsedConverts.isEmpty()) {
@@ -424,6 +406,7 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
 
         return null;
     }
+
     protected ColumnDefSnippet getColumnDef(Column column) {
         return getColumnDef(column, false);
     }
@@ -461,6 +444,7 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
 
         return columnDef;
     }
+
     protected void processInternalAttributeOverride(AttributeOverridesHandler attrHandler, Set<AttributeOverride> attributeOverrrides) {
         if (attributeOverrrides != null && !attributeOverrrides.isEmpty()
                 && attrHandler.getAttributeOverrides() == null) {
@@ -509,8 +493,8 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
             assoHandler.setAssociationOverrides(null);
         }
     }
-    
-      protected List<JoinColumnSnippet> getJoinColumns(List<? extends JoinColumn> parsedJoinColumns, boolean mapKey) {
+
+    protected List<JoinColumnSnippet> getJoinColumns(List<? extends JoinColumn> parsedJoinColumns, boolean mapKey) {
 
         List<JoinColumnSnippet> joinColumns = new ArrayList<>();
 
@@ -548,7 +532,6 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
         return joinColumns;
     }
 
-      
     protected JoinTableSnippet getJoinTable(JoinTable parsedJoinTable) {
         if (parsedJoinTable == null || JoinTableValidator.isEmpty(parsedJoinTable)) {
             return null;
@@ -597,6 +580,7 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
 
         return foreignKey;
     }
+
     protected List<IndexSnippet> getIndexes(List<Index> parsedIndexes) {
         if (parsedIndexes == null || parsedIndexes.isEmpty()) {
             return Collections.<IndexSnippet>emptyList();
@@ -604,12 +588,15 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
         return parsedIndexes.stream().filter(index -> !index.getColumnList().isEmpty())
                 .map(index -> new IndexSnippet(index)).collect(toList());
     }
+
     protected List<UniqueConstraintSnippet> getUniqueConstraints(Set<UniqueConstraint> parsedUniqueConstraints) {
         if (parsedUniqueConstraints == null || parsedUniqueConstraints.isEmpty()) {
             return Collections.<UniqueConstraintSnippet>emptyList();
         }
         return parsedUniqueConstraints.stream().map(c -> new UniqueConstraintSnippet(c)).collect(toList());
-    }    private MapKeySnippet updateMapKeyAttributeSnippet(MapKeyHandler mapKeyHandler) {
+    }
+
+    private MapKeySnippet updateMapKeyAttributeSnippet(MapKeyHandler mapKeyHandler) {
         if (mapKeyHandler.getMapKeyType() == null || mapKeyHandler.getValidatedMapKeyType() == null) {
             return null;
         }
@@ -656,6 +643,7 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
         }
         return joinColumns;
     }
+
     protected CollectionTableSnippet getCollectionTable(CollectionTable parsedCollectionTable) {
         if (parsedCollectionTable == null || CollectionTableValidator.isEmpty(parsedCollectionTable)) {
             return null;
@@ -680,6 +668,7 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
 
         return collectionTable;
     }
+
     protected List<String> getCascadeTypes(CascadeType cascadeType) {
 
         if (cascadeType == null) {
@@ -716,6 +705,7 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
 
         return cascadeTypes;
     }
+
     protected AttributeOverridesSnippet processAttributeOverrides(
             Set<AttributeOverride> parsedAttributeOverrides) {
 
@@ -744,6 +734,5 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
 
         return attributeOverridesSnippet;
     }
-
 
 }

@@ -15,11 +15,11 @@
  */
 package io.github.jeddict.orm.generator.service;
 
-import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.MappedSuperclass;
 import io.github.jeddict.jpa.spec.extend.IPrimaryKeyAttributes;
 import io.github.jeddict.orm.generator.compiler.def.MappedSuperClassDefSnippet;
+import org.apache.commons.lang.StringUtils;
 
 public class MappedSuperClassGenerator extends IdentifiableClassGenerator<MappedSuperClassDefSnippet> {
 
@@ -57,18 +57,17 @@ public class MappedSuperClassGenerator extends IdentifiableClassGenerator<Mapped
         if (parsedAttributes != null) {//#ATTRIBUTE_SEQUENCE_FLOW#
             processEmbeddedId(mappedSuperclass, parsedAttributes.getEmbeddedId());
             if (parsedAttributes.getEmbeddedId() == null) {
-                processId(parsedAttributes.getId());
+                parsedAttributes.getId().forEach(this::processId);
             }
-            processBasic(parsedAttributes.getBasic());
-            processElementCollection(parsedAttributes.getElementCollection());
-            processEmbedded(parsedAttributes.getEmbedded());
-
-            processOneToOne(parsedAttributes.getOneToOne());
-            processManyToOne(parsedAttributes.getManyToOne());
-            processOneToMany(parsedAttributes.getOneToMany());
-            processManyToMany(parsedAttributes.getManyToMany());
-            processVersion(parsedAttributes.getVersion());
-            processTransient(parsedAttributes.getTransient());
+            parsedAttributes.getBasic().forEach(this::processBasic);
+            parsedAttributes.getElementCollection().forEach(this::processElementCollection);
+            parsedAttributes.getEmbedded().forEach(this::processEmbedded);
+            parsedAttributes.getOneToOne().forEach(this::processOneToOne);
+            parsedAttributes.getManyToOne().forEach(this::processManyToOne);
+            parsedAttributes.getOneToMany().forEach(this::processOneToMany);
+            parsedAttributes.getManyToMany().forEach(this::processManyToMany);
+            parsedAttributes.getVersion().forEach(this::processVersion);
+            parsedAttributes.getTransient().forEach(this::processTransient);
         }
 
         //Class decorations

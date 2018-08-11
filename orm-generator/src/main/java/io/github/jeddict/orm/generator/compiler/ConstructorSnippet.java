@@ -15,21 +15,22 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.jpa.spec.extend.AccessModifierType;
 import io.github.jeddict.jpa.spec.extend.Constructor;
+import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.NEW_LINE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.SEMICOLON;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.SPACE;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class ConstructorSnippet implements Snippet {
 
@@ -49,6 +50,13 @@ public class ConstructorSnippet implements Snippet {
         this.allVariableSnippets.addAll(localVariableSnippets);
     }
 
+    /**
+     * @return the className
+     */
+    public String getClassName() {
+        return className;
+    }
+
     @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
@@ -56,8 +64,8 @@ public class ConstructorSnippet implements Snippet {
             builder.append(constructor.getAccessModifier().getValue()).append(SPACE);
         }
 
-        builder.append(className).append(OPEN_PARANTHESES);
-
+        builder.append(className)
+                .append(OPEN_PARANTHESES);
         if (!allVariableSnippets.isEmpty()) {
             for (VariableDefSnippet variableSnippet : allVariableSnippets) {
                 builder.append(variableSnippet.getConstraintType())
@@ -71,45 +79,49 @@ public class ConstructorSnippet implements Snippet {
 
         StringBuilder varAssign = new StringBuilder();
         if (!parentVariableSnippets.isEmpty()) {
-            varAssign.append("        ")
-                   .append("super(");
+            varAssign.append("super")
+                    .append(OPEN_PARANTHESES);
             for (VariableDefSnippet parentVariableSnippet : parentVariableSnippets) {
-                varAssign.append(parentVariableSnippet.getName()).append(", ");
+                varAssign.append(parentVariableSnippet.getName())
+                        .append(COMMA)
+                        .append(SPACE);
             }
             varAssign.setLength(varAssign.length() - 2);
-            varAssign.append(");").append(NEW_LINE);
+            varAssign.append(CLOSE_PARANTHESES)
+                    .append(SEMICOLON)
+                    .append(NEW_LINE);
         }
 
         if (!localVariableSnippets.isEmpty()) {
             for (VariableDefSnippet localVariableSnippet : localVariableSnippets) {
-                varAssign.append("        ")
-                   .append(String.format("this.%s=%s;", localVariableSnippet.getName(), localVariableSnippet.getName())).append(NEW_LINE);
+                varAssign.append(String.format("this.%s=%s;", localVariableSnippet.getName(), localVariableSnippet.getName()))
+                        .append(NEW_LINE);
             }
         }
 
-        builder.append(OPEN_BRACES).append(NEW_LINE);
-        if (StringUtils.isNotBlank(constructor.getPreCode())) {
-            builder.append(constructor.getPreCode()).append(NEW_LINE);
+        builder.append(OPEN_BRACES)
+                .append(NEW_LINE);
+        if (isNotBlank(constructor.getPreCode())) {
+            builder.append(constructor.getPreCode())
+                    .append(NEW_LINE);
         }
         builder.append(varAssign);
-        if (StringUtils.isNotBlank(constructor.getPostCode())) {
-            builder.append(constructor.getPostCode()).append(NEW_LINE);
+        if (isNotBlank(constructor.getPostCode())) {
+            builder.append(constructor.getPostCode())
+                    .append(NEW_LINE);
         }
-        builder.append("    ").append(CLOSE_BRACES);
+        builder.append(CLOSE_BRACES);
 
         return builder.toString();
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.<String>emptyList();
-    }
-
-    /**
-     * @return the className
-     */
-    public String getClassName() {
-        return className;
+        Collection<String> imports = new HashSet<>();
+        for (VariableDefSnippet variableSnippet : allVariableSnippets) {
+            imports.addAll(variableSnippet.getTypeImportSnippets());
+        }
+        return imports;
     }
 
 }

@@ -15,8 +15,6 @@
  */
 package io.github.jeddict.orm.generator.service.staticmetamodel;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import io.github.jeddict.jpa.spec.ElementCollection;
 import io.github.jeddict.jpa.spec.ManagedClass;
 import io.github.jeddict.jpa.spec.ManyToMany;
@@ -31,6 +29,7 @@ import io.github.jeddict.jpa.spec.extend.PersistenceBaseAttribute;
 import io.github.jeddict.jpa.spec.extend.RelationAttribute;
 import io.github.jeddict.orm.generator.service.ClassGenerator;
 import io.github.jeddict.orm.generator.util.ClassHelper;
+import java.util.ArrayList;
 
 public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClassDefSnippet> {
 
@@ -42,7 +41,7 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
         this.managedClass = managedClass;
         this.rootPackageName = packageName;
         this.packageName = managedClass.getAbsolutePackage(rootPackageName);
-        this.entityPackageName=entityPackageName;
+        this.entityPackageName = entityPackageName;
     }
 
     @Override
@@ -57,7 +56,18 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
         return variableDef;
     }
 
-    private void processBase(BaseAttribute parsedBaseAttribute) {
+    @Override
+    protected MetamodelVariableDefSnippet processVariable(Attribute attr) {
+        if (attr instanceof BaseAttribute) {
+            return processBase((BaseAttribute) attr);
+        } else if (attr instanceof RelationAttribute) {
+            return processRelation((RelationAttribute) attr);
+        } else {
+            throw new IllegalStateException("Invalid Attribute Type");
+        }
+    }
+
+    private MetamodelVariableDefSnippet processBase(BaseAttribute parsedBaseAttribute) {
         MetamodelVariableDefSnippet variableDef = getVariableDef(parsedBaseAttribute);
         if (parsedBaseAttribute instanceof CompositionAttribute) {
             if (parsedBaseAttribute instanceof ElementCollection) {
@@ -72,35 +82,22 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
             variableDef.setType(parsedBaseAttribute.getAttributeType());
             variableDef.setAttributeType(MetamodelAttributeType.SINGULAR);
         }
+        return variableDef;
     }
 
-    private void processBase(Collection<? extends BaseAttribute> parsedBaseAttributes) {
-        if (parsedBaseAttributes == null) {
-            return;
+    private MetamodelVariableDefSnippet processRelation(RelationAttribute parsedRelation) {
+        MetamodelVariableDefSnippet variableDef = getVariableDef(parsedRelation);
+        variableDef.setType(parsedRelation.getTargetEntity());
+        if (parsedRelation instanceof ManyToMany) {
+            ManyToMany manyToMany = (ManyToMany) parsedRelation;
+            variableDef.setAttributeType(MetamodelAttributeType.getInstance(manyToMany.getCollectionType()));
+        } else if (parsedRelation instanceof OneToMany) {
+            OneToMany oneToMany = (OneToMany) parsedRelation;
+            variableDef.setAttributeType(MetamodelAttributeType.getInstance(oneToMany.getCollectionType()));
+        } else {
+            variableDef.setAttributeType(MetamodelAttributeType.SINGULAR);
         }
-        for (BaseAttribute parsedBaseAttribute : parsedBaseAttributes) {
-            processBase(parsedBaseAttribute);
-        }
-    }
-
-    private void processRelation(Collection<? extends RelationAttribute> parsedRelations) {
-        if (parsedRelations == null) {
-            return;
-        }
-        for (RelationAttribute parsedRelation : parsedRelations) {
-            MetamodelVariableDefSnippet variableDef = getVariableDef(parsedRelation);
-            variableDef.setType(parsedRelation.getTargetEntity());
-            if (parsedRelation instanceof ManyToMany) {
-                ManyToMany manyToMany = (ManyToMany) parsedRelation;
-                variableDef.setAttributeType(MetamodelAttributeType.getInstance(manyToMany.getCollectionType()));
-            } else if (parsedRelation instanceof OneToMany) {
-                OneToMany oneToMany = (OneToMany) parsedRelation;
-                variableDef.setAttributeType(MetamodelAttributeType.getInstance(oneToMany.getCollectionType()));
-            } else {
-                variableDef.setAttributeType(MetamodelAttributeType.SINGULAR);
-            }
-
-        }
+        return variableDef;
     }
 
     @Override
@@ -114,28 +111,28 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
                 if (parsedAttributes instanceof IPrimaryKeyAttributes) {
                     IPrimaryKeyAttributes primaryKeyAttributes = (IPrimaryKeyAttributes) parsedAttributes;
                     if (primaryKeyAttributes.getEmbeddedId() == null) {
-                        processBase(primaryKeyAttributes.getId());
+                        primaryKeyAttributes.getId().forEach(this::processBase);
                     } else {
                         processBase(primaryKeyAttributes.getEmbeddedId());
                     }
-                    processBase(primaryKeyAttributes.getVersion());
+                    primaryKeyAttributes.getVersion().forEach(this::processBase);
                 }
 
-                processBase(persistenceAttributes.getBasic());
-                processBase(persistenceAttributes.getElementCollection());
-                processBase(persistenceAttributes.getEmbedded());
-                processRelation(persistenceAttributes.getOneToOne());
-                processRelation(persistenceAttributes.getManyToOne());
-                processRelation(persistenceAttributes.getOneToMany());
-                processRelation(persistenceAttributes.getManyToMany());
+                persistenceAttributes.getBasic().forEach(this::processBase);
+                persistenceAttributes.getElementCollection().forEach(this::processBase);
+                persistenceAttributes.getEmbedded().forEach(this::processBase);
+                persistenceAttributes.getOneToOne().forEach(this::processRelation);
+                persistenceAttributes.getManyToOne().forEach(this::processRelation);
+                persistenceAttributes.getOneToMany().forEach(this::processRelation);
+                persistenceAttributes.getManyToMany().forEach(this::processRelation);
             }
-}
+        }
 
         // Classlevel annotations
         //Class decorations
         ClassHelper classHelper = new ClassHelper(managedClass.getClazz() + "_"); //For each managed class X in package p, a metamodel class X_ in package p is created.
         classHelper.setPackageName(packageName);
-//The name of the metamodel class is derived from the name of the managed class by appending "_" to the name of the managed class.
+        //The name of the metamodel class is derived from the name of the managed class by appending "_" to the name of the managed class.
         if (managedClass.getSuperclass() != null) {
             ClassHelper superClassHelper = new ClassHelper(managedClass.getSuperclass().getClazz() + "_");//If class X extends another class S, where S is the most derived managed class (i.e., entity or mapped superclass) extended by X, then class X_ must extend class S_, where S_ is the metamodel class created for S.
             superClassHelper.setPackageName(packageName);
@@ -146,8 +143,7 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
         classDef.setClassName(classHelper.getFQClassName());
 
         classDef.setPackageName(classHelper.getPackageName());
-        
-        
+
         classDef.getEntityClassHelper().setClassName(managedClass.getClazz());
         classDef.getEntityClassHelper().setPackageName(entityPackageName);
 //        classDef.setStaticMetamodel(true);
@@ -157,12 +153,6 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
         return classDef;
     }
 
-//    public boolean isManagedSuperClassExist(){
-//        return managedClass.getSuperclass()!=null;
-//    }
-//    public String getManagedSuperClass(){
-//        return managedClass.getSuperclass().getClazz();
-//    }
     public ManagedClass getManagedClass() {
         return managedClass;
     }
@@ -189,18 +179,4 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
         return true;
     }
 
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (obj == null) {
-//            return false;
-//        }
-//        if (getClass() != obj.getClass()) {
-//            return false;
-//        }
-//        final BaseElement other = (BaseElement) obj;
-//        if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
-//            return false;
-//        }
-//        return true;
-//    }
 }

@@ -96,6 +96,7 @@ import static io.github.jeddict.snippet.AttributeSnippetLocationType.SETTER_THRO
 import java.util.ArrayList;
 import java.util.Collection;
 import static java.util.Collections.emptyList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -439,19 +440,23 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
-    public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        ImportSet importSnippets = new ImportSet();
-
+    public Collection<String> getTypeImportSnippets() throws InvalidDataException {
+        Collection<String> imports = new HashSet<>();
         if (attribute instanceof CollectionTypeHandler) {
             typeIdentifier = new TypeIdentifierSnippet(this);
             classHelper = new ClassHelper();
             classHelper.setClassName(typeIdentifier.getVariableType());
-            importSnippets.addAll(typeIdentifier.getImportSnippets());
+            imports.addAll(typeIdentifier.getImportSnippets());
         } else if (classHelper.getPackageName() != null) {
-            importSnippets.add(classHelper.getFQClassName());
+            imports.add(classHelper.getFQClassName());
         }
+        return imports;
+    }
+
+    @Override
+    public Collection<String> getImportSnippets() throws InvalidDataException {
+        ImportSet importSnippets = new ImportSet();
+        importSnippets.addAll(getTypeImportSnippets());
         if (functionalType) {
             importSnippets.add(Optional.class.getCanonicalName());
         }
@@ -553,7 +558,11 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             importSnippets.addAll(associationOverrides.getImportSnippets());
         }
 
-        for (AnnotationSnippet snippet : this.getAnnotation().values().stream().flatMap(annot -> annot.stream()).collect(toList())) {
+        for (AnnotationSnippet snippet : this.getAnnotation()
+                .values()
+                .stream()
+                .flatMap(annot -> annot.stream())
+                .collect(toList())) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
 

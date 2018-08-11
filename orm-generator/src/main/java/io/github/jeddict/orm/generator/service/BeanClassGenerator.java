@@ -20,8 +20,8 @@ import io.github.jeddict.jpa.spec.bean.BeanClass;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.BaseAttribute;
 import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
-import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
 import io.github.jeddict.orm.generator.compiler.def.BeanClassDefSnippet;
+import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
 
 public class BeanClassGenerator extends ClassGenerator<BeanClassDefSnippet> {
 
@@ -36,21 +36,26 @@ public class BeanClassGenerator extends ClassGenerator<BeanClassDefSnippet> {
 
     @Override
     public BeanClassDefSnippet getClassDef() {
-        for (Attribute attribute : beanClass.getAttributes().getAllAttribute()) {
-            VariableDefSnippet variableDef = getVariableDef(attribute);
-            if (attribute instanceof BaseAttribute) {
-                variableDef.setType(((BaseAttribute) attribute).getAttributeType());
-            } else if (attribute instanceof AssociationAttribute) {
-                variableDef.setType(rootPackageName, ((AssociationAttribute) attribute).getConnectedClass());
-            }
-            if (attribute instanceof CollectionTypeHandler) {
-                variableDef.setCollectionType(((CollectionTypeHandler) attribute).getCollectionType());
-                variableDef.setCollectionImplType(((CollectionTypeHandler) attribute).getCollectionImplType());
-            }
-        }
+        beanClass.getAttributes().getAllAttribute().forEach(this::processVariable);
                    
         classDef = initClassDef(packageName, beanClass);
         classDef.setBeanClass(true);
         return classDef;
     }
+
+    @Override
+    protected VariableDefSnippet processVariable(Attribute attribute) {
+        VariableDefSnippet variableDef = getVariableDef(attribute);
+        if (attribute instanceof BaseAttribute) {
+            variableDef.setType(((BaseAttribute) attribute).getAttributeType());
+        } else if (attribute instanceof AssociationAttribute) {
+            variableDef.setType(rootPackageName, ((AssociationAttribute) attribute).getConnectedClass());
+        }
+        if (attribute instanceof CollectionTypeHandler) {
+            variableDef.setCollectionType(((CollectionTypeHandler) attribute).getCollectionType());
+            variableDef.setCollectionImplType(((CollectionTypeHandler) attribute).getCollectionImplType());
+        }
+        return variableDef;
+    }
+
 }

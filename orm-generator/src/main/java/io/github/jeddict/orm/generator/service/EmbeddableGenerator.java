@@ -15,10 +15,10 @@
  */
 package io.github.jeddict.orm.generator.service;
 
-import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.jpa.spec.Embeddable;
 import io.github.jeddict.jpa.spec.EmbeddableAttributes;
 import io.github.jeddict.orm.generator.compiler.def.EmbeddableDefSnippet;
+import org.apache.commons.lang.StringUtils;
 
 public class EmbeddableGenerator extends ManagedClassGenerator<EmbeddableDefSnippet> {
 
@@ -38,14 +38,14 @@ public class EmbeddableGenerator extends ManagedClassGenerator<EmbeddableDefSnip
         EmbeddableAttributes parsedEmbeddableAttributes = embeddable.getAttributes();
 
         if (parsedEmbeddableAttributes != null) {//#ATTRIBUTE_SEQUENCE_FLOW#
-            processBasic(parsedEmbeddableAttributes.getBasic());
-            processElementCollection(parsedEmbeddableAttributes.getElementCollection());
-            processEmbedded(parsedEmbeddableAttributes.getEmbedded());
-            processOneToOne(parsedEmbeddableAttributes.getOneToOne());
-            processManyToOne(parsedEmbeddableAttributes.getManyToOne());
-            processOneToMany(parsedEmbeddableAttributes.getOneToMany());
-            processManyToMany(parsedEmbeddableAttributes.getManyToMany());
-            processTransient(parsedEmbeddableAttributes.getTransient());
+            parsedEmbeddableAttributes.getBasic().forEach(this::processBasic);
+            parsedEmbeddableAttributes.getElementCollection().forEach(this::processElementCollection);
+            parsedEmbeddableAttributes.getEmbedded().forEach(this::processEmbedded);
+            parsedEmbeddableAttributes.getOneToOne().forEach(this::processOneToOne);
+            parsedEmbeddableAttributes.getManyToOne().forEach(this::processManyToOne);
+            parsedEmbeddableAttributes.getOneToMany().forEach(this::processOneToMany);
+            parsedEmbeddableAttributes.getManyToMany().forEach(this::processManyToMany);
+            parsedEmbeddableAttributes.getTransient().forEach(this::processTransient);
         }
 
         //Class decorations

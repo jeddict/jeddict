@@ -88,19 +88,17 @@ public class EntityGenerator extends IdentifiableClassGenerator<EntityDefSnippet
         if (parsedAttributes != null) {//#ATTRIBUTE_SEQUENCE_FLOW#
             processEmbeddedId(entity, parsedAttributes.getEmbeddedId());
             if (!entity.isEmbeddedIdType()) {
-                processId(parsedAttributes.getId());
+                parsedAttributes.getId().forEach(this::processId);
             }
-            processBasic(parsedAttributes.getBasic());
-            processElementCollection(parsedAttributes.getElementCollection());//todo embedded collection should be generate after embedded
-            processEmbedded(parsedAttributes.getEmbedded());
-
-            processOneToOne(parsedAttributes.getOneToOne());
-            processManyToOne(parsedAttributes.getManyToOne());
-            processOneToMany(parsedAttributes.getOneToMany());
-            processManyToMany(parsedAttributes.getManyToMany());
-
-            processVersion(parsedAttributes.getVersion());
-            processTransient(parsedAttributes.getTransient());
+            parsedAttributes.getBasic().forEach(this::processBasic);
+            parsedAttributes.getElementCollection().forEach(this::processElementCollection);//todo embedded collection should be generate after embedded
+            parsedAttributes.getEmbedded().forEach(this::processEmbedded);
+            parsedAttributes.getOneToOne().forEach(this::processOneToOne);
+            parsedAttributes.getManyToOne().forEach(this::processManyToOne);
+            parsedAttributes.getOneToMany().forEach(this::processOneToMany);
+            parsedAttributes.getManyToMany().forEach(this::processManyToMany);
+            parsedAttributes.getVersion().forEach(this::processVersion);
+            parsedAttributes.getTransient().forEach(this::processTransient);
         }
 
         /**

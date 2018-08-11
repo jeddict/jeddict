@@ -81,6 +81,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     public abstract T getClassDef();
 
+    protected abstract VariableDefSnippet processVariable(Attribute attr);
+
     protected T initClassDef(String packageName, JavaClass javaClass) {
         ClassHelper classHelper = new ClassHelper(javaClass.getClazz());
         classHelper.setPackageName(packageName);
@@ -213,7 +215,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             List<VariableDefSnippet> parentVariableSnippets = constructor.getAttributes()
                     .stream()
                     .filter(attr -> attr.getJavaClass() != javaClass)
-                    .map(attr -> getVariableDef(attr))
+                    .map(attr -> processVariable(attr))
                     .collect(toList());
             List<VariableDefSnippet> localVariableSnippets = constructor.getAttributes()
                     .stream()
@@ -346,42 +348,48 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     protected VariableDefSnippet getVariableDef(Attribute attr) {
         VariableDefSnippet variableDef = variables.get(attr.getName());
         if (variableDef == null) {
-            variableDef = new VariableDefSnippet(attr);
-            variableDef.setAccessModifier(attr.getAccessModifier());
-            variableDef.setName(attr.getName());
-            variableDef.setDefaultValue(attr.getDefaultValue());
-            variableDef.setDescription(attr.getDescription());
-            if (CodePanel.isJavaSESupportEnable()) {
-                variableDef.setPropertyChangeSupport(TRUE.equals(attr.getPropertyChangeSupport()));
-                variableDef.setVetoableChangeSupport(TRUE.equals(attr.getVetoableChangeSupport()));
-                VetoPropertyRuntimeSnippet vetoPropertySnippet = new VetoPropertyRuntimeSnippet();
-                attr.getJavaClass().getRuntimeSnippets().addAll(vetoPropertySnippet.getClassSnippet(variableDef));
-                attr.getRuntimeSnippets().addAll(vetoPropertySnippet.getAttributeSnippet(variableDef));
-                if (TRUE.equals(attr.getPropertyChangeSupport())) {
-                    classDef.setPropertyChangeSupport(true);
-                }
-                if (TRUE.equals(attr.getVetoableChangeSupport())) {
-                    classDef.setVetoableChangeSupport(true);
-                }
-            }
-
-            variableDef.setAttributeConstraints(getConstraintSnippet(attr.getAttributeConstraints()));
-            variableDef.setKeyConstraints(getConstraintSnippet(attr.getKeyConstraints()));
-            variableDef.setValueConstraints(getConstraintSnippet(attr.getValueConstraints()));
-            variableDef.setJSONBSnippets(getJSONBAttributeSnippet(attr));
-
-            Set<AttributeSnippet> snippets = new LinkedHashSet<>();
-            snippets.addAll(attr.getSnippets());
-            snippets.addAll(attr.getRuntimeSnippets());
-            variableDef.setCustomSnippet(buildCustomSnippet(snippets));
-            variableDef.setAnnotation(getAnnotationSnippet(attr.getAnnotation()));
-            variableDef.getAnnotation().putAll(getAnnotationSnippet(attr.getRuntimeAnnotation()));
-            
-            variableDef.setJaxbVariableType(attr.getJaxbVariableType());
-            variableDef.setJaxbWrapperMetadata(attr.getJaxbWrapperMetadata());
-            variableDef.setJaxbMetadata(attr.getJaxbMetadata());
+            variableDef = createVariableDef(attr);
             variables.put(attr.getName(), variableDef);
         }
+        return variableDef;
+    }
+
+    private VariableDefSnippet createVariableDef(Attribute attr) {
+        VariableDefSnippet variableDef = new VariableDefSnippet(attr);
+        variableDef.setAccessModifier(attr.getAccessModifier());
+        variableDef.setName(attr.getName());
+        variableDef.setFunctionalType(attr.isOptionalReturnType());
+        variableDef.setDefaultValue(attr.getDefaultValue());
+        variableDef.setDescription(attr.getDescription());
+        if (CodePanel.isJavaSESupportEnable()) {
+            variableDef.setPropertyChangeSupport(TRUE.equals(attr.getPropertyChangeSupport()));
+            variableDef.setVetoableChangeSupport(TRUE.equals(attr.getVetoableChangeSupport()));
+            VetoPropertyRuntimeSnippet vetoPropertySnippet = new VetoPropertyRuntimeSnippet();
+            attr.getJavaClass().getRuntimeSnippets().addAll(vetoPropertySnippet.getClassSnippet(variableDef));
+            attr.getRuntimeSnippets().addAll(vetoPropertySnippet.getAttributeSnippet(variableDef));
+            if (TRUE.equals(attr.getPropertyChangeSupport())) {
+                classDef.setPropertyChangeSupport(true);
+            }
+            if (TRUE.equals(attr.getVetoableChangeSupport())) {
+                classDef.setVetoableChangeSupport(true);
+            }
+        }
+
+        variableDef.setAttributeConstraints(getConstraintSnippet(attr.getAttributeConstraints()));
+        variableDef.setKeyConstraints(getConstraintSnippet(attr.getKeyConstraints()));
+        variableDef.setValueConstraints(getConstraintSnippet(attr.getValueConstraints()));
+        variableDef.setJSONBSnippets(getJSONBAttributeSnippet(attr));
+
+        Set<AttributeSnippet> snippets = new LinkedHashSet<>();
+        snippets.addAll(attr.getSnippets());
+        snippets.addAll(attr.getRuntimeSnippets());
+        variableDef.setCustomSnippet(buildCustomSnippet(snippets));
+        variableDef.setAnnotation(getAnnotationSnippet(attr.getAnnotation()));
+        variableDef.getAnnotation().putAll(getAnnotationSnippet(attr.getRuntimeAnnotation()));
+
+        variableDef.setJaxbVariableType(attr.getJaxbVariableType());
+        variableDef.setJaxbWrapperMetadata(attr.getJaxbWrapperMetadata());
+        variableDef.setJaxbMetadata(attr.getJaxbMetadata());
         return variableDef;
     }
 

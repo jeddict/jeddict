@@ -15,9 +15,11 @@
  */
 package io.github.jeddict.orm.generator.service;
 
+import io.github.jeddict.jpa.spec.DefaultAttribute;
 import io.github.jeddict.jpa.spec.DefaultClass;
-import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
+import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.orm.generator.compiler.def.DefaultClassDefSnippet;
+import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
 
 public class DefaultClassGenerator extends ClassGenerator<DefaultClassDefSnippet> {
 
@@ -32,14 +34,27 @@ public class DefaultClassGenerator extends ClassGenerator<DefaultClassDefSnippet
 
     @Override
     public DefaultClassDefSnippet getClassDef() {
-        defaultClass.getAttributes().getDefaultAttributes()
-                .forEach(attribute -> {
-                    VariableDefSnippet variableDef = getVariableDef(attribute);
-                    variableDef.setType(attribute.getAttributeType());
-                });
+        defaultClass.getAttributes()
+                .getDefaultAttributes()
+                .forEach(this::processDefaultAttribute);
         classDef = initClassDef(packageName, defaultClass);
         classDef.setDefaultClass(true);
 
         return classDef;
+    }
+
+    @Override
+    protected VariableDefSnippet processVariable(Attribute attr) {
+        if (attr instanceof DefaultAttribute) {
+            return processDefaultAttribute((DefaultAttribute) attr);
+        } else {
+            throw new IllegalStateException("Invalid Attribute Type");
+        }
+    }
+
+    protected VariableDefSnippet processDefaultAttribute(DefaultAttribute attr) {
+        VariableDefSnippet variableDef = getVariableDef(attr);
+        variableDef.setType(attr.getAttributeType());
+        return variableDef;
     }
 }

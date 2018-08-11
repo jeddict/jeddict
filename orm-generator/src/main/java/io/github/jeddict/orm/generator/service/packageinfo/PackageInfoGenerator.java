@@ -16,12 +16,14 @@
 package io.github.jeddict.orm.generator.service.packageinfo;
 
 import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.jpa.spec.extend.Attribute;
+import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
 import io.github.jeddict.orm.generator.service.ClassGenerator;
 import io.github.jeddict.orm.generator.util.ClassHelper;
 
 public class PackageInfoGenerator extends ClassGenerator<PackageInfoClassDefSnippet> {
 
-    private EntityMappings parsedEntityMappings = null;
+    private EntityMappings parsedEntityMappings;
 
     public PackageInfoGenerator(EntityMappings parsedEntityMappings, String packageName) {
         super(new PackageInfoClassDefSnippet());
@@ -38,8 +40,12 @@ public class PackageInfoGenerator extends ClassGenerator<PackageInfoClassDefSnip
         classDef.setPackageName(classHelper.getPackageName());
         classDef.setNamespace(parsedEntityMappings.getJaxbNameSpace());
         classDef.setJSONBSnippets(getJSONBCPackageSnippet(parsedEntityMappings));
-        
         return classDef;
+    }
+
+    @Override
+    protected VariableDefSnippet processVariable(Attribute attr) {
+        throw new IllegalStateException("Invalid Attribute Type");
     }
 
 }

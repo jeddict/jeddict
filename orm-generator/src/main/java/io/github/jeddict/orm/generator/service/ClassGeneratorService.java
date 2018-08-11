@@ -16,6 +16,8 @@
 package io.github.jeddict.orm.generator.service;
 
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseProblemException;
+import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
@@ -24,6 +26,7 @@ import io.github.jeddict.collaborate.issues.ExceptionUtils;
 import io.github.jeddict.jcode.console.Console;
 import static io.github.jeddict.jcode.console.Console.BOLD;
 import static io.github.jeddict.jcode.console.Console.FG_DARK_RED;
+import static io.github.jeddict.jcode.console.Console.FG_RED;
 import io.github.jeddict.jcode.task.ITaskSupervisor;
 import static io.github.jeddict.jcode.util.Constants.JAVA_EXT_SUFFIX;
 import io.github.jeddict.jpa.spec.DefaultClass;
@@ -223,6 +226,13 @@ public class ClassGeneratorService implements ModuleGenerator {
                         .getInstance(javaClass)
                         .syncExistingSnippet(existingSource);
             } catch (FileNotFoundException ex) {
+            } catch (ParseProblemException ex) {
+                task.log(Console.wrap("Unable to sync with exising class : " + javaClass.getName(), FG_DARK_RED), true);
+                task.log(Console.wrap("-----------------------------------", FG_DARK_RED), true);
+                for (Problem prob : ex.getProblems()) {
+                    task.log(Console.wrap("Problem : " + prob.getMessage(), FG_RED), true);
+                }
+                task.log(Console.wrap("-----------------------------------", FG_DARK_RED), true);
             }
         }
     }

@@ -472,6 +472,10 @@ public abstract class ClassDefSnippet implements WritableSnippet {
     public ImportSet getImportSet() throws InvalidDataException {
         ImportSet importSnippets = new ImportSet();
 
+        for (ConstructorSnippet constructor : getConstructors()) {
+            importSnippets.addAll(constructor.getImportSnippets());
+        }
+
         if (getEqualsMethod() != null) {
             importSnippets.addAll(getEqualsMethod().getImportSnippets());
         }
