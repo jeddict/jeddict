@@ -15,7 +15,8 @@
  */
 package io.github.jeddict.jcode.util;
 
-import com.sun.org.apache.xml.internal.utils.PrefixResolver;
+import io.github.jeddict.jcode.task.progress.ProgressHandler;
+import static io.github.jeddict.jcode.util.JavaSourceHelper.reformat;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -44,8 +45,6 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.queries.FileEncodingQuery;
-import static io.github.jeddict.jcode.util.JavaSourceHelper.reformat;
-import io.github.jeddict.jcode.task.progress.ProgressHandler;
 import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
@@ -263,13 +262,7 @@ public class FileUtil {
         if (manager == null) {
             synchronized (FileUtil.class) {
                 if (manager == null) {
-                    ClassLoader loader = Lookup.getDefault().lookup(ClassLoader.class);
-                    try {
-                        loader.loadClass(PrefixResolver.class.getName());
-                    } catch (ClassNotFoundException ex) {
-                        Exceptions.printStackTrace(ex);
-                    }
-                    manager = new ScriptEngineManager(loader != null ? loader : Thread.currentThread().getContextClassLoader());
+                    manager = new ScriptEngineManager();
                 }
             }
         }
@@ -315,18 +308,13 @@ public class FileUtil {
         @Override
         public void run() {
             try {
-//                if (toDir.getFileObject(toFile) != null) {
-//                    return; 
-//                }
                 FileObject xml = org.openide.filesystems.FileUtil.createData(toDir, toFile);
                 String content = readResource(loadResource(fromFile));
                 if (content != null) {
                     FileLock lock = xml.lock();
-                    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(xml.getOutputStream(lock)));
-                    try {
+                    try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(xml.getOutputStream(lock)))) {
                         bw.write(content);
                     } finally {
-                        bw.close();
                         lock.releaseLock();
                     }
                 }
@@ -339,16 +327,13 @@ public class FileUtil {
         private String readResource(InputStream is) throws IOException {
             StringBuilder sb = new StringBuilder();
             String lineSep = System.getProperty("line.separator"); // NOI18N
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            try {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
                 String line = br.readLine();
                 while (line != null) {
                     sb.append(line);
                     sb.append(lineSep);
                     line = br.readLine();
                 }
-            } finally {
-                br.close();
             }
             return sb.toString();
         }
@@ -366,28 +351,25 @@ public class FileUtil {
         return path.substring(path.lastIndexOf('.') + 1);
     }
     
-        public static String readResource(InputStream is, String encoding) throws IOException {
+    public static String readResource(InputStream is, String encoding) throws IOException {
         // read the config from resource first
         StringBuilder sbuffer = new StringBuilder();
         String lineSep = System.getProperty("line.separator");//NOI18N
-        BufferedReader br = new BufferedReader(new InputStreamReader(is, encoding));
-        String line = br.readLine();
-        while (line != null) {
-            sbuffer.append(line);
-            sbuffer.append(lineSep);
-            line = br.readLine();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(is, encoding))) {
+            String line = br.readLine();
+            while (line != null) {
+                sbuffer.append(line);
+                sbuffer.append(lineSep);
+                line = br.readLine();
+            }
         }
-        br.close();
         return sbuffer.toString();
     }
 
     public static void createFile(FileObject target, String content, String encoding) throws IOException {
         FileLock lock = target.lock();
-        try {
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(target.getOutputStream(lock), encoding));
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(target.getOutputStream(lock), encoding))) {
             bw.write(content);
-            bw.close();
-
         } finally {
             lock.releaseLock();
         }
