@@ -19,6 +19,7 @@ import static io.github.jeddict.jcode.util.Constants.JAVA_EXT;
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import org.openide.filesystems.FileObject;
@@ -157,5 +158,9 @@ public class JavaUtil {
             return package2;
         }
         return EMPTY;
+    }
+
+    public static <R> Predicate<R> not(Predicate<R> predicate) {
+        return predicate.negate();
     }
 }

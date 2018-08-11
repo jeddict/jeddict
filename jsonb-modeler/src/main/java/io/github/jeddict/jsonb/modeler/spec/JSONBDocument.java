@@ -15,13 +15,6 @@
  */
 package io.github.jeddict.jsonb.modeler.spec;
 
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
-import java.util.stream.IntStream;
 import io.github.jeddict.jpa.spec.ElementCollection;
 import io.github.jeddict.jpa.spec.Embedded;
 import io.github.jeddict.jpa.spec.extend.Attribute;
@@ -29,11 +22,14 @@ import io.github.jeddict.jpa.spec.extend.FlowNode;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.jpa.spec.extend.RelationAttribute;
 import io.github.jeddict.jpa.spec.workspace.WorkSpace;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 
 public class JSONBDocument extends FlowNode {
 
-    private JavaClass javaClass;
-    private WorkSpace workSpace;
+    private final JavaClass javaClass;
+    private final WorkSpace workSpace;
 
     private List<JSONBNode> nodes = new LinkedList<>();
 
@@ -45,13 +41,9 @@ public class JSONBDocument extends FlowNode {
 
     public void loadAttribute() {
         List<JSONBNode> nodes = new LinkedList<>();
-        List<Attribute> attributes = this.javaClass.getAttributes().getAllAttribute();
-        List<Attribute> propertyOrder = this.javaClass.getJsonbPropertyOrder();
-        if (!propertyOrder.isEmpty()) {
-            Map<String, Integer> attributesMap = IntStream.range(0, propertyOrder.size())
-                    .boxed()
-                    .collect(toMap(i -> propertyOrder.get(i).getId(), identity()));
-            attributes.sort(Comparator.comparing(attr -> attributesMap.get(attr.getId())));
+        List<Attribute> attributes = javaClass.getAttributes().getAllAttribute();
+        if (!javaClass.getJsonbPropertyOrder().isEmpty()) {
+            attributes = javaClass.getAllJsonbPropertyOrder();
         } else {
             attributes.sort(Comparator.comparing(Attribute::getName));
         }
@@ -107,13 +99,6 @@ public class JSONBDocument extends FlowNode {
      */
     public JavaClass getJavaClass() {
         return javaClass;
-    }
-
-    /**
-     * @param javaClass the javaClass to set
-     */
-    public void setJavaClass(JavaClass javaClass) {
-        this.javaClass = javaClass;
     }
 
     /**

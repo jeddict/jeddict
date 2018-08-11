@@ -21,6 +21,7 @@ import static io.github.jeddict.jcode.JSONBConstants.JSONB_TYPE_DESERIALIZER_FQN
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_TYPE_SERIALIZER_FQN;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_VISIBILITY_FQN;
 import static io.github.jeddict.jcode.util.JavaUtil.mergePackage;
+import static io.github.jeddict.jcode.util.JavaUtil.not;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.IdentifiableClass;
 import io.github.jeddict.jsonb.spec.JsonbDateFormat;
@@ -979,6 +980,32 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode
             jsonbPropertyOrder = new ArrayList<>();
         }
         return jsonbPropertyOrder;
+    }
+
+    /**
+     * Removes all the deleted attributes
+     *
+     * @return
+     */
+    public List<Attribute> evalJsonbPropertyOrder() {
+        Set<Attribute> attributesSet = new HashSet<>(getAttributes().getAllAttribute());
+        List<Attribute> propertyOrder = getJsonbPropertyOrder();
+        propertyOrder.removeIf(not(attributesSet::contains));
+        return propertyOrder;
+    }
+
+    /**
+     * Gets the manually added attribute to JsonbPropertyOrder + all remaining
+     * attributes
+     *
+     * @return
+     */
+    public List<Attribute> getAllJsonbPropertyOrder() {
+        List<Attribute> attributes = getAttributes().getAllAttribute();
+        List<Attribute> propertyOrder = new ArrayList<>(evalJsonbPropertyOrder());
+        attributes.removeAll(propertyOrder);
+        propertyOrder.addAll(attributes);
+        return propertyOrder;
     }
 
     /**

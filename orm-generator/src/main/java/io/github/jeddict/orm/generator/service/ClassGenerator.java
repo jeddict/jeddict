@@ -16,6 +16,7 @@
 package io.github.jeddict.orm.generator.service;
 
 import io.github.jeddict.bv.constraints.Constraint;
+import static io.github.jeddict.jcode.util.JavaUtil.not;
 import io.github.jeddict.jpa.spec.DefaultClass;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.extend.AnnotationLocation;
@@ -284,14 +285,15 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         if(javaClass.getJsonbNillable()){
             snippets.add(new NillableSnippet(javaClass.getJsonbNillable()));
         }
-        if (!javaClass.getJsonbPropertyOrder().isEmpty()) {
-            snippets.add(new PropertyOrderSnippet(javaClass.getJsonbPropertyOrder()
-                    .stream()
-                    .filter(attr -> !attr.getJsonbTransient())
-                    .map(Attribute::getName)
-                    .collect(toList())
-                )
-            );
+
+        List<Attribute> propertyOrder = javaClass.evalJsonbPropertyOrder();
+        if (!propertyOrder.isEmpty()) {
+            snippets.add(new PropertyOrderSnippet(
+                    propertyOrder.stream()
+                            .filter(not(Attribute::getJsonbTransient))
+                            .map(Attribute::getName)
+                            .collect(toList())
+            ));
         }
         if (javaClass.getJsonbDateFormat() != null && !javaClass.getJsonbDateFormat().isEmpty()) {
             snippets.add(new DateFormatSnippet(javaClass.getJsonbDateFormat()));

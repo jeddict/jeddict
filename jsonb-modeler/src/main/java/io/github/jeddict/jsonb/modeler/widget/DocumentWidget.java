@@ -15,13 +15,32 @@
  */
 package io.github.jeddict.jsonb.modeler.widget;
 
-import io.github.jeddict.jpa.modeler.widget.OpenSourceCodeAction;
+import io.github.jeddict.jpa.modeler.initializer.JPAFileActionListener;
+import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
 import io.github.jeddict.jpa.modeler.widget.FlowNodeWidget;
+import static io.github.jeddict.jpa.modeler.widget.JavaClassWidget.getFileObject;
+import io.github.jeddict.jpa.modeler.widget.OpenSourceCodeAction;
+import io.github.jeddict.jpa.spec.ElementCollection;
+import io.github.jeddict.jpa.spec.Embedded;
+import io.github.jeddict.jpa.spec.extend.Attribute;
+import io.github.jeddict.jpa.spec.extend.JavaClass;
+import io.github.jeddict.jpa.spec.extend.RelationAttribute;
+import io.github.jeddict.jsonb.modeler.initializer.JSONBModelerScene;
+import static io.github.jeddict.jsonb.modeler.initializer.JSONBModelerUtil.JSON_DOCUMENT;
+import static io.github.jeddict.jsonb.modeler.initializer.JSONBModelerUtil.JSON_DOCUMENT_ICON_PATH;
+import static io.github.jeddict.jsonb.modeler.properties.PropertiesHandler.getJsonbTypeAdapter;
+import static io.github.jeddict.jsonb.modeler.properties.PropertiesHandler.getJsonbTypeDeserializer;
+import static io.github.jeddict.jsonb.modeler.properties.PropertiesHandler.getJsonbTypeSerializer;
+import static io.github.jeddict.jsonb.modeler.properties.PropertiesHandler.getJsonbVisibility;
+import io.github.jeddict.jsonb.modeler.spec.JSONBDocument;
+import io.github.jeddict.jsonb.modeler.spec.JSONBNode;
+import io.github.jeddict.jsonb.modeler.widget.context.DocumentContextModel;
 import java.awt.Cursor;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,25 +49,6 @@ import static java.util.stream.Collectors.toList;
 import javax.swing.JMenuItem;
 import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.widget.Widget;
-import io.github.jeddict.jsonb.modeler.widget.context.DocumentContextModel;
-import static io.github.jeddict.jsonb.modeler.properties.PropertiesHandler.getJsonbTypeAdapter;
-import static io.github.jeddict.jsonb.modeler.properties.PropertiesHandler.getJsonbTypeDeserializer;
-import static io.github.jeddict.jsonb.modeler.properties.PropertiesHandler.getJsonbTypeSerializer;
-import static io.github.jeddict.jsonb.modeler.properties.PropertiesHandler.getJsonbVisibility;
-import io.github.jeddict.jsonb.modeler.spec.JSONBDocument;
-import io.github.jeddict.jsonb.modeler.spec.JSONBNode;
-import io.github.jeddict.jsonb.modeler.initializer.JSONBModelerScene;
-import static io.github.jeddict.jsonb.modeler.initializer.JSONBModelerUtil.JSON_DOCUMENT;
-import static io.github.jeddict.jsonb.modeler.initializer.JSONBModelerUtil.JSON_DOCUMENT_ICON_PATH;
-import static io.github.jeddict.jpa.modeler.widget.JavaClassWidget.getFileObject;
-import io.github.jeddict.jpa.spec.ElementCollection;
-import io.github.jeddict.jpa.spec.Embedded;
-import io.github.jeddict.jpa.spec.extend.Attribute;
-import io.github.jeddict.jpa.spec.extend.JavaClass;
-import io.github.jeddict.jpa.spec.extend.RelationAttribute;
-import io.github.jeddict.jpa.modeler.initializer.JPAFileActionListener;
-import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import java.util.Comparator;
 import org.netbeans.modeler.anchors.CustomRectangularAnchor;
 import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.core.ModelerFile;
@@ -294,16 +294,20 @@ public class DocumentWidget extends FlowNodeWidget<JSONBDocument, JSONBModelerSc
     }
 
     public Map<String, List<Widget>> getNodeCategories() {
-        List<Attribute> attributes = this.getBaseElementSpec().getJavaClass().getJsonbPropertyOrder();
-        if (attributes.isEmpty()) {
-            attributes = this.getBaseElementSpec().getJavaClass().getAttributes().getAllAttribute();
+        JavaClass javaClass = this.getBaseElementSpec().getJavaClass();
+        List<Attribute> attributes;
+        if (javaClass.getJsonbPropertyOrder().isEmpty()) {
+            attributes = javaClass.getAttributes().getAllAttribute();
             attributes.sort(Comparator.comparing(Attribute::getName));
+        } else {
+            attributes = javaClass.getAllJsonbPropertyOrder();
         }
         return Collections.singletonMap("", attributes.stream()
                 .map(attr -> getJSONNodeWidget(attr))
                 .collect(toList()));
     }
 
+    @Override
     public Anchor getAnchor() {
         return new CustomRectangularAnchor(this, -5, true);
     }
