@@ -19,6 +19,7 @@ import static io.github.jeddict.jcode.JPAConstants.PERSISTENCE_METAMODEL_PACKAGE
 import static io.github.jeddict.jcode.util.AttributeType.getWrapperType;
 import static io.github.jeddict.jcode.util.AttributeType.isArray;
 import static io.github.jeddict.jcode.util.AttributeType.isPrimitive;
+import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
 import io.github.jeddict.orm.generator.util.ImportSet;
@@ -27,6 +28,10 @@ import java.util.Collection;
 public class MetamodelVariableDefSnippet extends VariableDefSnippet {
 
     private MetamodelAttributeType attributeType;
+
+    public MetamodelVariableDefSnippet(Attribute attribute) {
+        super(attribute);
+    }
 
     /**
      * @return the attributeType

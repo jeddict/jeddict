@@ -41,18 +41,22 @@ import static io.github.jeddict.jcode.JPAConstants.JPA_ANNOTATIONS;
 import static io.github.jeddict.jcode.JPAConstants.PERSISTENCE_PACKAGE;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_ANNOTATIONS;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_PACKAGE;
+import io.github.jeddict.jcode.util.Inflector;
 import static io.github.jeddict.jcode.util.JavaIdentifiers.isFQN;
 import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualify;
 import static io.github.jeddict.jcode.util.JavaUtil.getFieldName;
+import static io.github.jeddict.jcode.util.JavaUtil.getFieldNameFromDelegatorMethod;
 import static io.github.jeddict.jcode.util.JavaUtil.isBeanMethod;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.ClassAnnotation;
 import io.github.jeddict.jpa.spec.extend.ClassAnnotationLocationType;
 import static io.github.jeddict.jpa.spec.extend.ClassAnnotationLocationType.TYPE;
+import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
 import io.github.jeddict.jpa.spec.extend.Constructor;
 import io.github.jeddict.jpa.spec.extend.IAttributes;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.jpa.spec.extend.ReferenceClass;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateFluentAPI;
 import io.github.jeddict.snippet.ClassSnippet;
 import io.github.jeddict.snippet.ClassSnippetLocationType;
 import static io.github.jeddict.snippet.ClassSnippetLocationType.AFTER_CLASS;
@@ -69,6 +73,7 @@ import java.util.Set;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  *
@@ -140,28 +145,66 @@ public class JavaClassSyncHandler {
                             if (previousAttribute != null) { //renamed
                                 AttributeSyncHandler
                                         .getInstance(previousAttribute)
-                                        .loadExistingSnippet(attributeName, method, imports);
+                                        .syncExistingSnippet(attributeName, method, imports);
                             } else if (attribute != null) { // new or non-modified
                                 AttributeSyncHandler
                                         .getInstance(attribute)
-                                        .loadExistingSnippet(attributeName, method, imports);
+                                        .syncExistingSnippet(attributeName, method, imports);
                             } else {
                                 syncMethodSnippet(method, imports);
                             }
-                        } else if (method.getNameAsString().equals("toString")
+                        } else if (methodName.equals("toString")
                                 && method.getParameters().isEmpty()) {
                             if (javaClass.getToStringMethod().getAttributes().isEmpty()) {
                                 syncMethodSnippet(method, imports);
                             }
-                        } else if (method.getNameAsString().equals("hashCode")
+                        } else if (methodName.equals("hashCode")
                                 && method.getParameters().isEmpty()) {
                             if (javaClass.getHashCodeMethod().getAttributes().isEmpty()) {
                                 syncMethodSnippet(method, imports);
                             }
-                        } else if (method.getNameAsString().equals("equals")
+                        } else if (methodName.equals("equals")
                                 && method.getParameters().size() == 1
                                 && method.getParameters().get(0).getTypeAsString().equals("Object")) {
                             if (javaClass.getEqualsMethod().getAttributes().isEmpty()) {
+                                syncMethodSnippet(method, imports);
+                            }
+                        } else if ((methodName.startsWith("add")
+                                || methodName.startsWith("remove"))
+                                && method.getParameters().size() == 1) { // delegator/helper method
+                            String attributeName = getFieldNameFromDelegatorMethod(methodName);
+
+                            String attributePluralName = Inflector.getInstance().pluralize(attributeName);
+                            if (javaClass.getRemovedAttributes().contains(attributePluralName)) {
+                                continue;
+                            }
+                            Attribute previousAttribute = previousAttributes.get(attributePluralName);
+                            Attribute attribute = attributes.get(attributePluralName);
+
+                            if (previousAttribute == null && attribute == null) { // if helper method field name is not plural
+                                if (javaClass.getRemovedAttributes().contains(attributeName)) {
+                                    continue;
+                                }
+                                previousAttribute = previousAttributes.get(attributeName);
+                                attribute = attributes.get(attributeName);
+                            }
+
+                            if (previousAttribute != null
+                                    && previousAttribute instanceof CollectionTypeHandler
+                                    && isNotBlank(((CollectionTypeHandler) previousAttribute).getCollectionImplType())) { //renamed
+                                // skip
+                            } else if (attribute != null
+                                    && attribute instanceof CollectionTypeHandler
+                                    && isNotBlank(((CollectionTypeHandler) attribute).getCollectionImplType())) { // new or non-modified
+                                // skip
+                            } else {
+                                syncMethodSnippet(method, imports);
+                            }
+                        } else if (isFluentMethod(method)) {
+                            String attributeName = method.getParameter(0).getNameAsString();
+                            Attribute previousAttribute = previousAttributes.get(attributeName);
+                            Attribute attribute = attributes.get(attributeName);
+                            if (previousAttribute == null && attribute == null) {
                                 syncMethodSnippet(method, imports);
                             }
                         } else {
@@ -180,11 +223,11 @@ public class JavaClassSyncHandler {
                         if (previousAttribute != null) { //renamed
                             AttributeSyncHandler
                                     .getInstance(previousAttribute)
-                                    .loadExistingSnippet(attributeName, field, imports);
+                                    .syncExistingSnippet(attributeName, field, imports);
                         } else if (attribute != null) { // new or non-modified
                             AttributeSyncHandler
                                     .getInstance(attribute)
-                                    .loadExistingSnippet(attributeName, field, imports);
+                                    .syncExistingSnippet(attributeName, field, imports);
                         } else {
                             syncFieldSnippet((FieldDeclaration) member, imports);
                         }
@@ -204,6 +247,13 @@ public class JavaClassSyncHandler {
                 System.out.println("member not supported");
             }
         }
+    }
+
+    public boolean isFluentMethod(MethodDeclaration method) {
+        return isGenerateFluentAPI()
+                && method.getParameters().size() == 1
+                && (method.getTypeAsString().equals(javaClass.getPreviousClass()) || method.getTypeAsString().equals(javaClass.getClazz()))
+                && method.getNameAsString().toLowerCase().endsWith(method.getParameter(0).getNameAsString().toLowerCase());
     }
 
     private void syncHeader(Comment comment, ClassSnippetLocationType locationType) {

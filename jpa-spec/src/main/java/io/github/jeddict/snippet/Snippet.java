@@ -90,7 +90,7 @@ public abstract class Snippet<L extends SnippetLocation> {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Snippet)) {
             return false;
         }
         final Snippet other = (Snippet) obj;

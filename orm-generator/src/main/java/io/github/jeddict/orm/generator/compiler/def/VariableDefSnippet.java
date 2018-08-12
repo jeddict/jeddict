@@ -80,6 +80,7 @@ import io.github.jeddict.orm.generator.compiler.TableGeneratorSnippet;
 import io.github.jeddict.orm.generator.compiler.TemporalSnippet;
 import io.github.jeddict.orm.generator.compiler.TypeIdentifierSnippet;
 import io.github.jeddict.orm.generator.compiler.constraints.ConstraintSnippet;
+import static io.github.jeddict.orm.generator.service.ClassGenerator.buildCustomSnippet;
 import io.github.jeddict.orm.generator.util.ClassHelper;
 import io.github.jeddict.orm.generator.util.ImportSet;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
@@ -93,6 +94,7 @@ import static io.github.jeddict.settings.generate.GenerateSettings.isFluentAPIJa
 import static io.github.jeddict.settings.generate.GenerateSettings.isGetterJavaDoc;
 import static io.github.jeddict.settings.generate.GenerateSettings.isPropertyJavaDoc;
 import static io.github.jeddict.settings.generate.GenerateSettings.isSetterJavaDoc;
+import io.github.jeddict.snippet.AttributeSnippet;
 import io.github.jeddict.snippet.AttributeSnippetLocationType;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.GETTER_JAVADOC;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.GETTER_THROWS;
@@ -104,9 +106,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import static java.util.Collections.emptyList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -159,16 +163,13 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private AssociationOverridesSnippet associationOverrides;
     private AttributeOverridesSnippet attributeOverrides;
     private TypeIdentifierSnippet typeIdentifier;
-    private Attribute attribute;
+    private final Attribute attribute;
     private Map<AttributeSnippetLocationType, List<String>> customSnippet;
     private Map<AttributeAnnotationLocationType, List<AnnotationSnippet>> annotation;
     private ConvertsSnippet converts;
-    
+
     private String collectionType;
     private String collectionImplType;
-
-    public VariableDefSnippet() {
-    }
 
     public VariableDefSnippet(Attribute attribute) {
         this.attribute = attribute;
@@ -985,7 +986,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     }
 
     public String getPropertyJavaDoc() {
-        if (getCustomSnippet(PROPERTY_JAVADOC.name()) != null) {
+        if (!getCustomSnippet(PROPERTY_JAVADOC.name()).isEmpty()) {
             return getCustomSnippet(PROPERTY_JAVADOC.name())
                     .stream()
                     .collect(joining("\n"));
@@ -997,7 +998,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     }
 
     public String getGetterJavaDoc() {
-        if (getCustomSnippet(GETTER_JAVADOC.name()) != null) {
+        if (!getCustomSnippet(GETTER_JAVADOC.name()).isEmpty()) {
             return getCustomSnippet(GETTER_JAVADOC.name())
                     .stream()
                     .collect(joining("\n"));
@@ -1011,7 +1012,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     }
 
     public String getSetterJavaDoc() {
-        if (getCustomSnippet(SETTER_JAVADOC.name()) != null) {
+        if (!getCustomSnippet(SETTER_JAVADOC.name()).isEmpty()) {
             return getCustomSnippet(SETTER_JAVADOC.name())
                     .stream()
                     .collect(joining("\n"));
@@ -1039,17 +1040,17 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
     public boolean isPropertyJavaDocExist() {
         return (isJavaDocExist() && isPropertyJavaDoc())
-                || getCustomSnippet(PROPERTY_JAVADOC.name()) != null;
+                || !getCustomSnippet(PROPERTY_JAVADOC.name()).isEmpty();
     }
 
     public boolean isGetterJavaDocExist() {
         return (isJavaDocExist() && isGetterJavaDoc())
-                || getCustomSnippet(GETTER_JAVADOC.name()) != null;
+                || !getCustomSnippet(GETTER_JAVADOC.name()).isEmpty();
     }
 
     public boolean isSetterJavaDocExist() {
         return (isJavaDocExist() && isSetterJavaDoc())
-                || getCustomSnippet(SETTER_JAVADOC.name()) != null;
+                || !getCustomSnippet(SETTER_JAVADOC.name()).isEmpty();
     }
 
     public boolean isFluentJavaDocExist() {
@@ -1099,28 +1100,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         this.defaultValue = defaultValue;
     }
 
-    /**
-     * @return the customSnippet
-     */
-    public Map<AttributeSnippetLocationType, List<String>> getCustomSnippet() {
-        return customSnippet;
-    }
-
-    public List<String> getCustomSnippet(String type) {
-        AttributeSnippetLocationType locationType = AttributeSnippetLocationType.valueOf(type);
-        List<String> customSnippets = customSnippet.containsKey(locationType)
-                ? customSnippet.get(locationType) : emptyList();
-        if (locationType == IMPORT) {
-            customSnippets
-                    = customSnippets
-                            .stream()
-                            .filter(snippet -> snippet.startsWith("import"))
-                            .filter(snippet -> snippet.startsWith(";"))
-                            .collect(toList());
-        }
-        return customSnippets;
-    }
-
     public boolean isGetterThrows() {
         return !getCustomSnippet(GETTER_THROWS.name()).isEmpty();
     }
@@ -1137,6 +1116,33 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         return "throws " + getCustomSnippet(SETTER_THROWS.name()).stream().collect(joining(", "));
     }
 
+    /**
+     * @return the customSnippet
+     */
+    public Map<AttributeSnippetLocationType, List<String>> getCustomSnippet() {
+        if (customSnippet == null) {
+            Set<AttributeSnippet> snippets = new LinkedHashSet<>();
+            snippets.addAll(attribute.getSnippets());
+            snippets.addAll(attribute.getRuntimeSnippets());
+            customSnippet = buildCustomSnippet(snippets);
+        }
+        return customSnippet;
+    }
+
+    public List<String> getCustomSnippet(String type) {
+        AttributeSnippetLocationType locationType = AttributeSnippetLocationType.valueOf(type);
+        List<String> customSnippets = getCustomSnippet().containsKey(locationType)
+                ? getCustomSnippet().get(locationType) : emptyList();
+        if (locationType == IMPORT) {
+            customSnippets
+                    = customSnippets
+                            .stream()
+                            .filter(snippet -> snippet.startsWith("import"))
+                            .filter(snippet -> snippet.startsWith(";"))
+                            .collect(toList());
+        }
+        return customSnippets;
+    }
     /**
      * @param customSnippet the customSnippet to set
      */

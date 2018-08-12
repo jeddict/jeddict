@@ -27,6 +27,7 @@ import static io.github.jeddict.snippet.ClassSnippetLocationType.IMPORT;
 import java.util.ArrayList;
 import static java.util.Arrays.asList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  *
@@ -118,10 +119,20 @@ public class VetoPropertyRuntimeSnippet {
             String prop = "PROP_" + name.toUpperCase();
             String oldProp = "old" + variableDef.getMethodName();
             if (variableDef.isPropertyChangeSupport() || variableDef.isVetoableChangeSupport()) {
-                attributeSnippets.add(new AttributeSnippet(
-                        String.format("String %s = %s;", oldProp, name),
-                        PRE_SETTER
-                ));
+                //dynamic AttributeSnippet as type is not evaluated during registration
+                attributeSnippets.add(new AttributeSnippet() {
+                    Supplier<String> template = () -> String.format("%s %s = %s;", variableDef.getType(), oldProp, name);
+
+                    @Override
+                    public String getValue() {
+                        return template.get();
+                    }
+
+                    @Override
+                    public AttributeSnippetLocationType getLocationType() {
+                        return PRE_SETTER;
+                    }
+                });
             }
             if (variableDef.isVetoableChangeSupport()) {
                 attributeSnippets.add(new AttributeSnippet(

@@ -127,12 +127,12 @@
                 <attribute id="propertyChangeSupport" groupId="ATTR_PROP" class="java.lang.Boolean" name="propertyChangeSupport">
                     <display-name>Property Change Support</display-name>
                     <description>Property Change Support</description>
-                    <visible><![CDATA[io.github.jeddict.settings.code.CodePanel.isJavaSESupportEnable()==true]]></visible>
+                    <visible><![CDATA[io.github.jeddict.settings.diagram.ClassDiagramSettings.isJavaSESupportEnable()==true]]></visible>
                 </attribute>
                 <attribute id="vetoableChangeSupport" groupId="ATTR_PROP" class="java.lang.Boolean" name="vetoableChangeSupport">
                     <display-name>Vetoable Change Support</display-name>
                     <description>Vetoable Change Support</description>
-                    <visible><![CDATA[io.github.jeddict.settings.code.CodePanel.isJavaSESupportEnable()==true]]></visible>
+                    <visible><![CDATA[io.github.jeddict.settings.diagram.ClassDiagramSettings.isJavaSESupportEnable()==true]]></visible>
                 </attribute>
                 <attribute id="jaxbMetadata" groupId="JAXB_PROP" class="io.github.jeddict.jaxb.spec.JaxbMetadata" name="jaxbMetadata" />         
                 <attribute id="jaxbWrapperMetadata" groupId="JAXB_PROP" class="io.github.jeddict.jaxb.spec.JaxbMetadata" name="jaxbWrapperMetadata" />         

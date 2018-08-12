@@ -40,6 +40,7 @@ import io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType;
 import static io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType.GETTER;
 import static io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType.PROPERTY;
 import static io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType.SETTER;
+import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
 import io.github.jeddict.snippet.AttributeSnippet;
 import io.github.jeddict.snippet.AttributeSnippetLocationType;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.GETTER_JAVADOC;
@@ -57,6 +58,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import static org.apache.commons.lang.StringUtils.deleteWhitespace;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  *
@@ -74,52 +76,22 @@ public class AttributeSyncHandler {
         return new AttributeSyncHandler(attribute);
     }
 
-    public void loadExistingSnippet(String name, FieldDeclaration field, Map<String, ImportDeclaration> imports) {
-        loadJavadoc(field.getJavadocComment(), PROPERTY_JAVADOC);
-        loadAnnotation(field.getAnnotations(), PROPERTY, imports);
+    public void syncExistingSnippet(String name, FieldDeclaration field, Map<String, ImportDeclaration> imports) {
+        syncJavadoc(field.getJavadocComment(), PROPERTY_JAVADOC);
+        syncAnnotation(field.getAnnotations(), PROPERTY, imports);
     }
 
-    public void loadExistingSnippet(String name, MethodDeclaration method, Map<String, ImportDeclaration> imports) {
+    public void syncExistingSnippet(String name, MethodDeclaration method, Map<String, ImportDeclaration> imports) {
         String methodName = method.getNameAsString();
         boolean getterMethod = isGetterMethod(methodName);
 
-        for (ReferenceType thrownException : method.getThrownExceptions()) {
-            String value = thrownException.toString();
-            AttributeSnippet attributeSnippet = new AttributeSnippet(value, getterMethod ? GETTER_THROWS : SETTER_THROWS);
-            attribute.addRuntimeSnippet(attributeSnippet);
-            addImportSnippet(value, imports);
-        }
-
-        if (method.getBody().isPresent()) {
-            BlockStmt block = method.getBody().get();
-
-            AttributeSnippetLocationType locationType = getterMethod ? PRE_GETTER : PRE_SETTER;
-            List<String> bridgeLines = new ArrayList<>();
-            if (getterMethod) {
-                bridgeLines.add(deleteWhitespace(String.format("return %s;", name)));
-                bridgeLines.add(deleteWhitespace(String.format("return this.%s;", name)));
-            } else {
-                bridgeLines.add(deleteWhitespace(String.format("this.%s = %s;", name, name)));
-            }
-            for (Node node : block.getChildNodes()) {
-                String[] statements = node.toString().split("\n");
-                for (String statement : statements) {
-                    if (bridgeLines.contains(deleteWhitespace(statement))) {
-                        locationType = getterMethod ? POST_GETTER : POST_SETTER;
-                    } else {
-                        attribute.addRuntimeSnippet(new AttributeSnippet(statement, locationType));
-                        addImportSnippet(statement, imports);
-                    }
-                }
-            }
-        }
-
-        loadJavadoc(method.getJavadocComment(), getterMethod ? GETTER_JAVADOC : SETTER_JAVADOC);
-        loadAnnotation(method.getAnnotations(), getterMethod ? GETTER : SETTER, imports);
-
+        syncJavadoc(method.getJavadocComment(), getterMethod ? GETTER_JAVADOC : SETTER_JAVADOC);
+        syncAnnotation(method.getAnnotations(), getterMethod ? GETTER : SETTER, imports);
+        syncThrows(method, getterMethod, imports);
+        syncMethodBody(name, method, getterMethod, imports);
     }
 
-    private void loadJavadoc(Optional<JavadocComment> docOptional, AttributeSnippetLocationType locationType) {
+    private void syncJavadoc(Optional<JavadocComment> docOptional, AttributeSnippetLocationType locationType) {
         if (docOptional.isPresent()) {
             JavadocComment doc = docOptional.get();
             AttributeSnippet attributeSnippet = new AttributeSnippet();
@@ -132,7 +104,16 @@ public class AttributeSyncHandler {
         }
     }
 
-    private void loadAnnotation(List<AnnotationExpr> annotationExprs, AttributeAnnotationLocationType locationType, Map<String, ImportDeclaration> imports) {
+    private void syncThrows(MethodDeclaration method, boolean getterMethod, Map<String, ImportDeclaration> imports) {
+        for (ReferenceType thrownException : method.getThrownExceptions()) {
+            String value = thrownException.toString();
+            AttributeSnippet attributeSnippet = new AttributeSnippet(value, getterMethod ? GETTER_THROWS : SETTER_THROWS);
+            attribute.addRuntimeSnippet(attributeSnippet);
+            addImportSnippet(value, imports);
+        }
+    }
+
+    private void syncAnnotation(List<AnnotationExpr> annotationExprs, AttributeAnnotationLocationType locationType, Map<String, ImportDeclaration> imports) {
         for (AnnotationExpr annotationExpr : annotationExprs) {
             String annotationExprName = annotationExpr.getNameAsString();
             String annotationName;
@@ -166,6 +147,45 @@ public class AttributeSyncHandler {
                 }
             }
 
+        }
+    }
+
+    private void syncMethodBody(String name, MethodDeclaration method, boolean getterMethod, Map<String, ImportDeclaration> imports) {
+        if (method.getBody().isPresent()) {
+            BlockStmt block = method.getBody().get();
+            AttributeSnippetLocationType locationType = getterMethod ? PRE_GETTER : PRE_SETTER;
+
+            String intializerLines = null; // collection default impl type null check & intializer
+            if (attribute instanceof CollectionTypeHandler
+                    && isNotBlank(((CollectionTypeHandler) attribute).getCollectionImplType())) {
+                intializerLines = String.format("if\\(%s==null\\)\\{%s=new([A-Za-z]+)<>\\(\\);\\}", name, name);
+            }
+
+            List<String> bridgeLines = new ArrayList<>();
+            if (getterMethod) {
+                bridgeLines.add(deleteWhitespace(String.format("return %s;", name)));
+                bridgeLines.add(deleteWhitespace(String.format("return this.%s;", name)));
+            } else {
+                bridgeLines.add(deleteWhitespace(String.format("this.%s = %s;", name, name)));
+            }
+            for (Node node : block.getChildNodes()) {
+                if (locationType == PRE_GETTER
+                        && intializerLines != null
+                        && deleteWhitespace(node.toString()).matches(intializerLines)) {
+                    intializerLines = null;
+                    continue;
+                }
+
+                String[] statements = node.toString().split("\n");
+                for (String statement : statements) {
+                    if (bridgeLines.contains(deleteWhitespace(statement))) {
+                        locationType = getterMethod ? POST_GETTER : POST_SETTER;
+                    } else {
+                        attribute.addRuntimeSnippet(new AttributeSnippet(statement, locationType));
+                        addImportSnippet(statement, imports);
+                    }
+                }
+            }
         }
     }
 

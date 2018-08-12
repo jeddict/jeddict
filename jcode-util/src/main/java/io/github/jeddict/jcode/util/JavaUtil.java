@@ -136,6 +136,19 @@ public class JavaUtil {
         return fieldName;
     }
 
+    public static String getFieldNameFromDelegatorMethod(String methodName) {
+        String fieldName;
+        if (methodName.startsWith("add") && methodName.length() > 3) {
+            fieldName = methodName.substring(3);
+        } else if (methodName.startsWith("remove") && methodName.length() > 6) {
+            fieldName = methodName.substring(6);
+        } else {
+            return null;
+        }
+        fieldName = StringHelper.firstLower(fieldName);
+        return fieldName;
+    }
+
     public static String removeBeanMethodPrefix(String methodName) {
         if (methodName.startsWith("get")) {
             methodName = methodName.replaceFirst("get", EMPTY);

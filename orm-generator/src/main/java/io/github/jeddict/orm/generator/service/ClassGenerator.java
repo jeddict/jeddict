@@ -50,7 +50,6 @@ import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
 import io.github.jeddict.orm.generator.util.ClassHelper;
 import io.github.jeddict.orm.generator.util.ORMConvLogger;
 import io.github.jeddict.settings.diagram.ClassDiagramSettings;
-import io.github.jeddict.snippet.AttributeSnippet;
 import io.github.jeddict.snippet.ClassSnippet;
 import io.github.jeddict.snippet.Snippet;
 import io.github.jeddict.snippet.SnippetLocation;
@@ -161,7 +160,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return snippetsMap;
     }
 
-    protected <T extends SnippetLocation> Map<T, List<String>> buildCustomSnippet(Set<? extends Snippet<T>> snippets) {
+    public static <T extends SnippetLocation> Map<T, List<String>> buildCustomSnippet(Set<? extends Snippet<T>> snippets) {
         Map<T, List<String>> snippetsMap = new HashMap<>();
         for (Snippet<T> snippet : snippets) {
             if (snippet.isEnable()) {
@@ -382,11 +381,6 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         variableDef.setKeyConstraints(getConstraintSnippet(attr.getKeyConstraints()));
         variableDef.setValueConstraints(getConstraintSnippet(attr.getValueConstraints()));
         variableDef.setJSONBSnippets(getJSONBAttributeSnippet(attr));
-
-        Set<AttributeSnippet> snippets = new LinkedHashSet<>();
-        snippets.addAll(attr.getSnippets());
-        snippets.addAll(attr.getRuntimeSnippets());
-        variableDef.setCustomSnippet(buildCustomSnippet(snippets));
         variableDef.setAnnotation(getAnnotationSnippet(attr.getAnnotation()));
         variableDef.getAnnotation().putAll(getAnnotationSnippet(attr.getRuntimeAnnotation()));
 
