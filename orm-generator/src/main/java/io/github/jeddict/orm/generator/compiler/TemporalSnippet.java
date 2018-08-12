@@ -15,9 +15,6 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_TEMPORAL;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_TEMPORAL_FQN;
 import static io.github.jeddict.jcode.JPAConstants.TEMPORAL;
@@ -27,14 +24,27 @@ import static io.github.jeddict.jcode.JPAConstants.TEMPORAL_TIME;
 import static io.github.jeddict.jcode.JPAConstants.TEMPORAL_TIMESTAMP;
 import static io.github.jeddict.jcode.JPAConstants.TEMPORAL_TYPE_FQN;
 import io.github.jeddict.jpa.spec.TemporalType;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static java.util.Arrays.asList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class TemporalSnippet implements Snippet {
 
-    private static final List<String> TEMPORAL_TYPES = getTemporalTypes();
+    private static final List<String> TEMPORAL_TYPES = asList(
+            TEMPORAL_DATE,
+            TEMPORAL_TIME,
+            TEMPORAL_TIMESTAMP
+    );
+
     private boolean mapKey;
 
-    private String value = null;
+    private String value;
 
     public TemporalSnippet(boolean mapKey) {
         this.mapKey = mapKey;
@@ -59,50 +69,47 @@ public class TemporalSnippet implements Snippet {
     }
 
     public void setValue(TemporalType parsedTemporalType) {
-        if (parsedTemporalType.equals(TemporalType.DATE)) {
-            this.setValue(TEMPORAL_DATE);
-        } else if (parsedTemporalType.equals(TemporalType.TIME)) {
-            this.setValue(TEMPORAL_TIME);
-        } else if (parsedTemporalType.equals(TemporalType.TIMESTAMP)) {
-            this.setValue(TEMPORAL_TIMESTAMP);
+        switch (parsedTemporalType) {
+            case DATE:
+                this.setValue(TEMPORAL_DATE);
+                break;
+            case TIME:
+                this.setValue(TEMPORAL_TIME);
+                break;
+            case TIMESTAMP:
+                this.setValue(TEMPORAL_TIMESTAMP);
+                break;
+            default:
+                break;
         }
     }
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder();
-        builder.append('@');
+        StringBuilder builder = new StringBuilder(AT);
         if (mapKey) {
             builder.append(MAP_KEY_TEMPORAL);
         } else {
             builder.append(TEMPORAL);
         }
-        if (value != null) {
-            builder.append(ORMConverterUtil.OPEN_PARANTHESES).append(value).append(ORMConverterUtil.CLOSE_PARANTHESES);
+        if (isNotBlank(value)) {
+            builder.append(OPEN_PARANTHESES).append(value).append(CLOSE_PARANTHESES);
         }
         return builder.toString();
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
+        Set<String> imports = new HashSet<>();
         if (mapKey) {
-            importSnippets.add(MAP_KEY_TEMPORAL_FQN);
+            imports.add(MAP_KEY_TEMPORAL_FQN);
         } else {
-            importSnippets.add(TEMPORAL_FQN);
+            imports.add(TEMPORAL_FQN);
         }
-        if (value != null) {
-            importSnippets.add(TEMPORAL_TYPE_FQN);
+        if (isNotBlank(value)) {
+            imports.add(TEMPORAL_TYPE_FQN);
         }
-        return importSnippets;
-    }
-
-    private static List<String> getTemporalTypes() {
-        List<String> temporalTypesList = new ArrayList<>();
-        temporalTypesList.add(TEMPORAL_DATE);
-        temporalTypesList.add(TEMPORAL_TIME);
-        temporalTypesList.add(TEMPORAL_TIMESTAMP);
-        return temporalTypesList;
+        return imports;
     }
 
     /**

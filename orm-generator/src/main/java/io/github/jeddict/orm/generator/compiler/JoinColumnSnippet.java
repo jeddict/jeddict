@@ -23,12 +23,11 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import java.util.HashSet;
+import java.util.Set;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class JoinColumnSnippet implements Snippet {
 
@@ -118,6 +117,20 @@ public class JoinColumnSnippet implements Snippet {
         this.table = table;
     }
 
+    /**
+     * @return the foreignKey
+     */
+    public ForeignKeySnippet getForeignKey() {
+        return foreignKey;
+    }
+
+    /**
+     * @param foreignKey the foreignKey to set
+     */
+    public void setForeignKey(ForeignKeySnippet foreignKey) {
+        this.foreignKey = foreignKey;
+    }
+
     @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder(AT);
@@ -132,120 +145,62 @@ public class JoinColumnSnippet implements Snippet {
                     && nullable == true
                     && unique == false
                     && updatable == true
-                    && columnDefinition == null
-                    && name == null
-                    && referencedColumnName == null
-                    && table == null 
+                    && isBlank(columnDefinition)
+                    && isBlank(name)
+                    && isBlank(referencedColumnName)
+                    && isBlank(table)
                     && foreignKey==null) {
                 return builder.toString();
             }
         }
 
-        builder.append(OPEN_PARANTHESES);
+        builder.append(OPEN_PARANTHESES)
+                .append(buildString("name", name))
+                .append(buildString("referencedColumnName", referencedColumnName))
+                .append(buildString("table", table));
 
-        if (isNotBlank(name)) {
-            builder.append("name=\"");
-            builder.append(name);
-            builder.append(QUOTE);
-            builder.append(COMMA);
-        }
-
-        if (isNotBlank(referencedColumnName)) {
-            builder.append("referencedColumnName=\"");
-            builder.append(referencedColumnName);
-            builder.append(QUOTE);
-            builder.append(COMMA);
-        }
-
-        if (isNotBlank(table)) {
-            builder.append("table=\"");
-            builder.append(table);
-            builder.append(QUOTE);
-            builder.append(COMMA);
-        }
-
-        if (isGenerateDefaultValue()) {
-            builder.append("unique=");
-            builder.append(unique);
-            builder.append(COMMA);
-        } else if (unique == true) {
+        if (isGenerateDefaultValue() || unique == true) {
             builder.append("unique=");
             builder.append(unique);
             builder.append(COMMA);
         }
 
-        if (isGenerateDefaultValue()) {
-            builder.append("insertable=");
-            builder.append(insertable);
-            builder.append(COMMA);
-        } else if (insertable == false) {
+        if (isGenerateDefaultValue() || insertable == false) {
             builder.append("insertable=");
             builder.append(insertable);
             builder.append(COMMA);
         }
 
-        if (isGenerateDefaultValue()) {
-            builder.append("nullable=");
-            builder.append(nullable);
-            builder.append(COMMA);
-        } else if (nullable == false) {
+        if (isGenerateDefaultValue() || nullable == false) {
             builder.append("nullable=");
             builder.append(nullable);
             builder.append(COMMA);
         }
 
-        if (isGenerateDefaultValue()) {
+        if (isGenerateDefaultValue() || updatable == false) {
             builder.append("updatable=");
             builder.append(updatable);
-            builder.append(COMMA);
-        } else if (updatable == false) {
-            builder.append("updatable=");
-            builder.append(updatable);
-            builder.append(COMMA);
-        }
-        
-        if (foreignKey != null) {
-            builder.append("foreignKey=");
-            builder.append(foreignKey.getSnippet());
             builder.append(COMMA);
         }
 
-        if (isNotBlank(columnDefinition)) {
-            builder.append("columnDefinition=\"");
-            builder.append(columnDefinition);
-            builder.append(QUOTE);
-            builder.append(COMMA);
-        }
-        
+        builder.append(buildSnippet("foreignKey", foreignKey))
+                .append(buildString("columnDefinition", columnDefinition));
+
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
+        Set<String> imports = new HashSet<>();
         if (mapKey) {
-            importSnippets.add(MAP_KEY_JOIN_COLUMN_FQN);
+            imports.add(MAP_KEY_JOIN_COLUMN_FQN);
         } else {
-            importSnippets.add(JOIN_COLUMN_FQN);
+            imports.add(JOIN_COLUMN_FQN);
         }
         if (foreignKey != null) {
-            importSnippets.addAll(foreignKey.getImportSnippets());
+            imports.addAll(foreignKey.getImportSnippets());
         }
-
-        return importSnippets;
+        return imports;
     }
 
-    /**
-     * @return the foreignKey
-     */
-    public ForeignKeySnippet getForeignKey() {
-        return foreignKey;
-    }
-
-    /**
-     * @param foreignKey the foreignKey to set
-     */
-    public void setForeignKey(ForeignKeySnippet foreignKey) {
-        this.foreignKey = foreignKey;
-    }
 }

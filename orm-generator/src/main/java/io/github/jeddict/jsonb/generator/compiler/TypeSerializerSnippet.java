@@ -15,17 +15,18 @@
  */
 package io.github.jeddict.jsonb.generator.compiler;
 
-import io.github.jeddict.orm.generator.compiler.InvalidDataException;
-import io.github.jeddict.orm.generator.compiler.Snippet;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_TYPE_SERIALIZER;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_TYPE_SERIALIZER_FQN;
 import io.github.jeddict.jpa.spec.extend.ReferenceClass;
+import io.github.jeddict.orm.generator.compiler.InvalidDataException;
+import io.github.jeddict.orm.generator.compiler.Snippet;
 import io.github.jeddict.orm.generator.util.ClassHelper;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TypeSerializerSnippet implements Snippet {
 
@@ -37,17 +38,19 @@ public class TypeSerializerSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder();
-        builder.append("@").append(JSONB_TYPE_SERIALIZER);
-        builder.append(OPEN_PARANTHESES).append(type.getClassNameWithClassSuffix()).append(CLOSE_PARANTHESES);
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(JSONB_TYPE_SERIALIZER)
+                .append(OPEN_PARANTHESES)
+                .append(type.getClassNameWithClassSuffix())
+                .append(CLOSE_PARANTHESES);
         return builder.toString();
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-        importSnippets.add(JSONB_TYPE_SERIALIZER_FQN);
-        importSnippets.add(type.getFQClassName());
-        return importSnippets;
+        Set<String> imports = new HashSet<>();
+        imports.add(JSONB_TYPE_SERIALIZER_FQN);
+        imports.add(type.getFQClassName());
+        return imports;
     }
 }

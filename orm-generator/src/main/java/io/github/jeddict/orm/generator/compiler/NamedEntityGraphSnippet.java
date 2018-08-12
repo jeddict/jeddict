@@ -15,13 +15,17 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
+import static io.github.jeddict.jcode.JPAConstants.NAMED_ENTITY_GRAPH;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_ENTITY_GRAPH_FQN;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import static io.github.jeddict.jcode.JPAConstants.NAMED_ENTITY_GRAPH;
-import static io.github.jeddict.jcode.JPAConstants.NAMED_ENTITY_GRAPH_FQN;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import java.util.Set;
 
 /**
  *
@@ -29,91 +33,15 @@ import io.github.jeddict.orm.generator.util.ORMConverterUtil;
  */
 public class NamedEntityGraphSnippet implements Snippet {
 
-    private String name = null;
+    private String name;
+
     private List<NamedAttributeNodeSnippet> namedAttributeNodes = Collections.<NamedAttributeNodeSnippet>emptyList();
+
     private List<NamedSubgraphSnippet> subgraphs = Collections.<NamedSubgraphSnippet>emptyList();
+
     private List<NamedSubgraphSnippet> subclassSubgraphs = Collections.<NamedSubgraphSnippet>emptyList();
+
     private Boolean includeAllAttributes;
-
-    @Override
-    public String getSnippet() throws InvalidDataException {
-
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("@").append(NAMED_ENTITY_GRAPH).append("(name=\"");
-        builder.append(getName());
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
-
-        if (!namedAttributeNodes.isEmpty()) {
-            builder.append("attributeNodes={");
-            for (NamedAttributeNodeSnippet namedAttributeNode : namedAttributeNodes) {
-                builder.append(namedAttributeNode.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-
-        }
-
-        if (!subgraphs.isEmpty()) {
-            builder.append("subgraphs={");
-            for (NamedSubgraphSnippet subgraph : subgraphs) {
-                builder.append(subgraph.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-
-        }
-
-        if (!subclassSubgraphs.isEmpty()) {
-            builder.append("subclassSubgraphs={");
-            for (NamedSubgraphSnippet subclassSubgraph : subclassSubgraphs) {
-                builder.append(subclassSubgraph.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-
-        }
-
-        if (includeAllAttributes != null) {
-            builder.append("includeAllAttributes= ");
-            builder.append(includeAllAttributes);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
-    }
-
-    @Override
-    public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        List<String> importSnippets = new ArrayList<>();
-
-        importSnippets.add(NAMED_ENTITY_GRAPH_FQN);
-
-        if (namedAttributeNodes != null && !namedAttributeNodes.isEmpty()) {
-            importSnippets.addAll(namedAttributeNodes.get(0).getImportSnippets());
-        }
-        if (subgraphs != null && !subgraphs.isEmpty()) {
-            for (NamedSubgraphSnippet subgraph : subgraphs) {
-                importSnippets.addAll(subgraph.getImportSnippets());
-            }
-        }
-        if (subclassSubgraphs != null && !subclassSubgraphs.isEmpty()) {
-            for (NamedSubgraphSnippet subclassSubgraph : subclassSubgraphs) {
-                importSnippets.addAll(subclassSubgraph.getImportSnippets());
-            }
-        }
-
-        return importSnippets;
-    }
 
     /**
      * @return the name
@@ -204,5 +132,42 @@ public class NamedEntityGraphSnippet implements Snippet {
      */
     public void setIncludeAllAttributes(Boolean includeAllAttributes) {
         this.includeAllAttributes = includeAllAttributes;
+    }
+
+    @Override
+    public String getSnippet() throws InvalidDataException {
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(NAMED_ENTITY_GRAPH)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", getName()))
+                .append(buildSnippets("attributeNodes", namedAttributeNodes))
+                .append(buildSnippets("subgraphs", subgraphs))
+                .append(buildSnippets("subclassSubgraphs", subclassSubgraphs))
+                .append(buildExp("includeAllAttributes", includeAllAttributes));
+
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+    }
+
+    @Override
+    public Collection<String> getImportSnippets() throws InvalidDataException {
+        Set<String> imports = new HashSet<>();
+
+        imports.add(NAMED_ENTITY_GRAPH_FQN);
+
+        if (namedAttributeNodes != null && !namedAttributeNodes.isEmpty()) {
+            imports.addAll(namedAttributeNodes.get(0).getImportSnippets());
+        }
+        if (subgraphs != null && !subgraphs.isEmpty()) {
+            for (NamedSubgraphSnippet subgraph : subgraphs) {
+                imports.addAll(subgraph.getImportSnippets());
+            }
+        }
+        if (subclassSubgraphs != null && !subclassSubgraphs.isEmpty()) {
+            for (NamedSubgraphSnippet subclassSubgraph : subclassSubgraphs) {
+                imports.addAll(subclassSubgraph.getImportSnippets());
+            }
+        }
+
+        return imports;
     }
 }

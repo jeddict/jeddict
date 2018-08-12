@@ -15,16 +15,21 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.LOCK_MODE_TYPE;
 import static io.github.jeddict.jcode.JPAConstants.LOCK_MODE_TYPE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_QUERY;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_QUERY_FQN;
 import io.github.jeddict.jpa.spec.LockModeType;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class NamedQuerySnippet implements Snippet {
 
@@ -69,67 +74,6 @@ public class NamedQuerySnippet implements Snippet {
         }
     }
 
-    @Override
-    public String getSnippet() throws InvalidDataException {
-
-        if (name == null || query == null) {
-            throw new InvalidDataException(
-                    "Query data missing, Name:" + name + " Query: " + query);
-        }
-
-        //remove new lines from query
-        query = query.replaceAll("\\n", " ");
-        query = query.replaceAll("\\t", " ");
-
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("@").append(NAMED_QUERY).append("(name=\"");
-        builder.append(name);
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
-
-        builder.append("query=\"");
-        builder.append(query);
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
-
-        if (lockMode != null) {
-            builder.append("lockMode=").append(LOCK_MODE_TYPE).append(".");
-            builder.append(lockMode);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (!queryHints.isEmpty()) {
-            builder.append("hints={");
-
-            for (QueryHintSnippet queryHint : queryHints) {
-                builder.append(queryHint.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
-    }
-
-    @Override
-    public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-        importSnippets.add(NAMED_QUERY_FQN);
-        if (lockMode != null) {
-            importSnippets.add(LOCK_MODE_TYPE_FQN);
-        }
-        if (!queryHints.isEmpty()) {
-            importSnippets.addAll(queryHints.get(0).getImportSnippets());
-        }
-        return importSnippets;
-    }
-
     /**
      * @return the lockMode
      */
@@ -143,4 +87,46 @@ public class NamedQuerySnippet implements Snippet {
     public void setLockMode(LockModeType lockMode) {
         this.lockMode = lockMode;
     }
+
+    @Override
+    public String getSnippet() throws InvalidDataException {
+        if (name == null || query == null) {
+            throw new InvalidDataException("Query data missing, Name:" + name + " Query: " + query);
+        }
+
+        //remove new lines from query
+        query = query.replaceAll("\\n", " ");
+        query = query.replaceAll("\\t", " ");
+
+        StringBuilder builder = new StringBuilder(AT);
+
+        builder.append(NAMED_QUERY)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", name))
+                .append(buildString("query", query));
+
+        if (lockMode != null) {
+            builder.append("lockMode=").append(LOCK_MODE_TYPE).append(".");
+            builder.append(lockMode);
+            builder.append(COMMA);
+        }
+
+        builder.append(buildSnippets("hints", queryHints));
+
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+    }
+
+    @Override
+    public Collection<String> getImportSnippets() throws InvalidDataException {
+        Set<String> imports = new HashSet<>();
+        imports.add(NAMED_QUERY_FQN);
+        if (lockMode != null) {
+            imports.add(LOCK_MODE_TYPE_FQN);
+        }
+        if (!queryHints.isEmpty()) {
+            imports.addAll(queryHints.get(0).getImportSnippets());
+        }
+        return imports;
+    }
+
 }

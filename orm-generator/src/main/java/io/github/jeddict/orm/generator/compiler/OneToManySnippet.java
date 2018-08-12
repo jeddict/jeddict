@@ -22,7 +22,6 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANT
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.getCommaSeparatedString;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -30,7 +29,26 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 public class OneToManySnippet extends MultiRelationAttributeSnippet {
 
     private boolean orphanRemoval = false;
-    
+
+    @Override
+    public String getType() {
+        return "OneToMany";
+    }
+
+    /**
+     * @return the orphanRemoval
+     */
+    public boolean isOrphanRemoval() {
+        return orphanRemoval;
+    }
+
+    /**
+     * @param orphanRemoval the orphanRemoval to set
+     */
+    public void setOrphanRemoval(boolean orphanRemoval) {
+        this.orphanRemoval = orphanRemoval;
+    }
+
     @Override
     public String getSnippet() throws InvalidDataException {
 
@@ -51,21 +69,10 @@ public class OneToManySnippet extends MultiRelationAttributeSnippet {
                     .append(ORMConverterUtil.TAB);
         }
 
-        builder.append(AT).append(getType()).append(OPEN_PARANTHESES);
-
-        if (isNotBlank(mappedBy)) {
-            builder.append("mappedBy = ")
-                    .append(QUOTE)
-                    .append(mappedBy)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
-
-        if (isNotBlank(getFetchType())) {
-            builder.append("fetch = ")
-                    .append(getFetchType())
-                    .append(COMMA);
-        }
+        builder.append(AT).append(getType())
+                .append(OPEN_PARANTHESES)
+                .append(buildString("mappedBy", mappedBy))
+                .append(buildExp("fetch", getFetchType()));;
 
         if (isGenerateDefaultValue() || orphanRemoval == true) {
             builder.append("orphanRemoval = ")
@@ -94,22 +101,4 @@ public class OneToManySnippet extends MultiRelationAttributeSnippet {
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
-    @Override
-    public String getType() {
-        return "OneToMany";
-    }
-
-    /**
-     * @return the orphanRemoval
-     */
-    public boolean isOrphanRemoval() {
-        return orphanRemoval;
-    }
-
-    /**
-     * @param orphanRemoval the orphanRemoval to set
-     */
-    public void setOrphanRemoval(boolean orphanRemoval) {
-        this.orphanRemoval = orphanRemoval;
-    }
 }

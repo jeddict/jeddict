@@ -15,9 +15,12 @@
  */
 package io.github.jeddict.orm.generator.compiler.constraints;
 
-import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.bv.constraints.Size;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import io.github.jeddict.orm.generator.compiler.InvalidDataException;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
  *
@@ -36,30 +39,21 @@ public class SizeSnippet extends ConstraintSnippet<Size> {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (constraint.getMessage() == null && constraint.getMin() == null && constraint.getMax() == null) {
-            return "@" + getAPI();
-        }
-        StringBuilder builder = new StringBuilder();
-        builder.append("@").append(getAPI()).append(ORMConverterUtil.OPEN_PARANTHESES);
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(getAPI());
 
-        if (constraint.getMin() != null) {
-            builder.append("min=");
-            builder.append(constraint.getMin());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-        if (constraint.getMax() != null) {
-            builder.append("max=");
-            builder.append(constraint.getMax());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-        if (constraint.getMessage() != null) {
-            builder.append("message=\"");
-            builder.append(constraint.getMessage());
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isBlank(constraint.getMessage())
+                && isBlank(constraint.getMin())
+                && isBlank(constraint.getMax())) {
+            return builder.toString();
         }
 
-        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
+        builder.append(OPEN_PARANTHESES)
+                .append(buildExp("min", constraint.getMin()))
+                .append(buildExp("max", constraint.getMax()))
+                .append(buildString("message", constraint.getMessage()));
+
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
 }

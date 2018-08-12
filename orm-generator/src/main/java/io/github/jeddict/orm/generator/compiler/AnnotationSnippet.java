@@ -15,10 +15,11 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import java.util.Collection;
-import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import java.util.HashSet;
+import java.util.Set;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class AnnotationSnippet implements Snippet {
 
@@ -37,11 +38,11 @@ public class AnnotationSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-        if(StringUtils.isNotBlank(_import)){
-            importSnippets.add(_import);
+        Set<String> imports = new HashSet<>();
+        if (isNotBlank(_import)) {
+            imports.add(_import);
         }
-        return importSnippets;
+        return imports;
     }
 
     /**
@@ -62,6 +63,6 @@ public class AnnotationSnippet implements Snippet {
         } else {
              _import = name.substring(1);
         }
-        this.name = '@' + name.substring(_import.lastIndexOf('.')+2);
+        this.name = AT + name.substring(_import.lastIndexOf('.') + 2);
     }
 }

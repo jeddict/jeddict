@@ -15,11 +15,16 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.Collection;
-import java.util.Collections;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_ATTRIBUTE_NODE;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_ATTRIBUTE_NODE_FQN;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import java.util.Collection;
+import static java.util.Collections.singleton;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
  *
@@ -75,44 +80,34 @@ public class NamedAttributeNodeSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (getName() == null || getName().isEmpty()) {
+        if (isBlank(getName())) {
             return null;
         }
 
-        StringBuilder builder = new StringBuilder();
-        if (getSubgraph() != null && getKeySubgraph() != null) {
-            builder.append("@").append(NAMED_ATTRIBUTE_NODE).append("(\"");
-            builder.append(getName());
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(NAMED_ATTRIBUTE_NODE)
+                .append(OPEN_PARANTHESES);
+
+        if (getSubgraph() != null && getKeySubgraph() != null) {  //todo ??
+            builder.append("");
         } else {
-            builder.append("@").append(NAMED_ATTRIBUTE_NODE).append("(value=\"");
-            builder.append(getName());
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append("value=");
         }
 
-        if (getSubgraph() != null) {
-            builder.append("subgraph =\"");
-            builder.append(getSubgraph());
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
+        builder.append(QUOTE)
+                .append(getName())
+                .append(QUOTE)
+                .append(COMMA);
 
-        if (getKeySubgraph() != null) {
-            builder.append("keySubgraph =\"");
-            builder.append(getSubgraph());
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
+        builder.append(buildString("subgraph", getSubgraph()))
+                .append(buildString("keySubgraph", getKeySubgraph()));
 
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList(NAMED_ATTRIBUTE_NODE_FQN);
+        return singleton(NAMED_ATTRIBUTE_NODE_FQN);
     }
 
 }

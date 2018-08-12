@@ -25,7 +25,7 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.singleton;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 
 public class ColumnDefSnippet implements Snippet {
@@ -147,59 +147,33 @@ public class ColumnDefSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
         StringBuilder builder = new StringBuilder();
 
-        if (name != null) {
-            builder.append("name=\"")
-                    .append(name)
-                    .append("\",");
+        builder.append(buildString("name", name))
+                .append(buildString("table", table));
+
+        if (isGenerateDefaultValue() || unique == true) {
+            builder.append("unique=");
+            builder.append(unique);
+            builder.append(COMMA);
         }
 
-        if (table != null) {
-            builder.append("table=\"")
-                    .append(table)
-                    .append("\",");
+        if (isGenerateDefaultValue() || insertable == false) {
+            builder.append("insertable=");
+            builder.append(insertable);
+            builder.append(COMMA);
         }
 
-        if (isGenerateDefaultValue()) {
-            if (unique == true) {
-                builder.append("unique=true,");
-            } else {
-                builder.append("unique=false,");
-            }
-        } else if (unique == true) {
-            builder.append("unique=true,");
+        if (isGenerateDefaultValue() || nullable == false) {
+            builder.append("nullable=");
+            builder.append(nullable);
+            builder.append(COMMA);
         }
 
-        if (isGenerateDefaultValue()) {
-            if (insertable == true) {
-                builder.append("insertable=true,");
-            } else {
-                builder.append("insertable=false,");
-            }
-        } else if (insertable == false) {
-            builder.append("insertable=false,");
-        }
-
-        if (isGenerateDefaultValue()) {
-            if (nullable == true) {
-                builder.append("nullable=true,");
-            } else {
-                builder.append("nullable=false,");
-            }
-        } else if (nullable == false) {
-            builder.append("nullable=false,");
-        }
-
-        if (isGenerateDefaultValue()) {
-            if (updatable == true) {
-                builder.append("updatable=true,");
-            } else {
-                builder.append("updatable=false,");
-            }
-        } else if (updatable == false) {
-            builder.append("updatable=false,");
+        if (isGenerateDefaultValue() || updatable == false) {
+            builder.append("updatable=");
+            builder.append(updatable);
+            builder.append(COMMA);
         }
 
         if (isGenerateDefaultValue() || length != 255) {
@@ -220,20 +194,16 @@ public class ColumnDefSnippet implements Snippet {
                     .append(COMMA);
         }
 
-        if (columnDefinition != null) {
-            builder.append("columnDefinition=\"")
-                    .append(columnDefinition)
-                    .append("\",");
-        }
+        builder.append(buildString("columnDefinition", columnDefinition));
 
         return AT + (mapKey ? MAP_KEY_COLUMN : COLUMN)
-                + OPEN_PARANTHESES
-                + (builder.length() > 1 ? builder.substring(0, builder.length() - 1) : EMPTY)
-                + CLOSE_PARANTHESES;
+                + (builder.length() > 1
+                ? OPEN_PARANTHESES + builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES
+                : EMPTY);
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList((mapKey ? MAP_KEY_COLUMN_FQN : COLUMN_FQN));
+        return singleton((mapKey ? MAP_KEY_COLUMN_FQN : COLUMN_FQN));
     }
 }

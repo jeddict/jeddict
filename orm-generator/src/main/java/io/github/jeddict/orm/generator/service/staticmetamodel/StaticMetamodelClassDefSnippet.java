@@ -15,11 +15,12 @@
  */
 package io.github.jeddict.orm.generator.service.staticmetamodel;
 
-import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.compiler.def.ClassDefSnippet;
 import io.github.jeddict.orm.generator.util.ClassHelper;
 import io.github.jeddict.orm.generator.util.ImportSet;
+import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  *
@@ -41,11 +42,12 @@ public class StaticMetamodelClassDefSnippet extends ClassDefSnippet {
     
     @Override
     public ImportSet getImportSet() throws InvalidDataException {
-        ImportSet importSnippets = super.getImportSet();
-        if (StringUtils.isNotBlank(getEntityPackageName()) && !StringUtils.equals(getPackageName(), getEntityPackageName())) {
-            importSnippets.add(entityClassHelper.getFQClassName());
+        ImportSet imports = super.getImportSet();
+        if (isNotBlank(getEntityPackageName())
+                && !StringUtils.equals(getPackageName(), getEntityPackageName())) {
+            imports.add(entityClassHelper.getFQClassName());
         }
-        return importSnippets;
+        return imports;
     }
 
     /**

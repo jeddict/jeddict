@@ -22,12 +22,10 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.Collection;
 import static java.util.Collections.singleton;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class OrderColumnSnippet implements Snippet {
 
@@ -100,51 +98,28 @@ public class OrderColumnSnippet implements Snippet {
             }
         }
 
-        builder.append(OPEN_PARANTHESES);
+        builder.append(OPEN_PARANTHESES)
+                .append(buildString("name", name));
 
-        if (isNotBlank(name)) {
-            builder.append("name=\"")
-                    .append(name)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
-
-        if (isGenerateDefaultValue()) {
-            builder.append(" insertable=")
-                    .append(insertable)
-                    .append(COMMA);
-        } else if (insertable == false) {
+        if (isGenerateDefaultValue() || insertable == false) {
             builder.append(" insertable=")
                     .append(insertable)
                     .append(COMMA);
         }
 
-        if (isGenerateDefaultValue()) {
-            builder.append(" nullable=")
-                    .append(nullable)
-                    .append(COMMA);
-        } else if (nullable == false) {
+        if (isGenerateDefaultValue() || nullable == false) {
             builder.append(" nullable=")
                     .append(nullable)
                     .append(COMMA);
         }
 
-        if (isGenerateDefaultValue()) {
-            builder.append(" updatable=")
-                    .append(updatable)
-                    .append(COMMA);
-        } else if (updatable == false) {
+        if (isGenerateDefaultValue() || updatable == false) {
             builder.append(" updatable=")
                     .append(updatable)
                     .append(COMMA);
         }
 
-        if (isNotBlank(columnDefinition)) {
-            builder.append(" columnDefinition=\"")
-                    .append(columnDefinition)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
+        builder.append(buildString("columnDefinition", columnDefinition));
 
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }

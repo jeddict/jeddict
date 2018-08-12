@@ -19,6 +19,7 @@ import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE;
 import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE_FQN;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.util.ImportSet;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 
 public class EmbeddableIdDefSnippet extends ClassDefSnippet {
 
@@ -31,13 +32,13 @@ public class EmbeddableIdDefSnippet extends ClassDefSnippet {
 
     @Override
     public String getManagedType() {
-        return "@" + EMBEDDABLE;
+        return AT + EMBEDDABLE;
     }
 
     @Override
     public ImportSet getImportSet() throws InvalidDataException {
-        ImportSet importSnippets = super.getImportSet();
-        importSnippets.add(EMBEDDABLE_FQN);
-        return importSnippets;
+        ImportSet imports = super.getImportSet();
+        imports.add(EMBEDDABLE_FQN);
+        return imports;
     }
 }

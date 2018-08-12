@@ -15,15 +15,19 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.Collection;
-import java.util.Collections;
-import org.apache.commons.lang.StringUtils;
 import static io.github.jeddict.jcode.JPAConstants.INDEX;
 import static io.github.jeddict.jcode.JPAConstants.INDEX_FQN;
 import io.github.jeddict.jpa.spec.Index;
 import io.github.jeddict.jpa.spec.OrderType;
 import io.github.jeddict.jpa.spec.extend.OrderbyItem;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.SPACE;
+import java.util.Collection;
+import static java.util.Collections.singleton;
 
 public class IndexSnippet implements Snippet {
 
@@ -35,55 +39,41 @@ public class IndexSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        
+
         if (index.getColumnList().isEmpty()) {
-               throw new InvalidDataException("Missing Index columnList");
+            throw new InvalidDataException("Missing Index columnList");
         }
-        
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(INDEX)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", index.getName()));
 
-        builder.append("@").append(INDEX).append("(");
-
-        if (StringUtils.isNotBlank(index.getName())) {
-            builder.append("name=\"");
-            builder.append(index.getName());
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-                
-        
-        builder.append("columnList=\"");
+        builder.append("columnList=").append(QUOTE);
         for (OrderbyItem orderbyItem : index.getColumnList()) {
             String property = orderbyItem.getProperty();
             OrderType orderType = orderbyItem.getOrderType();
             builder.append(property);
-            if(orderType!=null){
-                builder.append(" ").append(orderType.name());
+            if (orderType != null) {
+                builder.append(SPACE).append(orderType.name());
             }
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         }
         builder.setLength(builder.length() - 1);
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
 
+        builder.append(QUOTE).append(COMMA);
 
-
-        if (index.isUnique()!=null && index.isUnique()) {
-            builder.append("unique=true");
-            builder.append(ORMConverterUtil.COMMA);
+        if (index.isUnique() != null && index.isUnique()) {
+            builder.append("unique=true")
+                    .append(COMMA);
         }
-        
-        builder.setLength(builder.length() - 1);
 
-        
-        builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
-        return builder.toString();
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList(INDEX_FQN);
+        return singleton(INDEX_FQN);
 
     }
 }

@@ -25,13 +25,12 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.NEW_LINE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.TAB;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.getCommaSeparatedString;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefSnippet /*implements CollectionTypeHandler*/ {
@@ -48,7 +47,21 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
     public void setMappedBy(String mappedBy) {
         this.mappedBy = mappedBy;
     }
-    
+
+    /**
+     * @return the mapKeySnippet
+     */
+    public MapKeySnippet getMapKeySnippet() {
+        return mapKeySnippet;
+    }
+
+    /**
+     * @param mapKeySnippet the mapKeySnippet to set
+     */
+    public void setMapKeySnippet(MapKeySnippet mapKeySnippet) {
+        this.mapKeySnippet = mapKeySnippet;
+    }
+
     public abstract String getType();
 
     @Override
@@ -68,21 +81,10 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
                     .append(TAB);
         }
 
-        builder.append(AT).append(getType()).append(OPEN_PARANTHESES);
-
-        if (isNotBlank(mappedBy)) {
-            builder.append("mappedBy = ")
-                    .append(QUOTE)
-                    .append(mappedBy)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
-
-        if (isNotBlank(getFetchType())) {
-            builder.append("fetch = ")
-                    .append(getFetchType())
-                    .append(COMMA);
-        }
+        builder.append(AT).append(getType())
+                .append(OPEN_PARANTHESES)
+                .append(buildString("mappedBy", mappedBy))
+                .append(buildExp("fetch", getFetchType()));
 
         if (isGenerateDefaultValue() && isNotBlank(getTargetEntity())) {
             builder.append("targetEntity = ")
@@ -102,38 +104,23 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
             builder.append(COMMA);
         }
 
-
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-        importSnippets.add(PERSISTENCE_PACKAGE_PREFIX + getType());
+        Set<String> imports = new HashSet<>();
+        imports.add(PERSISTENCE_PACKAGE_PREFIX + getType());
         if (getFetchType() != null) {
-            importSnippets.add(FETCH_TYPE_FQN);
+            imports.add(FETCH_TYPE_FQN);
         }
         if (getCascadeTypes() != null && !getCascadeTypes().isEmpty()) {
-            importSnippets.add(CASCADE_TYPE_FQN);
+            imports.add(CASCADE_TYPE_FQN);
         }
         if(mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
-            importSnippets.addAll(mapKeySnippet.getImportSnippets());
+            imports.addAll(mapKeySnippet.getImportSnippets());
         }
-        return importSnippets;
-    }
-
-    /**
-     * @return the mapKeySnippet
-     */
-    public MapKeySnippet getMapKeySnippet() {
-        return mapKeySnippet;
-    }
-
-    /**
-     * @param mapKeySnippet the mapKeySnippet to set
-     */
-    public void setMapKeySnippet(MapKeySnippet mapKeySnippet) {
-        this.mapKeySnippet = mapKeySnippet;
+        return imports;
     }
 
 }

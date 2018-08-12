@@ -21,6 +21,7 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import java.util.Collection;
 import java.util.List;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public interface Snippet {
 
@@ -28,16 +29,15 @@ public interface Snippet {
 
     public Collection<String> getImportSnippets() throws InvalidDataException;
 
-    default String buildAnnotations(String key, List<? extends Snippet> snippets) throws InvalidDataException {
+    default String buildSnippets(String key, List<? extends Snippet> snippets) throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
-        if (!snippets.isEmpty()) {
+        if (snippets != null && !snippets.isEmpty()) {
             builder.append(key).append(" =");
             if (snippets.size() > 1) {
                 builder.append(OPEN_BRACES);
             }
-
-            for (Snippet joinColumn : snippets) {
-                builder.append(joinColumn.getSnippet()).append(COMMA);
+            for (Snippet snippet : snippets) {
+                builder.append(snippet.getSnippet()).append(COMMA);
             }
             builder.deleteCharAt(builder.length() - 1);
 
@@ -49,7 +49,7 @@ public interface Snippet {
         return builder.toString();
     }
 
-    default String buildAnnotation(String key, Snippet snippet) throws InvalidDataException {
+    default String buildSnippet(String key, Snippet snippet) throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
         String snippetValue;
         if (snippet != null && (snippetValue = snippet.getSnippet()) != null) {
@@ -62,7 +62,7 @@ public interface Snippet {
 
     default String buildString(String key, String value) throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
-        if (value != null && !value.trim().isEmpty()) {
+        if (isNotBlank(value)) {
             builder.append(key)
                     .append("=")
                     .append(QUOTE)
@@ -72,4 +72,50 @@ public interface Snippet {
         }
         return builder.toString();
     }
+
+    default String buildStrings(String key, List<String> values) throws InvalidDataException {
+        StringBuilder builder = new StringBuilder();
+        if (!values.isEmpty()) {
+            builder.append(key)
+                    .append("=");
+            if (values.size() > 1) {
+                builder.append(OPEN_BRACES);
+            }
+            for (String value : values) {
+                builder.append(QUOTE)
+                        .append(value)
+                        .append(QUOTE)
+                        .append(COMMA);
+            }
+            builder.deleteCharAt(builder.length() - 1);
+            if (values.size() > 1) {
+                builder.append(CLOSE_BRACES);
+            }
+            builder.append(COMMA);
+        }
+        return builder.toString();
+    }
+
+    default String buildExp(String key, String value) throws InvalidDataException {
+        StringBuilder builder = new StringBuilder();
+        if (isNotBlank(value)) {
+            builder.append(key)
+                    .append("=")
+                    .append(value)
+                    .append(COMMA);
+        }
+        return builder.toString();
+    }
+
+    default String buildExp(String key, Boolean value) throws InvalidDataException {
+        StringBuilder builder = new StringBuilder();
+        if (value != null) {
+            builder.append(key)
+                    .append("=")
+                    .append(value)
+                    .append(COMMA);
+        }
+        return builder.toString();
+    }
+
 }

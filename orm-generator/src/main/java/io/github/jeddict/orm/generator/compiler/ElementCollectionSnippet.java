@@ -15,13 +15,18 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION;
 import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION_FQN;
 import static io.github.jeddict.jcode.JPAConstants.FETCH_TYPE_FQN;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.NEW_LINE;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.TAB;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class ElementCollectionSnippet implements Snippet {
 
@@ -47,27 +52,33 @@ public class ElementCollectionSnippet implements Snippet {
         StringBuilder builder = new StringBuilder();
         if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
             builder.append(mapKeySnippet.getSnippet())
-                    .append(ORMConverterUtil.NEW_LINE)
-                    .append(ORMConverterUtil.TAB);
+                    .append(NEW_LINE)
+                    .append(TAB);
         }
-        builder.append("@").append(ELEMENT_COLLECTION);
-        if (fetchType != null) {
-            builder.append("(fetch=").append(getFetchType()).append(ORMConverterUtil.CLOSE_PARANTHESES);
+
+        builder.append(AT)
+                .append(ELEMENT_COLLECTION);
+
+        if (isNotBlank(getFetchType())) {
+            builder.append(OPEN_PARANTHESES)
+                    .append("fetch=")
+                    .append(getFetchType())
+                    .append(CLOSE_PARANTHESES);
         }
         return builder.toString();
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-        importSnippets.add(ELEMENT_COLLECTION_FQN);
-        if (fetchType != null) {
-            importSnippets.add(FETCH_TYPE_FQN);
+        Set<String> imports = new HashSet<>();
+        imports.add(ELEMENT_COLLECTION_FQN);
+        if (isNotBlank(getFetchType())) {
+            imports.add(FETCH_TYPE_FQN);
         }
         if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
-            importSnippets.addAll(mapKeySnippet.getImportSnippets());
+            imports.addAll(mapKeySnippet.getImportSnippets());
         }
-        return importSnippets;
+        return imports;
     }
 
     /**

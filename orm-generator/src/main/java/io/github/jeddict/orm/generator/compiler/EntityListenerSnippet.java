@@ -17,7 +17,8 @@ package io.github.jeddict.orm.generator.compiler;
 
 import io.github.jeddict.orm.generator.util.ClassHelper;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
 
 public class EntityListenerSnippet {
 
@@ -69,11 +70,9 @@ public class EntityListenerSnippet {
     }
 
     public Collection<String> getImportSnippets() throws InvalidDataException {
-
         if (classHelper.getPackageName() == null) {
-            return Collections.<String>emptyList();
+            return emptySet();
         }
-
-        return Collections.singletonList(classHelper.getFQClassName());
+        return singleton(classHelper.getFQClassName());
     }
 }

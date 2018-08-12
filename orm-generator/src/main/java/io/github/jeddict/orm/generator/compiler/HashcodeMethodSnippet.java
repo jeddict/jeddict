@@ -15,10 +15,6 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Random;
-import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.jpa.spec.DefaultAttribute;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.BaseAttribute;
@@ -26,6 +22,11 @@ import io.github.jeddict.jpa.spec.extend.ClassMembers;
 import io.github.jeddict.jpa.spec.extend.CompositionAttribute;
 import static io.github.jeddict.orm.generator.compiler.JavaHashcodeEqualsUtil.getHashcodeExpression;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.NEW_LINE;
+import java.util.Collection;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
+import java.util.Random;
+import org.apache.commons.lang.StringUtils;
 
 public class HashcodeMethodSnippet implements Snippet {
 
@@ -97,7 +98,7 @@ public class HashcodeMethodSnippet implements Snippet {
         if(hashcodeMethodSnippet == null){
             hashcodeMethodSnippet = getHashcodeMethodSnippet();
         }
-        return objectsImport ? Collections.singletonList("java.util.Objects") : Collections.<String>emptyList();
+        return objectsImport ? singleton("java.util.Objects") : emptySet();
     }
 
     /**

@@ -15,14 +15,19 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_SUBGRAPH;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_SUBGRAPH_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
  *
@@ -76,52 +81,38 @@ public class NamedSubgraphSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
-        if (name == null || namedAttributeNodes.isEmpty()) {
+        if (isBlank(name) || namedAttributeNodes.isEmpty()) {
             throw new InvalidDataException(
                     "EntityGraph data missing, Name:" + name + " NamedAttributeNode: " + namedAttributeNodes);
         }
 
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("@").append(NAMED_SUBGRAPH).append("(name=\"");
-        builder.append(name);
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(NAMED_SUBGRAPH)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", name));
 
         if (classHelper.getClassName() != null) {
             builder.append("type=");
             builder.append(getType());
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         }
 
-        builder.append("attributeNodes={");
-        for (NamedAttributeNodeSnippet namedAttributeNode : namedAttributeNodes) {
-            builder.append(namedAttributeNode.getSnippet());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-        builder.deleteCharAt(builder.length() - 1);
-        builder.append(ORMConverterUtil.CLOSE_BRACES);
-        builder.append(ORMConverterUtil.COMMA);
+        builder.append(buildSnippets("attributeNodes", namedAttributeNodes));
 
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        List<String> importSnippets = new ArrayList<>();
-
-        importSnippets.add(NAMED_SUBGRAPH_FQN);
+        Set<String> imports = new HashSet<>();
+        imports.add(NAMED_SUBGRAPH_FQN);
         if (classHelper.getPackageName() != null) {
-            importSnippets.add(classHelper.getFQClassName());
+            imports.add(classHelper.getFQClassName());
         }
         if (namedAttributeNodes != null && !namedAttributeNodes.isEmpty()) {
-            importSnippets.addAll(namedAttributeNodes.get(0).getImportSnippets());
+            imports.addAll(namedAttributeNodes.get(0).getImportSnippets());
         }
-
-        return importSnippets;
+        return imports;
     }
 
 }

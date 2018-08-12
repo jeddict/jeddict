@@ -29,7 +29,7 @@ public class BeanClassDefSnippet extends ClassDefSnippet {
 
     @Override
     public ImportSet getImportSet() throws InvalidDataException {
-        ImportSet importSnippets = super.getImportSet();
-        return importSnippets;
+        ImportSet imports = super.getImportSet();
+        return imports;
     }
 }

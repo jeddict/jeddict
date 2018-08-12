@@ -65,20 +65,20 @@ public class ManagedClassDefSnippet extends ClassDefSnippet implements Attribute
 
     @Override
     public ImportSet getImportSet() throws InvalidDataException {
-        ImportSet importSnippets = super.getImportSet();
+        ImportSet imports = super.getImportSet();
 
         if (associationOverrides != null) {
-            importSnippets.addAll(associationOverrides.getImportSnippets());
+            imports.addAll(associationOverrides.getImportSnippets());
         }
 
         if (attributeOverrides != null) {
-            importSnippets.addAll(attributeOverrides.getImportSnippets());
+            imports.addAll(attributeOverrides.getImportSnippets());
         }
 
         if (converts != null) {
-            importSnippets.addAll(converts.getImportSnippets());
+            imports.addAll(converts.getImportSnippets());
         }
 
-        return importSnippets;
+        return imports;
     }
 }

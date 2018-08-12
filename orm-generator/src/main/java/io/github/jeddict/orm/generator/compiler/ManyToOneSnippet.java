@@ -31,9 +31,9 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.getCommaSeparatedString;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
@@ -61,13 +61,8 @@ public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
                 return builder.toString();
         }
 
-        builder.append(OPEN_PARANTHESES);
-
-        if (isNotBlank(getFetchType())) {
-            builder.append("fetch = ")
-                    .append(getFetchType())
-                    .append(COMMA);
-        }
+        builder.append(OPEN_PARANTHESES)
+                .append(buildExp("fetch", getFetchType()));
 
         if (isGenerateDefaultValue() || optional == false) {
             builder.append("optional = ")
@@ -98,25 +93,25 @@ public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
+        Set<String> imports = new HashSet<>();
         if (isPrimaryKey()) {
             if (mapsId == null) {
-                importSnippets.add(ID_FQN);
+                imports.add(ID_FQN);
             } else {
-                importSnippets.add(MAPS_ID_FQN);
+                imports.add(MAPS_ID_FQN);
             }
         }
-        importSnippets.add(MANY_TO_ONE_FQN);
+        imports.add(MANY_TO_ONE_FQN);
 
         if (getFetchType() != null) {
-            importSnippets.add(FETCH_TYPE_FQN);
+            imports.add(FETCH_TYPE_FQN);
         }
 
         if (getCascadeTypes() != null && !getCascadeTypes().isEmpty()) {
-            importSnippets.add(CASCADE_TYPE_FQN);
+            imports.add(CASCADE_TYPE_FQN);
         }
 
-        return importSnippets;
+        return imports;
     }
 
 }

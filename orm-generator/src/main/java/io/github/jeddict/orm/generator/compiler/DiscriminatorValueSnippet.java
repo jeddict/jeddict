@@ -15,15 +15,19 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.Collection;
-import java.util.Collections;
+import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_VALUE;
 import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_VALUE_FQN;
-import static org.netbeans.modules.j2ee.persistence.dd.orm.model_1_0.Entity.DISCRIMINATOR_VALUE;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import java.util.Collection;
+import static java.util.Collections.singleton;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class DiscriminatorValueSnippet implements Snippet {
 
-    private String value = null;
+    private String value;
 
     public String getValue() {
         return value;
@@ -34,24 +38,25 @@ public class DiscriminatorValueSnippet implements Snippet {
     }
 
     public boolean isDefault() {
-        if ((value == null || value.isEmpty())) {
-            return true;
-        }
-        return false;
+        return isBlank(value);
     }
 
     @Override
     public String getSnippet() throws InvalidDataException {
         if (value == null) {
-            throw new InvalidDataException("Value cannot be null");
+            throw new InvalidDataException("DiscriminatorValue.value must be null");
         }
-
-        return "@"+DISCRIMINATOR_VALUE+"(\"" + value
-                + ORMConverterUtil.QUOTE + ORMConverterUtil.CLOSE_PARANTHESES;
+        return AT
+                + DISCRIMINATOR_VALUE
+                + OPEN_PARANTHESES
+                + QUOTE
+                + value
+                + QUOTE
+                + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList(DISCRIMINATOR_VALUE_FQN);
+        return singleton(DISCRIMINATOR_VALUE_FQN);
     }
 }

@@ -155,61 +155,61 @@ public class IdentifiableClassDefSnippet extends ManagedClassDefSnippet {
 
     @Override
     public ImportSet getImportSet() throws InvalidDataException {
-        ImportSet importSnippets = super.getImportSet();
+        ImportSet imports = super.getImportSet();
 
         if (namedQueries != null) {
-            importSnippets.addAll(namedQueries.getImportSnippets());
+            imports.addAll(namedQueries.getImportSnippets());
         }
 
         if (namedNativeQueries != null) {
-            importSnippets.addAll(namedNativeQueries.getImportSnippets());
+            imports.addAll(namedNativeQueries.getImportSnippets());
         }
 
         if (namedEntityGraphs != null) {
-            importSnippets.addAll(namedEntityGraphs.getImportSnippets());
+            imports.addAll(namedEntityGraphs.getImportSnippets());
         }
 
         if (namedStoredProcedureQueries != null) {
-            importSnippets.addAll(namedStoredProcedureQueries.getImportSnippets());
+            imports.addAll(namedStoredProcedureQueries.getImportSnippets());
         }
 
         if (sqlResultSetMappings != null) {
-            importSnippets.addAll(sqlResultSetMappings.getImportSnippets());
+            imports.addAll(sqlResultSetMappings.getImportSnippets());
         }
 
         if (entityListeners != null) {
-            importSnippets.addAll(entityListeners.getImportSnippets());
+            imports.addAll(entityListeners.getImportSnippets());
         }
 
         if (idClass != null) {
-            importSnippets.addAll(idClass.getImportSnippets());
+            imports.addAll(idClass.getImportSnippets());
         }
 
         if (tableDef != null) {
-            importSnippets.addAll(tableDef.getImportSnippets());
+            imports.addAll(tableDef.getImportSnippets());
         }
 
         if (secondaryTables != null) {
-            importSnippets.addAll(secondaryTables.getImportSnippets());
+            imports.addAll(secondaryTables.getImportSnippets());
         }
 
         if (cacheableDef != null) {
-            importSnippets.addAll(cacheableDef.getImportSnippets());
+            imports.addAll(cacheableDef.getImportSnippets());
         }
 
         if (primaryKeyJoinColumns != null) {
-            importSnippets.addAll(primaryKeyJoinColumns.getImportSnippets());
+            imports.addAll(primaryKeyJoinColumns.getImportSnippets());
         }
 
         if (excludeDefaultListener) {
-            importSnippets.add(EXCLUDE_DEFAULT_LISTENERS_FQN);
+            imports.add(EXCLUDE_DEFAULT_LISTENERS_FQN);
         }
 
         if (excludeSuperClassListener) {
-            importSnippets.add(EXCLUDE_SUPERCLASS_LISTENERS_FQN);
+            imports.add(EXCLUDE_SUPERCLASS_LISTENERS_FQN);
         }
 
-        return importSnippets;
+        return imports;
     }
 
 }

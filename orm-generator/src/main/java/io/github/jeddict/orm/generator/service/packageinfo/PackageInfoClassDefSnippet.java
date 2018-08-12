@@ -15,11 +15,11 @@
  */
 package io.github.jeddict.orm.generator.service.packageinfo;
 
-import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.compiler.Snippet;
 import io.github.jeddict.orm.generator.compiler.def.ClassDefSnippet;
 import io.github.jeddict.orm.generator.util.ImportSet;
+import org.apache.commons.lang.StringUtils;
 
 public class PackageInfoClassDefSnippet extends ClassDefSnippet {
 
@@ -53,13 +53,13 @@ public class PackageInfoClassDefSnippet extends ClassDefSnippet {
 
     @Override
     public ImportSet getImportSet() throws InvalidDataException {
-        ImportSet importSnippets = new ImportSet();
+        ImportSet imports = new ImportSet();
         if (isJaxbMetadataExist()) {
-            importSnippets.add("javax.xml.bind.annotation.*");
+            imports.add("javax.xml.bind.annotation.*");
         }
         for (Snippet snippet : getJSONBSnippets()) {
-            importSnippets.addAll(snippet.getImportSnippets());
+            imports.addAll(snippet.getImportSnippets());
         }
-        return importSnippets;
+        return imports;
     }
 }

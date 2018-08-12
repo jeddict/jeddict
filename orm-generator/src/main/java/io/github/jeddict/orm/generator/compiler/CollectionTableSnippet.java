@@ -3,15 +3,16 @@ package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.COLLECTION_TABLE;
 import static io.github.jeddict.jcode.JPAConstants.COLLECTION_TABLE_FQN;
-import io.github.jeddict.orm.generator.util.ImportSet;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CollectionTableSnippet implements Snippet {
 
@@ -81,18 +82,16 @@ public class CollectionTableSnippet implements Snippet {
             return null;
         }
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(AT).append(COLLECTION_TABLE).append(OPEN_PARANTHESES);
-
-        builder.append(buildString("name", name));
-        builder.append(buildString("schema", schema));
-        builder.append(buildString("catalog", catalog));
-
-        builder.append(buildAnnotations("uniqueConstraints", uniqueConstraints));
-        builder.append(buildAnnotations("indexes", indices));
-        builder.append(buildAnnotations("joinColumns", joinColumns));
-
-        builder.append(buildAnnotation("foreignKey", foreignKey));
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(COLLECTION_TABLE)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", name))
+                .append(buildString("schema", schema))
+                .append(buildString("catalog", catalog))
+                .append(buildSnippets("uniqueConstraints", uniqueConstraints))
+                .append(buildSnippets("indexes", indices))
+                .append(buildSnippets("joinColumns", joinColumns))
+                .append(buildSnippet("foreignKey", foreignKey));
 
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
@@ -101,36 +100,35 @@ public class CollectionTableSnippet implements Snippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (isEmpty()) {
-            return new ArrayList<>();
+            return emptySet();
         }
 
         if (joinColumns.isEmpty() && uniqueConstraints == null && foreignKey == null) {
-            return singletonList(COLLECTION_TABLE_FQN);
+            return singleton(COLLECTION_TABLE_FQN);
         }
 
-        ImportSet importSnippets = new ImportSet();
-
-        importSnippets.add(COLLECTION_TABLE_FQN);
+        Set<String> imports = new HashSet<>();
+        imports.add(COLLECTION_TABLE_FQN);
 
         if (!joinColumns.isEmpty()) {
             for (JoinColumnSnippet joinColumn : joinColumns) {
-                importSnippets.addAll(joinColumn.getImportSnippets());
+                imports.addAll(joinColumn.getImportSnippets());
             }
         }
         
         if (foreignKey != null) {
-            importSnippets.addAll(foreignKey.getImportSnippets());
+            imports.addAll(foreignKey.getImportSnippets());
         }
 
         if (!uniqueConstraints.isEmpty()) {
-            importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
+            imports.addAll(uniqueConstraints.get(0).getImportSnippets());
         }
         
         if (!indices.isEmpty()) {
-            importSnippets.addAll(indices.get(0).getImportSnippets());
+            imports.addAll(indices.get(0).getImportSnippets());
         }
 
-        return importSnippets;
+        return imports;
     }
 
     /**

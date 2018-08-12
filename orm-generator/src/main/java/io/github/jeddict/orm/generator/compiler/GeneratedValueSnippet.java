@@ -18,12 +18,14 @@ package io.github.jeddict.orm.generator.compiler;
 import static io.github.jeddict.jcode.JPAConstants.GENERATED_VALUE;
 import static io.github.jeddict.jcode.JPAConstants.GENERATED_VALUE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.GENERATION_TYPE_FQN;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
-import java.util.ArrayList;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class GeneratedValueSnippet implements Snippet {
 
@@ -61,50 +63,36 @@ public class GeneratedValueSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(GENERATED_VALUE);
 
-        if (generator == null && strategy == null) {
-            return "@" + GENERATED_VALUE;
+        if (isBlank(generator) && isBlank(strategy)) {
+            return builder.toString();
         }
 
-        StringBuilder builder = new StringBuilder();
+        builder.append(OPEN_PARANTHESES)
+                .append(buildString("generator", generator))
+                .append(buildExp("strategy", strategy));
 
-        builder.append("@").append(GENERATED_VALUE).append("(");
-
-        if (generator != null) {
-            builder.append("generator=\"");
-            builder.append(generator);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (strategy != null) {
-            builder.append("strategy=");
-            builder.append(strategy);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-        if (strategy != null) {
-            importSnippets.add(GENERATION_TYPE_FQN);
+        Set<String> imports = new HashSet<>();
+        if (isNotBlank(strategy)) {
+            imports.add(GENERATION_TYPE_FQN);
         }
-        importSnippets.add(GENERATED_VALUE_FQN);
-        return importSnippets;
+        imports.add(GENERATED_VALUE_FQN);
+        return imports;
     }
 
     private static Set<String> getStrategyTypes() {
         Set<String> strategyTypes = new HashSet<>();
-
         strategyTypes.add(AUTO);
         strategyTypes.add(IDENTITY);
         strategyTypes.add(SEQUENCE);
         strategyTypes.add(TABLE);
-
         return strategyTypes;
     }
 }

@@ -23,13 +23,11 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class DiscriminatorColumnSnippet implements Snippet {
 
@@ -73,7 +71,6 @@ public class DiscriminatorColumnSnippet implements Snippet {
     @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder(AT);
-
         builder.append(DISCRIMINATOR_COLUMN)
                 .append(OPEN_PARANTHESES);
 
@@ -83,12 +80,7 @@ public class DiscriminatorColumnSnippet implements Snippet {
                     .append(COMMA);
         }
 
-        if (isNotBlank(name)) {
-            builder.append("name=\"")
-                    .append(name)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
+        builder.append(buildString("name", name));
 
         if (discriminatorType != null) {
             builder.append("discriminatorType=DiscriminatorType.")
@@ -96,12 +88,7 @@ public class DiscriminatorColumnSnippet implements Snippet {
                     .append(COMMA);
         }
 
-        if (isNotBlank(columnDefinition)) {
-            builder.append("columnDefinition=\"")
-                    .append(columnDefinition)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
+        builder.append(buildString("columnDefinition", columnDefinition));
 
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
@@ -118,11 +105,11 @@ public class DiscriminatorColumnSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-        importSnippets.add(DISCRIMINATOR_COLUMN_FQN);
+        Set<String> imports = new HashSet<>();
+        imports.add(DISCRIMINATOR_COLUMN_FQN);
         if (discriminatorType != null) {
-            importSnippets.add(DISCRIMINATOR_TYPE_FQN);
+            imports.add(DISCRIMINATOR_TYPE_FQN);
         }
-        return importSnippets;
+        return imports;
     }
 }

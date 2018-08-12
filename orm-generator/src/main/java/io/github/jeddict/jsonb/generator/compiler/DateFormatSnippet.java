@@ -27,7 +27,7 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTH
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.singleton;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
@@ -52,7 +52,8 @@ public class DateFormatSnippet implements Snippet {
                     .append(COMMA);
         }
         if (isGenerateDefaultValue() || isNotBlank(format.getLocale())) {
-            builder.append("locale=\"")
+            builder.append("locale=")
+                    .append(QUOTE)
                     .append(format.getLocale())
                     .append(QUOTE)
                     .append(COMMA);
@@ -62,6 +63,6 @@ public class DateFormatSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList(JSONB_DATE_FORMAT_FQN);
+        return singleton(JSONB_DATE_FORMAT_FQN);
     }
 }

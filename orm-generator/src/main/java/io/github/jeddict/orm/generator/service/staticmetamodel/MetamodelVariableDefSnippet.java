@@ -44,10 +44,10 @@ public class MetamodelVariableDefSnippet extends VariableDefSnippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        ImportSet importSnippets = new ImportSet();
-        importSnippets.addAll(super.getImportSnippets());
-        importSnippets.add(PERSISTENCE_METAMODEL_PACKAGE + attributeType.getType());
-        return importSnippets;
+        ImportSet imports = new ImportSet();
+        imports.addAll(super.getImportSnippets());
+        imports.add(PERSISTENCE_METAMODEL_PACKAGE + attributeType.getType());
+        return imports;
     }
 
     @Override

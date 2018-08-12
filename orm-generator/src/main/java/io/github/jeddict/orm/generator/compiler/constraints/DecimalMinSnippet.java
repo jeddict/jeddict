@@ -21,11 +21,9 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import static java.lang.Boolean.FALSE;
 import org.apache.commons.lang.StringUtils;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  *
@@ -53,14 +51,8 @@ public class DecimalMinSnippet extends ConstraintSnippet<DecimalMin> {
             return builder.toString();
         }
 
-        builder.append(OPEN_PARANTHESES);
-
-        if (isNotBlank(constraint.getValue())) {
-            builder.append("value=\"")
-                    .append(constraint.getValue())
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
+        builder.append(OPEN_PARANTHESES)
+                .append(buildString("value", constraint.getValue()));
         
         if (isGenerateDefaultValue()) {
             boolean inclusive = !FALSE.equals(constraint.getInclusive());
@@ -73,12 +65,7 @@ public class DecimalMinSnippet extends ConstraintSnippet<DecimalMin> {
                     .append(COMMA);
         }
 
-        if (isNotBlank(constraint.getMessage())) {
-             builder.append("message=\"")
-                     .append(constraint.getMessage())
-                     .append(QUOTE)
-                     .append(COMMA);
-        }
+        builder.append(buildString("message", constraint.getMessage()));
 
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }

@@ -17,10 +17,11 @@ package io.github.jeddict.orm.generator.compiler.constraints;
 
 import io.github.jeddict.bv.constraints.Max;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
  *
@@ -39,11 +40,15 @@ public class MaxSnippet extends ConstraintSnippet<Max> {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (constraint.getMessage() == null && constraint.getValue() == null) {
-            return "@" + getAPI();
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(getAPI());
+
+        if (isBlank(constraint.getMessage())
+                && isBlank(constraint.getValue())) {
+            builder.toString();
         }
-        StringBuilder builder = new StringBuilder();
-        builder.append("@").append(getAPI()).append(OPEN_PARANTHESES);
+
+        builder.append(OPEN_PARANTHESES);
 
         if (constraint.getValue() != null) {
             if (constraint.getMessage() != null) {
@@ -52,13 +57,8 @@ public class MaxSnippet extends ConstraintSnippet<Max> {
             builder.append(constraint.getValue());
             builder.append(COMMA);
         }
-        
-         if (constraint.getMessage() != null) {
-            builder.append("message=\"");
-            builder.append(constraint.getMessage());
-             builder.append(QUOTE);
-             builder.append(COMMA);
-        }
+
+        builder.append(buildString("message", constraint.getMessage()));
 
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }

@@ -15,17 +15,23 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.COLUMN_RESULT;
 import static io.github.jeddict.jcode.JPAConstants.COLUMN_RESULT_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class ColumnResultSnippet implements Snippet {
 
-    private ClassHelper classHelper = new ClassHelper();
+    private final ClassHelper classHelper = new ClassHelper();
+
     private String name = null;
 
     public String getType() {
@@ -54,35 +60,31 @@ public class ColumnResultSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
-        if (name == null) {
-            throw new InvalidDataException("Name is null");
+        if (isBlank(name)) {
+            throw new InvalidDataException("ColumnResult.name property must not be null");
         }
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(COLUMN_RESULT)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", name));
 
-        builder.append("@").append(COLUMN_RESULT).append("(name=\"");
-        builder.append(name);
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
-
-        if (classHelper.getClassName() != null && !classHelper.getClassName().isEmpty()) {
-            builder.append("type=");
-            builder.append(getType());
-            builder.append(ORMConverterUtil.COMMA);
+        if (isNotBlank(classHelper.getClassName())) {
+            builder.append("type=")
+                    .append(getType())
+                    .append(COMMA);
         }
 
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-        importSnippets.add(COLUMN_RESULT_FQN);
+        Set<String> imports = new HashSet<>();
+        imports.add(COLUMN_RESULT_FQN);
         if (classHelper.getFQClassName() != null) {
-            importSnippets.add(classHelper.getFQClassName());
+            imports.add(classHelper.getFQClassName());
         }
-        return importSnippets;
+        return imports;
     }
 }

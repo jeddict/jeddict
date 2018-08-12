@@ -54,7 +54,7 @@ public class NumberFormatSnippet implements Snippet {
         }
 
         if (isGenerateDefaultValue() || isNotBlank(format.getLocale())) {
-            builder.append("locale=\"")
+            builder.append("locale=")
                     .append(QUOTE)
                     .append(format.getLocale())
                     .append(QUOTE)

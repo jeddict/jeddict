@@ -21,12 +21,10 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.Collection;
 import static java.util.Collections.singleton;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class SequenceGeneratorSnippet implements Snippet {
 
@@ -80,13 +78,8 @@ public class SequenceGeneratorSnippet implements Snippet {
         StringBuilder builder = new StringBuilder(AT);
 
         builder.append(SEQUENCE_GENERATOR)
-                .append(OPEN_PARANTHESES);
-
-        builder.append("name=")
-                .append(QUOTE)
-                .append(name)
-                .append(QUOTE)
-                .append(COMMA);
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", name));
 
         if (!isGenerateDefaultValue()) {
             if (sequenceName == null && allocationSize == 50 && initialValue == 1) {
@@ -94,12 +87,7 @@ public class SequenceGeneratorSnippet implements Snippet {
             }
         }
 
-        if (isNotBlank(sequenceName)) {
-            builder.append("sequenceName=\"")
-                    .append(sequenceName)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
+        builder.append(buildString("sequenceName", sequenceName));
 
         if (isGenerateDefaultValue() || allocationSize != 50) {
             builder.append("allocationSize=")
@@ -113,19 +101,8 @@ public class SequenceGeneratorSnippet implements Snippet {
                     .append(COMMA);
         }
 
-        if (isNotBlank(catalog)) {
-            builder.append("catalog=\"")
-                    .append(catalog)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
-
-        if (isNotBlank(schema)) {
-            builder.append("schema=\"")
-                    .append(schema)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
+        builder.append(buildString("catalog", catalog))
+                .append(buildString("schema", schema));
 
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }

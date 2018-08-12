@@ -23,11 +23,10 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class ForeignKeySnippet implements Snippet {
@@ -36,53 +35,6 @@ public class ForeignKeySnippet implements Snippet {
     private String name;
     private String constraintMode;
     private String foreignKeyDefinition;
-
-    @Override
-    public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder(AT);
-
-        builder.append(FOREIGN_KEY)
-                .append(OPEN_PARANTHESES);
-
-        if (isNotBlank(name)) {
-            builder.append("name=\"")
-                    .append(name)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
-
-        if (isNotBlank(constraintMode)) {
-            builder.append("value=")
-                    .append(CONSTRAINT_MODE)
-                    .append(".")
-                    .append(constraintMode)
-                    .append(COMMA);
-        } else if (isGenerateDefaultValue()) {
-            builder.append("value=")
-                    .append(CONSTRAINT_MODE)
-                    .append(".")
-                    .append("PROVIDER_DEFAULT")
-                    .append(COMMA);
-        }
-
-        if (isNotBlank(foreignKeyDefinition)) {
-            builder.append("foreignKeyDefinition=\"")
-                    .append(foreignKeyDefinition)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
-    }
-
-    @Override
-    public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-        if (isNotBlank(constraintMode) || isGenerateDefaultValue()) {
-            importSnippets.add(CONSTRAINT_MODE_FQN);
-        }
-        importSnippets.add(FOREIGN_KEY_FQN);
-        return importSnippets;
-    }
 
     /**
      * @return the description
@@ -139,4 +91,42 @@ public class ForeignKeySnippet implements Snippet {
     public void setForeignKeyDefinition(String foreignKeyDefinition) {
         this.foreignKeyDefinition = foreignKeyDefinition;
     }
+
+    @Override
+    public String getSnippet() throws InvalidDataException {
+        StringBuilder builder = new StringBuilder(AT);
+
+        builder.append(FOREIGN_KEY)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", name));
+
+        if (isNotBlank(constraintMode)) {
+            builder.append("value=")
+                    .append(CONSTRAINT_MODE)
+                    .append(".")
+                    .append(constraintMode)
+                    .append(COMMA);
+        } else if (isGenerateDefaultValue()) {
+            builder.append("value=")
+                    .append(CONSTRAINT_MODE)
+                    .append(".")
+                    .append("PROVIDER_DEFAULT")
+                    .append(COMMA);
+        }
+
+        builder.append(buildString("foreignKeyDefinition", foreignKeyDefinition));
+
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+    }
+
+    @Override
+    public Collection<String> getImportSnippets() throws InvalidDataException {
+        Set<String> imports = new HashSet<>();
+        if (isNotBlank(constraintMode) || isGenerateDefaultValue()) {
+            imports.add(CONSTRAINT_MODE_FQN);
+        }
+        imports.add(FOREIGN_KEY_FQN);
+        return imports;
+    }
+
 }

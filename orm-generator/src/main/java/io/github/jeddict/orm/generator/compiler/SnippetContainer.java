@@ -23,7 +23,10 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.TAB;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import static java.util.Collections.emptySet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public abstract class SnippetContainer<T extends Snippet> implements Snippet {
 
@@ -62,7 +65,7 @@ public abstract class SnippetContainer<T extends Snippet> implements Snippet {
         
         if(containerAnnotation){
             stringBuilder.setLength(stringBuilder.length() - 1);
-            stringBuilder.append(NEW_LINE + TAB + CLOSE_BRACES + CLOSE_PARANTHESES);
+            stringBuilder.append(NEW_LINE).append(TAB).append(CLOSE_BRACES).append(CLOSE_PARANTHESES);
         } 
         return stringBuilder.toString();
     }
@@ -70,23 +73,23 @@ public abstract class SnippetContainer<T extends Snippet> implements Snippet {
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         if (snippets.isEmpty()) {
-            return Collections.<String>emptyList();
+            return emptySet();
         }
         if (snippets.size() == 1) {
             return snippets.get(0).getImportSnippets();
         }
-        List<String> importSnippets = new ArrayList<>();
+        Set<String> imports = new HashSet<>();
 
         boolean containerAnnotation = !this.repeatable;
         if(containerAnnotation){
-            importSnippets.add(getContianerFQN());
+            imports.add(getContianerFQN());
         }
 
         for (T convertSnippet : snippets) {
-            importSnippets.addAll(convertSnippet.getImportSnippets());
+            imports.addAll(convertSnippet.getImportSnippets());
         }
 
-        return importSnippets;
+        return imports;
     }
 
     public void add(T snippet) {

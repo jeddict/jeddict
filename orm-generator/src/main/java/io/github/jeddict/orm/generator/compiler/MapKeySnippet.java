@@ -19,11 +19,13 @@ import static io.github.jeddict.jcode.JPAConstants.MAP_KEY;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_FQN;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MapKeySnippet implements Snippet {
 
@@ -44,58 +46,7 @@ public class MapKeySnippet implements Snippet {
     //New MapKeyType - Embeddable
     private AttributeOverridesSnippet attributeOverrideSnippet;
      
-         
-    @Override
-    public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder();
-        if (mapKeyAttribute != null) {
-            builder.append('@').append(MAP_KEY);
-            builder.append(ORMConverterUtil.OPEN_PARANTHESES);
-            builder.append("name = ");
-            builder.append(QUOTE).append(mapKeyAttribute.getName()).append(QUOTE);
-            builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
-        } else if (joinColumnsSnippet != null) {
-            builder.append(joinColumnsSnippet.getSnippet());
-        } else if (attributeOverrideSnippet != null) {
-            builder.append(attributeOverrideSnippet.getSnippet());
-        } else {
-            if (temporalSnippet != null) {
-                builder.append(temporalSnippet.getSnippet());
-            } else if (enumeratedSnippet != null) {
-                builder.append(enumeratedSnippet.getSnippet());
-            }
-            if (columnSnippet != null) {
-                builder.append(columnSnippet.getSnippet());
-            }
-        }
-        return builder.toString();
-    }
-
-    @Override
-    public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-        if (mapKeyAttribute != null) {
-            importSnippets.add(MAP_KEY_FQN);
-        } else if (joinColumnsSnippet != null) {
-            importSnippets.addAll(joinColumnsSnippet.getImportSnippets());
-        } else if (attributeOverrideSnippet != null) {
-            importSnippets.addAll(attributeOverrideSnippet.getImportSnippets());
-        } else {
-            if (temporalSnippet != null) {
-                importSnippets.addAll(temporalSnippet.getImportSnippets());
-            } else if (enumeratedSnippet != null) {
-                importSnippets.addAll(enumeratedSnippet.getImportSnippets());
-            }
-            if (columnSnippet != null) {
-                importSnippets.addAll(columnSnippet.getImportSnippets());
-            }
-        }
-        return importSnippets;
-    }
-    public boolean isEmpty(){
-        return false;
-    }
-           /**
+    /**
      * @return the mapKeyAttribute
      */
     public Attribute getMapKeyAttribute() {
@@ -108,8 +59,8 @@ public class MapKeySnippet implements Snippet {
     public void setMapKeyAttribute(Attribute mapKeyAttribute) {
         this.mapKeyAttribute = mapKeyAttribute;
     }
-    
-     /**
+
+    /**
      * @return the temporalSnippet
      */
     public TemporalSnippet getTemporalSnippet() {
@@ -151,7 +102,6 @@ public class MapKeySnippet implements Snippet {
         this.joinColumnsSnippet = joinColumnsSnippet;
     }
 
-
     public void setMapKeyAttributeType(String type) {
         this.getMapKeyAttributeType().setClassName(type);
     }
@@ -178,7 +128,8 @@ public class MapKeySnippet implements Snippet {
     }
 
     /**
-     * @param attributeOverridesSnippet the mapKeyAttributeOverrideSnippet to set
+     * @param attributeOverridesSnippet the mapKeyAttributeOverrideSnippet to
+     * set
      */
     public void setAttributeOverrideSnippet(AttributeOverridesSnippet attributeOverridesSnippet) {
         this.attributeOverrideSnippet = attributeOverridesSnippet;
@@ -191,5 +142,56 @@ public class MapKeySnippet implements Snippet {
         return mapKeyAttributeType;
     }
 
+    @Override
+    public String getSnippet() throws InvalidDataException {
+        StringBuilder builder = new StringBuilder();
+        if (mapKeyAttribute != null) {
+            builder.append(AT).append(MAP_KEY);
+            builder.append(OPEN_PARANTHESES);
+            builder.append("name = ");
+            builder.append(QUOTE).append(mapKeyAttribute.getName()).append(QUOTE);
+            builder.append(CLOSE_PARANTHESES);
+        } else if (joinColumnsSnippet != null) {
+            builder.append(joinColumnsSnippet.getSnippet());
+        } else if (attributeOverrideSnippet != null) {
+            builder.append(attributeOverrideSnippet.getSnippet());
+        } else {
+            if (temporalSnippet != null) {
+                builder.append(temporalSnippet.getSnippet());
+            } else if (enumeratedSnippet != null) {
+                builder.append(enumeratedSnippet.getSnippet());
+            }
+            if (columnSnippet != null) {
+                builder.append(columnSnippet.getSnippet());
+            }
+        }
+        return builder.toString();
+    }
+
+    @Override
+    public Collection<String> getImportSnippets() throws InvalidDataException {
+        Set<String> imports = new HashSet<>();
+        if (mapKeyAttribute != null) {
+            imports.add(MAP_KEY_FQN);
+        } else if (joinColumnsSnippet != null) {
+            imports.addAll(joinColumnsSnippet.getImportSnippets());
+        } else if (attributeOverrideSnippet != null) {
+            imports.addAll(attributeOverrideSnippet.getImportSnippets());
+        } else {
+            if (temporalSnippet != null) {
+                imports.addAll(temporalSnippet.getImportSnippets());
+            } else if (enumeratedSnippet != null) {
+                imports.addAll(enumeratedSnippet.getImportSnippets());
+            }
+            if (columnSnippet != null) {
+                imports.addAll(columnSnippet.getImportSnippets());
+            }
+        }
+        return imports;
+    }
+
+    public boolean isEmpty(){
+        return false;
+    }
 
 }

@@ -15,11 +15,13 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.Collection;
-import java.util.Collections;
 import static io.github.jeddict.jcode.JPAConstants.QUERY_HINT;
 import static io.github.jeddict.jcode.JPAConstants.QUERY_HINT_FQN;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.Collection;
+import static java.util.Collections.singleton;
 
 public class QueryHintSnippet implements Snippet {
 
@@ -44,31 +46,22 @@ public class QueryHintSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
         if (name == null || value == null) {
             throw new InvalidDataException("name or value cannot be null");
         }
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(QUERY_HINT)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", name))
+                .append(buildString("value", value));
 
-        builder.append("@").append(QUERY_HINT).append("(");
-
-        builder.append("name=\"");
-        builder.append(name);
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
-
-        builder.append("value=\"");
-        builder.append(value);
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
-
-        return builder.toString();
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
 
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singleton(QUERY_HINT_FQN);
+        return singleton(QUERY_HINT_FQN);
     }
 }

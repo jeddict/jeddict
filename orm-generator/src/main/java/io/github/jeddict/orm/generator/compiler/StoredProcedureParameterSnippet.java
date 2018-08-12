@@ -15,15 +15,19 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.PARAMETER_MODE;
 import static io.github.jeddict.jcode.JPAConstants.PARAMETER_MODE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.STORED_PROCEDURE_PARAMETER;
 import static io.github.jeddict.jcode.JPAConstants.STORED_PROCEDURE_PARAMETER_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  *
@@ -52,50 +56,43 @@ public class StoredProcedureParameterSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
         if (classHelper.getClassName() == null) {
             throw new InvalidDataException("Type required");
         }
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(STORED_PROCEDURE_PARAMETER)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", name));
 
-        builder.append("@").append(STORED_PROCEDURE_PARAMETER).append("(");
-        if (name != null) {
-            builder.append("name=\"");
-            builder.append(name);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (mode != null) {
+        if (isNotBlank(mode)) {
             builder.append("mode=").append(PARAMETER_MODE).append(".");
             builder.append(mode);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         }
 
         if (classHelper.getClassName() != null) {
             builder.append("type=");
             builder.append(getType());
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         }
 
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-        importSnippets.add(STORED_PROCEDURE_PARAMETER_FQN);
+        Set<String> imports = new HashSet<>();
+        imports.add(STORED_PROCEDURE_PARAMETER_FQN);
 
         if (classHelper.getFQClassName() != null) {
-            importSnippets.add(classHelper.getFQClassName());
+            imports.add(classHelper.getFQClassName());
         }
-        if (mode != null) {
-            importSnippets.add(PARAMETER_MODE_FQN);
+        if (isNotBlank(mode)) {
+            imports.add(PARAMETER_MODE_FQN);
         }
 
-        return importSnippets;
+        return imports;
     }
 
     public String getType() {

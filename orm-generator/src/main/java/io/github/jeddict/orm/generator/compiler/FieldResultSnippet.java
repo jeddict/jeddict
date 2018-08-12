@@ -15,11 +15,14 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.Collection;
-import java.util.Collections;
 import static io.github.jeddict.jcode.JPAConstants.FIELD_RESULT;
 import static io.github.jeddict.jcode.JPAConstants.FIELD_RESULT_FQN;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.Collection;
+import static java.util.Collections.singleton;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class FieldResultSnippet implements Snippet {
 
@@ -44,31 +47,22 @@ public class FieldResultSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
-        if (name == null || column == null) {
+        if (isBlank(name) || column == null) {
             throw new InvalidDataException("name or value cannot be null");
         }
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(FIELD_RESULT)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", name))
+                .append(buildString("column", column));
 
-        builder.append("@").append(FIELD_RESULT).append("(");
-
-        builder.append("name=\"");
-        builder.append(getName());
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
-
-        builder.append("column=\"");
-        builder.append(column);
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
-
-        return builder.toString();
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
 
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList(FIELD_RESULT_FQN);
+        return singleton(FIELD_RESULT_FQN);
     }
 }

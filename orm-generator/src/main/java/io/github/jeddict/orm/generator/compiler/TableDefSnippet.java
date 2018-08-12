@@ -15,21 +15,29 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.TABLE;
 import static io.github.jeddict.jcode.JPAConstants.TABLE_FQN;
-import io.github.jeddict.orm.generator.util.ImportSet;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.Collection;
+import java.util.Collections;
+import static java.util.Collections.singleton;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class TableDefSnippet implements Snippet {
 
-    private String catalog = null;
-    private String name = null;
-    private String schema = null;
+    private String catalog;
+
+    private String name;
+
+    private String schema;
 
     private List<UniqueConstraintSnippet> uniqueConstraints = Collections.<UniqueConstraintSnippet>emptyList();
+
     private List<IndexSnippet> indices = Collections.<IndexSnippet>emptyList();
 
     public String getCatalog() {
@@ -64,93 +72,7 @@ public class TableDefSnippet implements Snippet {
         this.uniqueConstraints = uniqueConstraints;
     }
 
-    @Override
-    public String getSnippet() throws InvalidDataException {
-
-        if (name == null
-                && catalog == null
-                && schema == null
-                && uniqueConstraints.isEmpty() && indices.isEmpty()) {
-            return "@" + TABLE;
-        }
-
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("@").append(TABLE).append("(");
-
-        if (name != null) {
-            builder.append("name=\"");
-            builder.append(name);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (schema != null) {
-            builder.append("schema=\"");
-            builder.append(schema);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (catalog != null) {
-            builder.append("catalog=\"");
-            builder.append(catalog);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (!uniqueConstraints.isEmpty()) {
-            builder.append("uniqueConstraints={");
-
-            for (UniqueConstraintSnippet uniqueConstraint : uniqueConstraints) {
-                builder.append(uniqueConstraint.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-        
-                if (!indices.isEmpty()) {
-            builder.append("indexes={");
-
-            for (IndexSnippet snippet : indices) {
-                builder.append(snippet.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
-
-    }
-
-    @Override
-    public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        if (uniqueConstraints == null) {
-            return Collections.singletonList(TABLE_FQN);
-        }
-
-        ImportSet importSnippets = new ImportSet();
-
-        importSnippets.add(TABLE_FQN);
-         if (!uniqueConstraints.isEmpty()) {
-            importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
-        }
-         
-         if (!indices.isEmpty()) {
-            importSnippets.addAll(indices.get(0).getImportSnippets());
-        }
-        return importSnippets;
-    }
-    
-        /**
+    /**
      * @return the indices
      */
     public List<IndexSnippet> getIndices() {
@@ -163,4 +85,47 @@ public class TableDefSnippet implements Snippet {
     public void setIndices(List<IndexSnippet> indices) {
         this.indices = indices;
     }
+
+    @Override
+    public String getSnippet() throws InvalidDataException {
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(TABLE);
+
+        if (isBlank(name)
+                && isBlank(catalog)
+                && isBlank(schema)
+                && uniqueConstraints.isEmpty()
+                && indices.isEmpty()) {
+            return builder.toString();
+        }
+
+        builder.append(OPEN_PARANTHESES)
+                .append(buildString("name", name))
+                .append(buildString("schema", schema))
+                .append(buildString("catalog", catalog))
+                .append(buildSnippets("uniqueConstraints", uniqueConstraints))
+                .append(buildSnippets("indexes", indices));
+
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+    }
+
+    @Override
+    public Collection<String> getImportSnippets() throws InvalidDataException {
+        if (uniqueConstraints == null) {
+            return singleton(TABLE_FQN);
+        }
+
+        Set<String> imports = new HashSet<>();
+
+        imports.add(TABLE_FQN);
+        if (!uniqueConstraints.isEmpty()) {
+            imports.addAll(uniqueConstraints.get(0).getImportSnippets());
+        }
+
+        if (!indices.isEmpty()) {
+            imports.addAll(indices.get(0).getImportSnippets());
+        }
+        return imports;
+    }
+
 }

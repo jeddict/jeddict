@@ -15,13 +15,19 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
+import static io.github.jeddict.jcode.JPAConstants.PRIMARY_KEY_JOIN_COLUMNS;
+import static io.github.jeddict.jcode.JPAConstants.PRIMARY_KEY_JOIN_COLUMNS_FQN;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import static io.github.jeddict.jcode.JPAConstants.PRIMARY_KEY_JOIN_COLUMNS;
-import static io.github.jeddict.jcode.JPAConstants.PRIMARY_KEY_JOIN_COLUMNS_FQN;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import java.util.Set;
 
 public class PrimaryKeyJoinColumnsSnippet implements Snippet {
 
@@ -74,59 +80,59 @@ public class PrimaryKeyJoinColumnsSnippet implements Snippet {
         boolean isRepeatable = this.repeatable || foreignKey != null; 
         
         if (isRepeatable) {
-            builder.append("@").append(PRIMARY_KEY_JOIN_COLUMNS);
+            builder.append(AT)
+                    .append(PRIMARY_KEY_JOIN_COLUMNS)
+                    .append(OPEN_PARANTHESES);
             if (foreignKey != null) {
-                builder.append("( value={");
+                builder.append("value={");
             } else {
-                builder.append("({");
+                builder.append("{");
             }
         }
         
         for (PrimaryKeyJoinColumnSnippet primaryKeyJoinColumn : primaryKeyJoinColumns) {
             builder.append(primaryKeyJoinColumn.getSnippet());
-            if(isRepeatable){builder.append(ORMConverterUtil.COMMA);}
+            if (isRepeatable) {
+                builder.append(COMMA);
+            }
         }
         if (isRepeatable) {
             builder.setLength(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(CLOSE_BRACES);
+            builder.append(COMMA);
         }
-        if (foreignKey != null) {
-            builder.append("foreignKey=");
-            builder.append(foreignKey.getSnippet());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-        
+
+        builder.append(buildSnippet("foreignKey", foreignKey));
+
         if (isRepeatable) {
             builder.setLength(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
+            builder.append(CLOSE_PARANTHESES);
         }
          return builder.toString();
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
+        Set<String> imports = new HashSet<>();
         boolean isRepeatable = this.repeatable || foreignKey != null; 
         if (primaryKeyJoinColumns.size() == 1) {
-            importSnippets.addAll(primaryKeyJoinColumns.get(0).getImportSnippets());
+            imports.addAll(primaryKeyJoinColumns.get(0).getImportSnippets());
             if(isRepeatable && foreignKey != null){
-                importSnippets.add(PRIMARY_KEY_JOIN_COLUMNS_FQN);
+                imports.add(PRIMARY_KEY_JOIN_COLUMNS_FQN);
             }
         } else {
             for (PrimaryKeyJoinColumnSnippet jc : primaryKeyJoinColumns) {
-                importSnippets.addAll(jc.getImportSnippets());
+                imports.addAll(jc.getImportSnippets());
             }
             if (isRepeatable) {
-                importSnippets.add(PRIMARY_KEY_JOIN_COLUMNS_FQN);
+                imports.add(PRIMARY_KEY_JOIN_COLUMNS_FQN);
             }
         }
 
         if (foreignKey != null) {
-            importSnippets.addAll(foreignKey.getImportSnippets());
+            imports.addAll(foreignKey.getImportSnippets());
         }
 
-        return importSnippets;
-
+        return imports;
     }
 }

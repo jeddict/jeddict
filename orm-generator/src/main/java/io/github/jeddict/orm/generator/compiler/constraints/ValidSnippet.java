@@ -17,9 +17,8 @@ package io.github.jeddict.orm.generator.compiler.constraints;
 
 import io.github.jeddict.bv.constraints.Valid;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import static java.util.Collections.singleton;
 
 /**
  *
@@ -38,9 +37,7 @@ public class ValidSnippet extends ConstraintSnippet<Valid> {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-        importSnippets.add("javax.validation." + getAPI());
-        return importSnippets;
+        return singleton("javax.validation." + getAPI());
     }
 
 }

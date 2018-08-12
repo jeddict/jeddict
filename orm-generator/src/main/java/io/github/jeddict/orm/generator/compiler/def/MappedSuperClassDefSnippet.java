@@ -19,20 +19,19 @@ import static io.github.jeddict.jcode.JPAConstants.MAPPED_SUPERCLASS;
 import static io.github.jeddict.jcode.JPAConstants.MAPPED_SUPERCLASS_FQN;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.util.ImportSet;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 
 public class MappedSuperClassDefSnippet extends IdentifiableClassDefSnippet {
 
     @Override
     public String getManagedType() {
-        return "@" + MAPPED_SUPERCLASS;
+        return AT + MAPPED_SUPERCLASS;
     }
 
     @Override
     public ImportSet getImportSet() throws InvalidDataException {
-        ImportSet importSnippets = super.getImportSet();
-
-        importSnippets.add(MAPPED_SUPERCLASS_FQN);
-
-        return importSnippets;
+        ImportSet imports = super.getImportSet();
+        imports.add(MAPPED_SUPERCLASS_FQN);
+        return imports;
     }
 }

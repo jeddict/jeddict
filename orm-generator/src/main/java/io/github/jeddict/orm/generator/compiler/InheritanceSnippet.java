@@ -15,20 +15,22 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.INHERITANCE;
 import static io.github.jeddict.jcode.JPAConstants.INHERITANCE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.INHERITANCE_TYPE;
 import static io.github.jeddict.jcode.JPAConstants.INHERITANCE_TYPE_FQN;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static java.util.Arrays.asList;
+import java.util.Collection;
 
 public class InheritanceSnippet implements Snippet {
 
     public static enum Type {
-
-        SINGLE_TABLE, JOINED, TABLE_PER_CLASS
+        SINGLE_TABLE,
+        JOINED,
+        TABLE_PER_CLASS
     };
 
     private Type statergy = Type.SINGLE_TABLE;
@@ -43,16 +45,19 @@ public class InheritanceSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        return "@"+INHERITANCE+"(strategy="+INHERITANCE_TYPE+"." + statergy + ORMConverterUtil.CLOSE_PARANTHESES;
+        return AT
+                + INHERITANCE
+                + OPEN_PARANTHESES
+                + "strategy="
+                + INHERITANCE_TYPE + "." + statergy
+                + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-
-        importSnippets.add(INHERITANCE_FQN);
-        importSnippets.add(INHERITANCE_TYPE_FQN);
-
-        return importSnippets;
+        return asList(
+                INHERITANCE_FQN,
+                INHERITANCE_TYPE_FQN
+        );
     }
 }

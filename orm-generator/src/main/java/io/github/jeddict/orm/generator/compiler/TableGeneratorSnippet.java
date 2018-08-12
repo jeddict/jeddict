@@ -18,12 +18,9 @@ package io.github.jeddict.orm.generator.compiler;
 import static io.github.jeddict.jcode.JPAConstants.TABLE_GENERATOR;
 import static io.github.jeddict.jcode.JPAConstants.TABLE_GENERATOR_FQN;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,7 +29,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class TableGeneratorSnippet implements Snippet {
 
@@ -132,132 +128,6 @@ public class TableGeneratorSnippet implements Snippet {
         this.valueColumnName = valueColumnName;
     }
 
-    @Override
-    public String getSnippet() throws InvalidDataException {
-        if (isBlank(name)) {
-            throw new InvalidDataException("Name is required");
-        }
-
-        StringBuilder builder = new StringBuilder(AT);
-
-        builder.append(TABLE_GENERATOR)
-                .append(OPEN_PARANTHESES);
-
-        builder.append("name=")
-                .append(QUOTE)
-                .append(name)
-                .append(QUOTE)
-                .append(COMMA);
-
-        if (isNotBlank(pkColumnValue)) {
-            builder.append("pkColumnValue=")
-                    .append(QUOTE)
-                    .append(pkColumnValue)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
-
-        if (isNotBlank(schema)) {
-            builder.append("schema=")
-                    .append(QUOTE)
-                    .append(schema)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
-
-        if (isNotBlank(table)) {
-            builder.append("table=")
-                    .append(QUOTE)
-                    .append(table)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
-
-        if (isNotBlank(valueColumnName)) {
-            builder.append("valueColumnName=")
-                    .append(QUOTE)
-                    .append(valueColumnName)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
-
-        if (isNotBlank(catalog)) {
-            builder.append("catalog=")
-                    .append(QUOTE)
-                    .append(catalog)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
-
-        if (isNotBlank(pkColumnName)) {
-            builder.append("pkColumnName=")
-                    .append(QUOTE)
-                    .append(pkColumnName)
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
-
-        if (isGenerateDefaultValue() || allocationSize != 50) {
-            builder.append("allocationSize=")
-                    .append(allocationSize)
-                    .append(COMMA);
-        }
-
-        if (isGenerateDefaultValue() || initialValue != 0) {
-            builder.append("initialValue=")
-                    .append(initialValue)
-                    .append(COMMA);
-        }
-
-        if (!uniqueConstraints.isEmpty()) {
-            builder.append("uniqueConstraints={");
-
-            for (UniqueConstraintSnippet uniqueConstraint : uniqueConstraints) {
-                builder.append(uniqueConstraint.getSnippet())
-                        .append(COMMA);
-            }
-            builder.deleteCharAt(builder.length() - 1);
-
-            builder.append(CLOSE_BRACES)
-                    .append(COMMA);
-        }
-
-        if (!indices.isEmpty()) {
-            builder.append("indexes=")
-                    .append(OPEN_BRACES);
-
-            for (IndexSnippet snippet : indices) {
-                builder.append(snippet.getSnippet())
-                        .append(COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(CLOSE_BRACES)
-                    .append(COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
-
-    }
-
-    @Override
-    public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        if (uniqueConstraints.isEmpty() && indices.isEmpty()) {
-            return singleton(TABLE_GENERATOR_FQN);
-        }
-
-        Set<String> importSnippets = new HashSet<>();
-        importSnippets.add(TABLE_GENERATOR_FQN);
-        if (!uniqueConstraints.isEmpty()) {
-            importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
-        }
-        if (!indices.isEmpty()) {
-            importSnippets.addAll(indices.get(0).getImportSnippets());
-        }
-        return importSnippets;
-    }
-
     /**
      * @return the indices
      */
@@ -271,4 +141,59 @@ public class TableGeneratorSnippet implements Snippet {
     public void setIndices(List<IndexSnippet> indices) {
         this.indices = indices;
     }
+
+    @Override
+    public String getSnippet() throws InvalidDataException {
+        if (isBlank(name)) {
+            throw new InvalidDataException("Name is required");
+        }
+
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(TABLE_GENERATOR)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", name))
+                .append(buildString("table", table))
+                .append(buildString("schema", schema))
+                .append(buildString("catalog", catalog))
+                .append(buildString("pkColumnValue", pkColumnValue))
+                .append(buildString("valueColumnName", valueColumnName))
+                .append(buildString("pkColumnName", pkColumnName));
+
+
+        if (isGenerateDefaultValue() || allocationSize != 50) {
+            builder.append("allocationSize=")
+                    .append(allocationSize)
+                    .append(COMMA);
+        }
+
+        if (isGenerateDefaultValue() || initialValue != 0) {
+            builder.append("initialValue=")
+                    .append(initialValue)
+                    .append(COMMA);
+        }
+
+        builder.append(buildSnippets("uniqueConstraints", uniqueConstraints))
+                .append(buildSnippets("indexes", indices));
+
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+
+    }
+
+    @Override
+    public Collection<String> getImportSnippets() throws InvalidDataException {
+        if (uniqueConstraints.isEmpty() && indices.isEmpty()) {
+            return singleton(TABLE_GENERATOR_FQN);
+        }
+
+        Set<String> imports = new HashSet<>();
+        imports.add(TABLE_GENERATOR_FQN);
+        if (!uniqueConstraints.isEmpty()) {
+            imports.addAll(uniqueConstraints.get(0).getImportSnippets());
+        }
+        if (!indices.isEmpty()) {
+            imports.addAll(indices.get(0).getImportSnippets());
+        }
+        return imports;
+    }
+
 }

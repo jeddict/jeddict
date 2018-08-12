@@ -17,14 +17,16 @@ package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.JOIN_TABLE;
 import static io.github.jeddict.jcode.JPAConstants.JOIN_TABLE_FQN;
-import io.github.jeddict.orm.generator.util.ImportSet;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class JoinTableSnippet implements Snippet {
 
@@ -118,13 +120,13 @@ public class JoinTableSnippet implements Snippet {
         builder.append(buildString("schema", schema));
         builder.append(buildString("catalog", catalog));
 
-        builder.append(buildAnnotations("uniqueConstraints", uniqueConstraints));
-        builder.append(buildAnnotations("indexes", indices));
-        builder.append(buildAnnotations("joinColumns", joinColumns));
-        builder.append(buildAnnotations("inverseJoinColumns", inverseJoinColumns));
+        builder.append(buildSnippets("uniqueConstraints", uniqueConstraints));
+        builder.append(buildSnippets("indexes", indices));
+        builder.append(buildSnippets("joinColumns", joinColumns));
+        builder.append(buildSnippets("inverseJoinColumns", inverseJoinColumns));
 
-        builder.append(buildAnnotation("foreignKey", foreignKey));
-        builder.append(buildAnnotation("inverseForeignKey", inverseForeignKey));
+        builder.append(buildSnippet("foreignKey", foreignKey));
+        builder.append(buildSnippet("inverseForeignKey", inverseForeignKey));
 
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
@@ -133,40 +135,40 @@ public class JoinTableSnippet implements Snippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (isEmpty()) {
-            return new ArrayList<>();
+            return emptySet();
         }
 
         if (inverseJoinColumns.isEmpty() && joinColumns.isEmpty() && uniqueConstraints == null
                 && foreignKey == null && inverseForeignKey == null ) {
-            return Collections.singletonList(JOIN_TABLE_FQN);
+            return singleton(JOIN_TABLE_FQN);
         }
 
-        ImportSet importSnippets = new ImportSet();
+        Set<String> imports = new HashSet<>();
         
-        importSnippets.add(JOIN_TABLE_FQN);
+        imports.add(JOIN_TABLE_FQN);
 
         if (!joinColumns.isEmpty()) {
             Collection<String> joinColumnSnippets  = joinColumns.get(0).getImportSnippets();
-            importSnippets.addAll(joinColumnSnippets);
+            imports.addAll(joinColumnSnippets);
         }
 
          if (!uniqueConstraints.isEmpty()) {
-            importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
+             imports.addAll(uniqueConstraints.get(0).getImportSnippets());
         }
          
          if (!indices.isEmpty()) {
-            importSnippets.addAll(indices.get(0).getImportSnippets());
+             imports.addAll(indices.get(0).getImportSnippets());
         }
         
         if (foreignKey != null) {
-            importSnippets.addAll(foreignKey.getImportSnippets());
+            imports.addAll(foreignKey.getImportSnippets());
         }
         
         if (inverseForeignKey != null) {
-            importSnippets.addAll(inverseForeignKey.getImportSnippets());
+            imports.addAll(inverseForeignKey.getImportSnippets());
         }
 
-        return importSnippets;
+        return imports;
     }
 
     /**

@@ -29,7 +29,9 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTH
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class EnumeratedSnippet implements Snippet {
 
@@ -90,20 +92,19 @@ public class EnumeratedSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        List<String> importSnippets = new ArrayList<>();
+        Set<String> imports = new HashSet<>();
         if (mapKey) {
-            importSnippets.add(MAP_KEY_ENUMERATED_FQN);
+            imports.add(MAP_KEY_ENUMERATED_FQN);
         } else {
-            importSnippets.add(ENUMERATED_FQN);
+            imports.add(ENUMERATED_FQN);
         }
         
         if (isGenerateDefaultValue()
                 || ENUM_TYPE_STRING.equals(value)
                 || ENUM_TYPE_ORDINAL.equals(value)) {
-            importSnippets.add(ENUM_TYPE_FQN);
+            imports.add(ENUM_TYPE_FQN);
         }
-        return importSnippets;
+        return imports;
     }
 
     private static List<String> getEnumTypes() {

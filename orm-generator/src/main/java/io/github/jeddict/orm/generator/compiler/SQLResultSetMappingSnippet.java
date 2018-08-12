@@ -15,13 +15,19 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
+import static io.github.jeddict.jcode.JPAConstants.SQL_RESULTSET_MAPPING;
+import static io.github.jeddict.jcode.JPAConstants.SQL_RESULTSET_MAPPING_FQN;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import static java.util.Collections.singleton;
+import java.util.HashSet;
 import java.util.List;
-import static io.github.jeddict.jcode.JPAConstants.SQL_RESULTSET_MAPPING;
-import static io.github.jeddict.jcode.JPAConstants.SQL_RESULTSET_MAPPING_FQN;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import java.util.Set;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class SQLResultSetMappingSnippet implements Snippet {
 
@@ -98,90 +104,49 @@ public class SQLResultSetMappingSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
-        if (name == null) {
+        if (isBlank(name)) {
             throw new InvalidDataException("name is null");
         }
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(SQL_RESULTSET_MAPPING)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", name))
+                .append(buildSnippets("entities", entityResults))
+                .append(buildSnippets("classes", constructorResults))
+                .append(buildSnippets("columns", columnResults));
 
-        builder.append("@").append(SQL_RESULTSET_MAPPING).append("(");
-
-        builder.append("name=\"");
-        builder.append(name);
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
-
-        if (!entityResults.isEmpty()) {
-            builder.append("entities={");
-
-            for (EntityResultSnippet entityResult : entityResults) {
-                builder.append(entityResult.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (!constructorResults.isEmpty()) {
-            builder.append("classes={");
-
-            for (ConstructorResultSnippet constructorResult : constructorResults) {
-                builder.append(constructorResult.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (!columnResults.isEmpty()) {
-            builder.append("columns={");
-
-            for (ColumnResultSnippet columnResult : columnResults) {
-                builder.append(columnResult.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        if (entityResults.isEmpty() && constructorResults.isEmpty() && columnResults.isEmpty()) {
-            return Collections.singletonList(SQL_RESULTSET_MAPPING_FQN);
+        if (entityResults.isEmpty()
+                && constructorResults.isEmpty()
+                && columnResults.isEmpty()) {
+            return singleton(SQL_RESULTSET_MAPPING_FQN);
         }
 
-        List<String> importSnippets = new ArrayList<>();
-        importSnippets.add(SQL_RESULTSET_MAPPING_FQN);
+        Set<String> imports = new HashSet<>();
+        imports.add(SQL_RESULTSET_MAPPING_FQN);
         if (entityResults != null) {
             for (EntityResultSnippet entityResult : entityResults) {
-                importSnippets.addAll(entityResult.getImportSnippets());
+                imports.addAll(entityResult.getImportSnippets());
             }
         }
 
         if (constructorResults != null) {
             for (ConstructorResultSnippet constructorResult : constructorResults) {
-                importSnippets.addAll(constructorResult.getImportSnippets());
+                imports.addAll(constructorResult.getImportSnippets());
             }
         }
 
         if (columnResults != null) {
             for (ColumnResultSnippet columnResult : columnResults) {
-                importSnippets.addAll(columnResult.getImportSnippets());
+                imports.addAll(columnResult.getImportSnippets());
             }
         }
 
-        return importSnippets;
+        return imports;
     }
 }

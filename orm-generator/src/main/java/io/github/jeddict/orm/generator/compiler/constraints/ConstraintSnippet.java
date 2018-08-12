@@ -15,13 +15,15 @@
  */
 package io.github.jeddict.orm.generator.compiler.constraints;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import io.github.jeddict.bv.constraints.Constraint;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.compiler.Snippet;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.Collection;
+import static java.util.Collections.singleton;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
  *
@@ -36,22 +38,22 @@ public abstract class ConstraintSnippet<T extends Constraint> implements Snippet
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (constraint.getMessage() == null) {
-            return "@" + getAPI();
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(getAPI());
+
+        if (isBlank(constraint.getMessage())) {
+            return builder.toString();
         }
-        StringBuilder builder = new StringBuilder();
-        builder.append("@").append(getAPI()).append("(message=\"");
-        builder.append(constraint.getMessage());
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
-        return builder.toString();
+
+        builder.append(OPEN_PARANTHESES)
+                .append(buildString("message", constraint.getMessage()));
+
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-        importSnippets.add("javax.validation.constraints." + getAPI());
-        return importSnippets;
+        return singleton("javax.validation.constraints." + getAPI());
     } 
    
     protected abstract String getAPI();

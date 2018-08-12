@@ -29,13 +29,13 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANT
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.getCommaSeparatedString;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import static java.util.Collections.singleton;
+import java.util.HashSet;
+import java.util.Set;
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class OneToOneSnippet extends SingleRelationAttributeSnippet {
@@ -49,6 +49,20 @@ public class OneToOneSnippet extends SingleRelationAttributeSnippet {
 
     public void setMappedBy(String mappedBy) {
         this.mappedBy = mappedBy;
+    }
+
+    /**
+     * @return the orphanRemoval
+     */
+    public boolean isOrphanRemoval() {
+        return orphanRemoval;
+    }
+
+    /**
+     * @param orphanRemoval the orphanRemoval to set
+     */
+    public void setOrphanRemoval(boolean orphanRemoval) {
+        this.orphanRemoval = orphanRemoval;
     }
 
     @Override
@@ -76,21 +90,9 @@ public class OneToOneSnippet extends SingleRelationAttributeSnippet {
             }
         }
 
-        builder.append(OPEN_PARANTHESES);
-
-        if (isNotBlank(getMappedBy())) {
-            builder.append("mappedBy = ")
-                    .append(QUOTE)
-                    .append(getMappedBy())
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
-
-        if (isNotBlank(getFetchType())) {
-            builder.append("fetch = ")
-                    .append(getFetchType())
-                    .append(COMMA);
-        }
+        builder.append(OPEN_PARANTHESES)
+                .append(buildString("mappedBy", getMappedBy()))
+                .append(buildExp("fetch", getFetchType()));
 
         if (isGenerateDefaultValue() || optional == false) {
             builder.append("optional = ")
@@ -128,45 +130,32 @@ public class OneToOneSnippet extends SingleRelationAttributeSnippet {
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
-        if (getFetchType() == null
-                && getCascadeTypes().isEmpty() && !isPrimaryKey()) {
-
-            return Collections.singletonList(ONE_TO_ONE_FQN);
+        if (isBlank(getFetchType())
+                && getCascadeTypes().isEmpty()
+                && !isPrimaryKey()) {
+            return singleton(ONE_TO_ONE_FQN);
         }
 
-        List<String> importSnippets = new ArrayList<>();
+        Set<String> imports = new HashSet<>();
 
         if (isPrimaryKey()) {
             if (mapsId == null) {
-                importSnippets.add(ID_FQN);
+                imports.add(ID_FQN);
             } else {
-                importSnippets.add(MAPS_ID_FQN);
+                imports.add(MAPS_ID_FQN);
             }
         }
 
-        importSnippets.add(ONE_TO_ONE_FQN);
+        imports.add(ONE_TO_ONE_FQN);
 
         if (getFetchType() != null) {
-            importSnippets.add(FETCH_TYPE_FQN);
+            imports.add(FETCH_TYPE_FQN);
         }
 
         if (getCascadeTypes() != null && !getCascadeTypes().isEmpty()) {
-            importSnippets.add(CASCADE_TYPE_FQN);
+            imports.add(CASCADE_TYPE_FQN);
         }
-        return importSnippets;
+        return imports;
     }
 
-    /**
-     * @return the orphanRemoval
-     */
-    public boolean isOrphanRemoval() {
-        return orphanRemoval;
-    }
-
-    /**
-     * @param orphanRemoval the orphanRemoval to set
-     */
-    public void setOrphanRemoval(boolean orphanRemoval) {
-        this.orphanRemoval = orphanRemoval;
-    }
 }

@@ -15,26 +15,30 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.CONSTRUCTOR_RESULT;
 import static io.github.jeddict.jcode.JPAConstants.CONSTRUCTOR_RESULT_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import static java.util.Collections.singleton;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class ConstructorResultSnippet implements Snippet {
 
-    private ClassHelper classHelper = new ClassHelper();
+    private final ClassHelper classHelper = new ClassHelper();
     private List<ColumnResultSnippet> columnResults = Collections.<ColumnResultSnippet>emptyList();
 
     public void addColumnResult(ColumnResultSnippet columnResult) {
-
         if (columnResults.isEmpty()) {
             columnResults = new ArrayList<>();
         }
-
         columnResults.add(columnResult);
     }
 
@@ -66,51 +70,31 @@ public class ConstructorResultSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
-        if (classHelper.getClassName() == null) {
-            throw new InvalidDataException("Target Class missing");
+        if (isBlank(classHelper.getClassName())) {
+            throw new InvalidDataException("ColumnResult.targetClass value must not be null");
         }
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(CONSTRUCTOR_RESULT)
+                .append(OPEN_PARANTHESES)
+                .append(buildExp("targetClass", getTargetClass()))
+                .append(buildSnippets("columns", columnResults));
 
-        builder.append("@").append(CONSTRUCTOR_RESULT).append("(targetClass=");
-        builder.append(getTargetClass());
-        builder.append(ORMConverterUtil.COMMA);
-
-        if (!columnResults.isEmpty()) {
-            builder.append("columns={");
-
-            for (ColumnResultSnippet columnResult : columnResults) {
-                builder.append(columnResult.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
-
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-
         if (columnResults.isEmpty()) {
-            return Collections.singletonList(CONSTRUCTOR_RESULT_FQN);
+            return singleton(CONSTRUCTOR_RESULT_FQN);
         }
 
-        List<String> importSnippets = new ArrayList<>();
-
-        importSnippets.add(CONSTRUCTOR_RESULT_FQN);
+        Set<String> imports = new HashSet<>();
+        imports.add(CONSTRUCTOR_RESULT_FQN);
         for (ColumnResultSnippet columnResult : columnResults) {
-            importSnippets.addAll(columnResult.getImportSnippets());
+            imports.addAll(columnResult.getImportSnippets());
         }
-        importSnippets.add(classHelper.getFQClassName());
-
-        return importSnippets;
+        imports.add(classHelper.getFQClassName());
+        return imports;
     }
 }

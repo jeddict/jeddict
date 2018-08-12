@@ -82,8 +82,11 @@ import io.github.jeddict.orm.generator.compiler.TypeIdentifierSnippet;
 import io.github.jeddict.orm.generator.compiler.constraints.ConstraintSnippet;
 import io.github.jeddict.orm.generator.util.ClassHelper;
 import io.github.jeddict.orm.generator.util.ImportSet;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.NEW_LINE;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.TAB;
 import static io.github.jeddict.settings.generate.GenerateSettings.getFluentAPIPrefix;
 import static io.github.jeddict.settings.generate.GenerateSettings.isFluentAPIJavaDoc;
@@ -430,10 +433,10 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public String getMapKeyString() {
 
         if (mapKey == null) {
-            return "@" + MAP_KEY;
+            return AT + MAP_KEY;
         }
 
-        return "@" + MAP_KEY + "(name=\"" + mapKey + ORMConverterUtil.QUOTE + ORMConverterUtil.CLOSE_PARANTHESES;
+        return AT + MAP_KEY + OPEN_PARANTHESES + "name=" + QUOTE + mapKey + QUOTE + CLOSE_PARANTHESES;
     }
 
     public TypeIdentifierSnippet getTypeIdentifier() { //in case of collection type
@@ -460,107 +463,107 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        ImportSet importSnippets = new ImportSet();
-        importSnippets.addAll(getTypeImportSnippets());
+        ImportSet imports = new ImportSet();
+        imports.addAll(getTypeImportSnippets());
         if (functionalType) {
-            importSnippets.add(Optional.class.getCanonicalName());
+            imports.add(Optional.class.getCanonicalName());
         }
 
         if (basic != null) {
-            importSnippets.addAll(basic.getImportSnippets());
+            imports.addAll(basic.getImportSnippets());
         }
         if (elementCollection != null) {
-            importSnippets.addAll(elementCollection.getImportSnippets());
+            imports.addAll(elementCollection.getImportSnippets());
         }
 
         if (columnDef != null) {
-            importSnippets.addAll(columnDef.getImportSnippets());
+            imports.addAll(columnDef.getImportSnippets());
         }
 
         if (relationDef != null) {
-            importSnippets.addAll(relationDef.getImportSnippets());
+            imports.addAll(relationDef.getImportSnippets());
         }
 
         if (orderBy != null) {
-            importSnippets.addAll(orderBy.getImportSnippets());
+            imports.addAll(orderBy.getImportSnippets());
         }
 
         if (orderColumn != null) {
-            importSnippets.addAll(orderColumn.getImportSnippets());
+            imports.addAll(orderColumn.getImportSnippets());
         }
 
         if (joinColumns != null) {
-            importSnippets.addAll(joinColumns.getImportSnippets());
+            imports.addAll(joinColumns.getImportSnippets());
         }
 
         if (joinTable != null) {
-            importSnippets.addAll(joinTable.getImportSnippets());
+            imports.addAll(joinTable.getImportSnippets());
         }
 
         if (collectionTable != null) {
-            importSnippets.addAll(collectionTable.getImportSnippets());
+            imports.addAll(collectionTable.getImportSnippets());
         }
 
         if (generatedValue != null) {
-            importSnippets.addAll(generatedValue.getImportSnippets());
+            imports.addAll(generatedValue.getImportSnippets());
         }
 
         if (tableGenerator != null) {
-            importSnippets.addAll(tableGenerator.getImportSnippets());
+            imports.addAll(tableGenerator.getImportSnippets());
         }
 
         if (sequenceGenerator != null) {
-            importSnippets.addAll(sequenceGenerator.getImportSnippets());
+            imports.addAll(sequenceGenerator.getImportSnippets());
         }
 
         if (enumerated != null) {
-            importSnippets.addAll(enumerated.getImportSnippets());
+            imports.addAll(enumerated.getImportSnippets());
         }
 
         if (temporal != null) {
-            importSnippets.addAll(temporal.getImportSnippets());
+            imports.addAll(temporal.getImportSnippets());
         }
 
         if (mapKey != null) {
-            importSnippets.add(MAP_KEY_FQN);
+            imports.add(MAP_KEY_FQN);
         }
 
         if (elementCollection != null) {
-            importSnippets.add(ELEMENT_COLLECTION_FQN);
+            imports.add(ELEMENT_COLLECTION_FQN);
         }
         if (embedded) {
-            importSnippets.add(EMBEDDED_FQN);
+            imports.add(EMBEDDED_FQN);
         }
 
         if (embeddedId) {
-            importSnippets.add(EMBEDDED_ID_FQN);
+            imports.add(EMBEDDED_ID_FQN);
         }
 
         if (lob) {
-            importSnippets.add(LOB_FQN);
+            imports.add(LOB_FQN);
         }
 
         if (primaryKey) {
-            importSnippets.add(ID_FQN);
+            imports.add(ID_FQN);
         }
 
         if (tranzient) {
-            importSnippets.add(TRANSIENT_FQN);
+            imports.add(TRANSIENT_FQN);
         }
 
         if (version) {
-            importSnippets.add(VERSION_FQN);
+            imports.add(VERSION_FQN);
         }
 
         if (converts != null) {
-            importSnippets.addAll(converts.getImportSnippets());
+            imports.addAll(converts.getImportSnippets());
         }
 
         if (attributeOverrides != null) {
-            importSnippets.addAll(attributeOverrides.getImportSnippets());
+            imports.addAll(attributeOverrides.getImportSnippets());
         }
         if (associationOverrides != null) {
-            importSnippets.addAll(associationOverrides.getImportSnippets());
+            imports.addAll(associationOverrides.getImportSnippets());
         }
 
         for (AnnotationSnippet snippet : this.getAnnotation()
@@ -568,32 +571,32 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
                 .stream()
                 .flatMap(annot -> annot.stream())
                 .collect(toList())) {
-            importSnippets.addAll(snippet.getImportSnippets());
+            imports.addAll(snippet.getImportSnippets());
         }
 
         for (ConstraintSnippet snippet : this.getAttributeConstraints()) {
-            importSnippets.addAll(snippet.getImportSnippets());
+            imports.addAll(snippet.getImportSnippets());
         }
 
         for (ConstraintSnippet snippet : this.getKeyConstraints()) {
-            importSnippets.addAll(snippet.getImportSnippets());
+            imports.addAll(snippet.getImportSnippets());
         }
 
         for (ConstraintSnippet snippet : this.getValueConstraints()) {
-            importSnippets.addAll(snippet.getImportSnippets());
+            imports.addAll(snippet.getImportSnippets());
         }
 
         for (Snippet snippet : this.getJSONBSnippets()) {
-            importSnippets.addAll(snippet.getImportSnippets());
+            imports.addAll(snippet.getImportSnippets());
         }
 
         if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelationDef() != null) {
-            importSnippets.add("org.eclipse.persistence.oxm.annotations.XmlInverseReference");
+            imports.add("org.eclipse.persistence.oxm.annotations.XmlInverseReference");
         }
 
         List<String> customImportSnippets = getCustomSnippet().get(IMPORT);
         if (customImportSnippets != null) {
-            importSnippets.addAll(
+            imports.addAll(
                     customImportSnippets
                             .stream()
                             .filter(snippet -> !snippet.startsWith("import"))
@@ -602,8 +605,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             );
         }
 
-
-        return importSnippets;
+        return imports;
     }
 
     /**
@@ -812,14 +814,14 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
         if (getJaxbVariableType() == JaxbVariableType.XML_ATTRIBUTE || getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {
             if (getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {
-                snippet.append("@" + JAXB_XML_LIST).append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                snippet.append(AT + JAXB_XML_LIST).append(NEW_LINE).append(TAB);
             }
-            snippet.append("@" + JAXB_XML_ATTRIBUTE);
+            snippet.append(AT + JAXB_XML_ATTRIBUTE);
             JaxbMetadata md = this.getJaxbMetadata();
             if (StringUtils.isNotBlank(md.getName())
                     || StringUtils.isNotBlank(md.getNamespace())
                     || md.getRequired()) {
-                snippet.append("(");
+                snippet.append(OPEN_PARANTHESES);
                 if (StringUtils.isNotBlank(md.getName())) {
                     snippet.append("name = \"").append(md.getName()).append("\", ");
                 }
@@ -836,15 +838,15 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
                 || getJaxbVariableType() == JaxbVariableType.XML_LIST_ELEMENT
                 || getJaxbVariableType() == JaxbVariableType.XML_ELEMENT_WRAPPER) {
             if (getJaxbVariableType() == JaxbVariableType.XML_LIST_ELEMENT) {
-                snippet.append("@" + JAXB_XML_LIST).append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                snippet.append(AT + JAXB_XML_LIST).append(NEW_LINE).append(TAB);
             } else if (getJaxbVariableType() == JaxbVariableType.XML_ELEMENT_WRAPPER) {
-                snippet.append("@" + JAXB_XML_ELEMENT_WRAPPER);
+                snippet.append(AT + JAXB_XML_ELEMENT_WRAPPER);
                 JaxbMetadata wmd = this.getJaxbWrapperMetadata();
                 if (StringUtils.isNotBlank(wmd.getName())
                         || StringUtils.isNotBlank(wmd.getNamespace())
                         || wmd.getRequired()
                         || wmd.getNillable()) {
-                    snippet.append("(");
+                    snippet.append(OPEN_PARANTHESES);
                     if (wmd.getName() != null && !wmd.getName().isEmpty()) {
                         snippet.append("name = \"").append(wmd.getName()).append("\", ");
                     }
@@ -860,15 +862,15 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
                     snippet.setLength(snippet.length() - 2);
                     snippet.append(")");
                 }
-                snippet.append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                snippet.append(NEW_LINE).append(TAB);
             }
-            snippet.append("@" + JAXB_XML_ELEMENT);
+            snippet.append(AT + JAXB_XML_ELEMENT);
             JaxbMetadata md = this.getJaxbMetadata();
             if (StringUtils.isNotBlank(md.getName())
                     || StringUtils.isNotBlank(md.getNamespace())
                     || md.getRequired()
                     || md.getNillable()) {
-                snippet.append("(");
+                snippet.append(OPEN_PARANTHESES);
                 if (md.getName() != null && !md.getName().isEmpty()) {
                     snippet.append("name = \"").append(md.getName()).append("\", ");
                 }
@@ -886,23 +888,23 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             }
         } else if (getJaxbVariableType() == JaxbVariableType.XML_VALUE || getJaxbVariableType() == JaxbVariableType.XML_LIST_VALUE) {
             if (getJaxbVariableType() == JaxbVariableType.XML_LIST_VALUE) {
-                snippet.append("@" + JAXB_XML_LIST).append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                snippet.append(AT + JAXB_XML_LIST).append(NEW_LINE).append(TAB);
             }
-            snippet.append("@" + JAXB_XML_VALUE);
+            snippet.append(AT + JAXB_XML_VALUE);
         } else if (getJaxbVariableType() == JaxbVariableType.XML_TRANSIENT) {
-            snippet.append("@" + JAXB_XML_TRANSIENT);
+            snippet.append(AT + JAXB_XML_TRANSIENT);
         } else if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelationDef() != null) {
             String mappedBy = getRelationDef().getTargetField();//both side are applicable so targetField is used instead of mappedBy
             if (mappedBy != null) {
-                snippet.append(String.format("@" + JAXB_XML_INVERSE_REFERENCE + "(mappedBy=\"%s\")", mappedBy));
+                snippet.append(String.format(AT + JAXB_XML_INVERSE_REFERENCE + "(mappedBy=\"%s\")", mappedBy));
             }
         } else if (getJaxbVariableType() == JaxbVariableType.XML_ELEMENT_REF) {
-            snippet.append("@" + JAXB_XML_ELEMENT_REF);
+            snippet.append(AT + JAXB_XML_ELEMENT_REF);
             JaxbMetadata md = this.getJaxbMetadata();
             if (StringUtils.isNotBlank(md.getName())
                     || StringUtils.isNotBlank(md.getNamespace())
                     || md.getRequired()) {
-                snippet.append("(");
+                snippet.append(OPEN_PARANTHESES);
                 if (StringUtils.isNotBlank(md.getName())) {
                     snippet.append("name = \"").append(md.getName()).append("\", ");
                 }
@@ -917,30 +919,30 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             }
         } else {
             if (isPrimaryKey()) {
-//            snippet.append("@XmlID").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+//            snippet.append("@XmlID").append(NEW_LINE).append(TAB);
             } else if (getRelationDef() != null) {
                 if (getRelationDef() instanceof OneToOneSnippet) {
                     OneToOneSnippet otoSnippet = (OneToOneSnippet) getRelationDef();
                     if (otoSnippet.getMappedBy() != null && !otoSnippet.getMappedBy().trim().isEmpty()) {
-                        snippet.append("@" + JAXB_XML_TRANSIENT);
+                        snippet.append(AT + JAXB_XML_TRANSIENT);
                     } else {
-//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+//                      snippet.append("@XmlIDREF").append(NEW_LINE).append(TAB);
                     }
                 } else if (getRelationDef() instanceof OneToManySnippet) {
                     OneToManySnippet otmSnippet = (OneToManySnippet) getRelationDef();
                     if (otmSnippet.getMappedBy() != null && !otmSnippet.getMappedBy().trim().isEmpty()) {
-                        snippet.append("@" + JAXB_XML_TRANSIENT);
+                        snippet.append(AT + JAXB_XML_TRANSIENT);
                     } else {
-//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+//                      snippet.append("@XmlIDREF").append(NEW_LINE).append(TAB);
                     }
                 } else if (getRelationDef() instanceof ManyToOneSnippet) {
-//                   snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+//                   snippet.append("@XmlIDREF").append(NEW_LINE).append(TAB);
                 } else if (getRelationDef() instanceof ManyToManySnippet) {
                     ManyToManySnippet mtmSnippet = (ManyToManySnippet) getRelationDef();
                     if (mtmSnippet.getMappedBy() != null && !mtmSnippet.getMappedBy().trim().isEmpty()) {
-                        snippet.append("@" + JAXB_XML_TRANSIENT);
+                        snippet.append(AT + JAXB_XML_TRANSIENT);
                     } else {
-//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+//                      snippet.append("@XmlIDREF").append(NEW_LINE).append(TAB);
                     }
                 }
             }

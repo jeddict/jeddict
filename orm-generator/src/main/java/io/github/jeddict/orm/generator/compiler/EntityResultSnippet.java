@@ -15,14 +15,19 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.ENTITY_RESULT;
 import static io.github.jeddict.jcode.JPAConstants.ENTITY_RESULT_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class EntityResultSnippet implements Snippet {
 
@@ -76,55 +81,34 @@ public class EntityResultSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
-        if (classHelper.getClassName() == null) {
+        if (isBlank(classHelper.getClassName())) {
             throw new InvalidDataException("Entity Class missing");
         }
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(ENTITY_RESULT)
+                .append(OPEN_PARANTHESES);
 
-        builder.append("@").append(ENTITY_RESULT).append("(entityClass=");
-        builder.append(getEntityClass());
-        builder.append(ORMConverterUtil.COMMA);
+        builder.append(buildExp("entityClass", getEntityClass()))
+                .append(buildString("discriminatorColumn", discriminatorColumn))
+                .append(buildSnippets("fields", fieldResults));
 
-        if (discriminatorColumn != null) {
-            builder.append("discriminatorColumn=\"");
-            builder.append(discriminatorColumn);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (!fieldResults.isEmpty()) {
-            builder.append("fields={");
-
-            for (FieldResultSnippet fieldResult : fieldResults) {
-                builder.append(fieldResult.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
 
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
+        Set<String> imports = new HashSet<>();
 
-        importSnippets.add(ENTITY_RESULT_FQN);
+        imports.add(ENTITY_RESULT_FQN);
         if (!fieldResults.isEmpty()) {
             for (FieldResultSnippet fieldResult : fieldResults) {
-                importSnippets.addAll(fieldResult.getImportSnippets());
+                imports.addAll(fieldResult.getImportSnippets());
             }
         }
-        importSnippets.add(classHelper.getFQClassName());
+        imports.add(classHelper.getFQClassName());
 
-        return importSnippets;
+        return imports;
     }
 }

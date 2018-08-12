@@ -15,13 +15,16 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_NATIVE_QUERY;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_NATIVE_QUERY_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class NamedNativeQuerySnippet extends NamedQuerySnippet implements Snippet {
 
@@ -50,71 +53,43 @@ public class NamedNativeQuerySnippet extends NamedQuerySnippet implements Snippe
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
         if (name == null || query == null) {
-            throw new InvalidDataException(
-                    "Query data missing, Name:" + name + " Query: " + query);
+            throw new InvalidDataException("Query data missing, Name:" + name + " Query: " + query);
         }
 
         //remove new lines & tabs from query
         query = query.replaceAll("\\n", " ");
         query = query.replaceAll("\\t", " ");
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(AT);
 
-        builder.append("@").append(NAMED_NATIVE_QUERY).append("(name=\"");
-        builder.append(name);
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
-
-        builder.append("query=\"");
-        builder.append(query);
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
+        builder.append(NAMED_NATIVE_QUERY)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", name))
+                .append(buildString("query", query));
 
         if (classHelper.getClassName() != null) {
             builder.append("resultClass=");
             builder.append(getResultClass());
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         }
 
-        if (resultSetMapping != null) {
-            builder.append("resultSetMapping=\"");
-            builder.append(resultSetMapping);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
+        builder.append(buildString("resultSetMapping", resultSetMapping))
+                .append(buildSnippets("hints", queryHints));
 
-        if (!queryHints.isEmpty()) {
-            builder.append("hints={");
-
-            for (QueryHintSnippet queryHint : queryHints) {
-                builder.append(queryHint.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-
-        importSnippets.add(NAMED_NATIVE_QUERY_FQN);
+        Set<String> imports = new HashSet<>();
+        imports.add(NAMED_NATIVE_QUERY_FQN);
         if (classHelper.getClassName() != null) {
-            importSnippets.add(classHelper.getFQClassName());
+            imports.add(classHelper.getFQClassName());
         }
         if (!queryHints.isEmpty()) {
-        importSnippets.addAll(queryHints.get(0).getImportSnippets());
+            imports.addAll(queryHints.get(0).getImportSnippets());
         }
-
-        return importSnippets;
+        return imports;
     }
 }

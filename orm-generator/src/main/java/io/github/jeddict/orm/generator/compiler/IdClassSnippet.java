@@ -15,17 +15,20 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.ID_CLASS;
 import static io.github.jeddict.jcode.JPAConstants.ID_CLASS_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class IdClassSnippet implements Snippet {
 
-    private ClassHelper classHelper = new ClassHelper();
+    private final ClassHelper classHelper = new ClassHelper();
 
     public String getValue() {
         return classHelper.getClassNameWithClassSuffix();
@@ -41,22 +44,26 @@ public class IdClassSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (classHelper.getClassName() == null) {
+        if (isBlank(classHelper.getClassName())) {
             throw new InvalidDataException("value is a required");
         }
 
-        return "@"+ID_CLASS+"(" + getValue() + ORMConverterUtil.CLOSE_PARANTHESES;
+        return AT
+                + ID_CLASS
+                + OPEN_PARANTHESES
+                + getValue()
+                + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
+        Set<String> imports = new HashSet<>();
 
-        importSnippets.add(ID_CLASS_FQN);
+        imports.add(ID_CLASS_FQN);
         if (classHelper.getFQClassName() != null) {
-            importSnippets.add(classHelper.getFQClassName());
+            imports.add(classHelper.getFQClassName());
         }
 
-        return importSnippets;
+        return imports;
     }
 }

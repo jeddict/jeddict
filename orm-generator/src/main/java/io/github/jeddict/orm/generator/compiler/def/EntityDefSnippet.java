@@ -15,7 +15,6 @@
  */
 package io.github.jeddict.orm.generator.compiler.def;
 
-import org.apache.commons.lang.StringUtils;
 import static io.github.jeddict.jcode.JPAConstants.ENTITY;
 import static io.github.jeddict.jcode.JPAConstants.ENTITY_FQN;
 import io.github.jeddict.orm.generator.compiler.DiscriminatorColumnSnippet;
@@ -23,6 +22,8 @@ import io.github.jeddict.orm.generator.compiler.DiscriminatorValueSnippet;
 import io.github.jeddict.orm.generator.compiler.InheritanceSnippet;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.util.ImportSet;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import org.apache.commons.lang.StringUtils;
 
 public class EntityDefSnippet extends IdentifiableClassDefSnippet {
 
@@ -66,29 +67,28 @@ public class EntityDefSnippet extends IdentifiableClassDefSnippet {
     @Override
     public String getManagedType() {
         if (StringUtils.isEmpty(entityName)) {
-            return "@" + ENTITY;
+            return AT + ENTITY;
         } else {
-            return "@" + ENTITY + "(name=\"" + entityName + "\")";
+            return AT + ENTITY + "(name=\"" + entityName + "\")";
         }
     }
 
     @Override
     public ImportSet getImportSet() throws InvalidDataException {
-        ImportSet importSnippets = super.getImportSet();
-
-        importSnippets.add(ENTITY_FQN);
+        ImportSet imports = super.getImportSet();
+        imports.add(ENTITY_FQN);
 
         if (discriminatorColumn != null) {
-            importSnippets.addAll(discriminatorColumn.getImportSnippets());
+            imports.addAll(discriminatorColumn.getImportSnippets());
         }
 
         if (discriminatorValue != null) {
-            importSnippets.addAll(discriminatorValue.getImportSnippets());
+            imports.addAll(discriminatorValue.getImportSnippets());
         }
 
         if (inheritance != null) {
-            importSnippets.addAll(inheritance.getImportSnippets());
+            imports.addAll(inheritance.getImportSnippets());
         }
-        return importSnippets;
+        return imports;
     }
 }

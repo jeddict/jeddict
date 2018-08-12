@@ -464,37 +464,37 @@ public abstract class ClassDefSnippet implements WritableSnippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        Collection<String> importSnippets = getImportSet();
-        importSnippets = eliminateSamePkgImports(classHelper.getPackageName(), importSnippets);
-        return processedImportStatements(importSnippets);
+        Collection<String> imports = getImportSet();
+        imports = eliminateSamePkgImports(classHelper.getPackageName(), imports);
+        return processedImportStatements(imports);
     }
 
     public ImportSet getImportSet() throws InvalidDataException {
-        ImportSet importSnippets = new ImportSet();
+        ImportSet imports = new ImportSet();
 
         for (ConstructorSnippet constructor : getConstructors()) {
-            importSnippets.addAll(constructor.getImportSnippets());
+            imports.addAll(constructor.getImportSnippets());
         }
 
         if (getEqualsMethod() != null) {
-            importSnippets.addAll(getEqualsMethod().getImportSnippets());
+            imports.addAll(getEqualsMethod().getImportSnippets());
         }
 
         if (getHashcodeMethod() != null) {
-            importSnippets.addAll(getHashcodeMethod().getImportSnippets());
+            imports.addAll(getHashcodeMethod().getImportSnippets());
         }
 
         if (getToStringMethod() != null) {
-            importSnippets.addAll(getToStringMethod().getImportSnippets());
+            imports.addAll(getToStringMethod().getImportSnippets());
         }
 
         if (superClassHelper.getPackageName() != null) {
-            importSnippets.add(superClassHelper.getFQClassName());
+            imports.add(superClassHelper.getFQClassName());
         }
 
         if (!variableDefs.isEmpty()) {
             for (VariableDefSnippet variableDef : variableDefs) {
-                importSnippets.addAll(variableDef.getImportSnippets());
+                imports.addAll(variableDef.getImportSnippets());
             }
         }
 
@@ -503,18 +503,18 @@ public abstract class ClassDefSnippet implements WritableSnippet {
                 .stream()
                 .flatMap(annot -> annot.stream())
                 .collect(toList())) {
-            importSnippets.addAll(snippet.getImportSnippets());
+            imports.addAll(snippet.getImportSnippets());
         }
 
-        importSnippets.addAll(this.getInterfaces().stream().collect(toList()));
+        imports.addAll(this.getInterfaces().stream().collect(toList()));
 
         for (Snippet snippet : this.getJSONBSnippets()) {
-            importSnippets.addAll(snippet.getImportSnippets());
+            imports.addAll(snippet.getImportSnippets());
         }
 
         List<String> customImportSnippets = getCustomSnippet().get(IMPORT);
         if (customImportSnippets != null) {
-            importSnippets.addAll(
+            imports.addAll(
                     customImportSnippets
                             .stream()
                             .filter(snippet -> !snippet.startsWith("import"))
@@ -524,10 +524,10 @@ public abstract class ClassDefSnippet implements WritableSnippet {
         }
 
         if (isJaxbSupport()) {
-            importSnippets.add("javax.xml.bind.annotation.*");
+            imports.add("javax.xml.bind.annotation.*");
         }
 
-        return importSnippets;
+        return imports;
     }
 
 }

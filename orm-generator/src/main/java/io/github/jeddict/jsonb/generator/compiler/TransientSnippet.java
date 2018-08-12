@@ -15,22 +15,23 @@
  */
 package io.github.jeddict.jsonb.generator.compiler;
 
-import io.github.jeddict.orm.generator.compiler.Snippet;
-import io.github.jeddict.orm.generator.compiler.InvalidDataException;
-import java.util.Collection;
-import java.util.Collections;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_TRANSIENT;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_TRANSIENT_FQN;
+import io.github.jeddict.orm.generator.compiler.InvalidDataException;
+import io.github.jeddict.orm.generator.compiler.Snippet;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import java.util.Collection;
+import static java.util.Collections.singleton;
 
 public class TransientSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        return "@" + JSONB_TRANSIENT;
+        return AT + JSONB_TRANSIENT;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList(JSONB_TRANSIENT_FQN);
+        return singleton(JSONB_TRANSIENT_FQN);
     }
 }

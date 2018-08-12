@@ -15,15 +15,21 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMNS;
 import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMNS_FQN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMNS;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMNS_FQN;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class JoinColumnsSnippet implements Snippet {
 
@@ -61,37 +67,37 @@ public class JoinColumnsSnippet implements Snippet {
         boolean containerAnnotation = !this.repeatable || foreignKey != null; 
         
         if (containerAnnotation) {
-            builder.append("@");
+            builder.append(AT);
             if (mapKey) {
                 builder.append(MAP_KEY_JOIN_COLUMNS);
             } else {
                 builder.append(JOIN_COLUMNS);
             }
             if (foreignKey != null) {
-                builder.append("( value={");
+                builder.append(OPEN_PARANTHESES).append("value=").append(OPEN_BRACES);
             } else {
-                builder.append("({");
+                builder.append(OPEN_PARANTHESES).append(OPEN_BRACES);
             }
         }
 
         for (JoinColumnSnippet joinColumn : joinColumns) {
             builder.append(joinColumn.getSnippet());
-            if(containerAnnotation){builder.append(ORMConverterUtil.COMMA);}
+            if (containerAnnotation) {
+                builder.append(COMMA);
+            }
         }
         
         if (containerAnnotation) {
             builder.setLength(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(CLOSE_BRACES);
+            builder.append(COMMA);
         }
-        if (foreignKey != null) {
-            builder.append("foreignKey=");
-            builder.append(foreignKey.getSnippet());
-            builder.append(ORMConverterUtil.COMMA);
-        }
+
+        builder.append(buildSnippet("foreignKey", foreignKey));
+
         if (containerAnnotation) {
             builder.setLength(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
+            builder.append(CLOSE_PARANTHESES);
         }
          
          return builder.toString();
@@ -99,35 +105,35 @@ public class JoinColumnsSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException { 
-        List<String> importSnippets = new ArrayList<>();
+        Set<String> imports = new HashSet<>();
         boolean containerAnnotation = !this.repeatable || foreignKey != null; 
         if (joinColumns.size() == 1) {
-            importSnippets.addAll(joinColumns.get(0).getImportSnippets());
+            imports.addAll(joinColumns.get(0).getImportSnippets());
             if (containerAnnotation && foreignKey != null) {
                 if (mapKey) {
-                    importSnippets.add(MAP_KEY_JOIN_COLUMNS_FQN);
+                    imports.add(MAP_KEY_JOIN_COLUMNS_FQN);
                 } else {
-                    importSnippets.add(JOIN_COLUMNS_FQN);
+                    imports.add(JOIN_COLUMNS_FQN);
                 }
             }
         } else {
             for (JoinColumnSnippet jc : joinColumns) {
-                importSnippets.addAll(jc.getImportSnippets());
+                imports.addAll(jc.getImportSnippets());
             }
             if (containerAnnotation) {
                 if (mapKey) {
-                    importSnippets.add(MAP_KEY_JOIN_COLUMNS_FQN);
+                    imports.add(MAP_KEY_JOIN_COLUMNS_FQN);
                 } else {
-                    importSnippets.add(JOIN_COLUMNS_FQN);
+                    imports.add(JOIN_COLUMNS_FQN);
                 }
             }
         }
 
         if (foreignKey != null) {
-            importSnippets.addAll(foreignKey.getImportSnippets());
+            imports.addAll(foreignKey.getImportSnippets());
         }
 
-        return importSnippets;
+        return imports;
     }
 
     /**

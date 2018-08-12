@@ -15,9 +15,12 @@
  */
 package io.github.jeddict.orm.generator.compiler.constraints;
 
-import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.bv.constraints.Digits;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import io.github.jeddict.orm.generator.compiler.InvalidDataException;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
  *
@@ -36,30 +39,21 @@ public class DigitsSnippet extends ConstraintSnippet<Digits> {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (constraint.getMessage() == null && constraint.getFraction() == null && constraint.getInteger() == null) {
-            return "@" + getAPI();
-        }
-        StringBuilder builder = new StringBuilder();
-        builder.append("@").append(getAPI()).append(ORMConverterUtil.OPEN_PARANTHESES);
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(getAPI());
 
-        if (constraint.getFraction() != null) {
-            builder.append("fraction=");
-            builder.append(constraint.getFraction());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-        if (constraint.getInteger() != null) {
-            builder.append("integer=");
-            builder.append(constraint.getInteger());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-        if (constraint.getMessage() != null) {
-            builder.append("message=\"");
-            builder.append(constraint.getMessage());
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isBlank(constraint.getMessage())
+                && isBlank(constraint.getFraction())
+                && isBlank(constraint.getInteger())) {
+            return builder.toString();
         }
 
-        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
+        builder.append(OPEN_PARANTHESES)
+                .append(buildExp("fraction", constraint.getFraction()))
+                .append(buildExp("integer", constraint.getInteger()))
+                .append(buildString("message", constraint.getMessage()));
+
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
 }

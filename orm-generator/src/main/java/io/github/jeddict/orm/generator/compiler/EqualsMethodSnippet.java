@@ -15,15 +15,15 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.Collection;
-import java.util.Collections;
-import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.BaseAttribute;
 import io.github.jeddict.jpa.spec.extend.ClassMembers;
 import io.github.jeddict.jpa.spec.extend.CompositionAttribute;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.NEW_LINE;
+import java.util.Collection;
+import static java.util.Collections.singleton;
+import org.apache.commons.lang.StringUtils;
 
 public class EqualsMethodSnippet implements Snippet {
 
@@ -74,6 +74,6 @@ public class EqualsMethodSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList("java.util.Objects");
+        return singleton("java.util.Objects");
     }
 }

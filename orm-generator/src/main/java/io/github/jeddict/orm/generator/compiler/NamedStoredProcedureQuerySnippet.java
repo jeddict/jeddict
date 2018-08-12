@@ -15,14 +15,21 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_STORED_PROCEDURE_QUERY;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_STORED_PROCEDURE_QUERY_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -38,102 +45,6 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
     private List<String> resultSetMappings = Collections.<String>emptyList();
 
     private List<StoredProcedureParameterSnippet> parameters = Collections.<StoredProcedureParameterSnippet>emptyList();
-
-    @Override
-    public String getSnippet() throws InvalidDataException {
-
-        if (name == null || procedureName == null) {
-            throw new InvalidDataException("Name and ProcedureName required");
-        }
-
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("@").append(NAMED_STORED_PROCEDURE_QUERY).append("(");
-
-        builder.append("name=\"");
-        builder.append(name);
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
-
-        builder.append("procedureName=\"");
-        builder.append(procedureName);
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
-
-        if (!resultSetMappings.isEmpty()) {
-            builder.append("resultSetMappings={");
-            for (String resultSetMapping : resultSetMappings) {
-                builder.append(ORMConverterUtil.QUOTE);
-                builder.append(resultSetMapping);
-                builder.append(ORMConverterUtil.QUOTE);
-                builder.append(ORMConverterUtil.COMMA);
-            }
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (!resultClasses.isEmpty()) {
-            builder.append("resultClasses={");
-            for (ClassHelper resultClass : resultClasses) {
-                builder.append(resultClass.getClassNameWithClassSuffix());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (!parameters.isEmpty()) {
-            builder.append("parameters={");
-            for (StoredProcedureParameterSnippet parameter : parameters) {
-                builder.append(parameter.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-
-        }
-
-        if (!queryHints.isEmpty()) {
-            builder.append("hints={");
-
-            for (QueryHintSnippet queryHint : queryHints) {
-                builder.append(queryHint.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
-            }
-
-            builder.deleteCharAt(builder.length() - 1);
-
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
-    }
-
-    @Override
-    public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        List<String> importSnippets = new ArrayList<>();
-
-        importSnippets.add(NAMED_STORED_PROCEDURE_QUERY_FQN);
-
-        for (StoredProcedureParameterSnippet parameter : parameters) {
-            importSnippets.addAll(parameter.getImportSnippets());
-        }
-
-        for (ClassHelper resultClass : resultClasses) {
-            importSnippets.add(resultClass.getFQClassName());
-        }
-
-        for (QueryHintSnippet queryHint : queryHints) {
-            importSnippets.addAll(queryHint.getImportSnippets());
-        }
-        return importSnippets;
-    }
 
     /**
      * @return the name
@@ -255,4 +166,52 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
         this.procedureName = procedureName;
     }
 
+    @Override
+    public String getSnippet() throws InvalidDataException {
+        if (name == null || procedureName == null) {
+            throw new InvalidDataException("Name and ProcedureName required");
+        }
+
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(NAMED_STORED_PROCEDURE_QUERY)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", name))
+                .append(buildString("procedureName", procedureName))
+                .append(buildStrings("resultSetMappings", resultSetMappings));
+
+        if (!resultClasses.isEmpty()) {
+            builder.append("resultClasses=").append(OPEN_BRACES);
+            for (ClassHelper resultClass : resultClasses) {
+                builder.append(resultClass.getClassNameWithClassSuffix());
+                builder.append(COMMA);
+            }
+            builder.deleteCharAt(builder.length() - 1);
+            builder.append(CLOSE_BRACES);
+            builder.append(COMMA);
+        }
+
+        builder.append(buildSnippets("parameters", parameters))
+                .append(buildSnippets("hints", queryHints));
+
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+    }
+
+    @Override
+    public Collection<String> getImportSnippets() throws InvalidDataException {
+        Set<String> imports = new HashSet<>();
+        imports.add(NAMED_STORED_PROCEDURE_QUERY_FQN);
+
+        for (StoredProcedureParameterSnippet parameter : parameters) {
+            imports.addAll(parameter.getImportSnippets());
+        }
+
+        for (ClassHelper resultClass : resultClasses) {
+            imports.add(resultClass.getFQClassName());
+        }
+
+        for (QueryHintSnippet queryHint : queryHints) {
+            imports.addAll(queryHint.getImportSnippets());
+        }
+        return imports;
+    }
 }

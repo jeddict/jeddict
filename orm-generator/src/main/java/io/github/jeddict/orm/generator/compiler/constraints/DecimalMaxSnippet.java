@@ -21,11 +21,9 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import static java.lang.Boolean.FALSE;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  *
@@ -52,15 +50,9 @@ public class DecimalMaxSnippet extends ConstraintSnippet<DecimalMax> {
             return builder.toString();
         }
 
-        builder.append(OPEN_PARANTHESES);
+        builder.append(OPEN_PARANTHESES)
+                .append(buildString("value", constraint.getValue()));
 
-        if (!isBlank(constraint.getValue())) {
-            builder.append("value=\"")
-                    .append(constraint.getValue())
-                    .append(QUOTE)
-                    .append(COMMA);
-        }
-        
         if (isGenerateDefaultValue()) {
             boolean inclusive = !FALSE.equals(constraint.getInclusive());
             builder.append("inclusive=")
@@ -72,12 +64,7 @@ public class DecimalMaxSnippet extends ConstraintSnippet<DecimalMax> {
                     .append(COMMA);
         }
 
-        if (isNotBlank(constraint.getMessage())) {
-             builder.append("message=\"")
-                     .append(constraint.getMessage())
-                     .append(QUOTE)
-                     .append(COMMA);
-        }
+        builder.append(buildString("message", constraint.getMessage()));
 
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }

@@ -19,12 +19,13 @@ import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDE;
 import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDE_FQN;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AssociationOverrideSnippet implements Snippet {
 
@@ -62,54 +63,38 @@ public class AssociationOverrideSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
         if (name == null || joinColumns == null) {
             throw new InvalidDataException("Name and JoinColumns required");
         }
 
-        StringBuilder builder = new StringBuilder();
-
-        builder.append(AT).append(ASSOCIATION_OVERRIDE).append("(");
-
-        builder.append("name=\"");
-        builder.append(name);
-        builder.append(QUOTE);
-        builder.append(COMMA);
-
-        builder.append(buildAnnotations("joinColumns", joinColumns));
-
-        if (joinTable != null && joinTable.getSnippet() != null) {
-            builder.append("joinTable=");
-            builder.append(joinTable.getSnippet());
-            builder.append(COMMA);
-        }
-        
-        if (foreignKey != null) {
-            builder.append("foreignKey=");
-            builder.append(foreignKey.getSnippet());
-            builder.append(COMMA);
-        }
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(ASSOCIATION_OVERRIDE)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", name))
+                .append(buildSnippets("joinColumns", joinColumns))
+                .append(buildSnippet("joinTable", joinTable))
+                .append(buildSnippet("foreignKey", foreignKey));
 
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
+        Set<String> imports = new HashSet<>();
 
-        importSnippets.add(ASSOCIATION_OVERRIDE_FQN);
+        imports.add(ASSOCIATION_OVERRIDE_FQN);
         if (joinColumns != null && !joinColumns.isEmpty()) {
-            importSnippets.addAll(joinColumns.get(0).getImportSnippets());
+            imports.addAll(joinColumns.get(0).getImportSnippets());
         }
         if (joinTable != null) {
-            importSnippets.addAll(joinTable.getImportSnippets());
+            imports.addAll(joinTable.getImportSnippets());
         }
         
         if (foreignKey != null) {
-            importSnippets.addAll(foreignKey.getImportSnippets());
+            imports.addAll(foreignKey.getImportSnippets());
         }
 
-        return importSnippets;
+        return imports;
     }
 
     /**

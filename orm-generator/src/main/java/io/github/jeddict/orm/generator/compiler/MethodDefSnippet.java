@@ -15,12 +15,14 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
+import static io.github.jeddict.jcode.JPAConstants.PERSISTENCE_PACKAGE_PREFIX;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import static java.util.Collections.emptySet;
+import java.util.HashSet;
 import java.util.List;
-import static io.github.jeddict.jcode.JPAConstants.PERSISTENCE_PACKAGE_PREFIX;
-import io.github.jeddict.orm.generator.util.ImportSet;
+import java.util.Set;
 
 public class MethodDefSnippet implements Snippet {
 
@@ -64,17 +66,14 @@ public class MethodDefSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-
         if (callbacks.isEmpty()) {
-            return Collections.<String>emptyList();
+            return emptySet();
         }
 
-        ImportSet importSnippets = new ImportSet();
-
+        Set<String> imports = new HashSet<>();
         for (CallbackSnippet callback : callbacks) {
-            importSnippets.add(PERSISTENCE_PACKAGE_PREFIX + callback.getCallbackType());
+            imports.add(PERSISTENCE_PACKAGE_PREFIX + callback.getCallbackType());
         }
-
-        return importSnippets;
+        return imports;
     }
 }

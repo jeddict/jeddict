@@ -15,13 +15,14 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.Collection;
-import java.util.Collections;
-import org.apache.commons.lang.StringUtils;
 import static io.github.jeddict.jcode.JPAConstants.UNIQUE_CONSTRAINT;
 import static io.github.jeddict.jcode.JPAConstants.UNIQUE_CONSTRAINT_FQN;
 import io.github.jeddict.jpa.spec.UniqueConstraint;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.Collection;
+import static java.util.Collections.singleton;
 
 public class UniqueConstraintSnippet implements Snippet {
 
@@ -33,41 +34,17 @@ public class UniqueConstraintSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
-        
-
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("@").append(UNIQUE_CONSTRAINT).append("(");
-
-        if (StringUtils.isNotBlank(constraint.getName())) {
-            builder.append("name=\"");
-            builder.append(constraint.getName());
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-                
-        builder.append("columnNames={");
-        if (!constraint.getColumnName().isEmpty()) {
-            for (String columnName : constraint.getColumnName()) {
-                builder.append(ORMConverterUtil.QUOTE);
-                builder.append(columnName);
-                builder.append(ORMConverterUtil.QUOTE);
-                builder.append(ORMConverterUtil.COMMA);
-            }
-            builder.deleteCharAt(builder.length() - 1);
-        }
-        builder.append(ORMConverterUtil.CLOSE_BRACES);
-
-        
-        
-        builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
-        return builder.toString();
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(UNIQUE_CONSTRAINT)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", constraint.getName()))
+                .append(buildStrings("columnNames", constraint.getColumnName()));
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList(UNIQUE_CONSTRAINT_FQN);
+        return singleton(UNIQUE_CONSTRAINT_FQN);
 
     }
 }

@@ -15,12 +15,15 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.PRIMARY_KEY_JOIN_COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.PRIMARY_KEY_JOIN_COLUMN_FQN;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class PrimaryKeyJoinColumnSnippet implements Snippet {
 
@@ -70,56 +73,31 @@ public class PrimaryKeyJoinColumnSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(PRIMARY_KEY_JOIN_COLUMN);
 
-        if (name == null
-                && referencedColumnName == null
-                && columnDefinition == null) {
-            return "@" + PRIMARY_KEY_JOIN_COLUMN;
+        if (isBlank(name)
+                && isBlank(referencedColumnName)
+                && isBlank(columnDefinition)) {
+            return builder.toString();
         }
 
-        StringBuilder builder = new StringBuilder();
+        builder.append(OPEN_PARANTHESES)
+                .append(buildString("name", name))
+                .append(buildString("referencedColumnName", referencedColumnName))
+                .append(buildString("columnDefinition", columnDefinition))
+                .append(buildSnippet("foreignKey", foreignKey));
 
-        builder.append("@").append(PRIMARY_KEY_JOIN_COLUMN).append("(");
-
-        if (name != null) {
-            builder.append("name=\"");
-            builder.append(name);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (referencedColumnName != null && !referencedColumnName.trim().isEmpty()) {
-            builder.append("referencedColumnName=\"");
-            builder.append(referencedColumnName);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (columnDefinition != null) {
-            builder.append("columnDefinition=\"");
-            builder.append(columnDefinition);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (foreignKey != null) {
-            builder.append("foreignKey=");
-            builder.append(foreignKey.getSnippet());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-        
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-       List<String> importSnippets = new ArrayList<>();
-       importSnippets.add(PRIMARY_KEY_JOIN_COLUMN_FQN);
+        Set<String> imports = new HashSet<>();
+        imports.add(PRIMARY_KEY_JOIN_COLUMN_FQN);
         if (foreignKey != null) {
-            importSnippets.addAll(foreignKey.getImportSnippets());
+            imports.addAll(foreignKey.getImportSnippets());
         }
-
-        return importSnippets;
+        return imports;
     }
 }

@@ -113,11 +113,11 @@ public class ORMConverterUtil {
         return file;
     }
 
-    public static Collection<String> eliminateSamePkgImports(String classPackage, Collection<String> importSnippets) {
+    public static Collection<String> eliminateSamePkgImports(String classPackage, Collection<String> imports) {
 
         List<String> uniqueImports = new ArrayList<>();
 
-        for (String importSnippet : importSnippets) {
+        for (String importSnippet : imports) {
 
             ClassHelper importSnippetHelper = new ClassHelper(importSnippet);
 
@@ -144,19 +144,12 @@ public class ORMConverterUtil {
         }
 
         byte[] bytes = new byte[(int) file.length()];
-        FileInputStream fileInputStream = null;
 
-        try {
-
-            fileInputStream = new FileInputStream(file);
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
             int read = fileInputStream.read(bytes);
-
             if (read != file.length()) {
                 throw new IOException("could not read entire file");
             }
-
-        } finally {
-            fileInputStream.close();
         }
 
         return bytes;
@@ -164,7 +157,7 @@ public class ORMConverterUtil {
 
     public static String getCommaSeparatedString(Collection<String> values) {
 
-        if (values == null || values.size() == 0) {
+        if (values == null || values.isEmpty()) {
             return null;
         }
 
@@ -210,14 +203,12 @@ public class ORMConverterUtil {
         return generatedClass.toString();
     }
 
-    public static Collection<String> processedImportStatements(
-            Collection<String> importSnippets) {
+    public static Collection<String> processedImportStatements(Collection<String> imports) {
 
         Collection<String> processedStatements = new ArrayList<>();
-        for (String element : importSnippets) {
+        for (String element : imports) {
             processedStatements.add(IMPORT + element + SEMICOLON);
         }
-
         return processedStatements;
     }
 

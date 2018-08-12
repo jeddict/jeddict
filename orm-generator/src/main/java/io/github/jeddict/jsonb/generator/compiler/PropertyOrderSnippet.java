@@ -15,19 +15,20 @@
  */
 package io.github.jeddict.jsonb.generator.compiler;
 
-import io.github.jeddict.orm.generator.compiler.InvalidDataException;
-import io.github.jeddict.orm.generator.compiler.Snippet;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import static java.util.stream.Collectors.joining;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_PROPERTY_ORDER;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_PROPERTY_ORDER_FQN;
+import io.github.jeddict.orm.generator.compiler.InvalidDataException;
+import io.github.jeddict.orm.generator.compiler.Snippet;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import java.util.Collection;
+import static java.util.Collections.singleton;
+import java.util.List;
+import static java.util.stream.Collectors.joining;
 
 public class PropertyOrderSnippet implements Snippet {
 
@@ -39,9 +40,8 @@ public class PropertyOrderSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder();
-        builder.append("@")
-                .append(JSONB_PROPERTY_ORDER)
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(JSONB_PROPERTY_ORDER)
                 .append(OPEN_PARANTHESES)
                 .append(OPEN_BRACES)
                 .append(propertyOrder.stream().collect(joining("\", \"", QUOTE, QUOTE)))
@@ -52,6 +52,6 @@ public class PropertyOrderSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList(JSONB_PROPERTY_ORDER_FQN);
+        return singleton(JSONB_PROPERTY_ORDER_FQN);
     }
 }

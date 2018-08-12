@@ -15,13 +15,15 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.ATTRIBUTE_OVERRIDE;
 import static io.github.jeddict.jcode.JPAConstants.ATTRIBUTE_OVERRIDE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.COLUMN_FQN;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static java.util.Arrays.asList;
+import java.util.Collection;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class AttributeOverrideSnippet implements Snippet {
 
@@ -47,34 +49,24 @@ public class AttributeOverrideSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
-        if (name == null || columnDef == null) {
+        if (isBlank(name) || columnDef == null) {
             throw new InvalidDataException("Name and ColumnDef required");
         }
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(ATTRIBUTE_OVERRIDE)
+                .append(OPEN_PARANTHESES)
+                .append(buildString("name", name))
+                .append(buildSnippet("column", columnDef));
 
-        builder.append("@").append(ATTRIBUTE_OVERRIDE).append("(");
-
-        builder.append("name=\"");
-        builder.append(name);
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
-
-        builder.append("column=");
-        builder.append(columnDef.getSnippet());
-        builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
-
-        return builder.toString();
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-
-        importSnippets.add(ATTRIBUTE_OVERRIDE_FQN);
-        importSnippets.add(COLUMN_FQN);
-
-        return importSnippets;
+        return asList(
+                ATTRIBUTE_OVERRIDE_FQN,
+                COLUMN_FQN
+        );
     }
 }
