@@ -15,13 +15,9 @@
  */
 package io.github.jeddict.orm.generator.service;
 
-import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.symbolsolver.JavaSymbolSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import io.github.jeddict.collaborate.issues.ExceptionUtils;
 import io.github.jeddict.jcode.console.Console;
 import static io.github.jeddict.jcode.console.Console.BOLD;
@@ -46,11 +42,14 @@ import io.github.jeddict.orm.generator.util.ClassType;
 import io.github.jeddict.orm.generator.util.ClassesRepository;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 import static io.github.jeddict.settings.generate.GenerateSettings.isSyncExistingSourceCode;
+import io.github.jeddict.source.SourceExplorer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import static java.util.Collections.EMPTY_SET;
 import java.util.List;
+import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
@@ -68,14 +67,24 @@ public class ClassGeneratorService implements ModuleGenerator {
     private ITaskSupervisor task;
     private final ClassesRepository classesRepository = ClassesRepository.getInstance();
 
+    private SourceExplorer sourceExplorer;
+
     @Override
     public void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings entityMappings) {
         try {
             this.entityMappings = entityMappings;
             this.task = task;
             this.sourceGroup = sourceGroup;
-            destDir = FileUtil.toFile(sourceGroup.getRootFolder());
+            this.destDir = FileUtil.toFile(sourceGroup.getRootFolder());
             this.packageName = entityMappings.getPackage();
+            if (isSyncExistingSourceCode()) {
+                this.sourceExplorer = new SourceExplorer(
+                        sourceGroup.getRootFolder(),
+                        entityMappings,
+                        EMPTY_SET,
+                        false
+                );
+            }
 
             generateMappedSuperClasses();
             generateEntityClasses();
@@ -200,16 +209,6 @@ public class ClassGeneratorService implements ModuleGenerator {
         return classDefs;
     }
 
-    static {
-        // Set up a minimal type solver that only looks at the classes used to run this sample.
-        CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
-        combinedTypeSolver.add(new ReflectionTypeSolver());
-
-        // Configure JavaParser to use type resolution
-        JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
-        JavaParser.getStaticConfiguration().setSymbolResolver(symbolSolver);
-    }
-
     private void loadExistingSnippet(JavaClass javaClass) {
         if (!isSyncExistingSourceCode()) {
             return;
@@ -225,10 +224,12 @@ public class ClassGeneratorService implements ModuleGenerator {
         }
         if (existingFile != null) {
             try {
-                CompilationUnit existingSource = JavaParser.parse(FileUtil.toFile(existingFile));
-                JavaClassSyncHandler
-                        .getInstance(javaClass)
-                        .syncExistingSnippet(existingSource);
+                Optional<CompilationUnit> existingSourceOpt = sourceExplorer.createCompilationUnit(existingFile);
+                if (existingSourceOpt.isPresent()) {
+                    JavaClassSyncHandler
+                            .getInstance(javaClass)
+                            .syncExistingSnippet(existingSourceOpt.get());
+                }
             } catch (FileNotFoundException ex) {
             } catch (ParseProblemException ex) {
                 task.log(Console.wrap("Unable to sync with exising class : " + javaClass.getName(), FG_DARK_RED), true);

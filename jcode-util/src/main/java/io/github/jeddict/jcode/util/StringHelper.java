@@ -17,6 +17,7 @@ package io.github.jeddict.jcode.util;
 
 import java.util.function.Predicate;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public final class StringHelper {
 
@@ -26,11 +27,17 @@ public final class StringHelper {
     public final static String NATURAL_TEXT_SPLITTER = "(\\s+)|(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])";
 
     public static String firstLower(String string) {
+        if (isBlank(string)) {
+            return EMPTY;
+        }
         boolean makeFirstLower = string.length() < 2 || (!Character.isUpperCase(string.charAt(1)));
         return makeFirstLower ? string.substring(0, 1).toLowerCase() + string.substring(1) : string;
     }
 
     public static String firstUpper(String string) {
+        if (isBlank(string)) {
+            return EMPTY;
+        }
         return string.length() > 1 ? string.substring(0, 1).toUpperCase() + string.substring(1) : string.toUpperCase();
     }
 

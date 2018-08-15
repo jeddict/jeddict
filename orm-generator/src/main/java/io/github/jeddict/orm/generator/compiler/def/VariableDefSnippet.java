@@ -72,6 +72,7 @@ import io.github.jeddict.orm.generator.compiler.OneToManySnippet;
 import io.github.jeddict.orm.generator.compiler.OneToOneSnippet;
 import io.github.jeddict.orm.generator.compiler.OrderBySnippet;
 import io.github.jeddict.orm.generator.compiler.OrderColumnSnippet;
+import io.github.jeddict.orm.generator.compiler.PrimaryKeyJoinColumnsSnippet;
 import io.github.jeddict.orm.generator.compiler.RelationDefSnippet;
 import io.github.jeddict.orm.generator.compiler.SequenceGeneratorSnippet;
 import io.github.jeddict.orm.generator.compiler.SingleRelationAttributeSnippet;
@@ -155,6 +156,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private JoinColumnsSnippet joinColumns;
     private JoinTableSnippet joinTable;
     private CollectionTableSnippet collectionTable;
+    private PrimaryKeyJoinColumnsSnippet primaryKeyJoinColumns;
     private GeneratedValueSnippet generatedValue;
     private TableGeneratorSnippet tableGenerator;
     private SequenceGeneratorSnippet sequenceGenerator;
@@ -505,6 +507,10 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             imports.addAll(collectionTable.getImportSnippets());
         }
 
+        if (primaryKeyJoinColumns != null) {
+            imports.addAll(primaryKeyJoinColumns.getImportSnippets());
+        }
+
         if (generatedValue != null) {
             imports.addAll(generatedValue.getImportSnippets());
         }
@@ -635,6 +641,14 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      */
     public void setCollectionTable(CollectionTableSnippet collectionTable) {
         this.collectionTable = collectionTable;
+    }
+
+    public PrimaryKeyJoinColumnsSnippet getPrimaryKeyJoinColumns() {
+        return primaryKeyJoinColumns;
+    }
+
+    public void setPrimaryKeyJoinColumns(PrimaryKeyJoinColumnsSnippet primaryKeyJoinColumns) {
+        this.primaryKeyJoinColumns = primaryKeyJoinColumns;
     }
 
     /**

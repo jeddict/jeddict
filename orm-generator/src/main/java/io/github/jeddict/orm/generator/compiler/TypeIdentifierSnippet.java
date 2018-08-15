@@ -15,14 +15,14 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
+import io.github.jeddict.jcode.util.AttributeType;
 import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
+import io.github.jeddict.orm.generator.util.ClassHelper;
+import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
-import io.github.jeddict.jcode.util.AttributeType;
-import io.github.jeddict.orm.generator.util.ClassHelper;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 import org.openide.util.Exceptions;
 
 public class TypeIdentifierSnippet implements Snippet {
@@ -94,10 +94,11 @@ public class TypeIdentifierSnippet implements Snippet {
                 implementationType = collectionImplType.getClassName();
                 importSnippets.add(collectionImplType.getFQClassName());
             }
-            if (collectionType != null && collectionType.getClazz() != null
-                    && !Map.class.isAssignableFrom(collectionType.getClazz())) {
-                constraintType = collectionType.getClassName() + "<" + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(variable.getClassName()) + ">";
-                type = collectionType.getClassName() + "<" + wrap(variable.getClassName()) + ">";
+            if (collectionType != null && collectionType.getClazz() != null) {
+                if (!Map.class.isAssignableFrom(collectionType.getClazz())) {
+                    constraintType = collectionType.getClassName() + "<" + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(variable.getClassName()) + ">";
+                    type = collectionType.getClassName() + "<" + wrap(variable.getClassName()) + ">";
+                }
                 importSnippets.add(collectionType.getFQClassName());
             }
 

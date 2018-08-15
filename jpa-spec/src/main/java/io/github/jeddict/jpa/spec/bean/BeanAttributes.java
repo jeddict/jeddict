@@ -79,16 +79,18 @@ public class BeanAttributes extends Attributes<BeanClass> {
             boolean relationType = false;
             String typeArgument = null;
             if (collectionType || mapType) {
-                typeArgument = member.getTypeArguments().get(mapType ? 1 : 0);
-                if (isJavaType(typeArgument)) {
-                    elementCollectionType = true;
+                if (!member.getTypeArguments().isEmpty()) {
+                    typeArgument = member.getTypeArguments().get(mapType ? 1 : 0);
+                    if (isJavaType(typeArgument)) {
+                        elementCollectionType = true;
+                    } else {
+                        relationType = true;
+                    }
                 } else {
                     relationType = true;
                 }
-            } else {
-                if (!isJavaType(type)) {
-                    relationType = true;
-                }
+            } else if (!isJavaType(type)) {
+                relationType = true;
             }
 
 

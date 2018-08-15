@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import java.util.Optional;
 import java.util.Set;
@@ -275,6 +276,9 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
         Map<SourceGroup, Set<String>> sourceGroups = new HashMap<>();
         for (FileObject fileObject : fileObjects) {
             SourceGroup sourceGroup = findSourceGroupForFile(fileObject);
+            if (isNull(sourceGroup)) {
+                continue;
+            }
             if (!sourceGroups.containsKey(sourceGroup)) {
                 sourceGroups.put(sourceGroup, new HashSet<>());
             }
@@ -340,17 +344,15 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
                 progressContributor.progress(progressStepCount);
             } catch (IOException | UnsolvedSymbolException ex) {
                 LOG.log(INFO, null, ex);
-                NotifyDescriptor nd = new NotifyDescriptor.Message(ex.getLocalizedMessage(), ERROR_MESSAGE);
-                DialogDisplayer.getDefault().notify(nd);
+                notifyError(ex.getLocalizedMessage());
             } catch (ParseProblemException ex) {
                 LOG.log(INFO, null, ex);
                 String message = ex.getLocalizedMessage().substring(0, ex.getLocalizedMessage().indexOf("Problem stacktrace"));
-                NotifyDescriptor nd = new NotifyDescriptor.Message(message, ERROR_MESSAGE);
-                DialogDisplayer.getDefault().notify(nd);
+                notifyError(message);
             } catch (UnsupportedOperationException ex) {
                 LOG.log(INFO, null, ex);
-                NotifyDescriptor nd = new NotifyDescriptor.Message("uncompilable source code detected", ERROR_MESSAGE);
-                DialogDisplayer.getDefault().notify(nd);
+                String message = ex.getMessage().isEmpty() ? ex.toString() : ex.getMessage();
+                notifyError(message);
             } catch (ProcessInterruptedException ex) {
                 LOG.log(INFO, null, ex);
             } finally {
@@ -378,6 +380,11 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
                 }
             }
         });
+    }
+
+    private void notifyError(String errorMessage) {
+        NotifyDescriptor nd = new NotifyDescriptor.Message("Please report the issue with NetBeans IDE log : " + errorMessage, ERROR_MESSAGE);
+        DialogDisplayer.getDefault().notify(nd);
     }
 
     private EntityMappings generateJPAModel(
@@ -479,12 +486,20 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
             final EntityMappings entityMappings) {
 
         List<ClassExplorer> classes = new CopyOnWriteArrayList<>(selectedClasses);
-        classes.sort((c1, c2) -> c1.isEntity() || c1.isMappedSuperclass() ? -1 : 1);
 
         for (ClassExplorer clazz : classes) {
-            String progressMsg = getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Class_Parsing", clazz.getName() + JAVA_EXT_SUFFIX);//NOI18N
-            reporter.progress(progressMsg, progressIndex++);
-            parseJavaClass(entityMappings, clazz);
+            if (clazz.isEntity() || clazz.isMappedSuperclass()) {
+                String progressMsg = getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Class_Parsing", clazz.getName() + JAVA_EXT_SUFFIX);//NOI18N
+                reporter.progress(progressMsg, progressIndex++);
+                parseJavaClass(entityMappings, clazz);
+            }
+        }
+        for (ClassExplorer clazz : classes) {
+            if (!clazz.isEntity() && !clazz.isMappedSuperclass()) {
+                String progressMsg = getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Class_Parsing", clazz.getName() + JAVA_EXT_SUFFIX);//NOI18N
+                reporter.progress(progressMsg, progressIndex++);
+                parseJavaClass(entityMappings, clazz);
+            }
         }
         return progressIndex;
     }
@@ -499,10 +514,8 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
                     String entityClass = attribute.getTargetEntity();
                     String entityClassFQN = attribute.getTargetEntityFQN();
                     if (entityMappings.findAllJavaClass(entityClass).isEmpty()) {
-                        ClassExplorer clazz;
                         try {
-                            clazz = source.createClass(entityClassFQN);
-                            newReferencedClass.add(clazz);
+                            source.createClass(entityClassFQN).ifPresent(newReferencedClass::add);
                         } catch (FileNotFoundException ex) {
                             ex.printStackTrace();
                             missingEntities.add(entityClassFQN);

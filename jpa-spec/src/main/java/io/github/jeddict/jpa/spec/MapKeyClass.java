@@ -6,6 +6,14 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import com.github.javaparser.resolution.UnsolvedSymbolException;
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_CLASS_FQN;
+import io.github.jeddict.source.AnnotationExplorer;
+import io.github.jeddict.source.JAREAnnotationLoader;
+import io.github.jeddict.source.JavaSourceParserUtil;
+import io.github.jeddict.source.MemberExplorer;
+import java.util.Optional;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.DeclaredType;
@@ -13,9 +21,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_CLASS_FQN;
-import io.github.jeddict.source.JAREAnnotationLoader;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -69,12 +74,35 @@ public class MapKeyClass implements JAREAnnotationLoader {
     }
     
     public static DeclaredType getDeclaredType(Element element) {
-         AnnotationMirror   annotationMirror = JavaSourceParserUtil.findAnnotation(element, MAP_KEY_CLASS_FQN);
+        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, MAP_KEY_CLASS_FQN);
         if (annotationMirror != null) {
-             return (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
+            return (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
         }
         return null;
     }
+
+    public static ResolvedReferenceTypeDeclaration getDeclaredType(MemberExplorer member) {
+        Optional<ResolvedReferenceTypeDeclaration> keyTypeOpt;
+        ResolvedReferenceTypeDeclaration keyType;
+        Optional<AnnotationExplorer> mapKeyClassOpt = member.getAnnotation(javax.persistence.MapKeyClass.class);
+        if (mapKeyClassOpt.isPresent()) {
+            Optional<ResolvedReferenceTypeDeclaration> mapKeyClassValueOpt = mapKeyClassOpt.get().getResolvedClass("value");
+            if (mapKeyClassValueOpt.isPresent()) {
+                keyType = mapKeyClassValueOpt.get();
+            } else {
+                throw new UnsolvedSymbolException("@MapKeyClass value not defind '" + member.getFieldName() + "'");
+            }
+        } else {
+            keyTypeOpt = member.getTypeArgumentDeclaration(0);
+            if (keyTypeOpt.isPresent()) {
+                keyType = keyTypeOpt.get();
+            } else {
+                throw new UnsolvedSymbolException("@MapKeyClass or generic type not defined in ElementCollection attribute '" + member.getFieldName() + "'");
+            }
+        }
+        return keyType;
+    }
+
 
     /**
      * Gets the value of the clazz property.

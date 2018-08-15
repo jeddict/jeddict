@@ -44,7 +44,6 @@ import io.github.jeddict.source.JavaSourceParserUtil;
 import static io.github.jeddict.source.JavaSourceParserUtil.isEntity;
 import static io.github.jeddict.source.JavaSourceParserUtil.isMappedSuperclass;
 import io.github.jeddict.source.MemberExplorer;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -211,10 +210,9 @@ public abstract class IdentifiableClass extends ManagedClass<IPrimaryKeyAttribut
         }
     }
 
-//    @Override
+    @Override
     public void load(ClassExplorer clazz) {
         super.load(clazz);
-        EntityMappings entityMappings = clazz.getEntityMappings();
         this.idClass = IdClass.load(clazz);
 
         if (this.getAttributes().getEmbeddedId() != null) {
@@ -259,43 +257,15 @@ public abstract class IdentifiableClass extends ManagedClass<IPrimaryKeyAttribut
         if (superClassTypeOpt.isPresent()) {
             ResolvedReferenceTypeDeclaration superClassType = superClassTypeOpt.get();
 
-            if (superClassType.hasAnnotation(ENTITY_FQN)) {
-                Optional<Entity> superClassOpt = entityMappings.findEntity(superClassType.getClassName());
-                Entity superClass = null;
+            if (superClassType.hasDirectlyAnnotation(ENTITY_FQN)) {
+                Optional<Entity> superClassOpt = clazz.getSource().findEntity(superClassType);
                 if (superClassOpt.isPresent()) {
-                    superClass = superClassOpt.get();
-                } else if (clazz.isIncludeReference()
-                        || clazz.getSource().isSelectedClass(superClassType.getClassName())) {
-                    try {
-                        ClassExplorer superClazz = clazz.getSource().createClass(superClassType.getQualifiedName());
-                        superClass = new Entity();
-                        superClass.load(superClazz);
-                        entityMappings.addEntity(superClass);
-                    } catch (FileNotFoundException ex) {
-                        clazz.getSource().addMissingClass(superClassType.getQualifiedName());
-                    }
+                    super.addSuperclass(superClassOpt.get());
                 }
-                if (superClass != null) {
-                    super.addSuperclass(superClass);
-                }
-            } else if (superClassType.hasAnnotation(MAPPED_SUPERCLASS_FQN)) {
-                Optional<MappedSuperclass> superClassOpt = entityMappings.findMappedSuperclass(superClassType.getClassName());//ClassName());
-                MappedSuperclass superClass = null;
+            } else if (superClassType.hasDirectlyAnnotation(MAPPED_SUPERCLASS_FQN)) {
+                Optional<MappedSuperclass> superClassOpt = clazz.getSource().findMappedSuperclass(superClassType);
                 if (superClassOpt.isPresent()) {
-                    superClass = superClassOpt.get();
-                } else if (clazz.isIncludeReference()
-                        || clazz.getSource().isSelectedClass(superClassType.getClassName())) {
-                    try {
-                        ClassExplorer superClazz = clazz.getSource().createClass(superClassType.getQualifiedName());
-                        superClass = new MappedSuperclass();
-                        superClass.load(superClazz);
-                        entityMappings.addMappedSuperclass(superClass);
-                    } catch (FileNotFoundException ex) {
-                        clazz.getSource().addMissingClass(superClassType.getQualifiedName());
-                    }
-                }
-                if (superClass != null) {
-                    super.addSuperclass(superClass);
+                    super.addSuperclass(superClassOpt.get());
                 }
             } else {
                 this.setSuperclassRef(new ReferenceClass(superClassType.getQualifiedName()));

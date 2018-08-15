@@ -1615,7 +1615,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         entityMappingsSpec.setVersion(version);
         entityMappingsSpec.setPreviousVersion(version);
         entityMappingsSpec.setPersistenceUnitName(DEFAULT_PU_NAME);
-        entityMappingsSpec.getSnippets().add(DEAFULT_SNIPPET);
+//        entityMappingsSpec.getSnippets().add(DEAFULT_SNIPPET);
 //      entityMappingsSpec.getInterfaces().add(DEAFULT_INTERFACE);
         return entityMappingsSpec;
     }

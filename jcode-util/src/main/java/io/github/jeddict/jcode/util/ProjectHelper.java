@@ -381,7 +381,8 @@ public class ProjectHelper {
         Parameters.notNull("sourceGroups", sourceGroups); //NOI18N
         Parameters.notNull("folder", folder); //NOI18N
         for (int i = 0; i < sourceGroups.length; i++) {
-            if (org.openide.filesystems.FileUtil.isParentOf(sourceGroups[i].getRootFolder(), folder)) {
+            if (org.openide.filesystems.FileUtil.isParentOf(sourceGroups[i].getRootFolder(), folder)
+                    || sourceGroups[i].getRootFolder().equals(folder)) {
                 return sourceGroups[i];
             }
         }
@@ -717,6 +718,21 @@ public class ProjectHelper {
             }
         }
         return null;
+    }
+
+    public static List<ClassLoader> getClassLoaders(Project project, SourceGroup group) {
+        ClassPathProvider cpp = project.getLookup().lookup(ClassPathProvider.class);
+        List<ClassLoader> classLoaders = new ArrayList<>();
+
+        ClassPath cp = cpp.findClassPath(group.getRootFolder(), ClassPath.COMPILE);
+        if (cp != null) {
+            classLoaders.add(cp.getClassLoader(true));
+        }
+        cp = cpp.findClassPath(group.getRootFolder(), ClassPath.SOURCE);
+        if (cp != null) {
+            classLoaders.add(cp.getClassLoader(true));
+        }
+        return classLoaders;
     }
 
     public static Class getGenericRawType(String typeName, ClassLoader loader) {

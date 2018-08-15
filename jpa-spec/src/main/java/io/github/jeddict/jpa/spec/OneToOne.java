@@ -11,8 +11,6 @@ import io.github.jeddict.jpa.spec.extend.SingleRelationAttribute;
 import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.MemberExplorer;
-import java.util.ArrayList;
-import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -20,7 +18,6 @@ import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -78,17 +75,9 @@ import org.apache.commons.lang.StringUtils;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "one-to-one", propOrder = {
-    "primaryKeyJoinColumn",
-    "primaryKeyForeignKey"
-})
+@XmlType(name = "one-to-one")
 @XmlRootElement
 public class OneToOne extends SingleRelationAttribute {
-
-    @XmlElement(name = "pk-jc")
-    protected List<PrimaryKeyJoinColumn> primaryKeyJoinColumn;//REVENG PENDING
-    @XmlElement(name = "pk-fk")
-    protected ForeignKey primaryKeyForeignKey;//REVENG PENDING
 
     @XmlAttribute(name = "own")
     private Boolean owner;//default true/null
@@ -114,55 +103,6 @@ public class OneToOne extends SingleRelationAttribute {
         super.loadAttribute(member, annotation);
         annotation.getString("mappedBy").ifPresent(this::setMappedBy);
         annotation.getBoolean("orphanRemoval").ifPresent(this::setOrphanRemoval);
-    }
-
-    /**
-     * Gets the value of the primaryKeyJoinColumn property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list, not a
-     * snapshot. Therefore any modification you make to the returned list will
-     * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the primaryKeyJoinColumn property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPrimaryKeyJoinColumn().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link PrimaryKeyJoinColumn }
-     *
-     *
-     */
-    public List<PrimaryKeyJoinColumn> getPrimaryKeyJoinColumn() {
-        if (primaryKeyJoinColumn == null) {
-            primaryKeyJoinColumn = new ArrayList<>();
-        }
-        return this.primaryKeyJoinColumn;
-    }
-
-    /**
-     * Gets the value of the primaryKeyForeignKey property.
-     *
-     * @return possible object is {@link ForeignKey }
-     *
-     */
-    public ForeignKey getPrimaryKeyForeignKey() {
-        return primaryKeyForeignKey;
-    }
-
-    /**
-     * Sets the value of the primaryKeyForeignKey property.
-     *
-     * @param value allowed object is {@link ForeignKey }
-     *
-     */
-    public void setPrimaryKeyForeignKey(ForeignKey value) {
-        this.primaryKeyForeignKey = value;
     }
 
     /**

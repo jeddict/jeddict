@@ -127,6 +127,15 @@ public class Column extends BaseElement implements JAREAnnotationLoader {
         return column;
     }
 
+    public static Column loadMapKey(MemberExplorer member) {
+        Column column = null;
+        Optional<AnnotationExplorer> annotationOpt = member.getAnnotation(javax.persistence.MapKeyColumn.class);
+        if (annotationOpt.isPresent()) {
+            column = load(annotationOpt.get());
+        }
+        return column;
+    }
+
     public static Column load(AnnotationExplorer annotation) {
         Column column = new Column();
         annotation.getString("name").ifPresent(column::setName);

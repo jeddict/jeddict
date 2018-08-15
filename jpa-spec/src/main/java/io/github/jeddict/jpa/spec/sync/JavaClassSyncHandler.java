@@ -19,6 +19,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
@@ -29,7 +30,6 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.Comment;
-import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.TypeParameter;
@@ -62,6 +62,7 @@ import io.github.jeddict.snippet.ClassSnippetLocationType;
 import static io.github.jeddict.snippet.ClassSnippetLocationType.AFTER_CLASS;
 import static io.github.jeddict.snippet.ClassSnippetLocationType.AFTER_FIELD;
 import static io.github.jeddict.snippet.ClassSnippetLocationType.AFTER_METHOD;
+import static io.github.jeddict.snippet.ClassSnippetLocationType.BEFORE_FIELD;
 import static io.github.jeddict.snippet.ClassSnippetLocationType.BEFORE_PACKAGE;
 import static io.github.jeddict.snippet.ClassSnippetLocationType.IMPORT;
 import static io.github.jeddict.snippet.ClassSnippetLocationType.TYPE_JAVADOC;
@@ -70,6 +71,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
@@ -105,24 +107,13 @@ public class JavaClassSyncHandler {
                 .collect(toMap(importDec -> unqualify(importDec.getNameAsString()), identity()));
 
         NodeList<TypeDeclaration<?>> types = existingSource.getTypes();
+
         for (TypeDeclaration<?> type : types) {
             if (type.getNameAsString().equals(javaClass.getPreviousClass())
                     || type.getNameAsString().equals(javaClass.getClazz())) {
                 ClassOrInterfaceDeclaration rootClass = (ClassOrInterfaceDeclaration) type;
 
-                if (type.getParentNode().isPresent()) {
-                    Node parentNode = type.getParentNode().get();
-
-                    parentNode.getComment()
-                            .ifPresent(comment -> syncHeader(comment, BEFORE_PACKAGE));
-
-                    parentNode.getChildNodes()
-                            .stream()
-                            .filter(node -> node instanceof JavadocComment)
-                            .map(node -> (JavadocComment) node)
-                            .forEach(javadocComment -> syncJavadoc(javadocComment, TYPE_JAVADOC));// Alternative of type.getJavadocComment() **
-                }
-
+                syncHeaderJavaDoc(type);
                 syncTypeParameters(rootClass.getTypeParameters(), imports);
                 syncExtendedTypes(rootClass.getExtendedTypes(), imports);
                 syncImplementedTypes(rootClass.getImplementedTypes(), imports);
@@ -256,15 +247,43 @@ public class JavaClassSyncHandler {
                 && method.getNameAsString().toLowerCase().endsWith(method.getParameter(0).getNameAsString().toLowerCase());
     }
 
-    private void syncHeader(Comment comment, ClassSnippetLocationType locationType) {
-        javaClass.addRuntimeSnippet(new ClassSnippet(comment.toString(), locationType));
+    private void syncHeader(Comment comment) {
+        String value = comment.toString();
+        javaClass.addRuntimeSnippet(new ClassSnippet(value, BEFORE_PACKAGE));
     }
 
-    private void syncJavadoc(JavadocComment javadocComment, ClassSnippetLocationType locationType) {
-        String value = javadocComment.toString();
+    private void syncJavadoc(Comment comment) {
+        String value = comment.toString();
         if (javaClass.getDescription() == null || !value.contains(javaClass.getDescription())) {
-            javaClass.addRuntimeSnippet(new ClassSnippet(value, locationType));
+            javaClass.addRuntimeSnippet(new ClassSnippet(value, TYPE_JAVADOC));
         }
+    }
+
+    private void syncHeaderJavaDoc(TypeDeclaration<?> type) {
+        TreeMap<Integer, Comment> comments = new TreeMap<>();
+        int packagePosition = 1;
+        if (type.getParentNode().isPresent()) {
+            Node parentNode = type.getParentNode().get();
+            parentNode.getComment().ifPresent(comment -> comments.put(comment.getBegin().get().line, comment));
+            for (Node node : parentNode.getChildNodes()) {
+                if (node instanceof PackageDeclaration) {
+                    PackageDeclaration packageDeclaration = (PackageDeclaration) node;
+                    if (packageDeclaration.getBegin().isPresent()) {
+                        packagePosition = packageDeclaration.getBegin().get().line;
+                    }
+                    if (packageDeclaration.getComment().isPresent()) {
+                        Comment comment = packageDeclaration.getComment().get();
+                        comments.put(comment.getBegin().get().line, comment);
+                    }
+                } else if (node instanceof Comment) {
+                    Comment comment = (Comment) node;
+                    comments.put(comment.getBegin().get().line, comment);
+                }
+            }
+        }
+        type.getComment().ifPresent(comment -> comments.put(comment.getBegin().get().line, comment));
+        comments.headMap(packagePosition).values().forEach(this::syncHeader);
+        comments.tailMap(packagePosition).values().forEach(this::syncJavadoc);
     }
 
     private void syncTypeParameters(List<TypeParameter> typeParameters, Map<String, ImportDeclaration> imports) {
@@ -353,7 +372,7 @@ public class JavaClassSyncHandler {
     }
 
     private void syncFieldSnippet(FieldDeclaration field, Map<String, ImportDeclaration> imports) {
-        syncClassSnippet(AFTER_FIELD, field.toString(), imports);
+        syncClassSnippet(field.isStatic() ? BEFORE_FIELD : AFTER_FIELD, field.toString(), imports);
     }
 
     private void syncInitializationBlockSnippet(InitializerDeclaration initializationBlock, Map<String, ImportDeclaration> imports) {

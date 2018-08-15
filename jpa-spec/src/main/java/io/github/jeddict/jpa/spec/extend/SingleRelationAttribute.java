@@ -28,6 +28,7 @@ import io.github.jeddict.jpa.spec.ForeignKey;
 import io.github.jeddict.jpa.spec.IdClass;
 import io.github.jeddict.jpa.spec.IdentifiableClass;
 import io.github.jeddict.jpa.spec.JoinColumn;
+import io.github.jeddict.jpa.spec.PrimaryKeyJoinColumn;
 import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.MemberExplorer;
@@ -44,6 +45,7 @@ import javax.lang.model.type.ErrorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 
 /**
  *
@@ -51,14 +53,16 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(propOrder = {
     "joinColumn",
-    "foreignKey"
+    "foreignKey",
+    "primaryKeyJoinColumn",
+    "primaryKeyForeignKey"
 })
 public abstract class SingleRelationAttribute extends RelationAttribute implements JoinColumnHandler {
 
     @XmlElement(name = "join-column")
     private List<JoinColumn> joinColumn;
     @XmlElement(name = "fk")
-    protected ForeignKey foreignKey;//joinColumns foreignKey
+    protected ForeignKey foreignKey;
 
     @XmlAttribute(name = "optional")
     protected Boolean optional;
@@ -66,6 +70,11 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
     private Boolean primaryKey;//id=>primaryKey changed to prevent BaseElement.id field hiding
     @XmlAttribute(name = "maps-id")
     private String mapsId;//used in case of EmbeddedId
+
+    @XmlElement(name = "pk-jc")
+    protected List<PrimaryKeyJoinColumn> primaryKeyJoinColumn;
+    @XmlElement(name = "pk-fk")
+    protected ForeignKey primaryKeyForeignKey;//REVENG PENDING
     
 
     @Override
@@ -134,7 +143,7 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
         this.primaryKey = idAnnotationOpt.isPresent() || mapsIdAnnotationOpt.isPresent();
 
         if (mapsIdAnnotationOpt.isPresent()) {
-            mapsIdAnnotationOpt.get().getString("value").ifPresent(this::setMapsId);
+            this.mapsId = mapsIdAnnotationOpt.get().getString("value").orElse(EMPTY);
         }
 
         annotation.getAnnotation("foreignKey").map(ForeignKey::load).ifPresent(this::setForeignKey);
@@ -149,7 +158,7 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
 
         this.targetEntityPackage = type.getPackageName();
         this.targetEntity = type.getClassName();
-
+        this.primaryKeyJoinColumn = PrimaryKeyJoinColumn.load(member);
     }
 
     /**
@@ -300,4 +309,52 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
         return getConstraintsClass(null);
     }
 
+    /**
+     * Gets the value of the primaryKeyJoinColumn property.
+     *
+     * <p>
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the primaryKeyJoinColumn property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getPrimaryKeyJoinColumn().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link PrimaryKeyJoinColumn }
+     *
+     *
+     */
+    public List<PrimaryKeyJoinColumn> getPrimaryKeyJoinColumn() {
+        if (primaryKeyJoinColumn == null) {
+            primaryKeyJoinColumn = new ArrayList<>();
+        }
+        return this.primaryKeyJoinColumn;
+    }
+
+    /**
+     * Gets the value of the primaryKeyForeignKey property.
+     *
+     * @return possible object is {@link ForeignKey }
+     *
+     */
+    public ForeignKey getPrimaryKeyForeignKey() {
+        return primaryKeyForeignKey;
+    }
+
+    /**
+     * Sets the value of the primaryKeyForeignKey property.
+     *
+     * @param value allowed object is {@link ForeignKey }
+     *
+     */
+    public void setPrimaryKeyForeignKey(ForeignKey value) {
+        this.primaryKeyForeignKey = value;
+    }
 }

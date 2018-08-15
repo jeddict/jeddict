@@ -37,7 +37,6 @@ import io.github.jeddict.jpa.spec.NamedNativeQuery;
 import io.github.jeddict.jpa.spec.NamedQuery;
 import io.github.jeddict.jpa.spec.NamedStoredProcedureQuery;
 import io.github.jeddict.jpa.spec.NamedSubgraph;
-import io.github.jeddict.jpa.spec.PrimaryKeyJoinColumn;
 import io.github.jeddict.jpa.spec.QueryHint;
 import io.github.jeddict.jpa.spec.SecondaryTable;
 import io.github.jeddict.jpa.spec.SequenceGenerator;
@@ -325,27 +324,6 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
             fieldResults.add(fieldResult);
         }
         return fieldResults;
-    }
-
-    protected List<PrimaryKeyJoinColumnSnippet> getPrimaryKeyJoinColumns(
-            List<PrimaryKeyJoinColumn> parsedPrimaryKeyJoinColumns) {
-
-        if (parsedPrimaryKeyJoinColumns == null || parsedPrimaryKeyJoinColumns.isEmpty()) {
-            return Collections.<PrimaryKeyJoinColumnSnippet>emptyList();
-        }
-
-        List<PrimaryKeyJoinColumnSnippet> primaryKeyJoinColumns = new ArrayList<>();
-
-        for (PrimaryKeyJoinColumn parsedPrimaryKeyJoinColumn : parsedPrimaryKeyJoinColumns) {
-            PrimaryKeyJoinColumnSnippet primaryKeyJoinColumn = new PrimaryKeyJoinColumnSnippet();
-            primaryKeyJoinColumn.setColumnDefinition(parsedPrimaryKeyJoinColumn.getColumnDefinition());
-            primaryKeyJoinColumn.setName(parsedPrimaryKeyJoinColumn.getName());
-            primaryKeyJoinColumn.setReferencedColumnName(parsedPrimaryKeyJoinColumn.getReferencedColumnName());
-            primaryKeyJoinColumn.setForeignKey(getForeignKey(parsedPrimaryKeyJoinColumn.getForeignKey()));
-            primaryKeyJoinColumns.add(primaryKeyJoinColumn);
-        }
-
-        return primaryKeyJoinColumns;
     }
 
     protected List<NamedAttributeNodeSnippet> getNamedAttributeNodes(

@@ -1107,6 +1107,11 @@ public class JavaSourceHelper {
         if (fqClassName == null) {
             return EMPTY;
         }
+
+        if (fqClassName.endsWith(".class")) {
+            fqClassName = fqClassName.substring(0, fqClassName.lastIndexOf(".class"));
+        }
+
         if (fqClassName.indexOf('.') == -1) {
             return fqClassName;
         }

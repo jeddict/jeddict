@@ -12,10 +12,8 @@ import io.github.jeddict.jpa.spec.extend.CompositionAttribute;
 import io.github.jeddict.jpa.spec.extend.ConvertContainerHandler;
 import io.github.jeddict.jpa.spec.validator.override.AssociationValidator;
 import io.github.jeddict.jpa.spec.validator.override.AttributeValidator;
-import io.github.jeddict.source.ClassExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.MemberExplorer;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -133,25 +131,11 @@ public class Embedded extends CompositionAttribute<Embeddable> implements Associ
         embedded.setAccess(AccessType.load(member));
 
         ResolvedReferenceTypeDeclaration type = member.getTypeDeclaration();
-        Optional<Embeddable> embeddableClassSpecOpt = entityMappings.findEmbeddable(type.getClassName());
-        Embeddable embeddableClassSpec = null;
-        if (embeddableClassSpecOpt.isPresent()) {
-            embeddableClassSpec = embeddableClassSpecOpt.get();
-        } else if (member.isIncludeReference()
-                || member.getSource().isSelectedClass(type.getClassName())) {
-            try {
-                ClassExplorer clazz = member.getSource().createClass(type.getQualifiedName());
-                embeddableClassSpec = new Embeddable();
-                embeddableClassSpec.load(clazz);
-                entityMappings.addEmbeddable(embeddableClassSpec);
-            } catch (FileNotFoundException ex) {
-                member.getSource().addMissingClass(type.getQualifiedName());
-            }
-        }
-        if (embeddableClassSpec == null) {
+        Optional<Embeddable> embeddableOpt = member.getSource().findEmbeddable(type);
+        if (!embeddableOpt.isPresent()) {
             return null;
         }
-        embedded.setConnectedClass(embeddableClassSpec);
+        embedded.setConnectedClass(embeddableOpt.get());
         embedded.setConverts(Convert.load(member));
         return embedded;
     }

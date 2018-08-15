@@ -71,6 +71,7 @@ public class MapKey implements JAREAnnotationLoader {
         MapKey mapKey = null;
         Optional<AnnotationExplorer> mapkeyOpt = member.getAnnotation(javax.persistence.MapKey.class);
         if (mapkeyOpt.isPresent()) {
+            mapKey = new MapKey();
             mapkeyOpt.get()
                     .getString("name").ifPresent(mapKey::setName);
         }

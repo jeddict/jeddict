@@ -77,4 +77,15 @@ public enum EnumType {
         }
         return null;
     }
+
+    public static EnumType loadMapKey(MemberExplorer member) {
+        Optional<AnnotationExplorer> enumeratedOpt = member.getAnnotation(javax.persistence.MapKeyEnumerated.class);
+        if (enumeratedOpt.isPresent()) {
+            AnnotationExplorer annotation = enumeratedOpt.get();
+            return annotation.getEnum("value")
+                    .map(EnumType::valueOf)
+                    .orElse(DEFAULT);
+        }
+        return null;
+    }
 }

@@ -93,11 +93,12 @@ public class JavaUtil {
     }
 
     public static boolean isGetterMethod(String methodName) {
-        return methodName.startsWith("get") || methodName.startsWith("is");
+        return (methodName.startsWith("get") && methodName.length() > 3)
+                || (methodName.startsWith("is") && methodName.length() > 2);
     }
 
     public static boolean isSetterMethod(String methodName) {
-        return methodName.startsWith("set") || methodName.startsWith("is");
+        return (methodName.startsWith("set") && methodName.length() > 3);
     }
 
     public static boolean isBeanMethod(String methodName) {

@@ -19,6 +19,8 @@ import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import io.github.jeddict.bv.constraints.Constraint;
 import io.github.jeddict.bv.constraints.Size;
+import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ENTITY_FQN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_COLUMN_FQN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_ENUMERATED_FQN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMNS_FQN;
@@ -251,43 +253,33 @@ public abstract class MultiRelationAttribute extends RelationAttribute
             this.mapKeyConvert = Convert.load(member, mapKeyExist, true);
             this.mapKey = MapKey.load(member);
             this.mapKeyType = this.mapKey != null ? MapKeyType.EXT : MapKeyType.NEW;
-//
-//            DeclaredType keyDeclaredType = MapKeyClass.getDeclaredType(element);
-//            if (keyDeclaredType == null) {
-//                keyDeclaredType = (DeclaredType) ((DeclaredType) variableElement.asType()).getTypeArguments().get(0);
-//            }
-//            if (isEmbeddable(keyDeclaredType.asElement())) {
-//                loadEmbeddableClass(entityMappings, element, variableElement, keyDeclaredType);
-//                this.mapKeyAttributeType = getSimpleClassName(keyDeclaredType.toString());
-//            } else if (isEntity(keyDeclaredType.asElement())) {
-//                loadEntity(entityMappings, element, variableElement, keyDeclaredType);
-//                this.mapKeyAttributeType = getSimpleClassName(keyDeclaredType.toString());
-//            } else {
-//                this.mapKeyAttributeType = keyDeclaredType.toString();
-//            }
-//
-//            this.mapKeyColumn = new Column().load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_COLUMN_FQN));
-//            this.mapKeyTemporal = TemporalType.load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_TEMPORAL_FQN));
-//            this.mapKeyEnumerated = EnumType.load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_ENUMERATED_FQN));
-//
-//            AnnotationMirror joinColumnsAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, MAP_KEY_JOIN_COLUMNS_FQN);
-//            if (joinColumnsAnnotationMirror != null) {
-//                List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(joinColumnsAnnotationMirror, "value");
-//                if (joinColumnsAnnot != null) {
-//                    for (Object joinColumnObj : joinColumnsAnnot) {
-//                        this.getMapKeyJoinColumn().add(new JoinColumn().load(element, (AnnotationMirror) joinColumnObj));
-//                    }
-//                }
-//            } else {
-//                AnnotationMirror joinColumnAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, MAP_KEY_JOIN_COLUMN_FQN);
-//                if (joinColumnAnnotationMirror != null) {
-//                    this.getMapKeyJoinColumn().add(new JoinColumn().load(element, joinColumnAnnotationMirror));
-//                }
-//            }
-//
-//            this.mapKeyForeignKey = ForeignKey.load(element, null);
-//            this.getMapKeyAttributeOverride().addAll(AttributeOverride.load(element));
-//
+
+            ResolvedReferenceTypeDeclaration keyType = MapKeyClass.getDeclaredType(member);
+            if (keyType.hasDirectlyAnnotation(EMBEDDABLE_FQN)) {
+                Optional<Embeddable> embeddableOpt = member.getSource().findEmbeddable(keyType);
+                if (!embeddableOpt.isPresent()) {
+                    throw new IllegalStateException("Embeddable Not found " + keyType.getQualifiedName());
+                }
+                this.mapKeyAttributeType = embeddableOpt.get().getClazz(); //TODO set Embeddable
+            } else if (keyType.hasDirectlyAnnotation(ENTITY_FQN)) {
+                Optional<Entity> entityOpt = member.getSource().findEntity(keyType);
+                if (!entityOpt.isPresent()) {
+                    throw new IllegalStateException("Entity Not found " + keyType.getQualifiedName());
+                }
+                this.mapKeyAttributeType = entityOpt.get().getClazz(); //TODO set Entity
+            } else {
+                this.mapKeyAttributeType = keyType.getQualifiedName();
+            }
+
+            this.mapKeyColumn = Column.loadMapKey(member);
+            this.mapKeyTemporal = TemporalType.loadMapKey(member);
+            this.mapKeyEnumerated = EnumType.loadMapKey(member);
+            this.mapKeyJoinColumn = JoinColumn.loadMapKey(member);
+
+            member.getAnnotation(javax.persistence.ForeignKey.class)
+                    .map(ForeignKey::load)
+                    .ifPresent(this::setMapKeyForeignKey);
+            this.mapKeyAttributeOverride = AttributeOverride.load(member);
         }
     }
 

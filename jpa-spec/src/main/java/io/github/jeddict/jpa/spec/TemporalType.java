@@ -69,4 +69,11 @@ public enum TemporalType {
                 .orElse(null);
     }
 
+    public static TemporalType loadMapKey(MemberExplorer member) {
+        return member
+                .getEnumAttribute(javax.persistence.MapKeyTemporal.class, "value")
+                .map(TemporalType::valueOf)
+                .orElse(null);
+    }
+
 }

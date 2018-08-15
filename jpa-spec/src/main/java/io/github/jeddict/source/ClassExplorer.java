@@ -33,6 +33,7 @@ import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualify;
 import static io.github.jeddict.jcode.util.JavaUtil.getFieldName;
 import static io.github.jeddict.jcode.util.JavaUtil.isGetterMethod;
 import io.github.jeddict.jpa.spec.EntityMappings;
+import java.io.FileNotFoundException;
 import java.util.Collection;
 import static java.util.Collections.emptyMap;
 import java.util.EnumSet;
@@ -46,6 +47,7 @@ import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -193,8 +195,15 @@ public class ClassExplorer extends AnnotatedMember {
                 ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) type;
                 if (!clazz.getExtendedTypes().isEmpty()) {
                     ClassOrInterfaceType parentClassType = clazz.getExtendedTypes().get(0);
-                    ClassOrInterfaceDeclaration parentClassDeclaration = (ClassOrInterfaceDeclaration) parentClassType.asReferenceType().getParentNode().get();
-                    fieldAccessValue = new ClassExplorer(source, parentClassDeclaration).isFieldAccess();
+                    String parentClassQualifiedName = parentClassType.resolve().asReferenceType().getQualifiedName();
+                    try {
+                        fieldAccessValue = getSource().createClass(parentClassQualifiedName)
+                                .map(ClassExplorer::isFieldAccess)
+                                .orElse(true);
+                    } catch (FileNotFoundException ex) {
+                        Exceptions.printStackTrace(ex);
+                        fieldAccessValue = true;
+                    }
                 } else {
                     fieldAccessValue = true;
                 }

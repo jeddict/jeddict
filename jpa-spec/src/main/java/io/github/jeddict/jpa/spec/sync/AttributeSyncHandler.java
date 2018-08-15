@@ -19,7 +19,7 @@ import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.ReferenceType;
@@ -77,7 +77,7 @@ public class AttributeSyncHandler {
     }
 
     public void syncExistingSnippet(String name, FieldDeclaration field, Map<String, ImportDeclaration> imports) {
-        syncJavadoc(field.getJavadocComment(), PROPERTY_JAVADOC);
+        syncJavadoc(field.getComment(), PROPERTY_JAVADOC);
         syncAnnotation(field.getAnnotations(), PROPERTY, imports);
     }
 
@@ -85,18 +85,18 @@ public class AttributeSyncHandler {
         String methodName = method.getNameAsString();
         boolean getterMethod = isGetterMethod(methodName);
 
-        syncJavadoc(method.getJavadocComment(), getterMethod ? GETTER_JAVADOC : SETTER_JAVADOC);
+        syncJavadoc(method.getComment(), getterMethod ? GETTER_JAVADOC : SETTER_JAVADOC);
         syncAnnotation(method.getAnnotations(), getterMethod ? GETTER : SETTER, imports);
         syncThrows(method, getterMethod, imports);
         syncMethodBody(name, method, getterMethod, imports);
     }
 
-    private void syncJavadoc(Optional<JavadocComment> docOptional, AttributeSnippetLocationType locationType) {
-        if (docOptional.isPresent()) {
-            JavadocComment doc = docOptional.get();
+    private void syncJavadoc(Optional<Comment> commentOpt, AttributeSnippetLocationType locationType) {
+        if (commentOpt.isPresent()) {
+            Comment comment = commentOpt.get();
             AttributeSnippet attributeSnippet = new AttributeSnippet();
             attributeSnippet.setLocationType(locationType);
-            attributeSnippet.setValue(doc.toString());
+            attributeSnippet.setValue(String.format("%" + comment.getBegin().get().column + "s%s", "", comment.toString()));
             if (attribute.getDescription() == null
                     || !attributeSnippet.getValue().contains(attribute.getDescription())) {
                 attribute.addRuntimeSnippet(attributeSnippet);

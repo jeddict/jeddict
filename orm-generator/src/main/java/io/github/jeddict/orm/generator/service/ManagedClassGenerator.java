@@ -36,6 +36,7 @@ import io.github.jeddict.jpa.spec.ManyToMany;
 import io.github.jeddict.jpa.spec.ManyToOne;
 import io.github.jeddict.jpa.spec.OneToMany;
 import io.github.jeddict.jpa.spec.OneToOne;
+import io.github.jeddict.jpa.spec.PrimaryKeyJoinColumn;
 import io.github.jeddict.jpa.spec.TemporalType;
 import io.github.jeddict.jpa.spec.Transient;
 import io.github.jeddict.jpa.spec.UniqueConstraint;
@@ -43,6 +44,7 @@ import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.JoinColumnHandler;
 import io.github.jeddict.jpa.spec.extend.MapKeyHandler;
 import io.github.jeddict.jpa.spec.extend.MapKeyType;
+import io.github.jeddict.jpa.spec.extend.SingleRelationAttribute;
 import io.github.jeddict.jpa.spec.validator.ConvertValidator;
 import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
 import io.github.jeddict.jpa.spec.validator.column.JoinColumnValidator;
@@ -73,6 +75,8 @@ import io.github.jeddict.orm.generator.compiler.OneToManySnippet;
 import io.github.jeddict.orm.generator.compiler.OneToOneSnippet;
 import io.github.jeddict.orm.generator.compiler.OrderBySnippet;
 import io.github.jeddict.orm.generator.compiler.OrderColumnSnippet;
+import io.github.jeddict.orm.generator.compiler.PrimaryKeyJoinColumnSnippet;
+import io.github.jeddict.orm.generator.compiler.PrimaryKeyJoinColumnsSnippet;
 import io.github.jeddict.orm.generator.compiler.TemporalSnippet;
 import io.github.jeddict.orm.generator.compiler.UniqueConstraintSnippet;
 import io.github.jeddict.orm.generator.compiler.def.ManagedClassDefSnippet;
@@ -237,6 +241,27 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
         return variableDef;
     }
 
+    protected List<PrimaryKeyJoinColumnSnippet> getPrimaryKeyJoinColumns(
+            List<PrimaryKeyJoinColumn> parsedPrimaryKeyJoinColumns) {
+
+        if (parsedPrimaryKeyJoinColumns == null || parsedPrimaryKeyJoinColumns.isEmpty()) {
+            return Collections.<PrimaryKeyJoinColumnSnippet>emptyList();
+        }
+
+        List<PrimaryKeyJoinColumnSnippet> primaryKeyJoinColumns = new ArrayList<>();
+
+        for (PrimaryKeyJoinColumn parsedPrimaryKeyJoinColumn : parsedPrimaryKeyJoinColumns) {
+            PrimaryKeyJoinColumnSnippet primaryKeyJoinColumn = new PrimaryKeyJoinColumnSnippet();
+            primaryKeyJoinColumn.setColumnDefinition(parsedPrimaryKeyJoinColumn.getColumnDefinition());
+            primaryKeyJoinColumn.setName(parsedPrimaryKeyJoinColumn.getName());
+            primaryKeyJoinColumn.setReferencedColumnName(parsedPrimaryKeyJoinColumn.getReferencedColumnName());
+            primaryKeyJoinColumn.setForeignKey(getForeignKey(parsedPrimaryKeyJoinColumn.getForeignKey()));
+            primaryKeyJoinColumns.add(primaryKeyJoinColumn);
+        }
+
+        return primaryKeyJoinColumns;
+    }
+
     protected VariableDefSnippet processOneToOne(OneToOne parsedOneToOne) {
         List<String> cascadeTypes = getCascadeTypes(parsedOneToOne.getCascade());
 
@@ -270,6 +295,7 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
         variableDef.setRelationDef(oneToOne);
         variableDef.setJoinTable(joinTable);
         variableDef.setJoinColumns(getJoinColumnsSnippet(parsedOneToOne, false));
+        variableDef.setPrimaryKeyJoinColumns(processPrimaryKeyJoinColumns(parsedOneToOne));
         return variableDef;
     }
 
@@ -304,7 +330,20 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
         variableDef.setRelationDef(manyToOne);
         variableDef.setJoinTable(joinTable);
         variableDef.setJoinColumns(getJoinColumnsSnippet(parsedManyToOne, false));
+        variableDef.setPrimaryKeyJoinColumns(processPrimaryKeyJoinColumns(parsedManyToOne));
         return variableDef;
+    }
+
+    private PrimaryKeyJoinColumnsSnippet processPrimaryKeyJoinColumns(SingleRelationAttribute singleRelationAttribute) {
+        PrimaryKeyJoinColumnsSnippet primaryKeyJoinColumnsSnippet = null;
+        List<PrimaryKeyJoinColumnSnippet> primaryKeyJoinColumns = getPrimaryKeyJoinColumns(singleRelationAttribute.getPrimaryKeyJoinColumn());
+        ForeignKeySnippet primaryKeyForeignKey = getForeignKey(singleRelationAttribute.getPrimaryKeyForeignKey());
+        if (primaryKeyJoinColumns != null && !primaryKeyJoinColumns.isEmpty()) {
+            primaryKeyJoinColumnsSnippet = new PrimaryKeyJoinColumnsSnippet(repeatable);
+            primaryKeyJoinColumnsSnippet.setPrimaryKeyJoinColumns(primaryKeyJoinColumns);
+            primaryKeyJoinColumnsSnippet.setForeignKey(primaryKeyForeignKey);
+        }
+        return primaryKeyJoinColumnsSnippet;
     }
 
     protected VariableDefSnippet processOneToMany(OneToMany parsedOneToMany) {

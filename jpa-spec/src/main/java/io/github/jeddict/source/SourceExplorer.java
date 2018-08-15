@@ -17,19 +17,29 @@ package io.github.jeddict.source;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import static io.github.jeddict.jcode.util.Constants.JAVA_EXT_SUFFIX;
 import io.github.jeddict.jcode.util.JavaIdentifiers;
+import static io.github.jeddict.jcode.util.ProjectHelper.getClassLoaders;
+import static io.github.jeddict.jcode.util.ProjectHelper.getFolderSourceGroup;
+import io.github.jeddict.jpa.spec.Embeddable;
+import io.github.jeddict.jpa.spec.Entity;
 import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.jpa.spec.MappedSuperclass;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import static java.util.Collections.unmodifiableList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toSet;
+import org.netbeans.api.project.FileOwnerQuery;
+import org.netbeans.api.project.Project;
+import org.netbeans.api.project.SourceGroup;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 
@@ -69,21 +79,38 @@ public class SourceExplorer {
         combinedTypeSolver.add(new JavaParserTypeSolver(FileUtil.toFile(sourceRoot)));
         combinedTypeSolver.add(new ReflectionTypeSolver());
 
+        SourceGroup sourceGroup = getFolderSourceGroup(sourceRoot);
+        Project project = FileOwnerQuery.getOwner(sourceRoot);
+        List<ClassLoader> classLoaders = getClassLoaders(project, sourceGroup);
+        for (ClassLoader classLoader : classLoaders) {
+            combinedTypeSolver.add(new ClassloaderTypeSolver(classLoader));
+        }
+
         // Configure JavaParser to use type resolution
         JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
         JavaParser.getStaticConfiguration().setSymbolResolver(symbolSolver);
     }
 
-    private CompilationUnit createCompilationUnit(String clazzFQN) throws FileNotFoundException {
+    public Optional<CompilationUnit> createCompilationUnit(String clazzFQN) throws FileNotFoundException {
         FileObject classFile = sourceRoot.getFileObject(clazzFQN.replace(".", "/") + JAVA_EXT_SUFFIX);
-        return JavaParser.parse(FileUtil.toFile(classFile));
+        return createCompilationUnit(classFile);
     }
 
-    public ClassExplorer createClass(String clazzFQN) throws FileNotFoundException {
-        CompilationUnit cu = createCompilationUnit(clazzFQN);
-        ClassExplorer clazz = new ClassExplorer(this, cu);
-        this.addClass(clazz);
-        return clazz;
+    public Optional<CompilationUnit> createCompilationUnit(FileObject classFile) throws FileNotFoundException {
+        if (classFile != null) {
+            return Optional.of(JavaParser.parse(FileUtil.toFile(classFile)));
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ClassExplorer> createClass(String clazzFQN) throws FileNotFoundException {
+        Optional<CompilationUnit> cuOpt = createCompilationUnit(clazzFQN);
+        if (cuOpt.isPresent()) {
+            ClassExplorer clazz = new ClassExplorer(this, cuOpt.get());
+            this.addClass(clazz);
+            return Optional.of(clazz);
+        }
+        return Optional.empty();
     }
 
     public EntityMappings getEntityMappings() {
@@ -122,5 +149,58 @@ public class SourceExplorer {
         return missingClasses.remove(clazz);
     }
 
+    public Optional<Embeddable> findEmbeddable(ResolvedReferenceTypeDeclaration type) {
+        Optional<Embeddable> embeddableOpt = entityMappings.findEmbeddable(type.getClassName());
+        if (!embeddableOpt.isPresent()
+                && (isIncludeReference() || isSelectedClass(type.getClassName()))) {
+            try {
+                embeddableOpt = createClass(type.getQualifiedName()).map(clazz -> {
+                    Embeddable embeddable = new Embeddable();
+                    embeddable.load(clazz);
+                    entityMappings.addEmbeddable(embeddable);
+                    return embeddable;
+                });
+            } catch (FileNotFoundException ex) {
+                addMissingClass(type.getQualifiedName());
+            }
+        }
+        return embeddableOpt;
+    }
+
+    public Optional<Entity> findEntity(ResolvedReferenceTypeDeclaration type) {
+        Optional<Entity> entityOpt = entityMappings.findEntity(type.getClassName());
+        if (!entityOpt.isPresent()
+                && (isIncludeReference() || isSelectedClass(type.getClassName()))) {
+            try {
+                entityOpt = createClass(type.getQualifiedName()).map(clazz -> {
+                    Entity entity = new Entity();
+                    entity.load(clazz);
+                    entityMappings.addEntity(entity);
+                    return entity;
+                });
+            } catch (FileNotFoundException ex) {
+                addMissingClass(type.getQualifiedName());
+            }
+        }
+        return entityOpt;
+    }
+
+    public Optional<MappedSuperclass> findMappedSuperclass(ResolvedReferenceTypeDeclaration type) {
+        Optional<MappedSuperclass> mappedSuperclassOpt = entityMappings.findMappedSuperclass(type.getClassName());
+        if (!mappedSuperclassOpt.isPresent()
+                && (isIncludeReference() || isSelectedClass(type.getClassName()))) {
+            try {
+                mappedSuperclassOpt = createClass(type.getQualifiedName()).map(clazz -> {
+                    MappedSuperclass mappedSuperclass = new MappedSuperclass();
+                    mappedSuperclass.load(clazz);
+                    entityMappings.addMappedSuperclass(mappedSuperclass);
+                    return mappedSuperclass;
+                });
+            } catch (FileNotFoundException ex) {
+                addMissingClass(type.getQualifiedName());
+            }
+        }
+        return mappedSuperclassOpt;
+    }
 
 }

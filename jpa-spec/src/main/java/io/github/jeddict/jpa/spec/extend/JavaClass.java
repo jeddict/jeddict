@@ -266,6 +266,10 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode
         clazz.getReferenceClassAttribute(javax.json.bind.annotation.JsonbVisibility.class, "value")
                 .ifPresent(this::setJsonbVisibility);
 
+        if (clazz.getAnnotation(javax.xml.bind.annotation.XmlRootElement.class).isPresent()) {
+            this.xmlRootElement = true;
+        }
+
     }
 
     public void beforeMarshal(Marshaller marshaller) {

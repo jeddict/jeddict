@@ -33,7 +33,7 @@ import io.github.jeddict.jsonb.modeler.JSONBModeler;
 @org.netbeans.modeler.specification.annotaton.DiagramModel(id = "JSONB", name = "JSONB Viewer", 
         modelerUtil = JSONBModelerUtil.class, modelerScene = JSONBModelerScene.class,
         relationValidator = RelationValidator.class,
-        version = "4.9", architectureVersion = "1.4")
+        version = "5.0-beta-rc1", architectureVersion = "1.4")
 @org.openide.util.lookup.ServiceProvider(service = JSONBModeler.class)
 public class JSONBViewerActionListener extends ModelerFileActionListener implements JSONBModeler {
 

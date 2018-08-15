@@ -258,12 +258,12 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
             this.cacheable = cacheableOpt.get().getBoolean("value").orElse(true);
         }
 
+        this.convert = Convert.load(clazz);
+        this.primaryKeyJoinColumn = PrimaryKeyJoinColumn.load(clazz);
         //        AnnotationMirror primaryKeyForeignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "primaryKeyForeignKeyValue");
 //            if (primaryKeyForeignKeyValue != null) {
 //                this.primaryKeyForeignKey = ForeignKey.load(element, primaryKeyForeignKeyValue);
 //            }
-        this.convert = Convert.load(clazz);
-        this.primaryKeyJoinColumn = PrimaryKeyJoinColumn.load(clazz);
         this.attributeOverride = AttributeOverride.load(clazz);
         this.associationOverride = AssociationOverride.load(clazz);
         this.namedEntityGraph = NamedEntityGraph.load(clazz);

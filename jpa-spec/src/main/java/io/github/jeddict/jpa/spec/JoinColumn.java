@@ -154,6 +154,27 @@ public class JoinColumn implements JAREAnnotationLoader, IJoinColumn {
         return joinColumns;
     }
 
+    public static List<JoinColumn> loadMapKey(AnnotatedMember member) {
+        List<JoinColumn> joinColumns = new ArrayList<>();
+        Optional<AnnotationExplorer> joinColumnsOpt = member.getAnnotation(javax.persistence.MapKeyJoinColumns.class);
+        if (joinColumnsOpt.isPresent()) {
+            joinColumns.addAll(
+                    joinColumnsOpt.get()
+                            .getAnnotationList("value")
+                            .map(JoinColumn::load)
+                            .collect(toList())
+            );
+        }
+
+        joinColumns.addAll(
+                member.getRepeatableAnnotations(javax.persistence.MapKeyJoinColumn.class)
+                        .map(JoinColumn::load)
+                        .collect(toList())
+        );
+
+        return joinColumns;
+    }
+
 
     /**
      * Gets the value of the name property.

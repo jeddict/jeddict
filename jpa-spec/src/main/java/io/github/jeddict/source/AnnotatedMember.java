@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
 
 /**
@@ -136,18 +135,18 @@ public abstract class AnnotatedMember {
         if (expressionOpt.isPresent()) {
             Expression expression = expressionOpt.get();
             if (expression.isStringLiteralExpr()) {
-                return expressionOpt
-                        .flatMap(Expression::toStringLiteralExpr)
+                return expression.toStringLiteralExpr()
                         .map(StringLiteralExpr::getValue);
             } else if (expression.isNameExpr()) {
-                return expressionOpt
-                        .flatMap(Expression::toNameExpr)
+                return expression.toNameExpr()
                         .map(NameExpr::getNameAsString);
             } else if (expression.isIntegerLiteralExpr()) {
-                return expressionOpt
-                        .flatMap(Expression::toIntegerLiteralExpr)
+                return expression.toIntegerLiteralExpr()
                         .map(IntegerLiteralExpr::asInt)
                         .map(String::valueOf);
+            } else if (expression.isFieldAccessExpr() || expression.isBinaryExpr()) {
+                return expressionOpt
+                        .map(Expression::toString);
             } else {
                 throw new UnsupportedOperationException();
             }
@@ -156,15 +155,24 @@ public abstract class AnnotatedMember {
     }
 
     static List<String> getStringAttributes(AnnotationExpr annotationExpr, String attributeName) {
-        List<String> values = emptyList();
+        List<String> values = new ArrayList<>();
         Optional<Expression> expOptional = getAttribute(annotationExpr, attributeName);
         if (expOptional.isPresent()) {
-            values = expOptional.get()
-                    .asArrayInitializerExpr()
-                    .getChildNodes()
-                    .stream()
-                    .map(exp -> exp.toString())
-                    .collect(toList());
+            Expression expression = expOptional.get();
+            if (expression.isStringLiteralExpr()) {
+                values.add(expression.asStringLiteralExpr().getValue());
+            } else if (expression.isArrayInitializerExpr()) {
+                List<Node> nodes = expression.asArrayInitializerExpr().getChildNodes();
+                for (Node node : nodes) {
+                    if (node instanceof StringLiteralExpr) {
+                        values.add(((StringLiteralExpr) node).getValue());
+                    } else {
+                        values.add(node.toString());
+                    }
+                }
+            } else {
+                throw new UnsupportedOperationException();
+            }
         }
         return values;
     }
@@ -304,17 +312,25 @@ public abstract class AnnotatedMember {
     }
 
     static List<String> getClassNameAttributes(AnnotationExpr annotationExpr, String attributeName) {
-        List<String> values = emptyList();
+        List<String> values = new ArrayList<>();
         Optional<Expression> expOptional = getAttribute(annotationExpr, attributeName);
         if (expOptional.isPresent()) {
-            values = expOptional.get()
-                    .asArrayInitializerExpr()
-                    .getChildNodes()
-                    .stream()
-                    .map(exp -> exp.toString())
-                    .collect(toList());
+            Expression expression = expOptional.get();
+            if (expression.isClassExpr()) {
+                values.add(expression.asClassExpr().getTypeAsString());
+            } else if (expression.isArrayInitializerExpr()) {
+                for (Node node : expression.asArrayInitializerExpr().getChildNodes()) {
+                    if (node instanceof ClassExpr) {
+                        values.add(((ClassExpr) node).getTypeAsString());
+                    } else {
+                        throw new UnsupportedOperationException();
+                    }
+                }
+            } else {
+                throw new UnsupportedOperationException();
+            }
         }
-        return values;  // ?? fqn
+        return values;
     }
 
     public Optional<ReferenceClass> getReferenceClassAttribute(Class<? extends Annotation> annotationClass, String attributeName) {
@@ -328,17 +344,10 @@ public abstract class AnnotatedMember {
                 .map(ReferenceClass::new);
     }
 
-    static Stream<ReferenceClass> getReferenceClassAttributes(AnnotationExpr annotationExpr, String attributeName) {
-        Stream<ReferenceClass> values = Stream.of();
-        Optional<Expression> expOptional = getAttribute(annotationExpr, attributeName);
-        if (expOptional.isPresent()) {
-            values = expOptional.get()
-                    .asArrayInitializerExpr()
-                    .getChildNodes()
-                    .stream()
-                    .map(exp -> new ReferenceClass(exp.toString()));
-        }
-        return values;
+    static Stream<ReferenceClass> getReferenceClassAttributes(AnnotationExpr annotationExpr, String attributeName) { // use getClassNameAttributes
+        return getClassNameAttributes(annotationExpr, attributeName)
+                .stream()
+                .map(ReferenceClass::new);
     }
 
     // Annotation type

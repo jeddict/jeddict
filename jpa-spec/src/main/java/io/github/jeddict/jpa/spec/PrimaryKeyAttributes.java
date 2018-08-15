@@ -251,10 +251,13 @@ public class PrimaryKeyAttributes extends PersistenceAttributes<IdentifiableClas
             String embeddableClassFQN = null;
             try {
                 embeddableClassFQN = embeddedIdMember.getType();
-                ClassExplorer embeddableClass = clazz.getSource().createClass(embeddableClassFQN);
-                for (MemberExplorer member : embeddableClass.getMembers()) {
-                    if (!mapsId.contains(member.getFieldName())) {
-                        this.addId(Id.load(member));
+
+                Optional<ClassExplorer> embeddableOpt = clazz.getSource().createClass(embeddableClassFQN);
+                if (embeddableOpt.isPresent()) {
+                    for (MemberExplorer member : embeddableOpt.get().getMembers()) {
+                        if (!mapsId.contains(member.getFieldName())) {
+                            this.addId(Id.load(member));
+                        }
                     }
                 }
             } catch (FileNotFoundException ex) {

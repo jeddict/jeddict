@@ -19,21 +19,24 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.LiteralStringValueExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithAnnotations;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
+import com.github.javaparser.utils.Pair;
 import io.github.jeddict.bv.constraints.Constraint;
 import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualify;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import static java.util.stream.Collectors.toList;
 
 /**
  *
@@ -97,10 +100,13 @@ public class MemberExplorer extends AnnotatedMember {
     }
 
     public List<String> getTypeArguments() {
-        return getReferenceType().getTypeParametersMap()
-                .stream()
-                .map(param -> param.b.asReferenceType().getQualifiedName())
-                .collect(toList());
+        List<String> args = new ArrayList<>();
+        for (Pair<ResolvedTypeParameterDeclaration, ResolvedType> pair : getReferenceType().getTypeParametersMap()) {
+            if (pair.b.isReferenceType()) {
+                args.add(pair.b.asReferenceType().getQualifiedName());
+            }
+        }
+        return args;
     }
 
     public Optional<ResolvedReferenceTypeDeclaration> getTypeArgumentDeclaration(int index) {
@@ -115,10 +121,13 @@ public class MemberExplorer extends AnnotatedMember {
     }
 
     public List<ResolvedReferenceTypeDeclaration> getTypeArgumentDeclarations() {
-        return getReferenceType().getTypeParametersMap()
-                .stream()
-                .map(param -> param.b.asReferenceType().getTypeDeclaration())
-                .collect(toList());
+        List<ResolvedReferenceTypeDeclaration> declarations = new ArrayList<>();
+        for (Pair<ResolvedTypeParameterDeclaration, ResolvedType> pair : getReferenceType().getTypeParametersMap()) {
+            if (pair.b.isReferenceType()) {
+                declarations.add(pair.b.asReferenceType().getTypeDeclaration());
+            } // isTypeVariable()asTypeParameter()
+        }
+        return declarations;
     }
 
     public ResolvedReferenceTypeDeclaration getTypeDeclaration() {
@@ -181,6 +190,8 @@ public class MemberExplorer extends AnnotatedMember {
                 defaultValue = ((NodeWithSimpleName) node).getNameAsString();
             } else if (node instanceof LiteralStringValueExpr) {
                 defaultValue = "'" + ((LiteralStringValueExpr) node).getValue() + "'";
+            } else if (node instanceof Expression) { // includes ObjectCreationExpr
+                defaultValue = node.toString();
             } else {
                 throw new UnsupportedOperationException();
             }

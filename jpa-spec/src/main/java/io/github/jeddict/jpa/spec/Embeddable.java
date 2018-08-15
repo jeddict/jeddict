@@ -11,7 +11,6 @@ import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE_FQN;
 import io.github.jeddict.jpa.spec.extend.ReferenceClass;
 import io.github.jeddict.source.ClassExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
-import java.io.FileNotFoundException;
 import java.util.Optional;
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -77,29 +76,13 @@ public class Embeddable extends ManagedClass<EmbeddableAttributes> {
     }
 
     public void load(ClassExplorer clazz) {
-        EntityMappings entityMappings = clazz.getEntityMappings();
         Optional<ResolvedReferenceTypeDeclaration> superClassTypeOpt = clazz.getSuperClass();
         if (superClassTypeOpt.isPresent()) {
             ResolvedReferenceTypeDeclaration superClassType = superClassTypeOpt.get();
-            if (superClassType.hasAnnotation(EMBEDDABLE_FQN)) {
-                Optional<Embeddable> superClassOpt = entityMappings.findEmbeddable(superClassType.getClassName());
-                Embeddable superClass = null;
-                if (superClassOpt.isPresent()) {
-                    superClass = superClassOpt.get();
-                } else if (clazz.isIncludeReference()
-                        || clazz.getSource().isSelectedClass(superClassType.getClassName())) {
-                    try {
-                        ClassExplorer superClazz = clazz.getSource().createClass(superClassType.getQualifiedName());
-                        superClass = new Embeddable();
-                        superClass.load(superClazz);
-                        superClass.getAttributes().load(superClazz);
-                        entityMappings.addEmbeddable(superClass);
-                    } catch (FileNotFoundException ex) {
-                        clazz.getSource().addMissingClass(superClassType.getQualifiedName());
-                    }
-                }
-                if (superClass != null) {
-                    super.addSuperclass(superClass);
+            if (superClassType.hasDirectlyAnnotation(EMBEDDABLE_FQN)) {
+                Optional<Embeddable> superEmbeddableOpt = clazz.getSource().findEmbeddable(superClassType);
+                if (superEmbeddableOpt.isPresent()) {
+                    super.addSuperclass(superEmbeddableOpt.get());
                 }
             } else {
                 this.setSuperclassRef(new ReferenceClass(superClassType.getQualifiedName()));
