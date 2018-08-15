@@ -30,7 +30,6 @@ import javax.swing.SwingUtilities;
 import javax.xml.namespace.QName;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.model.Model;
-import org.netbeans.modules.maven.model.pom.Resource;
 import org.apache.maven.model.io.ModelReader;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.netbeans.api.project.Project;
@@ -61,6 +60,7 @@ import org.netbeans.modules.maven.model.pom.Profile;
 import org.netbeans.modules.maven.model.pom.Properties;
 import org.netbeans.modules.maven.model.pom.Repository;
 import org.netbeans.modules.maven.model.pom.RepositoryPolicy;
+import org.netbeans.modules.maven.model.pom.Resource;
 import org.netbeans.modules.maven.model.pom.spi.POMExtensibilityElementBase;
 import org.openide.filesystems.FileObject;
 import static org.openide.filesystems.FileUtil.toFileObject;
@@ -574,19 +574,36 @@ public class POMManager extends BuildManager {
 //            });
 //    }
     
-    public static void addNBActionMappingProfile(String actionName, Project project, List<String> profiles) {
+    public static void addNBActionMappingProfile(String actionName,
+            Project project,
+            List<String> goals,
+            List<String> profiles,
+            Map<String, String> properties) {
         try {
             M2ConfigProvider configProvider = project.getLookup().lookup(M2ConfigProvider.class);
             NetbeansActionMapping actionMapping = ModelHandle2.getMapping(actionName, project, configProvider.getActiveConfiguration());
             if (actionMapping == null) {
                 actionMapping = ModelHandle2.getDefaultMapping(actionName, project);
             }
-           Set<String> existingProfiles = new HashSet<>(actionMapping.getActivatedProfiles());
-           for(String profile : profiles){
-               if (!existingProfiles.contains(profile)) {
-                actionMapping.addActivatedProfile(profile);
+            Set<String> existingGoals = new HashSet<>(actionMapping.getGoals());
+            for (String goal : goals) {
+                if (!existingGoals.contains(goal)) {
+                    actionMapping.addGoal(goal);
+                }
             }
-           }
+            Set<String> existingProfiles = new HashSet<>(actionMapping.getActivatedProfiles());
+            for (String profile : profiles) {
+                if (!existingProfiles.contains(profile)) {
+                    actionMapping.addActivatedProfile(profile);
+                }
+            }
+            Map<String, String> existingProperties = actionMapping.getProperties();
+            for (String key : properties.keySet()) {
+                if (!existingProperties.containsKey(key)) {
+                    actionMapping.addProperty(key, properties.get(key));
+                }
+            }
+            
             ModelHandle2.putMapping(actionMapping, project, configProvider.getActiveConfiguration());
         } catch (Exception e) {
             Exceptions.attachMessage(e, "Cannot persist action configuration.");

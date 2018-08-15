@@ -104,10 +104,47 @@ public class ApplicationConfigData implements Serializable {
     
     public void addProfileAndActivate(Project project, String profile) {
         addProfile(profile);
-        addNBActionMappingProfile("run", project, asList(profile));
-        addNBActionMappingProfile("run.single.deploy", project, asList(profile));
-        addNBActionMappingProfile("debug", project, asList(profile));
-        addNBActionMappingProfile("debug.single.deploy", project, asList(profile));
+
+        Map<String, String> properties = new HashMap<>();
+
+        addNBActionMappingProfile("build", project,
+                asList("install"),
+                asList(profile),
+                properties);
+
+        addNBActionMappingProfile("rebuild", project,
+                asList("clean", "install"),
+                asList(profile),
+                properties);
+
+        properties.put("netbeans.deploy", "true");
+        addNBActionMappingProfile("run", project,
+                asList("package"),
+                asList(profile),
+                properties);
+
+        properties.put("netbeans.deploy.clientUrlPart", "${webpagePath}");
+        addNBActionMappingProfile("run.single.deploy", project,
+                asList("package"),
+                asList(profile),
+                properties);
+
+        properties = new HashMap<>();
+        properties.put("netbeans.deploy", "true");
+        properties.put("netbeans.deploy.debugmode", "true");
+        addNBActionMappingProfile("debug", project,
+                asList("package"),
+                asList(profile),
+                properties);
+
+        properties = new HashMap<>();
+        properties.put("netbeans.deploy", "true");
+        properties.put("netbeans.deploy.debugmode", "true");
+        properties.put("netbeans.deploy.clientUrlPart", "${webpagePath}");
+        addNBActionMappingProfile("debug.single.deploy", project,
+                asList("package"),
+                asList(profile),
+                properties);
     }
     
     public void addGoal(String goal) {
