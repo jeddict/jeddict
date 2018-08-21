@@ -64,7 +64,7 @@
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-symbol-solver-core</artifactId>
-            <version>3.6.17</version>
+            <version>3.6.18</version>
             <exclusions>
                 <exclusion>
                     <groupId>backport-util-concurrent</groupId>
