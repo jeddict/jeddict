@@ -53,13 +53,13 @@ public class BeanAttributes extends Attributes<BeanClass> {
     @XmlElement(name = "transient")
     private List<Transient> _transient;
 
-    @XmlElement(name = "many-to-one")
+    @XmlElement(name = "many-to-one-assoc")
     private List<ManyToOneAssociation> manyToOne;
-    @XmlElement(name = "one-to-many")
+    @XmlElement(name = "one-to-many-assoc")
     private List<OneToManyAssociation> oneToMany;
-    @XmlElement(name = "one-to-one")
+    @XmlElement(name = "one-to-one-assoc")
     private List<OneToOneAssociation> oneToOne;
-    @XmlElement(name = "many-to-many")
+    @XmlElement(name = "many-to-many-assoc")
     private List<ManyToManyAssociation> manyToMany;
 
     @Override

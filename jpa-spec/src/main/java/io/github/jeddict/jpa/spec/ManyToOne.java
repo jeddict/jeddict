@@ -65,7 +65,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "many-to-one", propOrder = {})
+@XmlType(name = "many-to-one")
 @XmlRootElement
 public class ManyToOne extends SingleRelationAttribute {
 

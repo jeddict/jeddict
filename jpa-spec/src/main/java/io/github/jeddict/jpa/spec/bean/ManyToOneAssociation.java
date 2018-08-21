@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "many-to-one", propOrder = {})
+@XmlType(name = "many-to-one-assoc")
 @XmlRootElement
 public class ManyToOneAssociation extends SingleAssociationAttribute {
 

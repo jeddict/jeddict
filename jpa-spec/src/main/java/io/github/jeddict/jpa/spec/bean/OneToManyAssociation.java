@@ -18,8 +18,10 @@ package io.github.jeddict.jpa.spec.bean;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "one-to-many-assoc")
 @XmlRootElement
 public class OneToManyAssociation extends MultiAssociationAttribute {
 

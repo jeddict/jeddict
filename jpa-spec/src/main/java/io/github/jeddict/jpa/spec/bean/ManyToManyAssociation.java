@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "many-to-many")
+@XmlType(name = "many-to-many-assoc")
 @XmlRootElement
 public class ManyToManyAssociation extends MultiAssociationAttribute {
 
