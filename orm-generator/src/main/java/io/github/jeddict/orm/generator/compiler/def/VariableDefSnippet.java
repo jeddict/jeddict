@@ -50,6 +50,7 @@ import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType;
 import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
+import io.github.jeddict.jpa.spec.extend.MapKeyHandler;
 import io.github.jeddict.jpa.spec.extend.MultiRelationAttribute;
 import io.github.jeddict.orm.generator.compiler.AnnotationSnippet;
 import io.github.jeddict.orm.generator.compiler.AssociationOverridesHandler;
@@ -116,6 +117,7 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import org.openide.util.Exceptions;
 
@@ -1155,6 +1157,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         }
         return customSnippets;
     }
+
     /**
      * @param customSnippet the customSnippet to set
      */
@@ -1245,6 +1248,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public void setCollectionImplType(String collectionImplType) {
         this.collectionImplType = collectionImplType;
     }
+
     /**
      * @return the attributeJSONBSnippets
      */
@@ -1283,46 +1287,99 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         }
 
         if (type == null) {
-            return "";
+            return EMPTY;
         }
 
         type = getSimpleClassName(type);
 
-        //add
-        sb.append(String.format("public void add%s(%s %s) {",
-                helperMethodName, type, singularName)).append(NEW_LINE);
-        sb.append(String.format("get%s().add(%s);", methodName, singularName)).append(NEW_LINE);
-        if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
-            OneToMany otm = (OneToMany) attribute;
-            if (otm.getConnectedAttributeName() != null) {
-                connectedMethodName = JavaUtil.getMethodName("set", otm.getConnectedAttributeName());
-                sb.append(String.format("%s.%s(this);", singularName, connectedMethodName)).append(NEW_LINE);
+        if (this.getCollectionType().equals(Map.class.getName()) && attribute instanceof MapKeyHandler) {
+            MapKeyHandler mapKeyHandler = (MapKeyHandler) attribute;
+            Attribute mapkeyAttribute = mapKeyHandler.getMapKeyAttribute();
+            String mapkeyName, mapkeyType;
+            if (mapkeyAttribute == null) {
+                mapkeyName = "key";
+                mapkeyType = mapKeyHandler.getMapKeyDataTypeLabel();
+            } else {
+                mapkeyName = mapkeyAttribute.getName();
+                mapkeyType = mapkeyAttribute.getDataTypeLabel();
             }
-        } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
-            ManyToMany mtm = (ManyToMany) attribute;
-            if (mtm.getConnectedAttributeName() != null) {
-                connectedMethodName = JavaUtil.getMethodName("get", mtm.getConnectedAttributeName());
-                sb.append(String.format("%s.%s().add(this);", singularName, connectedMethodName)).append(NEW_LINE);
-            }
-        }
-        sb.append("}").append(NEW_LINE).append(NEW_LINE);
 
-        //remove
-        sb.append(String.format("public void remove%s(%s %s) {",
-                helperMethodName, type, getSingularName())).append(NEW_LINE);
-        sb.append(String.format("get%s().remove(%s);", methodName, singularName)).append(NEW_LINE);
-        if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
-            OneToMany otm = (OneToMany) attribute;
-            if (otm.getConnectedAttributeName() != null) {
-                sb.append(String.format("%s.%s(null);", singularName, connectedMethodName)).append(NEW_LINE);
+            //add
+            sb.append(String.format(
+                    "public void add%s(%s %s, %s %s) {",
+                    helperMethodName, mapkeyType, mapkeyName, type, singularName
+            )).append(NEW_LINE);
+            sb.append(String.format("get%s().put(%s, %s);", methodName, mapkeyName, singularName)).append(NEW_LINE);
+            if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
+                OneToMany otm = (OneToMany) attribute;
+                if (otm.getConnectedAttributeName() != null) {
+                    connectedMethodName = JavaUtil.getMethodName("set", otm.getConnectedAttributeName());
+                    sb.append(String.format("%s.%s(this);", singularName, connectedMethodName)).append(NEW_LINE);
+                }
+            } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
+                ManyToMany mtm = (ManyToMany) attribute;
+                if (mtm.getConnectedAttributeName() != null) {
+                    connectedMethodName = JavaUtil.getMethodName("get", mtm.getConnectedAttributeName());
+                    sb.append(String.format("%s.%s().add(this);", singularName, connectedMethodName)).append(NEW_LINE);
+                }
             }
-        } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
-            ManyToMany mtm = (ManyToMany) attribute;
-            if (mtm.getConnectedAttributeName() != null) {
-                sb.append(String.format("%s.%s().remove(this);", singularName, connectedMethodName)).append(NEW_LINE);
+            sb.append("}").append(NEW_LINE).append(NEW_LINE);
+
+            //remove
+            sb.append(String.format(
+                    "public void remove%s(%s %s, %s %s) {",
+                    helperMethodName, mapkeyType, mapkeyName, type, getSingularName()
+            )).append(NEW_LINE);
+            sb.append(String.format("get%s().remove(%s);", methodName, mapkeyName)).append(NEW_LINE);
+            if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
+                OneToMany otm = (OneToMany) attribute;
+                if (otm.getConnectedAttributeName() != null) {
+                    sb.append(String.format("%s.%s(null);", singularName, connectedMethodName)).append(NEW_LINE);
+                }
+            } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
+                ManyToMany mtm = (ManyToMany) attribute;
+                if (mtm.getConnectedAttributeName() != null) {
+                    sb.append(String.format("%s.%s().remove(this);", singularName, connectedMethodName)).append(NEW_LINE);
+                }
             }
+            sb.append("}").append(NEW_LINE).append(NEW_LINE);
+        } else {
+            //add
+            sb.append(String.format("public void add%s(%s %s) {",
+                    helperMethodName, type, singularName)).append(NEW_LINE);
+            sb.append(String.format("get%s().add(%s);", methodName, singularName)).append(NEW_LINE);
+            if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
+                OneToMany otm = (OneToMany) attribute;
+                if (otm.getConnectedAttributeName() != null) {
+                    connectedMethodName = JavaUtil.getMethodName("set", otm.getConnectedAttributeName());
+                    sb.append(String.format("%s.%s(this);", singularName, connectedMethodName)).append(NEW_LINE);
+                }
+            } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
+                ManyToMany mtm = (ManyToMany) attribute;
+                if (mtm.getConnectedAttributeName() != null) {
+                    connectedMethodName = JavaUtil.getMethodName("get", mtm.getConnectedAttributeName());
+                    sb.append(String.format("%s.%s().add(this);", singularName, connectedMethodName)).append(NEW_LINE);
+                }
+            }
+            sb.append("}").append(NEW_LINE).append(NEW_LINE);
+
+            //remove
+            sb.append(String.format("public void remove%s(%s %s) {",
+                    helperMethodName, type, getSingularName())).append(NEW_LINE);
+            sb.append(String.format("get%s().remove(%s);", methodName, singularName)).append(NEW_LINE);
+            if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
+                OneToMany otm = (OneToMany) attribute;
+                if (otm.getConnectedAttributeName() != null) {
+                    sb.append(String.format("%s.%s(null);", singularName, connectedMethodName)).append(NEW_LINE);
+                }
+            } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
+                ManyToMany mtm = (ManyToMany) attribute;
+                if (mtm.getConnectedAttributeName() != null) {
+                    sb.append(String.format("%s.%s().remove(this);", singularName, connectedMethodName)).append(NEW_LINE);
+                }
+            }
+            sb.append("}").append(NEW_LINE).append(NEW_LINE);
         }
-        sb.append("}").append(NEW_LINE).append(NEW_LINE);
 
         return sb.toString();
     }

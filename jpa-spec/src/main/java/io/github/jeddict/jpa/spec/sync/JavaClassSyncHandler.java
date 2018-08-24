@@ -162,7 +162,7 @@ public class JavaClassSyncHandler {
                             }
                         } else if ((methodName.startsWith("add")
                                 || methodName.startsWith("remove"))
-                                && method.getParameters().size() == 1) { // delegator/helper method
+                                && (method.getParameters().size() == 1 || method.getParameters().size() == 2)) { // delegator/helper method
                             String attributeName = getFieldNameFromDelegatorMethod(methodName);
 
                             String attributePluralName = Inflector.getInstance().pluralize(attributeName);

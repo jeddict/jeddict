@@ -67,22 +67,21 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
     @Override
     public String getSnippet() throws InvalidDataException {
 
-        if (mappedBy == null 
-                && getFetchType() == null
-                && getCascadeTypes().isEmpty() 
-                && (mapKeySnippet==null || mapKeySnippet.isEmpty())) {
-            return AT + getType();
-        }
-
         StringBuilder builder = new StringBuilder();
         if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
             builder.append(mapKeySnippet.getSnippet())
                     .append(NEW_LINE)
                     .append(TAB);
         }
+        builder.append(AT).append(getType());
 
-        builder.append(AT).append(getType())
-                .append(OPEN_PARANTHESES)
+        if (mappedBy == null
+                && getFetchType() == null
+                && getCascadeTypes().isEmpty()) {
+            return builder.toString();
+        }
+
+        builder.append(OPEN_PARANTHESES)
                 .append(buildString("mappedBy", mappedBy))
                 .append(buildExp("fetch", getFetchType()));
 
@@ -117,7 +116,7 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
         if (getCascadeTypes() != null && !getCascadeTypes().isEmpty()) {
             imports.add(CASCADE_TYPE_FQN);
         }
-        if(mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
+        if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
             imports.addAll(mapKeySnippet.getImportSnippets());
         }
         return imports;
