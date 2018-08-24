@@ -290,16 +290,14 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         }
     }
 
-
-     public ClassHelper getClassHelper(){
+    public ClassHelper getClassHelper() {
         return classHelper;
     }
-    
+
     public void setType(String type) {
         classHelper.setClassName(type);
     }
-    
-    
+
     public void setType(String rootPackage, JavaClass javaClass) {
         classHelper.setClassName(javaClass.getClazz());
         classHelper.setPackageName(javaClass.getAbsolutePackage(rootPackage));
@@ -1220,7 +1218,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         this.converts = convertsSnippet;
     }
 
-        /**
+    /**
      * @return the collectionType
      */
     public String getCollectionType() {
@@ -1233,7 +1231,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public void setCollectionType(String collectionType) {
         this.collectionType = collectionType;
     }
-            
+
     /**
      * @return the collectionImplType
      */
@@ -1316,12 +1314,12 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
             OneToMany otm = (OneToMany) attribute;
             if (otm.getConnectedAttributeName() != null) {
-                sb.append(String.format("%s.set%s(null);", singularName, connectedMethodName)).append(NEW_LINE);
+                sb.append(String.format("%s.%s(null);", singularName, connectedMethodName)).append(NEW_LINE);
             }
         } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
             ManyToMany mtm = (ManyToMany) attribute;
             if (mtm.getConnectedAttributeName() != null) {
-                sb.append(String.format("%s.get%s().remove(this);", singularName, connectedMethodName)).append(NEW_LINE);
+                sb.append(String.format("%s.%s().remove(this);", singularName, connectedMethodName)).append(NEW_LINE);
             }
         }
         sb.append("}").append(NEW_LINE).append(NEW_LINE);
