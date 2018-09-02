@@ -15,9 +15,12 @@
  */
 package io.github.jeddict.jpa.spec.bean;
 
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
+import io.github.jeddict.jpa.spec.extend.ReferenceClass;
 import io.github.jeddict.source.ClassExplorer;
+import java.util.Optional;
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -43,6 +46,17 @@ public class BeanClass extends JavaClass<BeanAttributes> {
     public void load(ClassExplorer clazz) {
         super.load(clazz);
         this.getAttributes().load(clazz);
+
+        Optional<ResolvedReferenceTypeDeclaration> superClassTypeOpt = clazz.getSuperClass();
+        if (superClassTypeOpt.isPresent()) {
+            ResolvedReferenceTypeDeclaration superClassType = superClassTypeOpt.get();
+            Optional<BeanClass> superClassOpt = clazz.getSource().findBeanClass(superClassType);
+            if (superClassOpt.isPresent()) {
+                super.addSuperclass(superClassOpt.get());
+            } else {
+                this.setSuperclassRef(new ReferenceClass(superClassType.getQualifiedName()));
+            }
+        }
     }
 
     public BeanClass() {

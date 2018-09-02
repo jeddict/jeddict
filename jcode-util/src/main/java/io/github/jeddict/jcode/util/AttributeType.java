@@ -141,7 +141,8 @@ public class AttributeType {
         if (isArray(type)) {
             type = getArrayType(type);
         }
-        return isPrimitive(type)
+        return STRING.equals(type)
+                || isPrimitive(type)
                 || isWrapper(type)
                 || type.startsWith("java.lang")
                 || type.startsWith("java.math")

@@ -15,6 +15,9 @@
  */
 package io.github.jeddict.jpa.spec.bean;
 
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import io.github.jeddict.source.MemberExplorer;
+import java.util.Optional;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -25,4 +28,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 public class OneToManyAssociation extends MultiAssociationAttribute {
 
+    public static OneToManyAssociation load(MemberExplorer member, ResolvedReferenceTypeDeclaration type) {
+        OneToManyAssociation attribute = new OneToManyAssociation();
+        attribute.loadAttribute(member);
+        attribute.setCollectionType(member.getType());
+
+        Optional<BeanClass> beanClassOpt = member.getSource().findBeanClass(type);
+        if (!beanClassOpt.isPresent()) {
+            return null;
+        }
+        attribute.setConnectedClass(beanClassOpt.get());
+        return attribute;
+    }
 }

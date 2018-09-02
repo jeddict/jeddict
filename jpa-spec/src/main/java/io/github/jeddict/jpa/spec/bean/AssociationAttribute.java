@@ -15,14 +15,14 @@
  */
 package io.github.jeddict.jpa.spec.bean;
 
+import io.github.jeddict.jaxb.spec.JaxbVariableType;
+import io.github.jeddict.jpa.spec.extend.Attribute;
+import io.github.jeddict.jpa.spec.extend.JavaClass;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
-import io.github.jeddict.jpa.spec.extend.Attribute;
-import io.github.jeddict.jpa.spec.extend.JavaClass;
-import io.github.jeddict.jaxb.spec.JaxbVariableType;
 
 /**
  *
@@ -104,15 +104,5 @@ public abstract class AssociationAttribute extends Attribute {
     public String getDataTypeLabel() {
         return getTargetClass();
     }
-
-    /**
-     * @return the owner
-     */
-    public abstract boolean isOwner();
-
-    /**
-     * @param owner the owner to set
-     */
-    public abstract void setOwner(boolean owner);
 
 }

@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.jpa.modeler.widget.flow.association;
 
-import java.awt.Color;
+import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
 import io.github.jeddict.jpa.modeler.widget.BeanClassWidget;
 import io.github.jeddict.jpa.modeler.widget.attribute.association.AssociationAttributeWidget;
 import io.github.jeddict.jpa.modeler.widget.attribute.association.MTMAssociationAttributeWidget;
@@ -24,8 +24,7 @@ import io.github.jeddict.jpa.modeler.widget.attribute.association.OTMAssociation
 import io.github.jeddict.jpa.modeler.widget.attribute.association.OTOAssociationAttributeWidget;
 import io.github.jeddict.jpa.modeler.widget.flow.AbstractEdgeWidget;
 import io.github.jeddict.jpa.spec.bean.AssociationAttribute;
-import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
+import java.awt.Color;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
 import org.netbeans.modeler.widget.node.INodeWidget;
@@ -172,7 +171,6 @@ public abstract class AssociationFlowWidget extends AbstractEdgeWidget<JPAModele
             }
 
             associationFlowWidget.setSourceAssociationAttributeWidget(associationAttributeWidget);
-            associationAttributeWidget.getBaseElementSpec().setOwner(true);
             return associationAttributeWidget.getPinWidgetInfo();
 
         } else {

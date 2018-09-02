@@ -15,15 +15,13 @@
  */
 package io.github.jeddict.jpa.spec.bean;
 
+import io.github.jeddict.bv.constraints.Constraint;
+import io.github.jeddict.bv.constraints.Size;
+import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
-import org.apache.commons.lang.StringUtils;
-import io.github.jeddict.bv.constraints.Constraint;
-import io.github.jeddict.bv.constraints.Size;
-import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
 
 /**
  *
@@ -31,43 +29,10 @@ import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
  */
 public abstract class MultiAssociationAttribute extends AssociationAttribute implements CollectionTypeHandler {
 
-    @XmlAttribute(name = "own")
-    private Boolean owner;
-    @XmlTransient//(name = "mapped-by")
-    protected String mappedBy;
     @XmlAttribute(name = "collection-type")
     private String collectionType;
     @XmlAttribute(name = "cit")
     private String collectionImplType;
-
-    /**
-     * Gets the value of the mappedBy property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getMappedBy() {
-        if (Boolean.FALSE.equals(isOwner())) {
-            if (mappedBy != null) {
-                return mappedBy;
-            }
-            if (getConnectedAttribute() != null) {
-                return getConnectedAttribute().getName();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Sets the value of the mappedBy property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setMappedBy(String value) {
-        this.mappedBy = value;
-        this.owner = StringUtils.isBlank(mappedBy);
-    }
 
     /**
      * @return the collectionType
@@ -104,29 +69,6 @@ public abstract class MultiAssociationAttribute extends AssociationAttribute imp
         this.collectionImplType = collectionImplType;
     }
 
-    /**
-     * @return the owner
-     */
-    @Override
-    public boolean isOwner() {
-        if (owner == null) {
-            return Boolean.FALSE;
-        }
-        return owner;
-    }
-
-    /**
-     * @param owner the owner to set
-     */
-    @Override
-    public void setOwner(boolean owner) {
-        this.owner = owner;
-        if (owner) {
-            mappedBy = null;
-        }
-
-    }
-
     @Override
     public String getDataTypeLabel() {
         return String.format("%s<%s>", getCollectionType(), getTargetClass());
@@ -141,10 +83,7 @@ public abstract class MultiAssociationAttribute extends AssociationAttribute imp
 
     @Override
     public Set<Class<? extends Constraint>> getKeyConstraintsClass() {
-//        if(!isMap(getCollectionType())){
         return Collections.EMPTY_SET;
-//        }
-//        return getConstraintsClass(getMapKeyDataTypeLabel());
     }
 
     @Override

@@ -30,6 +30,7 @@ import io.github.jeddict.jpa.spec.Embeddable;
 import io.github.jeddict.jpa.spec.Entity;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.MappedSuperclass;
+import io.github.jeddict.jpa.spec.bean.BeanClass;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import static java.util.Collections.unmodifiableList;
@@ -156,8 +157,9 @@ public class SourceExplorer {
             try {
                 embeddableOpt = createClass(type.getQualifiedName()).map(clazz -> {
                     Embeddable embeddable = new Embeddable();
-                    embeddable.load(clazz);
+                    embeddable.setClazz(clazz.getName());
                     entityMappings.addEmbeddable(embeddable);
+                    embeddable.load(clazz);
                     return embeddable;
                 });
             } catch (FileNotFoundException ex) {
@@ -174,8 +176,9 @@ public class SourceExplorer {
             try {
                 entityOpt = createClass(type.getQualifiedName()).map(clazz -> {
                     Entity entity = new Entity();
-                    entity.load(clazz);
+                    entity.setClazz(clazz.getName());
                     entityMappings.addEntity(entity);
+                    entity.load(clazz);
                     return entity;
                 });
             } catch (FileNotFoundException ex) {
@@ -192,8 +195,9 @@ public class SourceExplorer {
             try {
                 mappedSuperclassOpt = createClass(type.getQualifiedName()).map(clazz -> {
                     MappedSuperclass mappedSuperclass = new MappedSuperclass();
-                    mappedSuperclass.load(clazz);
+                    mappedSuperclass.setClazz(clazz.getName());
                     entityMappings.addMappedSuperclass(mappedSuperclass);
+                    mappedSuperclass.load(clazz);
                     return mappedSuperclass;
                 });
             } catch (FileNotFoundException ex) {
@@ -201,6 +205,25 @@ public class SourceExplorer {
             }
         }
         return mappedSuperclassOpt;
+    }
+
+    public Optional<BeanClass> findBeanClass(ResolvedReferenceTypeDeclaration type) {
+        Optional<BeanClass> beanClassOpt = entityMappings.findBeanClass(type.getClassName());
+        if (!beanClassOpt.isPresent()
+                && (isIncludeReference() || isSelectedClass(type.getClassName()))) {
+            try {
+                beanClassOpt = createClass(type.getQualifiedName()).map(clazz -> {
+                    BeanClass beanClass = new BeanClass();
+                    beanClass.setClazz(clazz.getName());
+                    entityMappings.addBeanClass(beanClass);
+                    beanClass.load(clazz);
+                    return beanClass;
+                });
+            } catch (FileNotFoundException ex) {
+                addMissingClass(type.getQualifiedName());
+            }
+        }
+        return beanClassOpt;
     }
 
 }

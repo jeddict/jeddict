@@ -15,13 +15,11 @@
  */
 package io.github.jeddict.jpa.modeler.widget.attribute.association;
 
+import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
 import io.github.jeddict.jpa.modeler.widget.BeanClassWidget;
 import io.github.jeddict.jpa.modeler.widget.attribute.AttributeWidget;
 import io.github.jeddict.jpa.modeler.widget.flow.association.AssociationFlowWidget;
 import io.github.jeddict.jpa.spec.bean.AssociationAttribute;
-import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
-import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -58,18 +56,6 @@ public abstract class AssociationAttributeWidget<E extends AssociationAttribute>
     }
 
     public abstract AssociationFlowWidget getAssociationFlowWidget();
-    
-    public BeanClassWidget getConnectedClassWidget(){
-            IFlowElementWidget flowElementWidget = ((AssociationAttribute)getBaseElementSpec()).isOwner() ? 
-                    this.getAssociationFlowWidget().getTargetWidget() : 
-                    this.getAssociationFlowWidget().getSourceWidget();
-            BeanClassWidget connectedClassWidget = null;
-            if (flowElementWidget instanceof BeanClassWidget) {
-                connectedClassWidget = (BeanClassWidget) flowElementWidget;
-            } else if (flowElementWidget instanceof AssociationAttributeWidget) {
-                connectedClassWidget = (BeanClassWidget) ((AssociationAttributeWidget) flowElementWidget).getClassWidget();
-            }
-            return connectedClassWidget;
-    }
+
 
 }

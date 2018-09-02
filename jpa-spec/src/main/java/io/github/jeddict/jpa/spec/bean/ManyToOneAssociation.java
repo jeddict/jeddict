@@ -15,6 +15,8 @@
  */
 package io.github.jeddict.jpa.spec.bean;
 
+import io.github.jeddict.source.MemberExplorer;
+import java.util.Optional;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -25,20 +27,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 public class ManyToOneAssociation extends SingleAssociationAttribute {
 
-    /**
-     * @return the owner
-     */
-    @Override
-    public boolean isOwner() {
-        return true;//always owner
-    }
+    public static ManyToOneAssociation load(MemberExplorer member) {
+        ManyToOneAssociation attribute = new ManyToOneAssociation();
+        attribute.loadAttribute(member);
 
-    /**
-     * @param owner the owner to set
-     */
-    @Override
-    public void setOwner(boolean owner) {
-        //skip
+        Optional<BeanClass> beanClassOpt = member.getSource().findBeanClass(member.getTypeDeclaration());
+        if (!beanClassOpt.isPresent()) {
+            return null;
+        }
+        attribute.setConnectedClass(beanClassOpt.get());
+        return attribute;
     }
 
 }

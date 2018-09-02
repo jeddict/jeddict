@@ -903,7 +903,7 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
 
         AssociationAttribute sourceAssociationAttribute = (AssociationAttribute) sourceAssociationAttributeWidget.getBaseElementSpec();
 
-        if (!sourceAssociationAttribute.isOwner()) {  //Only Owner will draw edge because in any case uni/bi owner is always exist
+        if (edgeWidgetFunction == null) {  //Only Owner will draw edge because in any case uni/bi owner is always exist
             return;
         }
 

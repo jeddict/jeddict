@@ -539,15 +539,17 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
             if (!entityMappings.findEntity(className).isPresent()) {
                 Entity entity;
                 javaClass = entity = new Entity();
-                entity.load(clazz);
+                javaClass.setClazz(clazz.getName());
                 entityMappings.addEntity(entity);
+                entity.load(clazz);
             }
         } else if (clazz.isMappedSuperclass()) {
             if (!entityMappings.findMappedSuperclass(className).isPresent()) {
                 MappedSuperclass mappedSuperclass;
                 javaClass = mappedSuperclass = new MappedSuperclass();
-                mappedSuperclass.load(clazz);
+                javaClass.setClazz(clazz.getName());
                 entityMappings.addMappedSuperclass(mappedSuperclass);
+                mappedSuperclass.load(clazz);
             }
         } else if (clazz.isEmbeddable()) {
 
@@ -555,8 +557,9 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
                     && !entityMappings.findEmbeddable(className).isPresent()) {
                 Embeddable embeddable;
                 javaClass = embeddable = new Embeddable();
-                embeddable.load(clazz);
+                javaClass.setClazz(clazz.getName());
                 entityMappings.addEmbeddable(embeddable);
+                embeddable.load(clazz);
             }
         } else if (!clazz.isEnum() && !clazz.isInterface()) {
 
@@ -564,8 +567,9 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
                     && !entityMappings.findBeanClass(className).isPresent()) {
                 BeanClass beanClass;
                 javaClass = beanClass = new BeanClass();
-                beanClass.load(clazz);
+                javaClass.setClazz(clazz.getName());
                 entityMappings.addBeanClass(beanClass);
+                beanClass.load(clazz);
             }
         }
 

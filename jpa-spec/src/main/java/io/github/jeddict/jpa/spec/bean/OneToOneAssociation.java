@@ -15,73 +15,28 @@
  */
 package io.github.jeddict.jpa.spec.bean;
 
+import io.github.jeddict.source.MemberExplorer;
+import java.util.Optional;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.lang.StringUtils;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "one-to-one-assoc")
 @XmlRootElement
 public class OneToOneAssociation extends SingleAssociationAttribute {
 
-    @XmlAttribute(name = "own")
-    private Boolean owner;//default true/null
-    @XmlTransient
-    protected String mappedBy;
+    public static OneToOneAssociation load(MemberExplorer member) {
+        OneToOneAssociation attribute = new OneToOneAssociation();
+        attribute.loadAttribute(member);
 
-    /**
-     * Gets the value of the mappedBy property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getMappedBy() {
-        if (Boolean.FALSE.equals(isOwner())) {
-            if (mappedBy != null) {
-                return mappedBy;
-            }
-            if (getConnectedAttribute() != null) {
-                return getConnectedAttribute().getName();
-            }
+        Optional<BeanClass> beanClassOpt = member.getSource().findBeanClass(member.getTypeDeclaration());
+        if (!beanClassOpt.isPresent()) {
+            return null;
         }
-        return null;
-    }
-
-    /**
-     * Sets the value of the mappedBy property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-      public void setMappedBy(String value) {
-        this.mappedBy = value;
-        this.owner =  StringUtils.isBlank(mappedBy);
-    }
-
-    /**
-     * @return the owner
-     */
-    @Override
-    public boolean isOwner() {
-        if (owner == null) {
-            return Boolean.FALSE;
-        }
-        return owner;
-    }
-
-    /**
-     * @param owner the owner to set
-     */
-    @Override
-    public void setOwner(boolean owner) {
-        this.owner = owner;
-        if(owner){
-            mappedBy = null;
-        } 
+        attribute.setConnectedClass(beanClassOpt.get());
+        return attribute;
     }
 
 }

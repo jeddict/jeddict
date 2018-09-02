@@ -15,6 +15,8 @@
  */
 package io.github.jeddict.jpa.spec.bean;
 
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import static io.github.jeddict.jcode.util.AttributeType.STRING;
 import static io.github.jeddict.jcode.util.AttributeType.Type.OTHER;
 import static io.github.jeddict.jcode.util.AttributeType.getArrayType;
 import static io.github.jeddict.jcode.util.AttributeType.getType;
@@ -77,38 +79,46 @@ public class BeanAttributes extends Attributes<BeanClass> {
 
             boolean elementCollectionType = false;
             boolean relationType = false;
-            String typeArgument = null;
+            Optional<ResolvedReferenceTypeDeclaration> typeArgument = Optional.empty();
             if (collectionType || mapType) {
                 if (!member.getTypeArguments().isEmpty()) {
-                    typeArgument = member.getTypeArguments().get(mapType ? 1 : 0);
-                    if (isJavaType(typeArgument)) {
+                    typeArgument = member.getTypeArgumentDeclaration(mapType ? 1 : 0);
+                    if (isJavaType(typeArgument.get().getClassName())) {
                         elementCollectionType = true;
                     } else {
                         relationType = true;
                     }
                 } else {
-                    relationType = true;
+                    elementCollectionType = true;
                 }
             } else if (!isJavaType(type)) {
                 relationType = true;
             }
 
-
             if (member.isTransient()) {
                 this.addTransient(Transient.load(member));
             } else if (elementCollectionType) {
-                this.addElementCollection(BeanCollectionAttribute.load(member, typeArgument));
+                if (typeArgument.isPresent()) {
+                    this.addElementCollection(BeanCollectionAttribute.load(member, typeArgument.get().getClassName()));
+                } else {
+                    this.addElementCollection(BeanCollectionAttribute.load(member, STRING));
+                }
             } else if (relationType) {
                 if (collectionType || mapType) {
-//                    member.getTypeDeclaration()
-//                      ManyToManyAssociation
-//                      ManyToOneAssociation
+                    if (typeArgument.isPresent()) {
+                        ManyToManyAssociation manyToMany = ManyToManyAssociation.load(member, typeArgument.get());
+                        if (manyToMany != null) {
+                            this.addManyToMany(manyToMany);
+                        }
+                    } else {
+                        this.addElementCollection(BeanCollectionAttribute.load(member, STRING));
+                    }
                 } else {
-//                      OneToManyAssociation
-//                      OneToOneAssociation
+                    OneToOneAssociation oneToOne = OneToOneAssociation.load(member);
+                    if (oneToOne != null) {
+                        this.addOneToOne(oneToOne);
+                    }
                 }
-                System.out.println("");
-//                this.addElementCollection(BeanCollectionAttribute.load(member, typeArgument));
             } else {
                 this.addBasic(BeanAttribute.load(member));
             }
@@ -394,8 +404,7 @@ public class BeanAttributes extends Attributes<BeanClass> {
     }
 
     public void removeNonOwnerAttribute(Set<JavaClass> filterJavaClasses) {
-        Predicate<AssociationAttribute> filterOwner = attr -> attr.isOwner()
-                || (attr.getConnectedAttribute() != null && filterJavaClasses.contains(attr.getConnectedClass()));//either owner or contains in specified class set
+        Predicate<AssociationAttribute> filterOwner = attr -> (attr.getConnectedAttribute() != null && filterJavaClasses.contains(attr.getConnectedClass()));//either owner or contains in specified class set
 
         setOneToOne(
                 getOneToOne()
