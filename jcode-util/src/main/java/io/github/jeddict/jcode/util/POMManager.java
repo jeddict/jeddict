@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
+import static java.util.Collections.emptySet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -220,8 +221,9 @@ public class POMManager extends BuildManager {
         }
     }
 
-    public void setExtensionOverrideFilter(BiFunction<Xpp3Dom, POMExtensibilityElement, Boolean> extensionOverrideFilter) {
+    public POMManager setExtensionOverrideFilter(BiFunction<Xpp3Dom, POMExtensibilityElement, Boolean> extensionOverrideFilter) {
         this.extensionOverrideFilter = extensionOverrideFilter;
+        return this;
     }
 
     public static boolean isMavenProject(Project project) {
@@ -279,12 +281,40 @@ public class POMManager extends BuildManager {
         }
         if (sourceBuild.getResources()!= null && !sourceBuild.getResources().isEmpty()) {
             for (org.apache.maven.model.Resource sourceResource : sourceBuild.getResources()) {
-                Resource targetResource = pomModel.getFactory().createResource();
+
+                Resource targetResource = null;
+                if (targetBuild.getResources() != null) {
+                    for (Resource resource : targetBuild.getResources()) {
+                        if (resource.getDirectory().equals(sourceResource.getDirectory())) {
+                            targetResource = resource;
+                        }
+                    }
+                }
+                if (targetResource == null) {
+                    targetResource = pomModel.getFactory().createResource();
+                    targetResource.setDirectory(sourceResource.getDirectory());
+                    targetBuild.addResource(targetResource);
+                }
+
                 targetResource.setFiltering(Boolean.parseBoolean(sourceResource.getFiltering()));
-                targetResource.setDirectory(sourceResource.getDirectory());
-                targetBuild.addResource(targetResource);
+
+                Set<String> existingExcludes = new HashSet<>(targetResource.getExcludes() != null ? targetResource.getExcludes() : emptySet());
+                for (String exclude : sourceResource.getExcludes()) {
+                    if (!existingExcludes.contains(exclude)) {
+                        targetResource.addExclude(exclude);
+                    }
+                }
+
+                Set<String> existingIncludes = new HashSet<>(targetResource.getIncludes() != null ? targetResource.getIncludes() : emptySet());
+                for (String include : sourceResource.getIncludes()) {
+                    if (!existingIncludes.contains(include)) {
+                        targetResource.addInclude(include);
+                    }
+                }
+
             }
         }
+
         if (sourceBuild.getPlugins() != null && !sourceBuild.getPlugins().isEmpty()) {
             for (org.apache.maven.model.Plugin sourcePlugin : sourceBuild.getPlugins()) {
                 Plugin targetPlugin = targetBuild.findPluginById(sourcePlugin.getGroupId(), sourcePlugin.getArtifactId());
@@ -362,12 +392,16 @@ public class POMManager extends BuildManager {
                         .filter(targetElement -> StringUtils.equals(targetElement.getQName().getLocalPart(), childDOM.getName()))
                         .filter(targetElement -> extensionOverrideFilter == null || extensionOverrideFilter.apply(childDOM, targetElement))
                         .findAny();
-                
+
                 POMExtensibilityElement element;
                 if (targetElementOptioal.isPresent()) {
                     element = targetElementOptioal.get();
                 } else {
                     element = pomModel.getFactory().createPOMExtensibilityElement(new QName(childDOM.getName()));
+                    for (String key : childDOM.getAttributeNames()) {
+                        String value = childDOM.getAttribute(key);
+                        element.setAttribute(key, value);
+                    }
                     target.addExtensibilityElement(element);
                 }
                 

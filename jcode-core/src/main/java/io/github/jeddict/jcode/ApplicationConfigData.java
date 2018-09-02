@@ -64,6 +64,10 @@ public class ApplicationConfigData implements Serializable {
     
     private RegistryType registryType = RegistryType.CONSUL;
 
+    private final Map<String, String> commonConfig = new HashMap<>();
+    private final Map<String, String> devConfig = new HashMap<>();
+    private final Map<String, String> prodConfig = new HashMap<>();
+
     public void addWebDescriptorContent(String content, Project project) {
         StringBuilder sb = webDescriptorContent.get(project);
         if (sb == null) {
@@ -396,6 +400,42 @@ public class ApplicationConfigData implements Serializable {
      */
     public void setRegistryType(RegistryType registryType) {
         this.registryType = registryType;
+    }
+
+    public Map<String, String> getCommonConfig() {
+        return commonConfig;
+    }
+
+    public void addCommonConfig(String key, String value) {
+        commonConfig.put(key, value);
+    }
+
+    public void removeCommonConfig(String key) {
+        commonConfig.remove(key);
+    }
+
+    public Map<String, String> getDevConfig() {
+        return devConfig;
+    }
+
+    public void addDevConfig(String key, String value) {
+        devConfig.put(key, value);
+    }
+
+    public void removeDevConfig(String key) {
+        devConfig.remove(key);
+    }
+
+    public Map<String, String> getProdConfig() {
+        return prodConfig;
+    }
+
+    public void addProdConfig(String key, String value) {
+        prodConfig.put(key, value);
+    }
+
+    public void removeProdConfig(String key) {
+        prodConfig.remove(key);
     }
 
 }

@@ -74,8 +74,7 @@ public class EJSUtil {
                 handler.progress(targetPath);
                 FileObject target = org.openide.filesystems.FileUtil.createData(webRoot, targetPath);
                 FileLock lock = target.lock();
-                try {
-                    OutputStream outputStream = target.getOutputStream(lock);
+                try (OutputStream outputStream = target.getOutputStream(lock);) {
                     parserManager.accept(new FileTypeStream(entryName, zipInputStream, outputStream, skipParsing));
                     zipInputStream.closeEntry();
                 } finally {

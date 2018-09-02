@@ -16,7 +16,10 @@
 package io.github.jeddict.jcode.util;
 
 import java.io.Reader;
+import java.util.function.BiFunction;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.netbeans.api.project.Project;
+import org.netbeans.modules.maven.model.pom.POMExtensibilityElement;
 
 public abstract class BuildManager {
 
@@ -45,6 +48,8 @@ public abstract class BuildManager {
     public abstract BuildManager reload();
     
     public abstract BuildManager setSourceVersion(final String version);
+
+    public abstract BuildManager setExtensionOverrideFilter(final BiFunction<Xpp3Dom, POMExtensibilityElement, Boolean> extensionOverrideFilter);
     
     public abstract BuildManager addDefaultProperties(java.util.Properties prop);
 
@@ -53,5 +58,6 @@ public abstract class BuildManager {
     public abstract BuildManager addProperties(java.util.Properties prop);
 
     public abstract BuildManager addProperties(String profile, java.util.Properties prop);
+
 
 }
