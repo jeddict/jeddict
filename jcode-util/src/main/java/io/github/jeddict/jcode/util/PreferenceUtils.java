@@ -18,6 +18,7 @@ package io.github.jeddict.jcode.util;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import static io.github.jeddict.jcode.util.StringHelper.kebabCase;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,7 +37,9 @@ import org.openide.util.Exceptions;
 
 public class PreferenceUtils {
 
-    private final static ObjectMapper MAPPER = new ObjectMapper().setSerializationInclusion(Include.NON_NULL);
+    private final static ObjectMapper MAPPER = new ObjectMapper()
+            .setSerializationInclusion(Include.NON_NULL)
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 //    private final static Jsonb JSONB = JsonbBuilder.create(
 //            new JsonbConfig().withPropertyVisibilityStrategy(new PropertyVisibilityStrategy() {
 //                @Override
