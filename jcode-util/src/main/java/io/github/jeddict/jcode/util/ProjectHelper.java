@@ -114,9 +114,15 @@ public class ProjectHelper {
     public static FileObject getProjectWebRoot(Project project) {
         Sources sources = ProjectUtils.getSources(project);
         SourceGroup sourceGroups[] = sources.getSourceGroups(WebProjectConstants.TYPE_DOC_ROOT);
-        if (sourceGroups.length > 0) {
+        if (sourceGroups != null && sourceGroups.length > 0) {
             return sourceGroups[0].getRootFolder();
-        } else {
+        }
+        try {
+            return project.getProjectDirectory()
+                    .getFileObject("src/main")
+                    .createFolder("webapp");
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
             return null;
         }
     }
@@ -134,9 +140,9 @@ public class ProjectHelper {
      */ 
     public static FileObject getResourceDirectory(Project project) {
         Sources srcs = ProjectUtils.getSources(project);
-        SourceGroup[] grps = srcs.getSourceGroups(JavaProjectConstants.SOURCES_TYPE_RESOURCES);
-        if (grps != null && grps.length > 0) {
-            return grps[0].getRootFolder();
+        SourceGroup[] sourceGroups = srcs.getSourceGroups(JavaProjectConstants.SOURCES_TYPE_RESOURCES);
+        if (sourceGroups != null && sourceGroups.length > 0) {
+            return sourceGroups[0].getRootFolder();
         }
         try {
             return project.getProjectDirectory()
