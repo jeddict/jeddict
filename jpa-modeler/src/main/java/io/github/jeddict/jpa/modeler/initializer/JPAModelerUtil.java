@@ -103,6 +103,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
@@ -123,6 +124,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.visual.widget.Widget;
@@ -414,17 +416,24 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
         return icon == null ? JAVA_CLASS_ICON_PATH : icon;
     }
 
-    public static EntityMappings getEntityMapping(File file) throws JAXBException {
+    public static EntityMappings getEntityMapping(Source source) throws JAXBException {
         EntityMappings definition_Load;
         if (MODELER_UNMARSHALLER == null) {
             MODELER_UNMARSHALLER = MODELER_CONTEXT.createUnmarshaller();
             MODELER_UNMARSHALLER.setEventHandler(new ValidateJAXB());
         }
-//         content = FileUtils.readFileToString(file);
-        definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(file), EntityMappings.class).getValue();
+        definition_Load = MODELER_UNMARSHALLER.unmarshal(source, EntityMappings.class).getValue();
         MODELER_UNMARSHALLER = null;//GC issue
 //        cleanUnMarshaller();
         return definition_Load;
+    }
+
+    public static EntityMappings getEntityMapping(Reader reader) throws JAXBException {
+        return getEntityMapping(new StreamSource(reader));
+    }
+
+    public static EntityMappings getEntityMapping(File file) throws JAXBException {
+        return getEntityMapping(new StreamSource(file));
     }
 
     private static void cleanUnMarshaller() {
@@ -432,8 +441,7 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
             String xmlStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><entity-mappings/>";
             MODELER_UNMARSHALLER.unmarshal(new StreamSource(new StringReader(xmlStr)));
         } catch (JAXBException ex) {
-//            Exceptions.printStackTrace(ex);
-            System.out.println(ex);
+            System.err.println(ex);
         }
     }
 

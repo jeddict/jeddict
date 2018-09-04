@@ -19,9 +19,7 @@ import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import io.github.jeddict.analytics.JeddictLogger;
 import static io.github.jeddict.jcode.util.Constants.JAVA_EXT_SUFFIX;
-import static io.github.jeddict.jcode.util.ProjectHelper.findSourceGroupForFile;
 import static io.github.jeddict.jcode.util.ProjectHelper.getFolderSourceGroup;
-import io.github.jeddict.jpa.modeler.initializer.JPAFileActionListener;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil;
 import io.github.jeddict.jpa.spec.Embeddable;
 import io.github.jeddict.jpa.spec.Entity;
@@ -33,23 +31,18 @@ import io.github.jeddict.jpa.spec.extend.IPersistenceAttributes;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.jpa.spec.extend.RelationAttribute;
 import io.github.jeddict.reveng.BaseWizardDescriptor;
-import io.github.jeddict.reveng.JCREProcessor;
 import static io.github.jeddict.reveng.settings.RevengPanel.isIncludeReferencedClasses;
 import io.github.jeddict.source.ClassExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.SourceExplorer;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import static java.util.Collections.singleton;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import java.util.Optional;
 import java.util.Set;
@@ -58,11 +51,9 @@ import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.INFO;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import static javax.swing.JOptionPane.showInputDialog;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import static org.apache.commons.lang.StringUtils.isEmpty;
@@ -70,15 +61,12 @@ import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.AggregateProgressHandle;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.api.project.Project;
-import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.templates.TemplateRegistration;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.exception.ProcessInterruptedException;
-import org.netbeans.modules.j2ee.persistence.api.EntityClassScope;
 import org.netbeans.modules.j2ee.persistence.dd.common.PersistenceUnit;
 import org.netbeans.modules.j2ee.persistence.provider.InvalidPersistenceXmlException;
 import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
-import org.netbeans.modules.j2ee.persistence.wizard.EntityClosure;
 import org.netbeans.modules.j2ee.persistence.wizard.PersistenceClientEntitySelection;
 import org.netbeans.modules.j2ee.persistence.wizard.Util;
 import static org.netbeans.modules.j2ee.persistence.wizard.WizardProperties.CREATE_PERSISTENCE_UNIT;
@@ -96,15 +84,12 @@ import static org.openide.NotifyDescriptor.OK_CANCEL_OPTION;
 import org.openide.WizardDescriptor;
 import org.openide.awt.NotificationDisplayer;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataFolder;
 import org.openide.util.ImageUtilities;
 import static org.openide.util.NbBundle.getMessage;
 import org.openide.util.RequestProcessor;
-import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.WindowManager;
 
-@ServiceProvider(service = JCREProcessor.class)
 @TemplateRegistration(
         folder = "Persistence",
         position = 2,
@@ -113,13 +98,20 @@ import org.openide.windows.WindowManager;
         description = "resources/JPA_JCRE_DESC.html",
         category = "persistence"
 )
-public final class RevEngWizardDescriptor extends BaseWizardDescriptor implements JCREProcessor {
+public final class ClassWizardDescriptor extends BaseWizardDescriptor {
 
     private PersistenceUnitWizardDescriptor puPanel;
     private WizardDescriptor wizard;
     private Project project;
 
-    private static final Logger LOG = Logger.getLogger(RevEngWizardDescriptor.class.getName());
+    private static final Logger LOG = Logger.getLogger(ClassWizardDescriptor.class.getName());
+
+    public ClassWizardDescriptor() {
+    }
+
+    public ClassWizardDescriptor(Project project) {
+        this.project = project;
+    }
 
     @Override
     public void initialize(WizardDescriptor wizard) {
@@ -129,8 +121,8 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
         if (project == null) {
             project = Templates.getProject(wizard);
         }
-        WizardDescriptor.Panel secondPanel = new ValidationPanel(project, new PersistenceClientEntitySelection(getMessage(RevEngWizardDescriptor.class, "LBL_EntityClasses"), null, wizard)); // NOI18N
-        WizardDescriptor.Panel thirdPanel = new JPAModelSetupPanel(project, wizard);
+        WizardDescriptor.Panel secondPanel = new ValidationPanel(project, new PersistenceClientEntitySelection(getMessage(ClassWizardDescriptor.class, "LBL_EntityClasses"), null, wizard)); // NOI18N
+        WizardDescriptor.Panel thirdPanel = new ClassSetupPanel(project, wizard);
         String names[];
         boolean noPuNeeded = true;
         try {
@@ -145,9 +137,9 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
             panels.add(thirdPanel);
             panels.add(puPanel);
             names = new String[]{
-                getMessage(RevEngWizardDescriptor.class, "LBL_EntityClasses"),
-                getMessage(RevEngWizardDescriptor.class, "LBL_JPA_Model"),
-                getMessage(RevEngWizardDescriptor.class, "LBL_PersistenceUnitSetup")
+                getMessage(ClassWizardDescriptor.class, "LBL_EntityClasses"),
+                getMessage(ClassWizardDescriptor.class, "LBL_JPA_Model"),
+                getMessage(ClassWizardDescriptor.class, "LBL_PersistenceUnitSetup")
             };
         } else {
 
@@ -155,12 +147,12 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
             panels.add(secondPanel);
             panels.add(thirdPanel);
             names = new String[]{
-                getMessage(RevEngWizardDescriptor.class, "LBL_EntityClasses"),
-                getMessage(RevEngWizardDescriptor.class, "LBL_JPA_Model")
+                getMessage(ClassWizardDescriptor.class, "LBL_EntityClasses"),
+                getMessage(ClassWizardDescriptor.class, "LBL_JPA_Model")
             };
         }
 
-        wizard.putProperty("NewFileWizard_Title", getMessage(RevEngWizardDescriptor.class, "NewFileWizard_Title"));
+        wizard.putProperty("NewFileWizard_Title", getMessage(ClassWizardDescriptor.class, "NewFileWizard_Title"));
         org.netbeans.modeler.component.Wizards.mergeSteps(wizard, panels.toArray(new WizardDescriptor.Panel[0]), names);
     }
 
@@ -199,7 +191,7 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
                 Util.addPersistenceUnitToProject(project, persistenceUnit);
             }
         }
-        final String title = getMessage(RevEngWizardDescriptor.class, "TITLE_Progress_JPA_Model");
+        final String title = getMessage(ClassWizardDescriptor.class, "TITLE_Progress_JPA_Model");
         EntityMappings entityMappings = EntityMappings.getNewInstance(JPAModelerUtil.getModelerFileVersion());
         entityMappings.setGenerated();
         instantiateJCREProcess(
@@ -212,110 +204,7 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
         return singleton(DataFolder.findFolder(targetFilePath));
     }
 
-    /**
-     * Update the complete existing diagram with existing class
-     *
-     * @param modelerFile
-     */
-    @Override
-    public void syncExistingDiagram(ModelerFile modelerFile) {
-        try {
-            this.project = modelerFile.getProject();
-            EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
-            FileObject targetFilePath = modelerFile.getFileObject().getParent();
-            FileObject sourcePackage = getFolderSourceGroup(targetFilePath).getRootFolder();
-            String targetFileName = modelerFile.getFileObject().getName();
-            Set<String> entities = entityMappings.getEntity()
-                    .stream()
-                    .map(JavaClass::getFQN)
-                    .collect(toSet());
-
-            EntityClassScope entityClassScope = EntityClassScope.getEntityClassScope(project.getProjectDirectory());
-            EntityClosure entityClosure = EntityClosure.create(entityClassScope, project);
-            entityClosure.setClosureEnabled(true);
-            entityClosure.addEntities(entities);
-            if (entityClosure.getSelectedEntities().size() > entities.size()) {
-                showInputDialog("Entity closure have more entity");
-            }
-
-            FileObject backupFile = null;
-            try {
-                String backupFileName = targetFileName + "_backup";
-                backupFile = FileUtil.copyFile(modelerFile.getFileObject(), targetFilePath, backupFileName);
-            } catch (IOException ex) {
-            }
-            EntityMappings newEntityMappings = EntityMappings.getNewInstance(JPAModelerUtil.getModelerFileVersion());
-            newEntityMappings.setGenerated();
-            instantiateJCREProcess(
-                    "Updating Design", newEntityMappings,
-                    sourcePackage, entities,
-                    targetFilePath, targetFileName,
-                    isIncludeReferencedClasses(), false,
-                    null
-            );
-            notifyBackupCreation(modelerFile, backupFile);
-        } catch (IOException ex) {
-            modelerFile.handleException(ex);
-        }
-    }
-
-    /**
-     * Drop classes in existing diagram
-     *
-     * @param modelerFile
-     * @param entityFiles
-     */
-    @Override
-    public void processDropedClasses(ModelerFile modelerFile, List<File> entityFiles) {
-        List<FileObject> fileObjects
-                = entityFiles
-                        .stream()
-                        .map(FileUtil::toFileObject)
-                        .collect(toList());
-
-        Map<SourceGroup, Set<String>> sourceGroups = new HashMap<>();
-        for (FileObject fileObject : fileObjects) {
-            SourceGroup sourceGroup = findSourceGroupForFile(fileObject);
-            if (isNull(sourceGroup)) {
-                continue;
-            }
-            if (!sourceGroups.containsKey(sourceGroup)) {
-                sourceGroups.put(sourceGroup, new HashSet<>());
-            }
-            String entity = fileObject.getPath()
-                    .substring(sourceGroup.getRootFolder().getPath().length() + 1, fileObject.getPath().lastIndexOf(JAVA_EXT_SUFFIX))
-                    .replace('/', '.');
-            sourceGroups.get(sourceGroup).add(entity);
-        }
-
-        try {
-            EntityMappings entityMappings = (EntityMappings) modelerFile.getModelerScene().getBaseElementSpec();
-            int totalSource = sourceGroups.keySet().size();
-            int sourceIndex = 0;
-            for (SourceGroup sourceGroup : sourceGroups.keySet()) {
-                int currentSource = ++sourceIndex;
-                Set<String> entities = sourceGroups.get(sourceGroup);
-                instantiateJCREProcess(
-                        "Importing classes",
-                        entityMappings,
-                        sourceGroup.getRootFolder(), entities,
-                        null, null,
-                        isIncludeReferencedClasses(), false,
-                        () -> {
-                            if (totalSource == currentSource) {
-                                modelerFile.save(true);
-                                modelerFile.close();
-                                JPAFileActionListener.open(modelerFile);
-                            }
-                        }
-                );
-            }
-        } catch (IOException ex) {
-            modelerFile.handleException(ex);
-        }
-    }
-
-    private void instantiateJCREProcess(
+    public void instantiateJCREProcess(
             final String title,
             final EntityMappings entityMappings,
             final FileObject sourcePackage,
@@ -399,7 +288,7 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
             final boolean autoOpen) throws IOException, ProcessInterruptedException {
 
         int progressIndex = 0;
-        String progressMsg = getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Model_Pre"); //NOI18N;
+        String progressMsg = getMessage(ClassWizardDescriptor.class, "MSG_Progress_JPA_Model_Pre"); //NOI18N;
         reporter.progress(progressMsg, progressIndex++);
 
         List<String> missingEntities = new ArrayList<>();
@@ -489,14 +378,14 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
 
         for (ClassExplorer clazz : classes) {
             if (clazz.isEntity() || clazz.isMappedSuperclass()) {
-                String progressMsg = getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Class_Parsing", clazz.getName() + JAVA_EXT_SUFFIX);//NOI18N
+                String progressMsg = getMessage(ClassWizardDescriptor.class, "MSG_Progress_JPA_Class_Parsing", clazz.getName() + JAVA_EXT_SUFFIX);//NOI18N
                 reporter.progress(progressMsg, progressIndex++);
                 parseJavaClass(entityMappings, clazz);
             }
         }
         for (ClassExplorer clazz : classes) {
             if (!clazz.isEntity() && !clazz.isMappedSuperclass()) {
-                String progressMsg = getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Class_Parsing", clazz.getName() + JAVA_EXT_SUFFIX);//NOI18N
+                String progressMsg = getMessage(ClassWizardDescriptor.class, "MSG_Progress_JPA_Class_Parsing", clazz.getName() + JAVA_EXT_SUFFIX);//NOI18N
                 reporter.progress(progressMsg, progressIndex++);
                 parseJavaClass(entityMappings, clazz);
             }
@@ -578,7 +467,7 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
 
     @Override
     public String name() {
-        return getMessage(RevEngWizardDescriptor.class, "LBL_WizardTitle");
+        return getMessage(ClassWizardDescriptor.class, "LBL_WizardTitle");
     }
 
     public static int getProgressStepCount(int entityCount) {
@@ -591,7 +480,7 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
 //        entityMappingsSpec.manageJoinColumnRefName();
     }
 
-    private static void notifyBackupCreation(ModelerFile file, FileObject backupFile) {
+    public static void notifyBackupCreation(ModelerFile file, FileObject backupFile) {
         if (backupFile == null) {
             return;
         }

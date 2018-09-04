@@ -50,7 +50,7 @@ public class DocSetupPanelVisual extends javax.swing.JPanel implements DocumentL
     private final JTextComponent packageComboBoxEditor;
     private final ChangeSupport changeSupport = new ChangeSupport(this);
     
-    private final FileFilter JSON_FILE_FILTER = new ServiceFileFilter();
+    private final FileFilter FILE_FILTER = new ServiceFileFilter();
     private static String previousDirectory;
     
     public static final String JSON_FILE = "JSON_FILE";
@@ -155,7 +155,7 @@ public class DocSetupPanelVisual extends javax.swing.JPanel implements DocumentL
                 .addComponent(jsonbCheckBox)
                 .addGap(18, 18, 18)
                 .addComponent(jaxbCheckBox)
-                .addContainerGap(187, Short.MAX_VALUE))
+                .addContainerGap(166, Short.MAX_VALUE))
         );
         optionsLayeredPaneLayout.setVerticalGroup(
             optionsLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -191,30 +191,24 @@ public class DocSetupPanelVisual extends javax.swing.JPanel implements DocumentL
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(10, 10, 10)
-                            .addComponent(locationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(projectLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(locationLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(packageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(fileNameLabel)
-                            .addComponent(jsonFileLabel))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jsonFileLabel))
+                    .addComponent(projectLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(packageLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fileNameLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(optionsLayeredPane)
                     .addComponent(locationComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(projectTextField, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(packageComboBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(fileNameTextField)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jsonFileTextField)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jBtnBrowse)))
+                        .addComponent(jBtnBrowse))
+                    .addComponent(fileNameTextField, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -282,8 +276,8 @@ public class DocSetupPanelVisual extends javax.swing.JPanel implements DocumentL
         JFileChooser chooser = new JFileChooser(previousDirectory);
         chooser.setMultiSelectionEnabled(false);
         chooser.setAcceptAllFileFilterUsed(false);
-        chooser.addChoosableFileFilter(JSON_FILE_FILTER);
-        chooser.setFileFilter(JSON_FILE_FILTER);
+        chooser.addChoosableFileFilter(FILE_FILTER);
+        chooser.setFileFilter(FILE_FILTER);
 
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File wsdlFile = chooser.getSelectedFile();
@@ -461,7 +455,7 @@ public class DocSetupPanelVisual extends javax.swing.JPanel implements DocumentL
 
       private static class ServiceFileFilter extends javax.swing.filechooser.FileFilter {
 
-        public static final String[] SUPPORTED_EXTENSIONS = {"json", "JSON"};
+          public static final String[] SUPPORTED_EXTENSIONS = {"json", "JSON", "xml", "XML", "yaml", "YAML", "yml", "YML"};
 
         @Override
         public boolean accept(File f) {

@@ -26,16 +26,16 @@ import org.netbeans.api.project.Project;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 
-final class JPAModelSetupPanel implements WizardDescriptor.Panel, WizardDescriptor.FinishablePanel, ChangeListener {
+final class ClassSetupPanel implements WizardDescriptor.Panel, WizardDescriptor.FinishablePanel, ChangeListener {
 
     private WizardDescriptor wizardDescriptor;
-    private JPAModelSetupPanelVisual component;
+    private ClassSetupPanelVisual component;
     private Project project;
 
     /**
      * Create the wizard panel descriptor.
      */
-    public JPAModelSetupPanel(Project project, WizardDescriptor wizardDescriptor) {
+    public ClassSetupPanel(Project project, WizardDescriptor wizardDescriptor) {
         this.project = project;
         this.wizardDescriptor = wizardDescriptor;
     }
@@ -48,7 +48,7 @@ final class JPAModelSetupPanel implements WizardDescriptor.Panel, WizardDescript
     @Override
     public Component getComponent() {
         if (component == null) {
-            component = new JPAModelSetupPanelVisual(project, wizardDescriptor);
+            component = new ClassSetupPanelVisual(project, wizardDescriptor);
             component.addChangeListener(this);
         }
         return component;
@@ -56,7 +56,7 @@ final class JPAModelSetupPanel implements WizardDescriptor.Panel, WizardDescript
 
     @Override
     public HelpCtx getHelp() {
-        return new HelpCtx("org.netbeans.modules.j2ee.persistence.wizard.jpacontroller." + JPAModelSetupPanel.class.getSimpleName()); // NOI18N
+        return new HelpCtx("org.netbeans.modules.j2ee.persistence.wizard.jpacontroller." + ClassSetupPanel.class.getSimpleName()); // NOI18N
     }
 
     @Override

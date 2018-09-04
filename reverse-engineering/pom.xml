@@ -42,6 +42,10 @@
                             <id>org.netbeans.modules:org-netbeans-modules-maven-embedder</id>
                             <type>impl</type>
                         </dependency>
+                        <dependency>
+                            <id>org.netbeans.modules:org-netbeans-modules-websvc-jaxws21</id>
+                            <type>impl</type>
+                        </dependency>
                     </moduleDependencies>
                 </configuration>
             </plugin>
@@ -49,6 +53,11 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.22</version>
+        </dependency>
         <dependency>
             <groupId>io.github.jeddict.modeler</groupId>
             <artifactId>modeler-api</artifactId>
@@ -199,6 +208,16 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-options-api</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-websvc-jaxws21</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-xml-jaxb-api</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
     </dependencies>

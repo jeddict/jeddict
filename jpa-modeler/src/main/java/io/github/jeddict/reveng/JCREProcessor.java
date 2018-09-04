@@ -39,4 +39,12 @@ public interface JCREProcessor {
      * @param entityFiles
      */
     void processDropedClasses(ModelerFile modelerFile, List<File> entityFiles);
+
+    /**
+     * Drop doc in existing diagram
+     *
+     * @param modelerFile
+     * @param docFile
+     */
+    void processDropedDocument(ModelerFile modelerFile, File docFile);
 }

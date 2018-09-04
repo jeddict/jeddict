@@ -27,12 +27,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
-import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.modules.j2ee.core.api.support.java.JavaIdentifiers;
-import org.netbeans.modules.j2ee.persistence.wizard.Util;
 import org.netbeans.modules.j2ee.persistence.wizard.fromdb.SourceGroupUISupport;
 import org.netbeans.spi.java.project.support.ui.PackageView;
 import org.netbeans.spi.project.ui.templates.support.Templates;
@@ -42,7 +40,7 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.ChangeSupport;
 import org.openide.util.NbBundle;
 
-public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements DocumentListener {
+public class ClassSetupPanelVisual extends javax.swing.JPanel implements DocumentListener {
 
     private WizardDescriptor wizard;
     private Project project;
@@ -52,7 +50,7 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
     /**
      * Creates new form CrudSetupPanel
      */
-    public JPAModelSetupPanelVisual(Project project, WizardDescriptor wizard) {
+    public ClassSetupPanelVisual(Project project, WizardDescriptor wizard) {
         this.project = project;
         this.wizard = wizard;
         initComponents();
@@ -81,18 +79,18 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
         fileNameLabel = new javax.swing.JLabel();
         fileNameTextField = new javax.swing.JTextField();
 
-        setName(org.openide.util.NbBundle.getMessage(JPAModelSetupPanelVisual.class, "LBL_JPA_Model")); // NOI18N
+        setName(org.openide.util.NbBundle.getMessage(ClassSetupPanelVisual.class, "LBL_JPA_Model")); // NOI18N
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("io/github/jeddict/reveng/klass/Bundle"); // NOI18N
         headerLabel.setText(bundle.getString("MSG_JPA_File_Location")); // NOI18N
 
         projectLabel.setLabelFor(projectTextField);
-        projectLabel.setText(org.openide.util.NbBundle.getMessage(JPAModelSetupPanelVisual.class, "LBL_Project")); // NOI18N
+        projectLabel.setText(org.openide.util.NbBundle.getMessage(ClassSetupPanelVisual.class, "LBL_Project")); // NOI18N
 
         projectTextField.setEditable(false);
 
         locationLabel.setLabelFor(locationComboBox);
-        org.openide.awt.Mnemonics.setLocalizedText(locationLabel, org.openide.util.NbBundle.getMessage(JPAModelSetupPanelVisual.class, "LBL_SrcLocation")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(locationLabel, org.openide.util.NbBundle.getMessage(ClassSetupPanelVisual.class, "LBL_SrcLocation")); // NOI18N
 
         locationComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -101,7 +99,7 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
         });
 
         packageLabel.setLabelFor(packageComboBox);
-        packageLabel.setText(org.openide.util.NbBundle.getMessage(JPAModelSetupPanelVisual.class, "LBL_Package")); // NOI18N
+        packageLabel.setText(org.openide.util.NbBundle.getMessage(ClassSetupPanelVisual.class, "LBL_Package")); // NOI18N
 
         packageComboBox.setEditable(true);
 
@@ -162,17 +160,17 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
                 .addContainerGap(122, Short.MAX_VALUE))
         );
 
-        headerLabel.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(JPAModelSetupPanelVisual.class, "MSG_JPA_File_Location")); // NOI18N
-        headerLabel.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(JPAModelSetupPanelVisual.class, "MSG_JPA_File_Location")); // NOI18N
-        projectLabel.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(JPAModelSetupPanelVisual.class, "LBL_Project")); // NOI18N
-        projectLabel.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(JPAModelSetupPanelVisual.class, "LBL_Project")); // NOI18N
-        projectTextField.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(JPAModelSetupPanelVisual.class, "ACSD_Project")); // NOI18N
-        locationLabel.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(JPAModelSetupPanelVisual.class, "LBL_SrcLocation")); // NOI18N
-        locationLabel.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(JPAModelSetupPanelVisual.class, "LBL_SrcLocation")); // NOI18N
-        locationComboBox.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(JPAModelSetupPanelVisual.class, "ACSD_Location")); // NOI18N
-        packageLabel.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(JPAModelSetupPanelVisual.class, "LBL_Package")); // NOI18N
-        packageLabel.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(JPAModelSetupPanelVisual.class, "LBL_Package")); // NOI18N
-        packageComboBox.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(JPAModelSetupPanelVisual.class, "ACSD_Package")); // NOI18N
+        headerLabel.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(ClassSetupPanelVisual.class, "MSG_JPA_File_Location")); // NOI18N
+        headerLabel.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(ClassSetupPanelVisual.class, "MSG_JPA_File_Location")); // NOI18N
+        projectLabel.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(ClassSetupPanelVisual.class, "LBL_Project")); // NOI18N
+        projectLabel.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(ClassSetupPanelVisual.class, "LBL_Project")); // NOI18N
+        projectTextField.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(ClassSetupPanelVisual.class, "ACSD_Project")); // NOI18N
+        locationLabel.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(ClassSetupPanelVisual.class, "LBL_SrcLocation")); // NOI18N
+        locationLabel.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(ClassSetupPanelVisual.class, "LBL_SrcLocation")); // NOI18N
+        locationComboBox.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(ClassSetupPanelVisual.class, "ACSD_Location")); // NOI18N
+        packageLabel.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(ClassSetupPanelVisual.class, "LBL_Package")); // NOI18N
+        packageLabel.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(ClassSetupPanelVisual.class, "LBL_Package")); // NOI18N
+        packageComboBox.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(ClassSetupPanelVisual.class, "ACSD_Package")); // NOI18N
     }// </editor-fold>//GEN-END:initComponents
 
     private void locationComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_locationComboBoxActionPerformed
@@ -200,39 +198,25 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
     }
 
     boolean valid(WizardDescriptor wizard) {
-        if (Util.isContainerManaged(project)) {
-            ClassPath cp = ClassPath.getClassPath(getLocationValue().getRootFolder(), ClassPath.COMPILE);
-            ClassLoader cl = cp.getClassLoader(true);
-            try {
-                Class.forName("javax.transaction.UserTransaction", false, cl);
-            } catch (ClassNotFoundException cnfe) {
-                wizard.putProperty("WizardPanel_errorMessage", NbBundle.getMessage(JPAModelSetupPanelVisual.class, "ERR_UserTransactionUnavailable"));
-                return false;
-            } catch (java.lang.UnsupportedClassVersionError err) {
-                wizard.putProperty("WizardPanel_errorMessage", NbBundle.getMessage(JPAModelSetupPanelVisual.class, "ERR_UserTransactionJavaVersion"));
-                return false;
-            }
-        }
-
         String fileName = getFileName();
         if (fileName.trim().equals("")) { // NOI18N
-            wizard.putProperty("WizardPanel_errorMessage", NbBundle.getMessage(JPAModelSetupPanelVisual.class, "ERR_JavaTargetChooser_CantUseEmptyFileName"));
+            wizard.putProperty("WizardPanel_errorMessage", NbBundle.getMessage(ClassSetupPanelVisual.class, "ERR_JavaTargetChooser_CantUseEmptyFileName"));
             return false;
         }
 
         String packageName = getPackage();
         if (packageName.trim().equals("")) { // NOI18N
-            wizard.putProperty("WizardPanel_errorMessage", NbBundle.getMessage(JPAModelSetupPanelVisual.class, "ERR_JavaTargetChooser_CantUseDefaultPackage"));
+            wizard.putProperty("WizardPanel_errorMessage", NbBundle.getMessage(ClassSetupPanelVisual.class, "ERR_JavaTargetChooser_CantUseDefaultPackage"));
             return false;
         }
 
         if (!JavaIdentifiers.isValidPackageName(packageName)) {
-            wizard.putProperty("WizardPanel_errorMessage", NbBundle.getMessage(JPAModelSetupPanelVisual.class, "ERR_JavaTargetChooser_InvalidPackage")); //NOI18N
+            wizard.putProperty("WizardPanel_errorMessage", NbBundle.getMessage(ClassSetupPanelVisual.class, "ERR_JavaTargetChooser_InvalidPackage")); //NOI18N
             return false;
         }
 
         if (!isFolderWritable(getLocationValue(), packageName)) {
-            wizard.putProperty("WizardPanel_errorMessage", NbBundle.getMessage(JPAModelSetupPanelVisual.class, "ERR_JavaTargetChooser_UnwritablePackage")); //NOI18N
+            wizard.putProperty("WizardPanel_errorMessage", NbBundle.getMessage(ClassSetupPanelVisual.class, "ERR_JavaTargetChooser_UnwritablePackage")); //NOI18N
             return false;
         }
         wizard.putProperty("WizardPanel_errorMessage", ""); // NOI18N

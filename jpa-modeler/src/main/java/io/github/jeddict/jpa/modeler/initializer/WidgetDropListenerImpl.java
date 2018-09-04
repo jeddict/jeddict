@@ -62,11 +62,15 @@ public class WidgetDropListenerImpl implements WidgetDropListener {
 
     @Override
     public void drop(Widget widget, Point point, Transferable transferable, IModelerScene scene) {
+        JCREProcessor processor = Lookup.getDefault().lookup(JCREProcessor.class);
         List<File> files = new ArrayList<>();
 
         if (isJavaClassDrop(transferable)) {
             try {
-                files.addAll((List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor));
+                List<File> javaFiles = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                files.addAll(javaFiles.stream()
+                        .filter(file -> file.getPath().endsWith(JAVA_EXT_SUFFIX))
+                        .collect(toList()));
             } catch (UnsupportedFlavorException | IOException ex) {
                 ErrorManager.getDefault().notify(ErrorManager.INFORMATIONAL, ex);
             }
@@ -85,8 +89,25 @@ public class WidgetDropListenerImpl implements WidgetDropListener {
         }
 
         if (!files.isEmpty()) {
-            JCREProcessor processor = Lookup.getDefault().lookup(JCREProcessor.class);
             processor.processDropedClasses(scene.getModelerFile(), files);
+        }
+        files.clear();
+
+        try {
+            List<File> jsonFiles = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+            files.addAll(jsonFiles.stream()
+                    .filter(file
+                            -> file.getPath().toLowerCase().endsWith(".json")
+                    || file.getPath().toLowerCase().endsWith(".xml")
+                    || file.getPath().toLowerCase().endsWith(".yml")
+                    || file.getPath().toLowerCase().endsWith(".yaml")
+                    || file.getPath().toLowerCase().endsWith(".jpa")
+                    ).collect(toList()));
+            if (!files.isEmpty()) {
+                processor.processDropedDocument(scene.getModelerFile(), jsonFiles.get(0));
+            }
+        } catch (UnsupportedFlavorException | IOException ex) {
+            ErrorManager.getDefault().notify(ErrorManager.INFORMATIONAL, ex);
         }
 
     }

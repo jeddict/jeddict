@@ -27,37 +27,27 @@
           </Group>
           <Group type="102" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
-                          <Component id="locationLabel" min="-2" pref="50" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="projectLabel" max="32767" attributes="0"/>
-                      </Group>
-                  </Group>
+                  <Component id="locationLabel" alignment="1" min="-2" pref="149" max="-2" attributes="0"/>
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="packageLabel" alignment="0" min="-2" pref="50" max="-2" attributes="0"/>
-                          <Component id="fileNameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jsonFileLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="jsonFileLabel" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="projectLabel" alignment="1" min="-2" pref="147" max="-2" attributes="0"/>
+                  <Component id="packageLabel" alignment="1" min="-2" pref="147" max="-2" attributes="0"/>
+                  <Component id="fileNameLabel" alignment="1" min="-2" pref="147" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="optionsLayeredPane" max="32767" attributes="0"/>
                   <Component id="locationComboBox" alignment="0" max="32767" attributes="1"/>
                   <Component id="projectTextField" alignment="1" max="32767" attributes="1"/>
                   <Component id="packageComboBox" alignment="1" max="32767" attributes="0"/>
-                  <Component id="fileNameTextField" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jsonFileTextField" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jBtnBrowse" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="fileNameTextField" alignment="1" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -232,7 +222,7 @@
                   <Component id="jsonbCheckBox" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jaxbCheckBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="187" max="32767" attributes="0"/>
+                  <EmptySpace pref="166" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
