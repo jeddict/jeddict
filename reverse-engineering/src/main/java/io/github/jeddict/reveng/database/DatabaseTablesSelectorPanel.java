@@ -1112,13 +1112,7 @@ public class DatabaseTablesSelectorPanel extends javax.swing.JPanel implements A
                     return true;
                 }
             }
-
             setErrorMessage(" "); // NOI18N
-
-            if (!ProviderUtil.isValidServerInstanceOrNone(project)) {
-                setWarningMessage(NbBundle.getMessage(DatabaseTablesSelectorPanel.class, "ERR_MissingServer"));
-            }
-
             return true;
         }
 
