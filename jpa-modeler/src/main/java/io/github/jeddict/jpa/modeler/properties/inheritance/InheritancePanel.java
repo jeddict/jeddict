@@ -1,9 +1,5 @@
 package io.github.jeddict.jpa.modeler.properties.inheritance;
 
-import static java.lang.Boolean.TRUE;
-import java.util.HashMap;
-import java.util.Map;
-import javax.swing.DefaultComboBoxModel;
 import io.github.jeddict.jpa.modeler.widget.EntityWidget;
 import io.github.jeddict.jpa.modeler.widget.InheritanceStateType;
 import static io.github.jeddict.jpa.modeler.widget.InheritanceStateType.BRANCH;
@@ -15,9 +11,13 @@ import io.github.jeddict.jpa.spec.DiscriminatorType;
 import io.github.jeddict.jpa.spec.Inheritance;
 import io.github.jeddict.jpa.spec.InheritanceType;
 import io.github.jeddict.jpa.spec.extend.InheritanceHandler;
+import static java.lang.Boolean.TRUE;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.DefaultComboBoxModel;
 import org.netbeans.modeler.core.ModelerFile;
-import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
 import org.netbeans.modeler.properties.customattr.Property;
+import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
 
 /**
  * Copyright 2013-2018 the original author or authors from the Jeddict project (https://jeddict.github.io/).
@@ -255,9 +255,9 @@ public class InheritancePanel extends GenericEmbeddedEditor<InheritanceHandler> 
         strategy_LayeredPaneLayout.setHorizontalGroup(
             strategy_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(strategy_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(strategy_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(strategy_ComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(strategy_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(strategy_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 484, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         strategy_LayeredPaneLayout.setVerticalGroup(
@@ -279,9 +279,9 @@ public class InheritancePanel extends GenericEmbeddedEditor<InheritanceHandler> 
         value_LayeredPaneLayout.setHorizontalGroup(
             value_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(value_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(value_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(value_TextField)
+                .addComponent(value_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(value_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         value_LayeredPaneLayout.setVerticalGroup(
@@ -308,9 +308,9 @@ public class InheritancePanel extends GenericEmbeddedEditor<InheritanceHandler> 
         column_name_LayeredPaneLayout.setHorizontalGroup(
             column_name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(column_name_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(column_name_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(column_name_TextField))
+                .addComponent(column_name_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(column_name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 477, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         column_name_LayeredPaneLayout.setVerticalGroup(
             column_name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -331,9 +331,9 @@ public class InheritancePanel extends GenericEmbeddedEditor<InheritanceHandler> 
         column_type_LayeredPaneLayout.setHorizontalGroup(
             column_type_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(column_type_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(column_type_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(column_type_ComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(column_type_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(column_type_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 477, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         column_type_LayeredPaneLayout.setVerticalGroup(
             column_type_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -357,8 +357,8 @@ public class InheritancePanel extends GenericEmbeddedEditor<InheritanceHandler> 
         column_length_LayeredPaneLayout.setHorizontalGroup(
             column_length_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(column_length_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(column_length_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(column_length_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(column_length_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -385,8 +385,8 @@ public class InheritancePanel extends GenericEmbeddedEditor<InheritanceHandler> 
         column_def_LayeredPaneLayout.setHorizontalGroup(
             column_def_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(column_def_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(column_def_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(column_def_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(column_def_ScrollPane))
         );
         column_def_LayeredPaneLayout.setVerticalGroup(
@@ -504,7 +504,7 @@ public class InheritancePanel extends GenericEmbeddedEditor<InheritanceHandler> 
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(main_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(main_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 

@@ -42,7 +42,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
-import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.isBlank;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.WARNING;
@@ -202,38 +202,45 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         InheritanceStateType type = this.getInheritanceState();
         boolean isAbstract = TRUE.equals(this.getBaseElementSpec().getAbstract()); 
         
-        if(isAbstract || SINGLETON == type) {
+        if (isAbstract || SINGLETON == type) {
             getSignalManager().clear(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
-        }else if(ROOT == type) {
-                evaluateDiscriminatorValue(classSpec.getInheritance());
-        }else if(BRANCH == type) {
+        } else if (ROOT == type) {
+            evaluateDiscriminatorValue(classSpec.getInheritance());
+        } else if (BRANCH == type) {
             if (!evaluateDiscriminatorValue(classSpec.getInheritance())) {
                 if (this.getSuperclassWidget().getBaseElementSpec() instanceof InheritanceHandler) {
                     evaluateDiscriminatorValue(((InheritanceHandler) this.getSuperclassWidget().getBaseElementSpec()).getInheritance());
                 }
             }
-        }else if(LEAF == type) {
-            if(this.getSuperclassWidget().getBaseElementSpec() instanceof InheritanceHandler){
+        } else if (LEAF == type) {
+            if (this.getSuperclassWidget().getBaseElementSpec() instanceof InheritanceHandler) {
                 evaluateDiscriminatorValue(((InheritanceHandler) this.getSuperclassWidget().getBaseElementSpec()).getInheritance());
             }
         }
+//        duplicateDiscriminatorValue();
     }
     
     private boolean evaluateDiscriminatorValue(Inheritance inheritance){
         boolean status = true;
         InheritanceHandler classSpec = (InheritanceHandler) this.getBaseElementSpec();
-        if (inheritance != null && inheritance.getStrategy() == InheritanceType.TABLE_PER_CLASS) {
-                getSignalManager().clear(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
-            } else {
-                if (StringUtils.isBlank(classSpec.getDiscriminatorValue())) {
-                    getSignalManager().fire(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
-                    status = false;
-                } else {
-                    getSignalManager().clear(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
-                }
-            }
+        if (inheritance != null
+                && inheritance.getStrategy() == InheritanceType.TABLE_PER_CLASS) {
+            getSignalManager().clear(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
+        } else if (isBlank(classSpec.getDiscriminatorValue())) {
+            getSignalManager().fire(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
+            status = false;
+        } else {
+            getSignalManager().clear(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
+        }
         return status;
     }
+
+//    public void duplicateDiscriminatorValue() {
+//        InheritanceStateType type = this.getInheritanceState();
+//        if (ROOT == type) {
+//            this.getSubclassWidgets();
+//        }
+//    }
     
 //    @Override
 //    protected List<JMenuItem> getPopupMenuItemList() {
