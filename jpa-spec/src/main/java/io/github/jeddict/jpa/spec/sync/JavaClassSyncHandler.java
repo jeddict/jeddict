@@ -229,13 +229,13 @@ public class JavaClassSyncHandler {
                     } else if (member instanceof ConstructorDeclaration) {
                         syncConstructorSnippet((ConstructorDeclaration) member, imports);
                     } else {
-                        System.out.println("member not supported");
+                        System.out.println("member not supported " + type);
                     }
                 }
             } else if (type instanceof ClassOrInterfaceDeclaration || type instanceof EnumDeclaration) {
                 syncClassOrInterfaceOrEnumSnippet(type, imports);
             } else {
-                System.out.println("member not supported");
+                System.out.println("member not supported " + type);
             }
         }
     }

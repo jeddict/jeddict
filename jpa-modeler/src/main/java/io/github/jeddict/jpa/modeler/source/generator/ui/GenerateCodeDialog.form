@@ -70,8 +70,8 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <Component id="wrapperLayeredPane" min="-2" pref="212" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Component id="configPane" min="-2" pref="293" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="configPane" min="-2" pref="325" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -95,8 +95,8 @@
                           <EmptySpace min="-2" pref="89" max="-2" attributes="0"/>
                           <Component id="monolithRadioButton" min="-2" pref="111" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="69" max="-2" attributes="0"/>
-                          <Component id="microservicesRadioButton" min="-2" pref="117" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="73" max="-2" attributes="0"/>
+                          <Component id="microservicesRadioButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="65" max="-2" attributes="0"/>
                           <Component id="gatewayRadioButton" min="-2" pref="153" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -185,7 +185,7 @@
                           <ResourceString bundle="io/github/jeddict/jpa/modeler/source/generator/ui/Bundle.properties" key="GenerateCodeDialog.targetProjectLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                         </Property>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[95, 17]"/>
+                          <Dimension value="[120, 17]"/>
                         </Property>
                       </Properties>
                       <AuxValues>
@@ -215,6 +215,11 @@
                   </SubComponents>
                 </Container>
                 <Container class="javax.swing.JLayeredPane" name="jLayeredPane2">
+                  <Properties>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[180, 26]"/>
+                    </Property>
+                  </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
                       <BorderConstraints direction="Center"/>
@@ -229,7 +234,7 @@
                           <ResourceString bundle="io/github/jeddict/jpa/modeler/source/generator/ui/Bundle.properties" key="GenerateCodeDialog.targetProjectPackageLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                         </Property>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[50, 17]"/>
+                          <Dimension value="[70, 17]"/>
                         </Property>
                       </Properties>
                       <AuxValues>
@@ -291,7 +296,7 @@
                           <ResourceString bundle="io/github/jeddict/jpa/modeler/source/generator/ui/Bundle.properties" key="GenerateCodeDialog.gatewayProjectLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                         </Property>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[95, 17]"/>
+                          <Dimension value="[120, 17]"/>
                         </Property>
                       </Properties>
                       <AuxValues>
@@ -335,7 +340,7 @@
                           <ResourceString bundle="io/github/jeddict/jpa/modeler/source/generator/ui/Bundle.properties" key="GenerateCodeDialog.gatewayProjectPackageLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                         </Property>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[50, 17]"/>
+                          <Dimension value="[70, 17]"/>
                         </Property>
                       </Properties>
                       <AuxValues>
@@ -381,7 +386,7 @@
                       <ResourceString bundle="io/github/jeddict/jpa/modeler/source/generator/ui/Bundle.properties" key="GenerateCodeDialog.packageLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[95, 17]"/>
+                      <Dimension value="[120, 17]"/>
                     </Property>
                   </Properties>
                   <AuxValues>
@@ -411,7 +416,7 @@
                           <ResourceString bundle="io/github/jeddict/jpa/modeler/source/generator/ui/Bundle.properties" key="GenerateCodeDialog.packagePrefixLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                         </Property>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[130, 14]"/>
+                          <Dimension value="[180, 14]"/>
                         </Property>
                       </Properties>
                       <Constraints>
@@ -467,9 +472,9 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="businessLayerLabel" min="-2" pref="90" max="-2" attributes="0"/>
+                          <Component id="businessLayerLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="businessLayerCombo" pref="519" max="32767" attributes="0"/>
+                          <Component id="businessLayerCombo" pref="582" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -480,7 +485,7 @@
                               <Component id="businessLayerLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="businessLayerCombo" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="6" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -499,6 +504,9 @@
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="io/github/jeddict/jpa/modeler/source/generator/ui/Bundle.properties" key="GenerateCodeDialog.businessLayerLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[120, 20]"/>
+                    </Property>
                   </Properties>
                   <AuxValues>
                     <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
@@ -512,9 +520,9 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="controllerLayerLabel" min="-2" pref="90" max="-2" attributes="0"/>
+                          <Component id="controllerLayerLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="controllerLayerCombo" pref="519" max="32767" attributes="0"/>
+                          <Component id="controllerLayerCombo" pref="582" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -544,6 +552,9 @@
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="io/github/jeddict/jpa/modeler/source/generator/ui/Bundle.properties" key="GenerateCodeDialog.controllerLayerLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[120, 20]"/>
+                    </Property>
                   </Properties>
                   <AuxValues>
                     <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
@@ -557,9 +568,9 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Component id="viewerLayerLabel" min="-2" pref="90" max="-2" attributes="0"/>
+                          <Component id="viewerLayerLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="viewerLayerCombo" pref="519" max="32767" attributes="0"/>
+                          <Component id="viewerLayerCombo" pref="582" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -588,6 +599,9 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="io/github/jeddict/jpa/modeler/source/generator/ui/Bundle.properties" key="GenerateCodeDialog.viewerLayerLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                    </Property>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[120, 20]"/>
                     </Property>
                   </Properties>
                   <AuxValues>

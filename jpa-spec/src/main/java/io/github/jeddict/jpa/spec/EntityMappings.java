@@ -2007,6 +2007,10 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         return getWorkSpaces().stream().filter(ws -> ws.getId().equals(workSpaceId)).findAny();
     }
 
+    public Optional<WorkSpace> findWorkSpaceByName(String workSpaceName) {
+        return getWorkSpaces().stream().filter(ws -> ws.getName().equals(workSpaceName)).findAny();
+    }
+
     /**
      * @return the jaxbSupport
      */

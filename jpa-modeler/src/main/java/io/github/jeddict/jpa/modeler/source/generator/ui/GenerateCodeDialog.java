@@ -15,6 +15,35 @@
  */
 package io.github.jeddict.jpa.modeler.source.generator.ui;
 
+import io.github.jeddict.jcode.ApplicationConfigData;
+import io.github.jeddict.jcode.Generator;
+import io.github.jeddict.jcode.LayerConfigPanel;
+import static io.github.jeddict.jcode.RegistryType.CONSUL;
+import io.github.jeddict.jcode.TechContext;
+import io.github.jeddict.jcode.annotation.Technology;
+import static io.github.jeddict.jcode.annotation.Technology.Type.BUSINESS;
+import static io.github.jeddict.jcode.annotation.Technology.Type.CONTROLLER;
+import static io.github.jeddict.jcode.annotation.Technology.Type.VIEWER;
+import io.github.jeddict.jcode.impl.DefaultBusinessLayer;
+import io.github.jeddict.jcode.impl.DefaultControllerLayer;
+import io.github.jeddict.jcode.impl.DefaultViewerLayer;
+import io.github.jeddict.jcode.ui.ProjectCellRenderer;
+import io.github.jeddict.jcode.util.POMManager;
+import io.github.jeddict.jcode.util.PreferenceUtils;
+import io.github.jeddict.jcode.util.ProjectHelper;
+import static io.github.jeddict.jcode.util.ProjectHelper.getJavaProjects;
+import io.github.jeddict.jcode.util.ProjectType;
+import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.ERROR_ICON;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.SUCCESS_ICON;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.WARNING_ICON;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.WORKSPACE_ICON;
+import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.jpa.spec.extend.JavaClass;
+import static io.github.jeddict.jpa.spec.extend.ProjectType.GATEWAY;
+import static io.github.jeddict.jpa.spec.extend.ProjectType.MICROSERVICE;
+import static io.github.jeddict.jpa.spec.extend.ProjectType.MONOLITH;
+import io.github.jeddict.jpa.spec.workspace.WorkSpace;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
@@ -35,34 +64,6 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
-import io.github.jeddict.jcode.util.POMManager;
-import io.github.jeddict.jcode.util.ProjectHelper;
-import static io.github.jeddict.jcode.util.ProjectHelper.getJavaProjects;
-import io.github.jeddict.jcode.util.ProjectType;
-import io.github.jeddict.jcode.Generator;
-import io.github.jeddict.jcode.TechContext;
-import io.github.jeddict.jcode.ApplicationConfigData;
-import io.github.jeddict.jcode.LayerConfigPanel;
-import static io.github.jeddict.jcode.RegistryType.CONSUL;
-import io.github.jeddict.jcode.annotation.Technology;
-import static io.github.jeddict.jcode.annotation.Technology.Type.BUSINESS;
-import static io.github.jeddict.jcode.annotation.Technology.Type.CONTROLLER;
-import static io.github.jeddict.jcode.annotation.Technology.Type.VIEWER;
-import io.github.jeddict.jcode.impl.DefaultBusinessLayer;
-import io.github.jeddict.jcode.impl.DefaultControllerLayer;
-import io.github.jeddict.jcode.impl.DefaultViewerLayer;
-import io.github.jeddict.jcode.ui.ProjectCellRenderer;
-import io.github.jeddict.jcode.util.PreferenceUtils;
-import io.github.jeddict.jpa.spec.EntityMappings;
-import io.github.jeddict.jpa.spec.extend.JavaClass;
-import static io.github.jeddict.jpa.spec.extend.ProjectType.GATEWAY;
-import static io.github.jeddict.jpa.spec.extend.ProjectType.MONOLITH;
-import io.github.jeddict.jpa.spec.workspace.WorkSpace;
-import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.ERROR_ICON;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.SUCCESS_ICON;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.WARNING_ICON;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.WORKSPACE_ICON;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.window.GenericDialog;
 import org.netbeans.spi.java.project.support.ui.PackageView;
@@ -73,7 +74,6 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 import static org.openide.util.NbBundle.getMessage;
 import org.openide.util.NbPreferences;
-import static io.github.jeddict.jpa.spec.extend.ProjectType.MICROSERVICE;
 
 /**
  *
@@ -401,8 +401,8 @@ public class GenerateCodeDialog extends GenericDialog {
                 .addGap(89, 89, 89)
                 .addComponent(monolithRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(69, 69, 69)
-                .addComponent(microservicesRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(73, 73, 73)
+                .addComponent(microservicesRadioButton)
+                .addGap(65, 65, 65)
                 .addComponent(gatewayRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         archLayeredPaneLayout.setVerticalGroup(
@@ -421,7 +421,7 @@ public class GenerateCodeDialog extends GenericDialog {
         jLayeredPane1.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(targetProjectLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.targetProjectLabel.text")); // NOI18N
-        targetProjectLabel.setPreferredSize(new java.awt.Dimension(95, 17));
+        targetProjectLabel.setPreferredSize(new java.awt.Dimension(120, 17));
         jLayeredPane1.add(targetProjectLabel, java.awt.BorderLayout.WEST);
 
         targetProjectCombo.setMinimumSize(new java.awt.Dimension(50, 20));
@@ -434,10 +434,11 @@ public class GenerateCodeDialog extends GenericDialog {
 
         targetProjectLayeredPane.add(jLayeredPane1, java.awt.BorderLayout.WEST);
 
+        jLayeredPane2.setPreferredSize(new java.awt.Dimension(180, 26));
         jLayeredPane2.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(targetProjectPackageLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.targetProjectPackageLabel.text")); // NOI18N
-        targetProjectPackageLabel.setPreferredSize(new java.awt.Dimension(50, 17));
+        targetProjectPackageLabel.setPreferredSize(new java.awt.Dimension(70, 17));
         jLayeredPane2.add(targetProjectPackageLabel, java.awt.BorderLayout.WEST);
 
         targetProjectPackageCombo.setEditable(true);
@@ -455,7 +456,7 @@ public class GenerateCodeDialog extends GenericDialog {
         jLayeredPane3.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(gatewayProjectLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.gatewayProjectLabel.text")); // NOI18N
-        gatewayProjectLabel.setPreferredSize(new java.awt.Dimension(95, 17));
+        gatewayProjectLabel.setPreferredSize(new java.awt.Dimension(120, 17));
         jLayeredPane3.add(gatewayProjectLabel, java.awt.BorderLayout.WEST);
 
         gatewayProjectCombo.setMinimumSize(new java.awt.Dimension(50, 20));
@@ -471,7 +472,7 @@ public class GenerateCodeDialog extends GenericDialog {
         jLayeredPane4.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(gatewayProjectPackageLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.gatewayProjectPackageLabel.text")); // NOI18N
-        gatewayProjectPackageLabel.setPreferredSize(new java.awt.Dimension(50, 17));
+        gatewayProjectPackageLabel.setPreferredSize(new java.awt.Dimension(70, 17));
         jLayeredPane4.add(gatewayProjectPackageLabel, java.awt.BorderLayout.WEST);
 
         gatewayProjectPackageCombo.setEditable(true);
@@ -486,14 +487,14 @@ public class GenerateCodeDialog extends GenericDialog {
         entityLayeredPane.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(packageLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.packageLabel.text")); // NOI18N
-        packageLabel.setPreferredSize(new java.awt.Dimension(95, 17));
+        packageLabel.setPreferredSize(new java.awt.Dimension(120, 17));
         entityLayeredPane.add(packageLabel, java.awt.BorderLayout.WEST);
 
         packageWrapper.setLayout(new java.awt.BorderLayout());
 
         packagePrefixLabel.setForeground(new java.awt.Color(153, 153, 153));
         org.openide.awt.Mnemonics.setLocalizedText(packagePrefixLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.packagePrefixLabel.text")); // NOI18N
-        packagePrefixLabel.setPreferredSize(new java.awt.Dimension(130, 14));
+        packagePrefixLabel.setPreferredSize(new java.awt.Dimension(180, 14));
         packageWrapper.add(packagePrefixLabel, java.awt.BorderLayout.WEST);
 
         entitySetting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/io/github/jeddict/jpa/modeler/resource/image/java/JAVA_CLASS.png"))); // NOI18N
@@ -522,6 +523,7 @@ public class GenerateCodeDialog extends GenericDialog {
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(businessLayerLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.businessLayerLabel.text")); // NOI18N
+        businessLayerLabel.setPreferredSize(new java.awt.Dimension(120, 20));
 
         businessLayeredPane.setLayer(businessLayerCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
         businessLayeredPane.setLayer(businessLayerLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -531,17 +533,17 @@ public class GenerateCodeDialog extends GenericDialog {
         businessLayeredPaneLayout.setHorizontalGroup(
             businessLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(businessLayeredPaneLayout.createSequentialGroup()
-                .addComponent(businessLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(businessLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(businessLayerCombo, 0, 519, Short.MAX_VALUE))
+                .addComponent(businessLayerCombo, 0, 582, Short.MAX_VALUE))
         );
         businessLayeredPaneLayout.setVerticalGroup(
             businessLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(businessLayeredPaneLayout.createSequentialGroup()
                 .addGroup(businessLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(businessLayerLabel)
+                    .addComponent(businessLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(businessLayerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 6, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         wrapperLayeredPane.add(businessLayeredPane);
@@ -553,6 +555,7 @@ public class GenerateCodeDialog extends GenericDialog {
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(controllerLayerLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.controllerLayerLabel.text")); // NOI18N
+        controllerLayerLabel.setPreferredSize(new java.awt.Dimension(120, 20));
 
         controllerLayeredPane.setLayer(controllerLayerCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
         controllerLayeredPane.setLayer(controllerLayerLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -562,15 +565,15 @@ public class GenerateCodeDialog extends GenericDialog {
         controllerLayeredPaneLayout.setHorizontalGroup(
             controllerLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(controllerLayeredPaneLayout.createSequentialGroup()
-                .addComponent(controllerLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(controllerLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(controllerLayerCombo, 0, 519, Short.MAX_VALUE))
+                .addComponent(controllerLayerCombo, 0, 582, Short.MAX_VALUE))
         );
         controllerLayeredPaneLayout.setVerticalGroup(
             controllerLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controllerLayeredPaneLayout.createSequentialGroup()
                 .addGroup(controllerLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(controllerLayerLabel)
+                    .addComponent(controllerLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(controllerLayerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -584,6 +587,7 @@ public class GenerateCodeDialog extends GenericDialog {
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(viewerLayerLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.viewerLayerLabel.text")); // NOI18N
+        viewerLayerLabel.setPreferredSize(new java.awt.Dimension(120, 20));
 
         viewerLayeredPane.setLayer(viewerLayerCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
         viewerLayeredPane.setLayer(viewerLayerLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -593,16 +597,16 @@ public class GenerateCodeDialog extends GenericDialog {
         viewerLayeredPaneLayout.setHorizontalGroup(
             viewerLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(viewerLayeredPaneLayout.createSequentialGroup()
-                .addComponent(viewerLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(viewerLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(viewerLayerCombo, 0, 519, Short.MAX_VALUE))
+                .addComponent(viewerLayerCombo, 0, 582, Short.MAX_VALUE))
         );
         viewerLayeredPaneLayout.setVerticalGroup(
             viewerLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(viewerLayeredPaneLayout.createSequentialGroup()
                 .addGroup(viewerLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(viewerLayerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(viewerLayerLabel))
+                    .addComponent(viewerLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -626,8 +630,8 @@ public class GenerateCodeDialog extends GenericDialog {
             optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(optionPaneLayout.createSequentialGroup()
                 .addComponent(wrapperLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(configPane, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(configPane, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -902,6 +906,7 @@ public class GenerateCodeDialog extends GenericDialog {
             gatewayProjectInfo.setProject((Project) gatewayProjectCombo.getSelectedItem());
             populateSourceFolderCombo(gatewayProjectInfo);
             populatePackageCombo(gatewayProjectPackageCombo, gatewayProjectInfo);
+            refreshLayer();
         }
     }//GEN-LAST:event_gatewayProjectComboItemStateChanged
 
