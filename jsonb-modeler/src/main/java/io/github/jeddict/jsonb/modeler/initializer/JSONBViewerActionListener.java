@@ -16,24 +16,29 @@
 package io.github.jeddict.jsonb.modeler.initializer;
 
 import io.github.jeddict.analytics.JeddictLogger;
-import io.github.jeddict.jsonb.modeler.event.ShortcutListener;
-import static io.github.jeddict.jsonb.modeler.initializer.JSONBModelerUtil.TAB_ICON;
+import io.github.jeddict.jpa.modeler.widget.connection.relation.RelationValidator;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.workspace.WorkSpace;
-import io.github.jeddict.jpa.modeler.widget.connection.relation.RelationValidator;
+import io.github.jeddict.jsonb.modeler.JSONBModeler;
+import io.github.jeddict.jsonb.modeler.event.ShortcutListener;
+import static io.github.jeddict.jsonb.modeler.initializer.JSONBModelerUtil.TAB_ICON;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.annotaton.ModelerConfig;
 import org.netbeans.modeler.specification.model.file.action.ModelerFileActionListener;
-import io.github.jeddict.jsonb.modeler.JSONBModeler;
 
 
 @ModelerConfig(palette = "io/github/jeddict/jsonb/modeler/resource/document/PaletteConfig.xml",
         document = "io/github/jeddict/jsonb/modeler/resource/document/DocumentConfig.xml",
         element = "io/github/jeddict/jsonb/modeler/resource/document/ElementConfig.xml")
-@org.netbeans.modeler.specification.annotaton.DiagramModel(id = "JSONB", name = "JSONB Viewer", 
-        modelerUtil = JSONBModelerUtil.class, modelerScene = JSONBModelerScene.class,
+@org.netbeans.modeler.specification.annotaton.DiagramModel(
+        id = "JSONB",
+        name = "JSONB Viewer",
+        modelerUtil = JSONBModelerUtil.class,
+        modelerScene = JSONBModelerScene.class,
         relationValidator = RelationValidator.class,
-        version = "5.0-beta-rc1", architectureVersion = "1.4")
+        version = "5.1",
+        architectureVersion = "1.4"
+)
 @org.openide.util.lookup.ServiceProvider(service = JSONBModeler.class)
 public class JSONBViewerActionListener extends ModelerFileActionListener implements JSONBModeler {
 

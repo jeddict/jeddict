@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.github.jeddict</groupId>
         <artifactId>jeddict</artifactId>
-        <version>5.0</version>
+        <version>5.1</version>
     </parent>
     <artifactId>jcode-core</artifactId>
     <name>jCode Core</name>

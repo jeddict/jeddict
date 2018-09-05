@@ -15,16 +15,16 @@
  */
 package io.github.jeddict.relation.mapper.initializer;
 
-import static io.github.jeddict.relation.mapper.initializer.RelationMapperUtil.TAB_ICON;
-import io.github.jeddict.relation.mapper.event.ShortcutListener;
 import io.github.jeddict.analytics.JeddictLogger;
+import io.github.jeddict.jpa.modeler.widget.connection.relation.RelationValidator;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.workspace.WorkSpace;
-import io.github.jeddict.jpa.modeler.widget.connection.relation.RelationValidator;
+import io.github.jeddict.relation.mapper.RelationMapper;
+import io.github.jeddict.relation.mapper.event.ShortcutListener;
+import static io.github.jeddict.relation.mapper.initializer.RelationMapperUtil.TAB_ICON;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.annotaton.ModelerConfig;
 import org.netbeans.modeler.specification.model.file.action.ModelerFileActionListener;
-import io.github.jeddict.relation.mapper.RelationMapper;
 
 //@ActionID(
 //        category = "Build",
@@ -36,10 +36,16 @@ import io.github.jeddict.relation.mapper.RelationMapper;
 @ModelerConfig(palette = "io/github/jeddict/relation/mapper/resource/document/PaletteConfig.xml",
         document = "io/github/jeddict/relation/mapper/resource/document/DocumentConfig.xml",
         element = "io/github/jeddict/relation/mapper/resource/document/ElementConfig.xml")
-@org.netbeans.modeler.specification.annotaton.DiagramModel(id = "JPA_DB", name = "DB Viewer", 
-        modelerUtil = RelationMapperUtil.class, modelerScene = RelationMapperScene.class,
-        relationValidator = RelationValidator.class, modelerDiagramEngine = RelationMapperDiagramEngine.class,
-        version = "5.0-beta-rc1", architectureVersion = "1.4")
+@org.netbeans.modeler.specification.annotaton.DiagramModel(
+        id = "JPA_DB",
+        name = "DB Viewer",
+        modelerUtil = RelationMapperUtil.class,
+        modelerScene = RelationMapperScene.class,
+        relationValidator = RelationValidator.class,
+        modelerDiagramEngine = RelationMapperDiagramEngine.class,
+        version = "5.1",
+        architectureVersion = "1.4"
+)
 @org.openide.util.lookup.ServiceProvider(service = RelationMapper.class)
 public class RealationMapperActionListener extends ModelerFileActionListener implements RelationMapper {
 

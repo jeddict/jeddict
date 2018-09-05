@@ -15,12 +15,12 @@
  */
 package io.github.jeddict.db.modeler.initializer;
 
-import org.netbeans.api.db.explorer.node.BaseNode;
 import io.github.jeddict.analytics.JeddictLogger;
 import io.github.jeddict.db.modeler.action.TableNodeList;
+import io.github.jeddict.jpa.modeler.widget.connection.relation.RelationValidator;
 import io.github.jeddict.relation.mapper.event.ShortcutListener;
 import static io.github.jeddict.relation.mapper.initializer.RelationMapperUtil.TAB_ICON;
-import io.github.jeddict.jpa.modeler.widget.connection.relation.RelationValidator;
+import org.netbeans.api.db.explorer.node.BaseNode;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.annotaton.DiagramModel;
 import org.netbeans.modeler.specification.annotaton.ModelerConfig;
@@ -40,7 +40,7 @@ import org.openide.nodes.Node;
         modelerScene = DBModelerScene.class,
         relationValidator = RelationValidator.class, 
         modelerDiagramEngine = DBDiagramEngine.class,
-        version = "5.0-beta-rc1", 
+        version = "5.1",
         architectureVersion = "1.0"
 )
 public class DBModelerActionListener extends ModelerFileActionListener {
