@@ -42,7 +42,7 @@ import static io.github.jeddict.jcode.util.AttributeType.SHORT_WRAPPER;
 import static io.github.jeddict.jcode.util.AttributeType.STRING;
 import static io.github.jeddict.jcode.util.AttributeType.STRING_FQN;
 import static io.github.jeddict.jcode.util.AttributeType.UUID;
-import java.util.Arrays;
+import static java.util.Arrays.asList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,7 +59,8 @@ import java.util.stream.Stream;
  */
 public class ConstraintUtil {
     private static final Map<String, Function<Map<String,Constraint>,String>> DEFAULT_VALUE = new HashMap<>();
-    private static final Map<String, Function<Map<String,Constraint>,String>> UPDATE_VALUE = new HashMap<>();
+    private static final Map<String, Function<Map<String, Constraint>, String>> UPDATE_VALUE = new HashMap<>();
+    private static final Map<String, Function<Map<String, Constraint>, String>> UPDATE_VALUE2 = new HashMap<>();
 
     private static final BiFunction<Map<String, Constraint>, String, String> TEXT_VALUE = (cm, packet) -> {
         Size size = (Size) cm.get(Size.class.getSimpleName());
@@ -166,9 +167,9 @@ public class ConstraintUtil {
     }
 
     static {
-                
-        Function<Map<String,Constraint>,String> number = cm -> NUMBER_VALUE.apply(cm, 2L);
-        Function<Map<String,Constraint>,String> text = cm -> TEXT_VALUE.apply(cm, "B");
+        Function<Map<String, Constraint>, String> number = cm -> NUMBER_VALUE.apply(cm, 2L);
+        Function<Map<String, Constraint>, String> text = cm -> TEXT_VALUE.apply(cm, "B");
+
         UPDATE_VALUE.put(BYTE, number);
         UPDATE_VALUE.put(SHORT, number);
         UPDATE_VALUE.put(INT, number);
@@ -186,14 +187,13 @@ public class ConstraintUtil {
         UPDATE_VALUE.put(DOUBLE_WRAPPER, number.andThen(digit -> digit + ".0D"));
         UPDATE_VALUE.put(BOOLEAN_WRAPPER, cm -> "true");
         UPDATE_VALUE.put(CHAR_WRAPPER, cm -> "'b'");
-        
-       
-        UPDATE_VALUE.put(BIGDECIMAL, number.andThen(digit -> String.format("new java.math.BigDecimal(%s.0)",digit)));
-        UPDATE_VALUE.put(BIGINTEGER, number.andThen(digit -> String.format("new java.math.BigInteger(%s)",digit)));
+
+        UPDATE_VALUE.put(BIGDECIMAL, number.andThen(digit -> String.format("new java.math.BigDecimal(%s.0)", digit)));
+        UPDATE_VALUE.put(BIGINTEGER, number.andThen(digit -> String.format("new java.math.BigInteger(%s)", digit)));
         UPDATE_VALUE.put(STRING, text);
         UPDATE_VALUE.put(STRING_FQN, text);
-        
-        //TODO : @Future & @Past for Date        
+
+        //TODO : @Future & @Past for Date
         UPDATE_VALUE.put(CALENDAR, cm -> "java.util.Calendar.getInstance()");
         UPDATE_VALUE.put(DATE, cm -> "java.util.Date.from(java.time.Instant.now())");
 //        UPDATE_VALUE.put(SQL_DATE, cm -> "java.sql.Date.from(java.time.Instant.now())");
@@ -210,6 +210,44 @@ public class ConstraintUtil {
 
     }
 
+    static {
+        Function<Map<String, Constraint>, String> number = cm -> NUMBER_VALUE.apply(cm, 3L);
+        Function<Map<String, Constraint>, String> text = cm -> TEXT_VALUE.apply(cm, "C");
+
+        UPDATE_VALUE2.put(BYTE, number);
+        UPDATE_VALUE2.put(SHORT, number);
+        UPDATE_VALUE2.put(INT, number);
+        UPDATE_VALUE2.put(LONG, number.andThen(digit -> digit + "L"));
+        UPDATE_VALUE2.put(FLOAT, number.andThen(digit -> digit + ".0F"));
+        UPDATE_VALUE2.put(DOUBLE, number.andThen(digit -> digit + ".0D"));
+        UPDATE_VALUE2.put(BOOLEAN, cm -> "true");
+        UPDATE_VALUE2.put(CHAR, cm -> "'c'");
+
+        UPDATE_VALUE2.put(BYTE_WRAPPER, number);
+        UPDATE_VALUE2.put(SHORT_WRAPPER, number);
+        UPDATE_VALUE2.put(INT_WRAPPER, number);
+        UPDATE_VALUE2.put(LONG_WRAPPER, number.andThen(digit -> digit + "L"));
+        UPDATE_VALUE2.put(FLOAT_WRAPPER, number.andThen(digit -> digit + ".0F"));
+        UPDATE_VALUE2.put(DOUBLE_WRAPPER, number.andThen(digit -> digit + ".0D"));
+        UPDATE_VALUE2.put(BOOLEAN_WRAPPER, cm -> "true");
+        UPDATE_VALUE2.put(CHAR_WRAPPER, cm -> "'c'");
+
+        UPDATE_VALUE2.put(BIGDECIMAL, number.andThen(digit -> String.format("new java.math.BigDecimal(%s.0)", digit)));
+        UPDATE_VALUE2.put(BIGINTEGER, number.andThen(digit -> String.format("new java.math.BigInteger(%s)", digit)));
+        UPDATE_VALUE2.put(STRING, text);
+        UPDATE_VALUE2.put(STRING_FQN, text);
+
+        //TODO : @Future & @Past for Date
+        UPDATE_VALUE2.put(CALENDAR, cm -> "java.util.Calendar.getInstance()");
+        UPDATE_VALUE2.put(DATE, cm -> "java.util.Date.from(java.time.Instant.now())");
+        UPDATE_VALUE2.put(BYTE_ARRAY, cm -> "new byte[] {7, 8, 9}");
+        UPDATE_VALUE2.put(BYTE_WRAPPER_ARRAY, cm -> "new Byte[] {7, 8, 9}");
+        UPDATE_VALUE2.put(CHAR_ARRAY, cm -> "new char[] {'g', 'h', 'i'}");
+        UPDATE_VALUE2.put(CHAR_WRAPPER_ARRAY, cm -> "new Character[] {'g', 'h', 'i'}");
+
+        UPDATE_VALUE2.put(UUID, cm -> "java.util.UUID.randomUUID()");
+    }
+
     public static String getAttributeDefaultValue(String type) {
         return getAttributeDefaultValue(type, Collections.EMPTY_MAP);
     }
@@ -223,12 +261,17 @@ public class ConstraintUtil {
         return getAttributeUpdateValue(type, Collections.EMPTY_MAP);
     }
     
-    public static String getAttributeUpdateValue(String type, Map<String,Constraint> constraints) {
-        Function<Map<String,Constraint>,String> eval = UPDATE_VALUE.get(type);
-        return eval != null? eval.apply(constraints): null;
+    public static String getAttributeUpdateValue(String type, Map<String, Constraint> constraints) {
+        Function<Map<String, Constraint>, String> eval = UPDATE_VALUE.get(type);
+        return eval != null ? eval.apply(constraints) : null;
     }
-    
-    private static final Set<Class<? extends Constraint>> SKIP_CONSTRAINTS = new HashSet<>(Arrays.asList(
+
+    public static String getAttributeUpdateValue2(String type, Map<String, Constraint> constraints) {
+        Function<Map<String, Constraint>, String> eval = UPDATE_VALUE2.get(type);
+        return eval != null ? eval.apply(constraints) : null;
+    }
+
+    private static final Set<Class<? extends Constraint>> SKIP_CONSTRAINTS = new HashSet<>(asList(
             Email.class, 
             Future.class, FutureOrPresent.class, 
             Past.class, PastOrPresent.class,
