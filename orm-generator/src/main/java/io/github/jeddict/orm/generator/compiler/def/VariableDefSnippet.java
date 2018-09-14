@@ -105,6 +105,7 @@ import static io.github.jeddict.snippet.AttributeSnippetLocationType.PROPERTY_JA
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.SETTER_JAVADOC;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.SETTER_THROWS;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import static java.util.Collections.emptyList;
 import java.util.HashSet;
@@ -144,6 +145,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private AccessModifierType accessModifier;
     private String name;
     private String defaultValue;
+    private final List<String> defaultValueImports = new ArrayList<>();
     private String description;
     private boolean propertyChangeSupport;
     private boolean vetoableChangeSupport;
@@ -468,6 +470,11 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public Collection<String> getImportSnippets() throws InvalidDataException {
         ImportSet imports = new ImportSet();
         imports.addAll(getTypeImportSnippets());
+
+        if (defaultValue != null && !defaultValueImports.isEmpty()) {
+            imports.addAll(defaultValueImports);
+        }
+
         if (functionalType) {
             imports.add(Optional.class.getCanonicalName());
         }
@@ -1111,7 +1118,20 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     }
 
     public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
+        if (isNotBlank(defaultValue)) {
+            defaultValue = defaultValue.trim();
+            if (defaultValue.startsWith("[")) {
+                String importText = defaultValue.substring(1, defaultValue.indexOf("]"));
+                this.defaultValueImports.addAll(
+                        Arrays.stream(importText.split(","))
+                                .map(String::trim)
+                                .collect(toList())
+                );
+                this.defaultValue = defaultValue.substring(defaultValue.indexOf("]") + 1).trim();
+            } else {
+                this.defaultValue = defaultValue;
+            }
+        }
     }
 
     public boolean isGetterThrows() {

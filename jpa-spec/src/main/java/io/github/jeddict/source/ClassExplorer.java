@@ -245,6 +245,10 @@ public class ClassExplorer extends AnnotatedMember {
         return type.isEnumDeclaration();
     }
 
+    public Map<String, ImportDeclaration> getImports() {
+        return imports;
+    }
+
     @Override
     protected NodeWithAnnotations getAnnotatedMember() {
         return type;

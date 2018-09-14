@@ -15,6 +15,7 @@
  */
 package io.github.jeddict.source;
 
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
@@ -35,8 +36,10 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import static java.util.stream.Collectors.joining;
 
 /**
  *
@@ -183,15 +186,22 @@ public class MemberExplorer extends AnnotatedMember {
 
     public String getDefaultValue() {
         String defaultValue = null;
-        // String(ClassOrInterfaceType) var() = value(NameExp);
         if (field.getVariables().get(0).getChildNodes().size() == 3) {
             Node node = field.getVariables().get(0).getChildNodes().get(2);
-            if (node instanceof NodeWithSimpleName) {
+            if (node instanceof Expression) { //FieldAccessExpr, MethodCallExpr, ObjectCreationExpr
+                defaultValue = node.toString();
+                Map<String, ImportDeclaration> imports = clazz.getImports();
+                 String importList = imports.keySet()
+                         .stream()
+                        .filter(defaultValue::contains)
+                        .map(imports::get)
+                        .map(ImportDeclaration::getNameAsString)
+                        .collect(joining(" ,\n"));
+                defaultValue = importList.isEmpty() ? defaultValue : "[\n" + importList + "\n]\n" + defaultValue;
+            } else if (node instanceof NodeWithSimpleName) {
                 defaultValue = ((NodeWithSimpleName) node).getNameAsString();
             } else if (node instanceof LiteralStringValueExpr) {
                 defaultValue = "'" + ((LiteralStringValueExpr) node).getValue() + "'";
-            } else if (node instanceof Expression) { // includes ObjectCreationExpr
-                defaultValue = node.toString();
             } else {
                 throw new UnsupportedOperationException();
             }
