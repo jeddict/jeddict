@@ -15,9 +15,13 @@
  */
 package io.github.jeddict.jpa.modeler.specification.model.file;
 
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.JPA_FILE_TYPE;
 import java.awt.Image;
 import java.io.IOException;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.JPA_FILE_TYPE;
+import java.util.concurrent.Callable;
+import org.netbeans.core.api.multiview.MultiViews;
+import org.netbeans.core.spi.multiview.MultiViewElement;
+import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
 import org.netbeans.modeler.file.ModelerFileDataObject;
 import org.netbeans.modeler.resource.toolbar.ImageUtil;
 import org.openide.awt.ActionID;
@@ -28,7 +32,12 @@ import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiFileLoader;
+import org.openide.text.CloneableEditorSupport;
+import org.openide.text.CloneableEditorSupport.Pane;
+import org.openide.util.Lookup;
+import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
+import org.openide.windows.TopComponent;
 
 @Messages({
     "LBL_JPAModel_LOADER=Files of JPAModel"
@@ -94,16 +103,34 @@ import org.openide.util.NbBundle.Messages;
             = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
             position = 1400)
 })
-public class JPAFileDataObject extends ModelerFileDataObject {
+public class JPAFileDataObject extends ModelerFileDataObject implements Callable<CloneableEditorSupport.Pane> {
 
     public JPAFileDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
-        registerEditor(JPA_FILE_TYPE, false);
+        registerEditor(JPA_FILE_TYPE, true);
     }
 
     @Override
     public Image getIcon() {
         return ImageUtil.getInstance().getImage(JPAFileDataObject.class, "JPA_FILE_ICON.png");
+    }
+
+    @Override
+    public Pane call() {
+        return (Pane) MultiViews.createCloneableMultiView(JPA_FILE_TYPE, this);
+    }
+
+    @NbBundle.Messages("Source=&Source")
+    @MultiViewElement.Registration(
+            displayName = "#Source",
+            iconBase = "io/github/jeddict/jpa/modeler/specification/model/file/JPA_FILE_ICON.png",
+            persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED,
+            mimeType = JPA_FILE_TYPE,
+            preferredID = "jpa.source",
+            position = 1
+    )
+    public static MultiViewEditorElement createMultiViewEditorElement(Lookup context) {
+        return new MultiViewEditorElement(context);
     }
 
 }
