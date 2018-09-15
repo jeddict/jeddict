@@ -96,6 +96,16 @@
             </Container>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JCheckBox" name="enableIntrospectionComp">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="io/github/jeddict/settings/generate/Bundle.properties" key="GenerateSettings.enableIntrospectionComp.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="io/github/jeddict/settings/generate/Bundle.properties" key="GenerateSettings.enableIntrospectionComp.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+        </Component>
         <Component class="javax.swing.JCheckBox" name="generateDefaultValueComp">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">

@@ -249,11 +249,8 @@ $varDef.getGetterJavaDoc()
     $annotation.getSnippet()
 #end
 #set($method = $varDef.getMethodName())
-#if($varDef.type == "boolean" || $varDef.type == "java.lang.Boolean" || $varDef.type == "Boolean")
-    public $varDef.returnType is$method() #if($varDef.isGetterThrows()) $varDef.getGetterThrowsSnippet() #end {
-#else
-    public $varDef.returnType get$method() #if($varDef.isGetterThrows()) $varDef.getGetterThrowsSnippet() #end {
-#end
+#set($methodPrefix = $varDef.getGetterMethodPrefix())
+    public $varDef.returnType $methodPrefix$method() #if($varDef.isGetterThrows()) $varDef.getGetterThrowsSnippet() #end {
 #####################custom attribute snippet - pre getter ###############################
 #foreach($snippet in $varDef.getCustomSnippet("PRE_GETTER") )
         $snippet
@@ -284,7 +281,8 @@ $varDef.getSetterJavaDoc()
 #foreach($annotation in $varDef.getAnnotation("SETTER") )
     $annotation.getSnippet()
 #end
-    public void set$method($varDef.type $varDef.name) #if($varDef.isSetterThrows()) $varDef.getSetterThrowsSnippet() #end{
+#set($methodPrefix = $varDef.getSetterMethodPrefix())
+    public void $methodPrefix$method($varDef.type $varDef.name) #if($varDef.isSetterThrows()) $varDef.getSetterThrowsSnippet() #end{
 #####################custom attribute snippet - pre setter ###############################
 #foreach($snippet in $varDef.getCustomSnippet("PRE_SETTER") )
         $snippet

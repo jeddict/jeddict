@@ -50,6 +50,8 @@ public class AttributeType {
     public static final String BOOLEAN_WRAPPER = "Boolean";
     public static final String CHAR_WRAPPER = "Character";
 
+    public static final String BOOLEAN_WRAPPER_FQN = "java.lang.Boolean";
+
     public static final String BIGDECIMAL = "java.math.BigDecimal";
     public static final String BIGINTEGER = "java.math.BigInteger";
     public static final String STRING = "String";
@@ -173,7 +175,7 @@ public class AttributeType {
     }
 
     public static boolean isBoolean(String type) {
-        return BOOLEAN.equals(type) || BOOLEAN_WRAPPER.equals(type);
+        return BOOLEAN.equals(type) || BOOLEAN_WRAPPER.equals(type) || BOOLEAN_WRAPPER_FQN.equals(type);
     }
     
     public static boolean isText(String type) {

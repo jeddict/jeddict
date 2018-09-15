@@ -32,19 +32,14 @@ public class $classDef.getClassName() implements Serializable {
 #####################getter/setter #################################
 #foreach( $varDef in $classDef.getVariableDefs() )
 #set($method = $varDef.getMethodName())
-#if($varDef.type == "boolean" || $varDef.type == "java.lang.Boolean" || $varDef.type == "Boolean")
-    
-    public $varDef.type is$method() {
+
+#set($methodPrefix = $varDef.getGetterMethodPrefix())
+   public $varDef.type $methodPrefix$method() {
         return $varDef.name;
     }
-#else
 
-   public $varDef.type get$method() {
-        return $varDef.name;
-    }
-#end
-
-    public void set$method ($varDef.type $varDef.name) {
+#set($methodPrefix = $varDef.getSetterMethodPrefix())
+    public void $methodPrefix$method ($varDef.type $varDef.name) {
         this.$varDef.name = $varDef.name;
     }
 #end

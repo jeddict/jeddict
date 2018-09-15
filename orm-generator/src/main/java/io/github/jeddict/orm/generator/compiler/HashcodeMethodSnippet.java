@@ -74,7 +74,7 @@ public class HashcodeMethodSnippet implements Snippet {
             if(attribute instanceof BaseAttribute && !(attribute instanceof CompositionAttribute)){
                 expression = getHashcodeExpression(((BaseAttribute)attribute).getAttributeType(), attribute.getName(), optionalType);
             } else {
-                expression = getHashcodeExpression(attribute.getName(), optionalType);
+                expression = getHashcodeExpression(attribute.getDataTypeLabel(), attribute.getName(), optionalType);
             }
             builder.append("        ")
                    .append(String.format("hash = %s * hash + %s;", multiplyNumber, expression)).append(NEW_LINE);

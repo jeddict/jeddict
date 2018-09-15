@@ -54,8 +54,9 @@ public class EqualsMethodSnippet implements Snippet {
             if (attribute instanceof BaseAttribute && !(attribute instanceof CompositionAttribute)) {
                 expression = JavaHashcodeEqualsUtil.getEqualExpression(((BaseAttribute) attribute).getAttributeType(), attribute.getName(), optionalType);
             } else {
-                expression = JavaHashcodeEqualsUtil.getEqualExpression(attribute.getName(), optionalType);
+                expression = JavaHashcodeEqualsUtil.getEqualExpression(attribute.getDataTypeLabel(), attribute.getName(), optionalType);
             }
+
             builder.append("        ")
                    .append(String.format("if (%s) {", expression));
             builder.append("        ")

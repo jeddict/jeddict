@@ -16,7 +16,9 @@
 package io.github.jeddict.orm.generator.compiler;
 
 import io.github.jeddict.jcode.util.AttributeType;
+import static io.github.jeddict.jcode.util.AttributeType.isBoolean;
 import static io.github.jeddict.jcode.util.JavaUtil.getMethodName;
+import static io.github.jeddict.settings.generate.GenerateSettings.getIntrospectionPrefix;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -82,28 +84,18 @@ public class JavaHashcodeEqualsUtil {
     }
 
     public static String getEqualExpression(String dataType, String attributeName, boolean optionalType) {
-        KindOfType type = detectKind(dataType);
-        String attributeFunction = getMethodName(type == KindOfType.BOOLEAN ? "is" : "get", attributeName) + (optionalType ? "().orElse(null)" : "()");
-        return EQUALS_PATTERNS.get(type).replace(VAR_EXPRESSION, attributeFunction);
+        String attributeFunction = getMethodName(getIntrospectionPrefix(isBoolean(dataType)), attributeName) + (optionalType ? "().orElse(null)" : "()");
+        return EQUALS_PATTERNS.get(detectKind(dataType))
+                .replace(VAR_EXPRESSION, attributeFunction);
     }
-    
-    public static String getEqualExpression(String attributeName, boolean optionalType) {
-        String attributeFunction = getMethodName("get", attributeName) + (optionalType ? "().orElse(null)" : "()");
-        return EQUALS_PATTERNS.get(KindOfType.OTHER).replace(VAR_EXPRESSION, attributeFunction);
-    }
-    
+
     public static String getHashcodeExpression(String dataType, String attributeName, boolean optionalType) {
-        KindOfType type = detectKind(dataType);
-        String attributeFunction = getMethodName(type == KindOfType.BOOLEAN ? "is" : "get", attributeName) + (optionalType ? "().orElse(null)" : "()");
-        return HASH_CODE_PATTERNS.get(type).replace(VAR_EXPRESSION, attributeFunction);
+        String attributeFunction = getMethodName(getIntrospectionPrefix(isBoolean(dataType)), attributeName) + (optionalType ? "().orElse(null)" : "()");
+        return HASH_CODE_PATTERNS.get(detectKind(dataType))
+                .replace(VAR_EXPRESSION, attributeFunction);
     }
-    
-    public static String getHashcodeExpression(String attributeName, boolean optionalType) {
-        String attributeFunction = getMethodName("get", attributeName) + (optionalType ? "().orElse(null)" : "()");
-        return HASH_CODE_PATTERNS.get(KindOfType.OTHER).replace(VAR_EXPRESSION, attributeFunction);
-    }
-    
-    private static KindOfType detectKind(String dataType){ //enum not detected
+
+    private static KindOfType detectKind(String dataType) {
         KindOfType kindOfType = null;
         AttributeType.Type type = AttributeType.getType(dataType);
         if (null != type) switch (type) {
@@ -114,7 +106,7 @@ public class JavaHashcodeEqualsUtil {
                 kindOfType = KindOfType.valueOf(dataType.toUpperCase());
                 break;
             case WRAPPER:
-                kindOfType = KindOfType.OTHER;//valueOf(AttributeType.getPrimitiveType(dataType).toUpperCase());
+                kindOfType = KindOfType.OTHER;
                 break;
             case ARRAY:
                 kindOfType = KindOfType.ARRAY;
@@ -128,7 +120,5 @@ public class JavaHashcodeEqualsUtil {
         }
         return kindOfType;
     }
-    
-    
 
 }

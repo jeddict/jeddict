@@ -92,6 +92,7 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTH
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.TAB;
 import static io.github.jeddict.settings.generate.GenerateSettings.getFluentAPIPrefix;
+import static io.github.jeddict.settings.generate.GenerateSettings.getIntrospectionPrefix;
 import static io.github.jeddict.settings.generate.GenerateSettings.isFluentAPIJavaDoc;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGetterJavaDoc;
 import static io.github.jeddict.settings.generate.GenerateSettings.isPropertyJavaDoc;
@@ -353,6 +354,14 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      */
     public String getMethodName() {
         return JavaUtil.getMethodName(null, name);
+    }
+
+    public String getGetterMethodPrefix() {
+        return getIntrospectionPrefix(io.github.jeddict.jcode.util.AttributeType.isBoolean(getType()));
+    }
+
+    public String getSetterMethodPrefix() {
+        return "set";
     }
 
     public RelationDefSnippet getRelationDef() {

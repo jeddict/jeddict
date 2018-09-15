@@ -35,6 +35,7 @@ public final class GenerateSettings extends javax.swing.JPanel {
         fluentAPIPrefixWrapperPanel = new javax.swing.JLayeredPane();
         fluentAPIPrefix_Label = new javax.swing.JLabel();
         fluentAPIPrefixComp = new javax.swing.JTextField();
+        enableIntrospectionComp = new javax.swing.JCheckBox();
         generateDefaultValueComp = new javax.swing.JCheckBox();
         javaDocPanel = new javax.swing.JLayeredPane();
         javaDoc_Label = new javax.swing.JLabel();
@@ -67,6 +68,10 @@ public final class GenerateSettings extends javax.swing.JPanel {
         javaseWrapperPanel1.add(fluentAPIPrefixWrapperPanel, java.awt.BorderLayout.CENTER);
 
         rootLayeredPane.add(javaseWrapperPanel1);
+
+        org.openide.awt.Mnemonics.setLocalizedText(enableIntrospectionComp, org.openide.util.NbBundle.getMessage(GenerateSettings.class, "GenerateSettings.enableIntrospectionComp.text")); // NOI18N
+        enableIntrospectionComp.setToolTipText(org.openide.util.NbBundle.getMessage(GenerateSettings.class, "GenerateSettings.enableIntrospectionComp.toolTipText")); // NOI18N
+        rootLayeredPane.add(enableIntrospectionComp);
 
         org.openide.awt.Mnemonics.setLocalizedText(generateDefaultValueComp, org.openide.util.NbBundle.getMessage(GenerateSettings.class, "GenerateSettings.generateDefaultValueComp.text")); // NOI18N
         rootLayeredPane.add(generateDefaultValueComp);
@@ -120,6 +125,7 @@ public final class GenerateSettings extends javax.swing.JPanel {
         generateFluentAPIComp.setSelected(isGenerateFluentAPI());
         fluentAPIPrefixComp.setText(getFluentAPIPrefix());
         generateDefaultValueComp.setSelected(isGenerateDefaultValue());
+        enableIntrospectionComp.setSelected(isEnableIntrospection());
     }
 
     void store() {
@@ -131,6 +137,8 @@ public final class GenerateSettings extends javax.swing.JPanel {
         pref.putBoolean("generateFluentAPI", generateFluentAPIComp.isSelected());
         pref.put("fluentAPIPrefix", fluentAPIPrefixComp.getText());
         pref.putBoolean("generateDefaultValue", generateDefaultValueComp.isSelected());
+        pref.putBoolean("enableIntrospection", enableIntrospectionComp.isSelected());
+
         syncExistingSourceCode = null;
         propertyJavaDoc = null;
         getterJavaDoc = null;
@@ -139,6 +147,7 @@ public final class GenerateSettings extends javax.swing.JPanel {
         generateFluentAPI = null;
         fluentAPIPrefix = null;
         generateDefaultValue = null;
+        enableIntrospection = null;
     }
 
     private static Boolean syncExistingSourceCode;
@@ -149,6 +158,7 @@ public final class GenerateSettings extends javax.swing.JPanel {
     private static Boolean generateFluentAPI;
     private static String fluentAPIPrefix;
     private static Boolean generateDefaultValue;
+    private static Boolean enableIntrospection;
 
     public static boolean isSyncExistingSourceCode() {
         if (syncExistingSourceCode == null) {
@@ -206,12 +216,29 @@ public final class GenerateSettings extends javax.swing.JPanel {
         return generateDefaultValue;
     }
 
+    public static boolean isEnableIntrospection() {
+        if (enableIntrospection == null) {
+            enableIntrospection = pref.getBoolean("enableIntrospection", Boolean.FALSE);
+        }
+        return enableIntrospection;
+    }
+
+    public static String getIntrospectionPrefix(boolean booleanTypeAttribute) {
+        if (booleanTypeAttribute) {
+            return isEnableIntrospection() ? "get" : "is";
+        } else {
+            return "get";
+        }
+    }
+
+
     public boolean valid() {
         return true;
     }
 
     private static final Preferences pref = NbPreferences.forModule(GenerateSettings.class);
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox enableIntrospectionComp;
     private javax.swing.JCheckBox fluentAPIJavaDocComp;
     private javax.swing.JTextField fluentAPIPrefixComp;
     private javax.swing.JLayeredPane fluentAPIPrefixWrapperPanel;
