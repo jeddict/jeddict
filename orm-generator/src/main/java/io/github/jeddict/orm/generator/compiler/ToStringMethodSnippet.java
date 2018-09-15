@@ -15,21 +15,26 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import io.github.jeddict.jpa.spec.Id;
+import io.github.jeddict.jpa.spec.IdentifiableClass;
+import io.github.jeddict.jpa.spec.extend.Attribute;
+import io.github.jeddict.jpa.spec.extend.ClassMembers;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.SINGLE_QUOTE;
+import java.util.Collection;
+import java.util.Collections;
+import static java.util.Objects.nonNull;
 
 public class ToStringMethodSnippet implements Snippet {
 
     private final String className;
-    private List<String> attributes = Collections.<String>emptyList();
+    private final ClassMembers classMembers;
 
-    public ToStringMethodSnippet(String className) {
+    public ToStringMethodSnippet(String className, ClassMembers classMembers) {
         this.className = className;
+        this.classMembers = classMembers;
     }
 
     @Override
@@ -39,13 +44,22 @@ public class ToStringMethodSnippet implements Snippet {
         builder.append(String.format(classTemplate, className));
 
         String attrTemplate = " %s=\" + %s + ";
-        for (int i = 0; i < getAttributes().size(); i++) {
-            String attribute = getAttributes().get(i);
+
+        for (int i = 0; i < classMembers.getAttributes().size(); i++) {
+            Attribute attribute = classMembers.getAttributes().get(i);
+
+            if (attribute instanceof Id) {
+                IdentifiableClass identifiableClass = (IdentifiableClass) attribute.getJavaClass();
+                if (nonNull(identifiableClass.getAttributes().getEmbeddedId())) {
+                    continue;
+                }
+            }
+
             builder.append(QUOTE);
             if (i != 0) {
                 builder.append(COMMA);
             }
-            builder.append(String.format(attrTemplate, attribute, attribute));
+            builder.append(String.format(attrTemplate, attribute.getName(), attribute.getName()));
         }
         builder.append(SINGLE_QUOTE).append(CLOSE_BRACES).append(SINGLE_QUOTE);
         return builder.toString();
@@ -64,16 +78,9 @@ public class ToStringMethodSnippet implements Snippet {
     }
 
     /**
-     * @return the attributes
+     * @return the classMembers
      */
-    public List<String> getAttributes() {
-        return attributes;
-    }
-
-    /**
-     * @param attributes the attributes to set
-     */
-    public void setAttributes(List<String> attributes) {
-        this.attributes = attributes;
+    public ClassMembers getClassMembers() {
+        return classMembers;
     }
 }

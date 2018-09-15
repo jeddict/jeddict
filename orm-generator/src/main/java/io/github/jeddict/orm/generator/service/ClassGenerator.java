@@ -196,13 +196,11 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         if (classMembers.getAttributes().isEmpty()) {
             return null;
         }
-        ToStringMethodSnippet snippet = new ToStringMethodSnippet(javaClass.getClazz());
-        snippet.setAttributes(classMembers.getAttributeNames());
-        return snippet;
+        return new ToStringMethodSnippet(javaClass.getClazz(), classMembers);
     }
 
     protected List<ConstructorSnippet> getConstructorSnippets(JavaClass javaClass) {
-        List<ConstructorSnippet> constructorSnippets = new ArrayList<>();       
+        List<ConstructorSnippet> constructorSnippets = new ArrayList<>();
         List<Constructor> constructors = javaClass.getConstructors();
         if (javaClass instanceof DefaultClass && constructors.isEmpty()) { //for EmbeddedId and IdClass
             constructors.add(Constructor.getNoArgsInstance());
@@ -211,21 +209,28 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             constructors.add(constructor);
         }
 
-        constructors.stream().filter(Constructor::isEnable).map(constructor -> {
-            String className = javaClass.getClazz();
-            List<VariableDefSnippet> parentVariableSnippets = constructor.getAttributes()
-                    .stream()
-                    .filter(attr -> attr.getJavaClass() != javaClass)
-                    .map(attr -> processVariable(attr))
-                    .collect(toList());
-            List<VariableDefSnippet> localVariableSnippets = constructor.getAttributes()
-                    .stream()
-                    .filter(attr -> attr.getJavaClass() == javaClass)
-                    .map(attr -> getVariableDef(attr))
-                    .collect(toList());
-            ConstructorSnippet snippet = new ConstructorSnippet(className, constructor, parentVariableSnippets, localVariableSnippets);
-            return snippet;
-        }).forEach(constructorSnippets::add);
+        constructors.stream()
+                .filter(Constructor::isEnable)
+                .map(constructor -> {
+                    String className = javaClass.getClazz();
+                    List<VariableDefSnippet> parentVariableSnippets = constructor.getAttributes()
+                            .stream()
+                            .filter(attr -> attr.getJavaClass() != javaClass)
+                            .map(attr -> processVariable(attr))
+                            .collect(toList());
+                    List<VariableDefSnippet> localVariableSnippets = constructor.getAttributes()
+                            .stream()
+                            .filter(attr -> attr.getJavaClass() == javaClass)
+                            .map(attr -> getVariableDef(attr))
+                            .collect(toList());
+            return new ConstructorSnippet(
+                    className,
+                    constructor,
+                    parentVariableSnippets,
+                    localVariableSnippets
+            );
+                })
+                .forEach(constructorSnippets::add);
         return constructorSnippets;
     }
 

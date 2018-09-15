@@ -69,7 +69,10 @@ public class ClassMembers {
     }
 
     public List<String> getAttributeNames() {
-        return getAttributes().stream().map((Attribute a) -> a.getName()).collect(toList());
+        return getAttributes()
+                .stream()
+                .map(Attribute::getName)
+                .collect(toList());
     }
 
     /**
