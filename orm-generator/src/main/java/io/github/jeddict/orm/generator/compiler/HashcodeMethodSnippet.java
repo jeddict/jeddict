@@ -16,6 +16,8 @@
 package io.github.jeddict.orm.generator.compiler;
 
 import io.github.jeddict.jpa.spec.DefaultAttribute;
+import io.github.jeddict.jpa.spec.Id;
+import io.github.jeddict.jpa.spec.IdentifiableClass;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.BaseAttribute;
 import io.github.jeddict.jpa.spec.extend.ClassMembers;
@@ -25,6 +27,7 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.NEW_LINE;
 import java.util.Collection;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
+import static java.util.Objects.nonNull;
 import java.util.Random;
 import org.apache.commons.lang.StringUtils;
 
@@ -65,6 +68,14 @@ public class HashcodeMethodSnippet implements Snippet {
         
         for (int i = 0; i < classMembers.getAttributes().size(); i++) {
             Attribute attribute = classMembers.getAttributes().get(i);
+
+            if (attribute instanceof Id) {
+                IdentifiableClass identifiableClass = (IdentifiableClass) attribute.getJavaClass();
+                if (nonNull(identifiableClass.getAttributes().getEmbeddedId())) {
+                    continue;
+                }
+            }
+
             if(attribute instanceof DefaultAttribute) {
                 attribute = ((DefaultAttribute)attribute).getConnectedAttribute();
             }

@@ -15,6 +15,9 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
+import io.github.jeddict.jpa.spec.DefaultAttribute;
+import io.github.jeddict.jpa.spec.Id;
+import io.github.jeddict.jpa.spec.IdentifiableClass;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.BaseAttribute;
 import io.github.jeddict.jpa.spec.extend.ClassMembers;
@@ -23,6 +26,7 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.NEW_LINE;
 import java.util.Collection;
 import static java.util.Collections.singleton;
+import static java.util.Objects.nonNull;
 import org.apache.commons.lang.StringUtils;
 
 public class EqualsMethodSnippet implements Snippet {
@@ -47,8 +51,21 @@ public class EqualsMethodSnippet implements Snippet {
         if (StringUtils.isNotBlank(classMembers.getPreCode())) {
             builder.append(classMembers.getPreCode()).append(NEW_LINE);
         }
+
         for (int i = 0; i < classMembers.getAttributes().size(); i++) {
             Attribute attribute = classMembers.getAttributes().get(i);
+
+            if (attribute instanceof Id) {
+                IdentifiableClass identifiableClass = (IdentifiableClass) attribute.getJavaClass();
+                if (nonNull(identifiableClass.getAttributes().getEmbeddedId())) {
+                    continue;
+                }
+            }
+
+            if (attribute instanceof DefaultAttribute) {
+                attribute = ((DefaultAttribute) attribute).getConnectedAttribute();
+            }
+
             String expression;
             boolean optionalType = attribute.isOptionalReturnType();
             if (attribute instanceof BaseAttribute && !(attribute instanceof CompositionAttribute)) {
