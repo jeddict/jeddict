@@ -1,5 +1,6 @@
 
 
+
 <p align="center">
     <img src="https://jeddict.github.io/images/logo/logo-home.png">
 </p>
@@ -38,6 +39,8 @@ See the [Quick Start](http://jeddict.github.io/tutorial/page.html?l=QuickStart) 
 
 ##### 1) [JPA 2.2 source generation](http://jeddict.github.io/tutorial/page.html?l=QuickStart)
 ##### 2) Java EE 8 / MicroProfile full-stack application generator
+ - ###### [Monolith](https://jeddict.github.io/page.html?l=tutorial/Monolith)
+ - ###### [MicroService](https://jeddict.github.io/page.html?l=tutorial/MicroService)
 ##### 3) Visualize architecture
 ##### 4) Reverse Engineering of Java Source Code
 ##### 5) Visual creation of database structures
