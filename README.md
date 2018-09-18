@@ -1,8 +1,11 @@
+
 <p align="center">
     <img src="https://jeddict.github.io/images/logo/logo-home.png">
 </p>
 <p align="center">
-    [![][license img]][license]
+    <a href="https://opensource.org/licenses/Apache-2.0">
+        <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="Apache 2.0 License">
+    </a>
     <a href="https://github.com/jeddict/jeddict/releases">
         <img src="https://img.shields.io/github/release/jeddict/jeddict/all.svg" alt="latest version">
     </a>
@@ -12,7 +15,8 @@
 </p>
 
 
-# Jeddict [http://jeddict.github.io/](http://jeddict.github.io/)
+# Jeddict
+[http://jeddict.github.io/](http://jeddict.github.io/)
 
 Jeddict is an open source graphical tool that enhances productivity and simplifies development tasks of creating complex entity relationship models. Using it developers can create JPA class & Database visually and automates Java code generation. The Jeddict provides forward & reverse engineering capabilities, import models from existing database, generate complex SQL/DDL and much more.
 
@@ -33,6 +37,7 @@ See the [Quick Start](http://jeddict.github.io/tutorial/page.html?l=QuickStart) 
 <p align="center">
     <img src="https://jeddict.github.io/resource/media/ANGULAR4.gif">
 </p>
+
 ##### 3) Visualize architecture
 ##### 4) Reverse Engineering of Java Source Code
 ##### 5) Visual creation of database structures
@@ -40,6 +45,7 @@ See the [Quick Start](http://jeddict.github.io/tutorial/page.html?l=QuickStart) 
 <p align="center">
     <img src="https://jeddict.github.io/resource/media/JSONB.gif">
 </p>
+
 ##### 7) DB Reverse Engineering
 ##### 8) SQL/DDL script generation
 ##### 9) Database schema model viewer
