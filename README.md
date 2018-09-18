@@ -1,13 +1,17 @@
 
+
 <p align="center">
     <img src="https://jeddict.github.io/images/logo/logo-home.png">
 </p>
 <p align="center">
     <a href="https://opensource.org/licenses/Apache-2.0">
-        <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="Apache 2.0 License">
+        <img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="Apache 2.0 License">
     </a>
     <a href="https://github.com/jeddict/jeddict/releases">
         <img src="https://img.shields.io/github/release/jeddict/jeddict/all.svg" alt="latest version">
+    </a>
+    <a href="https://www.youtube.com/imjeddict">
+        <img src="https://img.shields.io/badge/Youtube-ImJeddict-red.svg" alt="Demo">
     </a>
     <a href="https://twitter.com/intent/follow?screen_name=imjeddict">
         <img src="https://img.shields.io/twitter/follow/imjeddict.svg?style=social&logo=twitter" alt="follow on Twitter">
