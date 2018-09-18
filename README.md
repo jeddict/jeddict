@@ -34,25 +34,13 @@ See the [Quick Start](http://jeddict.github.io/tutorial/page.html?l=QuickStart) 
 
 ##### 1) [JPA 2.2 source generation](http://jeddict.github.io/tutorial/page.html?l=QuickStart)
 ##### 2) Java EE 8 / MicroProfile full-stack application generator
-<p align="center">
-    <img src="https://jeddict.github.io/resource/media/ANGULAR4.gif">
-</p>
-
 ##### 3) Visualize architecture
 ##### 4) Reverse Engineering of Java Source Code
 ##### 5) Visual creation of database structures
 ##### 6) JSONB modeler
-<p align="center">
-    <img src="https://jeddict.github.io/resource/media/JSONB.gif">
-</p>
-
 ##### 7) DB Reverse Engineering
 ##### 8) SQL/DDL script generation
 ##### 9) Database schema model viewer
-<p align="center">
-    <img src="https://jeddict.github.io/resource/media/NATIVE_DB_MODELER.gif">
-</p>
-
 
 ## Communication
 
