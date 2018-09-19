@@ -1,7 +1,7 @@
 <h1 align="center">
   <br>
   <a href="https://jeddict.github.io">
-    <img src="https://jeddict.github.io/images/logo/logo.png" alt="Jeddict" width="180">
+    <img src="https://jeddict.github.io/images/logo/logo.png" alt="Jeddict" width="150">
   </a>
   <br>
   Jeddict
@@ -36,7 +36,7 @@
  - ###### [MicroService](https://jeddict.github.io/page.html?l=tutorial/MicroService)
 ##### 3) Visualize architecture
 <p align="center">
-<img src="https://jeddict.github.io/tutorial/Inheritance/INHERITANCE.PNG">
+<img src="https://jeddict.github.io/tutorial/Inheritance/INHERITANCE.PNG" width="400">
 </p>
 
 ##### 4) Reverse Engineering of Java Source Code
@@ -46,7 +46,7 @@
 ##### 8) SQL/DDL script generation
 ##### 9) Database schema model viewer
 <p align="center">
-<img src="https://jeddict.github.io/tutorial/Inheritance/JOINED.PNG">
+<img src="https://jeddict.github.io/tutorial/Inheritance/JOINED.PNG" width="500">
 </p>
 
 
