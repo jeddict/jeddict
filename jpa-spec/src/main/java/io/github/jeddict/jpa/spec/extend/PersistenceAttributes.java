@@ -102,6 +102,10 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
         return findById(basic, id);
     }
 
+    public Optional<Basic> findBasic(String name) {
+        return findByName(basic, name);
+    }
+
     @Override
     public void addBasic(Basic basic) {
         getBasic().add(basic);
@@ -145,10 +149,11 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
 
     @Override
     public Optional<ElementCollection> getElementCollection(String id) {
-        if (elementCollection != null) {
-            return elementCollection.stream().filter(a -> a.getId().equals(id)).findFirst();
-        }
-        return null;
+        return findById(elementCollection, id);
+    }
+
+    public Optional<ElementCollection> findElementCollection(String name) {
+        return findByName(elementCollection, name);
     }
 
     @Override
@@ -181,6 +186,10 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
     @Override
     public Optional<Embedded> getEmbedded(String id) {
         return findById(embedded, id);
+    }
+
+    public Optional<Embedded> findEmbedded(String name) {
+        return findByName(embedded, name);
     }
 
     @Override
@@ -217,6 +226,10 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
         return findById(_transient, id);
     }
 
+    public Optional<Transient> findTransient(String name) {
+        return findByName(_transient, name);
+    }
+
     @Override
     public void addTransient(Transient _transient) {
         getTransient().add(_transient);
@@ -247,6 +260,10 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
     @Override
     public Optional<ManyToOne> getManyToOne(String id) {
         return findById(manyToOne, id);
+    }
+
+    public Optional<ManyToOne> findManyToOne(String name) {
+        return findByName(manyToOne, name);
     }
 
     @Override
@@ -281,6 +298,10 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
         return findById(oneToMany, id);
     }
 
+    public Optional<OneToMany> findOneToMany(String name) {
+        return findByName(oneToMany, name);
+    }
+
     @Override
     public void addOneToMany(OneToMany oneToMany) {
         getOneToMany().add(oneToMany);
@@ -313,6 +334,10 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
         return findById(oneToOne, id);
     }
 
+    public Optional<OneToOne> findOneToOne(String name) {
+        return findByName(oneToOne, name);
+    }
+
     @Override
     public void addOneToOne(OneToOne oneToOne) {
         getOneToOne().add(oneToOne);
@@ -343,6 +368,10 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
     @Override
     public Optional<ManyToMany> getManyToMany(String id) {
         return findById(manyToMany, id);
+    }
+
+    public Optional<ManyToMany> findManyToMany(String name) {
+        return findByName(manyToMany, name);
     }
 
     @Override

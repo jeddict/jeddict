@@ -340,10 +340,8 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
         return elementCollection;
     }
 
-    public static ElementCollection load(MemberExplorer member) {
-        EntityMappings entityMappings = member.getEntityMapping();
+    public static ElementCollection load(ElementCollection elementCollection, MemberExplorer member) {
         AnnotationExplorer annotation = member.getAnnotation(javax.persistence.ElementCollection.class).get();
-        ElementCollection elementCollection = new ElementCollection();
         elementCollection.loadAttribute(member);
         elementCollection.column = Column.load(member);
         elementCollection.temporal = TemporalType.load(member);

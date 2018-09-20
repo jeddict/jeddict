@@ -109,7 +109,6 @@ public class PrimaryKeyAttributes extends PersistenceAttributes<IdentifiableClas
     protected EmbeddedId embeddedId;
     protected List<Version> version;
 
-    @Override
     @Deprecated
     public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
         Set<String> mapsId = new HashSet<>();
@@ -134,44 +133,44 @@ public class PrimaryKeyAttributes extends PersistenceAttributes<IdentifiableClas
             if (JavaSourceParserUtil.isAnnotatedWith(element, ID_FQN)
                     && !(JavaSourceParserUtil.isAnnotatedWith(element, ONE_TO_ONE_FQN)
                     || JavaSourceParserUtil.isAnnotatedWith(element, MANY_TO_ONE_FQN))) {
-                this.addId(Id.load(element, variableElement, getterElement));
+//                this.addId(Id.load(element, variableElement, getterElement));
             } else if (JavaSourceParserUtil.isAnnotatedWith(element, BASIC_FQN)) {
-                this.addBasic(Basic.load(element, variableElement, getterElement));
+//                this.addBasic(Basic.load(element, variableElement, getterElement));
             } else if (JavaSourceParserUtil.isAnnotatedWith(element, TRANSIENT_FQN)) {
-                this.addTransient(Transient.load(element, variableElement, getterElement));
+//                this.addTransient(Transient.load(element, variableElement, getterElement));
             } else if (JavaSourceParserUtil.isAnnotatedWith(element, VERSION_FQN)) {
-                this.addVersion(Version.load(element, variableElement, getterElement));
+//                this.addVersion(Version.load(element, variableElement, getterElement));
             } else if (JavaSourceParserUtil.isAnnotatedWith(element, ELEMENT_COLLECTION_FQN)) {
                 this.addElementCollection(ElementCollection.load(entityMappings, element, variableElement, getterElement));
             } else if (JavaSourceParserUtil.isAnnotatedWith(element, ONE_TO_ONE_FQN)) {
-                OneToOne oneToOneObj = new OneToOne().load(entityMappings, element, variableElement, getterElement, null);
-                this.addOneToOne(oneToOneObj);
-                if (StringUtils.isNotBlank(oneToOneObj.getMapsId())) {
-                    mapsId.add(oneToOneObj.getMapsId());
-                } else {
-                    mapsId.add(oneToOneObj.getName());
-                }
+//                OneToOne oneToOneObj = new OneToOne().load(entityMappings, element, variableElement, getterElement, null);
+//                this.addOneToOne(oneToOneObj);
+//                if (StringUtils.isNotBlank(oneToOneObj.getMapsId())) {
+//                    mapsId.add(oneToOneObj.getMapsId());
+//                } else {
+//                    mapsId.add(oneToOneObj.getName());
+//                }
             } else if (JavaSourceParserUtil.isAnnotatedWith(element, MANY_TO_ONE_FQN)) {
-                ManyToOne manyToOneObj = new ManyToOne().load(entityMappings, element, variableElement, getterElement, null);
-                this.addManyToOne(manyToOneObj);
-                if (StringUtils.isNotBlank(manyToOneObj.getMapsId())) {
-                    mapsId.add(manyToOneObj.getMapsId());
-                } else {
-                    mapsId.add(manyToOneObj.getName());
-                }
+//                ManyToOne manyToOneObj = new ManyToOne().load(entityMappings, element, variableElement, getterElement, null);
+//                this.addManyToOne(manyToOneObj);
+//                if (StringUtils.isNotBlank(manyToOneObj.getMapsId())) {
+//                    mapsId.add(manyToOneObj.getMapsId());
+//                } else {
+//                    mapsId.add(manyToOneObj.getName());
+//                }
             } else if (JavaSourceParserUtil.isAnnotatedWith(element, ONE_TO_MANY_FQN)) {
-                OneToMany oneToManyObj = new OneToMany().load(entityMappings, element, variableElement, getterElement, null);
-                this.addOneToMany(oneToManyObj);
+//                OneToMany oneToManyObj = new OneToMany().load(entityMappings, element, variableElement, getterElement, null);
+//                this.addOneToMany(oneToManyObj);
             } else if (JavaSourceParserUtil.isAnnotatedWith(element, MANY_TO_MANY_FQN)) {
-                ManyToMany manyToManyObj = new ManyToMany().load(entityMappings, element, variableElement, getterElement, null);
-                this.addManyToMany(manyToManyObj);
+//                ManyToMany manyToManyObj = new ManyToMany().load(entityMappings, element, variableElement, getterElement, null);
+//                this.addManyToMany(manyToManyObj);
             } else if (JavaSourceParserUtil.isAnnotatedWith(element, EMBEDDED_ID_FQN)) {
                 this.setEmbeddedId(EmbeddedId.load(entityMappings, element, variableElement, getterElement));
                 embeddedIdVariableElement = variableElement;
             } else if (JavaSourceParserUtil.isAnnotatedWith(element, EMBEDDED_FQN)) {
                 this.addEmbedded(Embedded.load(entityMappings, element, variableElement, getterElement));
             } else {
-                this.addBasic(Basic.load(element, variableElement, getterElement)); //Default Annotation
+//                this.addBasic(Basic.load(element, variableElement, getterElement)); //Default Annotation
             }
         }
 
@@ -179,7 +178,7 @@ public class PrimaryKeyAttributes extends PersistenceAttributes<IdentifiableClas
             for (VariableElement variableElement : JavaSourceParserUtil.getFields(JavaSourceParserUtil.getAttributeTypeElement(embeddedIdVariableElement))) {
                 if (!mapsId.contains(variableElement.getSimpleName().toString())) {
                     ExecutableElement getterElement = JavaSourceParserUtil.guessGetter(variableElement);
-                    this.addId(Id.load(variableElement, variableElement, getterElement));
+//                    this.addId(Id.load(variableElement, variableElement, getterElement));
                 }
             }
         }
@@ -196,54 +195,103 @@ public class PrimaryKeyAttributes extends PersistenceAttributes<IdentifiableClas
             if (member.isAnnotationPresent(javax.persistence.Id.class)
                     && !(member.isAnnotationPresent(javax.persistence.OneToOne.class)
                     || member.isAnnotationPresent(javax.persistence.ManyToOne.class))) {
-                this.addId(Id.load(member));
+                this.findId(member.getFieldName())
+                        .orElseGet(() -> {
+                            Id id = new Id();
+                            this.addId(id);
+                            return id;
+                        }).load(member);
+            } else if (member.isAnnotationPresent(javax.persistence.Version.class)) {
+                this.findVersion(member.getFieldName())
+                        .orElseGet(() -> {
+                            Version version = new Version();
+                            this.addVersion(version);
+                            return version;
+                        }).load(member);
             } else if (member.isAnnotationPresent(javax.persistence.EmbeddedId.class)) {
                 this.setEmbeddedId(EmbeddedId.load(member));
                 embeddedIdMember = member;
             } else if (member.isAnnotationPresent(javax.persistence.Basic.class)) {
-                this.addBasic(Basic.load(member));
+                this.findBasic(member.getFieldName())
+                        .orElseGet(() -> {
+                            Basic basic = new Basic();
+                            this.addBasic(basic);
+                            return basic;
+                        }).load(member);
             } else if (member.isAnnotationPresent(javax.persistence.Transient.class)) {
-                this.addTransient(Transient.load(member));
-            } else if (member.isAnnotationPresent(javax.persistence.Version.class)) {
-                this.addVersion(Version.load(member));
+                this.findTransient(member.getFieldName())
+                        .orElseGet(() -> {
+                            Transient _transient = new Transient();
+                            this.addTransient(_transient);
+                            return _transient;
+                        }).load(member);
             } else if (member.isAnnotationPresent(javax.persistence.ElementCollection.class)) {
-                ElementCollection elementCollection = ElementCollection.load(member);
-                if (nonNull(elementCollection)) {
-                    this.addElementCollection(elementCollection);
+                Optional<ElementCollection> elementCollectionOpt = this.findElementCollection(member.getFieldName());
+                if (elementCollectionOpt.isPresent()) {
+                    ElementCollection.load(elementCollectionOpt.get(), member);
+                } else {
+                    ElementCollection elementCollection = ElementCollection.load(new ElementCollection(), member);
+                    if (nonNull(elementCollection)) {
+                        this.addElementCollection(elementCollection);
+                    }
                 }
             } else if (member.isAnnotationPresent(javax.persistence.OneToOne.class)) {
-                OneToOne oneToOneObj = new OneToOne();
-                this.addOneToOne(oneToOneObj);
-                oneToOneObj.load(member);
-                if (isNotBlank(oneToOneObj.getMapsId())) {
-                    mapsId.add(oneToOneObj.getMapsId());
+                OneToOne oneToOne = this.findOneToOne(member.getFieldName())
+                        .orElseGet(() -> {
+                            OneToOne oneToOneObj = new OneToOne();
+                            this.addOneToOne(oneToOneObj);
+                            return oneToOneObj;
+                        });
+                oneToOne.load(member);
+                if (isNotBlank(oneToOne.getMapsId())) {
+                    mapsId.add(oneToOne.getMapsId());
                 } else {
-                    mapsId.add(oneToOneObj.getName());
+                    mapsId.add(oneToOne.getName());
                 }
             } else if (member.isAnnotationPresent(javax.persistence.ManyToOne.class)) {
-                ManyToOne manyToOneObj = new ManyToOne();
-                this.addManyToOne(manyToOneObj);
-                manyToOneObj.load(member);
-                if (isNotBlank(manyToOneObj.getMapsId())) {
-                    mapsId.add(manyToOneObj.getMapsId());
+                ManyToOne manyToOne = this.findManyToOne(member.getFieldName())
+                        .orElseGet(() -> {
+                            ManyToOne manyToOneObj = new ManyToOne();
+                            this.addManyToOne(manyToOneObj);
+                            return manyToOneObj;
+                        });
+                manyToOne.load(member);
+                if (isNotBlank(manyToOne.getMapsId())) {
+                    mapsId.add(manyToOne.getMapsId());
                 } else {
-                    mapsId.add(manyToOneObj.getName());
+                    mapsId.add(manyToOne.getName());
                 }
             } else if (member.isAnnotationPresent(javax.persistence.OneToMany.class)) {
-                OneToMany oneToManyObj = new OneToMany();
-                this.addOneToMany(oneToManyObj);
-                oneToManyObj.load(member);
+                this.findOneToMany(member.getFieldName())
+                        .orElseGet(() -> {
+                    OneToMany oneToMany = new OneToMany();
+                    this.addOneToMany(oneToMany);
+                    return oneToMany;
+                        }).load(member);
             } else if (member.isAnnotationPresent(javax.persistence.ManyToMany.class)) {
-                ManyToMany manyToManyObj = new ManyToMany();
-                this.addManyToMany(manyToManyObj);
-                manyToManyObj.load(member);
+                this.findManyToMany(member.getFieldName())
+                        .orElseGet(() -> {
+                    ManyToMany manyToMany = new ManyToMany();
+                    this.addManyToMany(manyToMany);
+                    return manyToMany;
+                        }).load(member);
             } else if (member.isAnnotationPresent(javax.persistence.Embedded.class)) {
-                Embedded embedded = Embedded.load(member);
-                if (nonNull(embedded)) {
-                    this.addEmbedded(embedded);
+                Optional<Embedded> embeddedOpt = this.findEmbedded(member.getFieldName());
+                if (embeddedOpt.isPresent()) {
+                    Embedded.load(embeddedOpt.get(), member);
+                } else {
+                    Embedded embedded = Embedded.load(new Embedded(), member);
+                    if (nonNull(embedded)) {
+                        this.addEmbedded(embedded);
+                    }
                 }
             } else {
-                this.addBasic(Basic.load(member)); //Default Annotation
+                this.findBasic(member.getFieldName()) //Default Annotation
+                        .orElseGet(() -> {
+                            Basic basic = new Basic();
+                            this.addBasic(basic);
+                            return basic;
+                        }).load(member);
             }
         }
 
@@ -256,7 +304,12 @@ public class PrimaryKeyAttributes extends PersistenceAttributes<IdentifiableClas
                 if (embeddableOpt.isPresent()) {
                     for (MemberExplorer member : embeddableOpt.get().getMembers()) {
                         if (!mapsId.contains(member.getFieldName())) {
-                            this.addId(Id.load(member));
+                            this.findId(member.getFieldName())
+                                    .orElseGet(() -> {
+                                        Id id = new Id();
+                                        this.addId(id);
+                                        return id;
+                                    }).load(member);
                         }
                     }
                 }
@@ -330,11 +383,12 @@ public class PrimaryKeyAttributes extends PersistenceAttributes<IdentifiableClas
         notifyListeners(id, "removeAttribute", null, null);
     }
 
-    public Optional<Id> getId(String id_) {
-        if (id != null) {
-            return id.stream().filter(a -> a.getId().equals(id_)).findFirst();
-        }
-        return null;
+    public Optional<Id> getId(String _id) {
+        return findById(id, _id);
+    }
+
+    public Optional<Id> findId(String name) {
+        return findByName(id, name);
     }
 
     /**
@@ -386,7 +440,7 @@ public class PrimaryKeyAttributes extends PersistenceAttributes<IdentifiableClas
      * Objects of the following type(s) are allowed in the list {@link Version }
      *
      *
-     * @return 
+     * @return
      */
     @Override
     public List<Version> getVersion() {
@@ -424,10 +478,11 @@ public class PrimaryKeyAttributes extends PersistenceAttributes<IdentifiableClas
     }
 
     public Optional<Version> getVersion(String _id) {
-        if (version != null) {
-            return version.stream().filter(a -> a.getId().equals(_id)).findFirst();
-        }
-        return null;
+        return findById(version, _id);
+    }
+
+    public Optional<Version> findVersion(String name) {
+        return findByName(version, name);
     }
 
     @Override

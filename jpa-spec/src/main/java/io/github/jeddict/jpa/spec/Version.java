@@ -51,16 +51,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Version extends PersistenceBaseAttribute implements AccessTypeHandler {
 
-    public static Version load(Element element, VariableElement variableElement, ExecutableElement getterElement) {
-        Version version = new Version();
-        version.loadAttribute(element, variableElement, getterElement);
-        return version;
-    }
-
-    public static Version load(MemberExplorer member) {
-        Version version = new Version();
-        version.loadAttribute(member);
-        return version;
+    public void load(MemberExplorer member) {
+        this.loadAttribute(member);
     }
     
     @Override

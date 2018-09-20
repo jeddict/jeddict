@@ -27,11 +27,9 @@ public class BeanAttribute extends BaseAttribute {
     @XmlAttribute(name = "attribute-type")
     private String attributeType;
 
-    public static BeanAttribute load(MemberExplorer member) {
-        BeanAttribute attribute = new BeanAttribute();
-        attribute.loadAttribute(member);
-        attribute.setAttributeType(member.getType());
-        return attribute;
+    public void load(MemberExplorer member) {
+        this.loadAttribute(member);
+        this.setAttributeType(member.getType());
     }
 
     /**

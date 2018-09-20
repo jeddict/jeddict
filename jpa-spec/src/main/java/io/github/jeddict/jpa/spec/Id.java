@@ -68,23 +68,11 @@ public class Id extends PersistenceBaseAttribute {
     @XmlElement(name = "sequence-generator")
     protected SequenceGenerator sequenceGenerator;
 
-    @Deprecated
-    public static Id load(Element element, VariableElement variableElement, ExecutableElement getterElement) {
-        Id id = new Id();
-        id.loadAttribute(element, variableElement, getterElement);
-        id.generatedValue = GeneratedValue.load(element, variableElement);
-        id.tableGenerator = TableGenerator.load(element);
-        id.sequenceGenerator = SequenceGenerator.load(element);
-        return id;
-    }
-
-    public static Id load(MemberExplorer member) {
-        Id id = new Id();
-        id.loadAttribute(member);
-        id.generatedValue = GeneratedValue.load(member);
-        id.tableGenerator = TableGenerator.load(member);
-        id.sequenceGenerator = SequenceGenerator.load(member);
-        return id;
+    public void load(MemberExplorer member) {
+        this.loadAttribute(member);
+        this.generatedValue = GeneratedValue.load(member);
+        this.tableGenerator = TableGenerator.load(member);
+        this.sequenceGenerator = SequenceGenerator.load(member);
     }
 
     /**

@@ -21,6 +21,7 @@ import static io.github.jeddict.jcode.util.ProjectHelper.findSourceGroupForFile;
 import static io.github.jeddict.jcode.util.StringHelper.camelCase;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.JAVA_CLASS_ICON;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.PACKAGE_ICON;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.TABLE_ICON;
 import io.github.jeddict.jpa.modeler.widget.BeanClassWidget;
 import io.github.jeddict.jpa.modeler.widget.JavaClassWidget;
 import io.github.jeddict.jpa.modeler.widget.PersistenceClassWidget;
@@ -50,6 +51,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import org.netbeans.api.db.explorer.DatabaseMetaDataTransfer.Table;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.modeler.action.WidgetDropListener;
@@ -64,7 +66,6 @@ import org.openide.loaders.DataFolder;
 import org.openide.nodes.FilterNode;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
-import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
 /**
@@ -73,8 +74,8 @@ import org.openide.windows.WindowManager;
  */
 public class WidgetDropListenerImpl implements WidgetDropListener {
 
-    static final String PRIMARY_TYPE = "application";
-    static final String SUBTYPE = "x-java-org-netbeans-modules-java-project-packagenodednd";
+    private static final String PRIMARY_TYPE = "application";
+    private static final String PACKAGE_TYPE = "x-java-org-netbeans-modules-java-project-packagenodednd";
 
     @Override
     public boolean isDroppable(Widget widget, Point point, Transferable transferable, IModelerScene scene) {
@@ -138,7 +139,10 @@ public class WidgetDropListenerImpl implements WidgetDropListener {
                 JavaClassWidget<JavaClass> javaClassWidget = (JavaClassWidget) widget;
                 JavaClass javaClass = javaClassWidget.getBaseElementSpec();
 
-                if (classExplorer.isInterface()) {
+                if (javaClass.getClazz().equals(clazz)) {
+                    JCREProcessor processor = Lookup.getDefault().lookup(JCREProcessor.class);
+                    processor.processDropedClasses(scene.getModelerFile(), files);
+                } else if (classExplorer.isInterface()) {
                     interfaceDropOption(widget, scene, classExplorer, clazzFQN);
                 } else if (classExplorer.isClass()) {
                     classDropOption(widget, scene, classExplorer, clazzFQN);
@@ -146,7 +150,6 @@ public class WidgetDropListenerImpl implements WidgetDropListener {
                     enumDropOption(widget, clazzFQN);
                 }
             }
-
         }
     }
 
@@ -291,7 +294,8 @@ public class WidgetDropListenerImpl implements WidgetDropListener {
 
     private boolean isPackageFlavor(DataFlavor[] flavors) {
         for (int i = 0; i < flavors.length; i++) {
-            if (SUBTYPE.equals(flavors[i].getSubType()) && PRIMARY_TYPE.equals(flavors[i].getPrimaryType())) {
+            if (PACKAGE_TYPE.equals(flavors[i].getSubType())
+                    && PRIMARY_TYPE.equals(flavors[i].getPrimaryType())) {
                 //Disable pasting into package, only paste into root is allowed
                 return true;
             }
@@ -303,7 +307,7 @@ public class WidgetDropListenerImpl implements WidgetDropListener {
         List<FileObject> packages = new ArrayList<>();
         DataFlavor[] flavors = transferable.getTransferDataFlavors();
         for (int i = 0; i < flavors.length; i++) {
-            if (SUBTYPE.equals(flavors[i].getSubType())
+            if (PACKAGE_TYPE.equals(flavors[i].getSubType())
                     && PRIMARY_TYPE.equals(flavors[i].getPrimaryType())) {
                 FilterNode node;
                 try {

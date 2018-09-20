@@ -37,12 +37,6 @@ public class BeanClass extends JavaClass<BeanAttributes> {
     private BeanAttributes attributes;
 
     @Override
-    public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
-        super.load(entityMappings, element, fieldAccess);
-        this.getAttributes().load(entityMappings, element, fieldAccess);
-    }
-//
-    @Override
     public void load(ClassExplorer clazz) {
         super.load(clazz);
         this.getAttributes().load(clazz);

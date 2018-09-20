@@ -68,18 +68,9 @@ public class Transient extends BaseAttribute {
         }
     }
 
-    public static Transient load(Element element, VariableElement variableElement, ExecutableElement getterElement) {
-        Transient _transient = new Transient();
-        _transient.loadAttribute(element, variableElement, getterElement);
-        _transient.setAttributeType(variableElement.asType().toString());
-        return _transient;
-    }
-
-    public static Transient load(MemberExplorer member) {
-        Transient _transient = new Transient();
-        _transient.loadAttribute(member);
-        _transient.setAttributeType(member.getType());
-        return _transient;
+    public void load(MemberExplorer member) {
+        this.loadAttribute(member);
+        this.setAttributeType(member.getType());
     }
 
 }

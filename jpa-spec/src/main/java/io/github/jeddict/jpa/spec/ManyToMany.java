@@ -86,16 +86,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 public class ManyToMany extends MultiRelationAttribute {
 
-    @Override
-    public ManyToMany load(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement, AnnotationMirror annotationMirror) {
-        if (annotationMirror == null) {
-            annotationMirror = JavaSourceParserUtil.findAnnotation(element, MANY_TO_MANY_FQN);
-        }
-        super.loadAttribute(entityMappings, element, variableElement, getterElement, annotationMirror);
-        return this;
-    }
-
-//        @Override
     public ManyToMany load(MemberExplorer member) {
         AnnotationExplorer annotation = member.getAnnotation(javax.persistence.ManyToMany.class).get();
         super.loadAttribute(member, annotation);

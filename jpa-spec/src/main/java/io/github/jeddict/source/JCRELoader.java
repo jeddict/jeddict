@@ -15,16 +15,11 @@
  */
 package io.github.jeddict.source;
 
-import io.github.jeddict.jpa.spec.EntityMappings;
-import javax.lang.model.element.TypeElement;
-
 /**
  *
  * @author Gaurav Gupta
  */
 public interface JCRELoader {
-
-    void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess);
 
     void load(ClassExplorer clazz);
 }

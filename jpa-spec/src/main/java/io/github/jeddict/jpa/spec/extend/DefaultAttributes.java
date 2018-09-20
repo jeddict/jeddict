@@ -39,11 +39,6 @@ public class DefaultAttributes extends Attributes<DefaultClass> {
     private List<DefaultAttribute> defaultAttributes;
 
     @Override
-    public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void load(ClassExplorer clazz) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

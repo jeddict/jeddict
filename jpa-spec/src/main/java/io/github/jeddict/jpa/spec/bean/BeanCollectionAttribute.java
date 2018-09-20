@@ -24,17 +24,15 @@ public class BeanCollectionAttribute extends BeanAttribute implements Collection
 
     @XmlAttribute(name = "ct")
     private String collectionType;
+
     @XmlAttribute(name = "cit")
     private String collectionImplType;
 
-    public static BeanCollectionAttribute load(MemberExplorer member, String typeArgument) {
-
-        BeanCollectionAttribute attribute = new BeanCollectionAttribute();
-        attribute.loadAttribute(member);
-        attribute.setCollectionType(member.getType());
-        attribute.setAttributeType(typeArgument);
+    public void load(MemberExplorer member, String typeArgument) {
+        this.loadAttribute(member);
+        this.setCollectionType(member.getType());
+        this.setAttributeType(typeArgument);
         // collectionImplType, 1st arg in map type ??
-        return attribute;
     }
 
     /**

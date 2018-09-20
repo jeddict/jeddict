@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import static java.util.Objects.nonNull;
+import java.util.Optional;
 import java.util.function.Predicate;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -69,89 +70,79 @@ import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttrib
 public class EmbeddableAttributes extends PersistenceAttributes<Embeddable> {
 
     @Override
-    @Deprecated
-    public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
-        List<Element> elements = getElements(typeElement, fieldAccess);
-
-        for (Element element : elements) {
-            VariableElement variableElement;
-            ExecutableElement getterElement;
-            if (element instanceof VariableElement) {
-                variableElement = (VariableElement) element;
-                getterElement = JavaSourceParserUtil.guessGetter(variableElement);
-            } else {
-                variableElement = JavaSourceParserUtil.guessField((ExecutableElement) element);
-                getterElement = (ExecutableElement) element;
-            }
-
-            if (JavaSourceParserUtil.isAnnotatedWith(element, BASIC_FQN)) {
-                this.addBasic(Basic.load(element, variableElement, getterElement));
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, TRANSIENT_FQN)) {
-                this.addTransient(Transient.load(element, variableElement, getterElement));
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, ELEMENT_COLLECTION_FQN)) {
-                this.addElementCollection(ElementCollection.load(entityMappings, element, variableElement, getterElement));
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, ONE_TO_ONE_FQN)) {
-                OneToOne oneToOneObj = new OneToOne();
-                this.addOneToOne(oneToOneObj);
-                oneToOneObj.load(entityMappings, element, variableElement, getterElement, null);
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, MANY_TO_ONE_FQN)) {
-                ManyToOne manyToOneObj = new ManyToOne();
-                this.addManyToOne(manyToOneObj);
-                manyToOneObj.load(entityMappings, element, variableElement, getterElement, null);
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, ONE_TO_MANY_FQN)) {
-                OneToMany oneToManyObj = new OneToMany();
-                this.addOneToMany(oneToManyObj);
-                oneToManyObj.load(entityMappings, element, variableElement, getterElement, null);
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, MANY_TO_MANY_FQN)) {
-                ManyToMany manyToManyObj = new ManyToMany();
-                this.addManyToMany(manyToManyObj);
-                manyToManyObj.load(entityMappings, element, variableElement, getterElement, null);
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, EMBEDDED_FQN)) {
-                this.addEmbedded(Embedded.load(entityMappings, element, variableElement, getterElement));
-            } else {
-                this.addBasic(Basic.load(element, variableElement, getterElement)); //Default Annotation
-            }
-        }
-
-    }
-
-    @Override
     public void load(ClassExplorer clazz) {
         Collection<MemberExplorer> members = clazz.getMembers();
 
         for (MemberExplorer member : members) {
             if (member.isAnnotationPresent(javax.persistence.Basic.class)) {
-                this.addBasic(Basic.load(member));
+                this.findBasic(member.getFieldName())
+                        .orElseGet(() -> {
+                            Basic basic = new Basic();
+                            this.addBasic(basic);
+                            return basic;
+                        }).load(member);
             } else if (member.isAnnotationPresent(javax.persistence.Transient.class)) {
-                this.addTransient(Transient.load(member));
+                this.findTransient(member.getFieldName())
+                        .orElseGet(() -> {
+                            Transient _transient = new Transient();
+                            this.addTransient(_transient);
+                            return _transient;
+                        }).load(member);
             } else if (member.isAnnotationPresent(javax.persistence.ElementCollection.class)) {
-                ElementCollection elementCollection = ElementCollection.load(member);
-                if (nonNull(elementCollection)) {
-                    this.addElementCollection(elementCollection);
+                Optional<ElementCollection> elementCollectionOpt = this.findElementCollection(member.getFieldName());
+                if (elementCollectionOpt.isPresent()) {
+                    ElementCollection.load(elementCollectionOpt.get(), member);
+                } else {
+                    ElementCollection elementCollection = ElementCollection.load(new ElementCollection(), member);
+                    if (nonNull(elementCollection)) {
+                        this.addElementCollection(elementCollection);
+                    }
                 }
             } else if (member.isAnnotationPresent(javax.persistence.OneToOne.class)) {
-                OneToOne oneToOneObj = new OneToOne();
-                this.addOneToOne(oneToOneObj);
-                oneToOneObj.load(member);
+                this.findOneToOne(member.getFieldName())
+                        .orElseGet(() -> {
+                            OneToOne oneToOneObj = new OneToOne();
+                            this.addOneToOne(oneToOneObj);
+                            return oneToOneObj;
+                        }).load(member);
             } else if (member.isAnnotationPresent(javax.persistence.ManyToOne.class)) {
-                ManyToOne manyToOneObj = new ManyToOne();
-                this.addManyToOne(manyToOneObj);
-                manyToOneObj.load(member);
+                this.findManyToOne(member.getFieldName())
+                        .orElseGet(() -> {
+                            ManyToOne manyToOneObj = new ManyToOne();
+                            this.addManyToOne(manyToOneObj);
+                            return manyToOneObj;
+                        }).load(member);
             } else if (member.isAnnotationPresent(javax.persistence.OneToMany.class)) {
-                OneToMany oneToManyObj = new OneToMany();
-                this.addOneToMany(oneToManyObj);
-                oneToManyObj.load(member);
+                this.findOneToMany(member.getFieldName())
+                        .orElseGet(() -> {
+                            OneToMany oneToMany = new OneToMany();
+                            this.addOneToMany(oneToMany);
+                            return oneToMany;
+                        }).load(member);
             } else if (member.isAnnotationPresent(javax.persistence.ManyToMany.class)) {
-                ManyToMany manyToManyObj = new ManyToMany();
-                this.addManyToMany(manyToManyObj);
-                manyToManyObj.load(member);
+                this.findManyToMany(member.getFieldName())
+                        .orElseGet(() -> {
+                            ManyToMany manyToMany = new ManyToMany();
+                            this.addManyToMany(manyToMany);
+                            return manyToMany;
+                        }).load(member);
             } else if (member.isAnnotationPresent(javax.persistence.Embedded.class)) {
-                Embedded embedded = Embedded.load(member);
-                if (nonNull(embedded)) {
-                    this.addEmbedded(embedded);
+                Optional<Embedded> embeddedOpt = this.findEmbedded(member.getFieldName());
+                if (embeddedOpt.isPresent()) {
+                    Embedded.load(embeddedOpt.get(), member);
+                } else {
+                    Embedded embedded = Embedded.load(new Embedded(), member);
+                    if (nonNull(embedded)) {
+                        this.addEmbedded(embedded);
+                    }
                 }
             } else {
-                this.addBasic(Basic.load(member)); //Default Annotation
+                this.findBasic(member.getFieldName()) //Default Annotation
+                        .orElseGet(() -> {
+                            Basic basic = new Basic();
+                            this.addBasic(basic);
+                            return basic;
+                        }).load(member);
             }
         }
     }

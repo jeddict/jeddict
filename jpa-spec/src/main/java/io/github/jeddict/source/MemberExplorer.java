@@ -31,6 +31,7 @@ import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.utils.Pair;
 import io.github.jeddict.bv.constraints.Constraint;
 import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualify;
+import io.github.jeddict.jcode.util.JavaUtil;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class MemberExplorer extends AnnotatedMember {
 
     private BodyDeclaration<? extends Annotation> annotatedMember;
     private MethodDeclaration getter;
+    private MethodDeclaration setter;
     private FieldDeclaration field;
 
     private final ClassExplorer clazz;
@@ -70,11 +72,15 @@ public class MemberExplorer extends AnnotatedMember {
     }
 
     public boolean isTransient() {
-        return field.isTransient();
+        return field != null ? field.isTransient() : false;
     }
 
     public String getFieldName() {
-        return field.getVariable(0).getNameAsString();
+        if (field != null) {
+            return field.getVariable(0).getNameAsString();
+        } else {
+            return JavaUtil.getFieldName(getter.getNameAsString());
+        }
     }
 
     public Set<Constraint> getTypeArgumentBeanValidationConstraints(int index) {
@@ -140,20 +146,38 @@ public class MemberExplorer extends AnnotatedMember {
     public String getType() {
         String type;
         ResolvedType resolvedType = null;
-        try {
-            resolvedType = field.getElementType().resolve();
-        } catch (UnsupportedOperationException ex) {
-            System.out.println("UnsupportedOperationException : " + field);
-        }
-        if (resolvedType != null && resolvedType.isReferenceType()) {
-            type = resolvedType.asReferenceType().getQualifiedName();
-        } else if (resolvedType != null && resolvedType.isPrimitive()) {
-            type = resolvedType.asPrimitive().describe();
+        if (field != null) {
+            try {
+                resolvedType = field.getElementType().resolve();
+            } catch (UnsupportedOperationException ex) {
+                System.out.println("UnsupportedOperationException : " + field);
+            }
+            if (resolvedType != null && resolvedType.isReferenceType()) {
+                type = resolvedType.asReferenceType().getQualifiedName();
+            } else if (resolvedType != null && resolvedType.isPrimitive()) {
+                type = resolvedType.asPrimitive().describe();
+            } else {
+                type = field.getElementType().toString();
+            }
+            if (field.getVariable(0).getType().isArrayType()) {
+                type = type + "[]";
+            }
         } else {
-            type = field.getElementType().toString();
-        }
-        if (field.getVariable(0).getType().isArrayType()) {
-            type = type + "[]";
+            try {
+                resolvedType = getter.getType().resolve();
+            } catch (UnsupportedOperationException ex) {
+                System.out.println("UnsupportedOperationException : " + field);
+            }
+            if (resolvedType != null && resolvedType.isReferenceType()) {
+                type = resolvedType.asReferenceType().getQualifiedName();
+            } else if (resolvedType != null && resolvedType.isPrimitive()) {
+                type = resolvedType.asPrimitive().describe();
+            } else {
+                type = getter.getTypeAsString();
+            }
+            if (getter.getType().isArrayType()) {
+                type = type + "[]";
+            }
         }
         return type;
     }
@@ -186,7 +210,7 @@ public class MemberExplorer extends AnnotatedMember {
 
     public String getDefaultValue() {
         String defaultValue = null;
-        if (field.getVariables().get(0).getChildNodes().size() == 3) {
+        if (field != null && field.getVariables().get(0).getChildNodes().size() == 3) {
             Node node = field.getVariables().get(0).getChildNodes().get(2);
             if (node instanceof Expression) { //FieldAccessExpr, MethodCallExpr, ObjectCreationExpr
                 defaultValue = node.toString();
@@ -228,6 +252,14 @@ public class MemberExplorer extends AnnotatedMember {
 
     public void setGetter(MethodDeclaration getter) {
         this.getter = getter;
+    }
+
+    public MethodDeclaration getSetter() {
+        return setter;
+    }
+
+    public void setSetter(MethodDeclaration setter) {
+        this.setter = setter;
     }
 
     public FieldDeclaration getField() {

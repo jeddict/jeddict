@@ -83,37 +83,21 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
     @XmlAttribute(name = "optional")
     protected Boolean optional;
 
-    @Deprecated
-    public static Basic load(Element element, VariableElement variableElement, ExecutableElement getterElement) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, BASIC_FQN);
-        Basic basic = new Basic();
-        basic.loadAttribute(element, variableElement, getterElement);
-        basic.lob = Lob.load(element, variableElement);
-        basic.enumerated = EnumType.load(element, null);
-        basic.fetch = FetchType.load(element, annotationMirror);
-        if (annotationMirror != null) {
-            basic.optional = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "optional");
-        }
-        return basic;
-    }
-
-    public static Basic load(MemberExplorer member) {
-        Basic basic = new Basic();
-        basic.loadAttribute(member);
-        basic.lob = Lob.load(member);
-        basic.enumerated = EnumType.load(member);
+    public void load(MemberExplorer member) {
+        this.loadAttribute(member);
+        this.lob = Lob.load(member);
+        this.enumerated = EnumType.load(member);
         List<Convert> converts = Convert.load(member);
         if (!converts.isEmpty()) {
-            basic.convert = converts.get(0);
+            this.convert = converts.get(0);
         }
 
         Optional<AnnotationExplorer> basicOpt = member.getAnnotation(javax.persistence.Basic.class);
         if (basicOpt.isPresent()) {
             AnnotationExplorer annotation = basicOpt.get();
-            basic.fetch = FetchType.load(annotation);
-            annotation.getBoolean("optional").ifPresent(basic::setOptional);
+            this.fetch = FetchType.load(annotation);
+            annotation.getBoolean("optional").ifPresent(this::setOptional);
         }
-        return basic;
     }
 
     /**

@@ -122,9 +122,7 @@ public class Embedded extends CompositionAttribute<Embeddable> implements Associ
         return embedded;
     }
 
-    public static Embedded load(MemberExplorer member) {
-        EntityMappings entityMappings = member.getEntityMapping();
-        Embedded embedded = new Embedded();
+    public static Embedded load(Embedded embedded, MemberExplorer member) {
         embedded.loadAttribute(member);
         embedded.getAttributeOverride().addAll(AttributeOverride.load(member));
         embedded.getAssociationOverride().addAll(AssociationOverride.load(member));

@@ -69,16 +69,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 public class ManyToOne extends SingleRelationAttribute {
 
-    @Override
-    public ManyToOne load(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement, AnnotationMirror annotationMirror) {
-        if (annotationMirror == null) {
-            annotationMirror = JavaSourceParserUtil.findAnnotation(element, MANY_TO_ONE_FQN);
-        }
-        super.loadAttribute(entityMappings, element, variableElement, getterElement, annotationMirror);
-        return this;
-    }
-
-//  @Override
     public ManyToOne load(MemberExplorer member) {
         AnnotationExplorer annotation = member.getAnnotation(javax.persistence.ManyToOne.class).get();
         super.loadAttribute(member, annotation);

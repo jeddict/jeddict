@@ -28,8 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 public class ManyToManyAssociation extends MultiAssociationAttribute {
 
-    public static ManyToManyAssociation load(MemberExplorer member, ResolvedReferenceTypeDeclaration type) {
-        ManyToManyAssociation attribute = new ManyToManyAssociation();
+    public static ManyToManyAssociation load(ManyToManyAssociation attribute, MemberExplorer member, ResolvedReferenceTypeDeclaration type) {
         attribute.loadAttribute(member);
         attribute.setCollectionType(member.getType());
 

@@ -105,42 +105,13 @@ public class OneToMany extends MultiRelationAttribute implements JoinColumnHandl
 
     @XmlElement(name = "join-column")
     protected List<JoinColumn> joinColumn;
+
     @XmlElement(name = "fk")
     protected ForeignKey foreignKey;//joinColumns foreignKey
+
     @XmlAttribute(name = "orp")
     protected Boolean orphanRemoval;
 
-    @Override
-    public OneToMany load(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement, AnnotationMirror annotationMirror) {
-        if (annotationMirror == null) {
-            annotationMirror = JavaSourceParserUtil.findAnnotation(element, ONE_TO_MANY_FQN);
-        }
-        super.loadAttribute(entityMappings, element, variableElement, getterElement, annotationMirror);
-
-        AnnotationMirror joinColumnsAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, JOIN_COLUMNS_FQN);
-        if (joinColumnsAnnotationMirror != null) {
-            List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(joinColumnsAnnotationMirror, "value");
-            if (joinColumnsAnnot != null) {
-                for (Object joinColumnObj : joinColumnsAnnot) {
-                    this.getJoinColumn().add(new JoinColumn().load(element, (AnnotationMirror) joinColumnObj));
-                }
-            }
-        } else {
-            AnnotationMirror joinColumnAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, JOIN_COLUMN_FQN);
-            if (joinColumnAnnotationMirror != null) {
-                this.getJoinColumn().add(new JoinColumn().load(element, joinColumnAnnotationMirror));
-            }
-        }
-        this.orphanRemoval = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "orphanRemoval");
-
-        AnnotationMirror foreignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKey");
-        if (foreignKeyValue != null) {
-            this.foreignKey = ForeignKey.load(element, foreignKeyValue);
-        }
-        return this;
-    }
-
-//  @Override
     public OneToMany load(MemberExplorer member) {
         AnnotationExplorer annotation = member.getAnnotation(javax.persistence.OneToMany.class).get();
         super.loadAttribute(member, annotation);

@@ -26,7 +26,6 @@ import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.FetchType;
 import io.github.jeddict.jpa.spec.JoinTable;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JARELoader;
 import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
@@ -50,7 +49,7 @@ import org.apache.commons.lang.StringUtils;
     "joinTable",
     "cascade"
 })
-public abstract class RelationAttribute extends Attribute implements AccessTypeHandler, FetchTypeHandler, JoinTableHandler, JARELoader {
+public abstract class RelationAttribute extends Attribute implements AccessTypeHandler, FetchTypeHandler, JoinTableHandler {
 
     @XmlAttribute(name = "connected-entity-id", required = true)
     @XmlIDREF

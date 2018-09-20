@@ -55,6 +55,16 @@ public abstract class Attributes<T extends JavaClass> implements IAttributes {
         }
         return Optional.empty();
     }
+
+    protected <T extends Attribute> Optional<T> findByName(List<T> attributes, String name) {
+        if (attributes != null) {
+            return attributes
+                    .stream()
+                    .filter(a -> a.getName().equalsIgnoreCase(name))
+                    .findFirst();
+        }
+        return Optional.empty();
+    }
     
     @Override
     public List<Attribute> findAllAttribute(String name) {

@@ -15,7 +15,9 @@
  */
 package io.github.jeddict.jpa.modeler.widget.attribute.base;
 
-import java.awt.Image;
+import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE_ICON;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE_ICON_PATH;
 import io.github.jeddict.jpa.modeler.properties.PropertiesHandler;
 import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getConvertProperty;
 import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getMapKeyConvertProperties;
@@ -24,13 +26,10 @@ import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getOrde
 import io.github.jeddict.jpa.modeler.rules.attribute.AttributeValidator;
 import io.github.jeddict.jpa.spec.ElementCollection;
 import io.github.jeddict.jpa.spec.extend.FetchTypeHandler;
-import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE_ICON_PATH;
+import java.awt.Image;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE_ICON;
 
 /**
  *

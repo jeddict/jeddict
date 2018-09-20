@@ -86,18 +86,6 @@ public class OneToOne extends SingleRelationAttribute {
     @XmlAttribute(name = "orp")
     protected Boolean orphanRemoval;
 
-    @Override
-    @Deprecated
-    public OneToOne load(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement, AnnotationMirror annotationMirror) {
-        if(annotationMirror==null){
-          annotationMirror = JavaSourceParserUtil.findAnnotation(element, ONE_TO_ONE_FQN);
-        }
-        super.loadAttribute(entityMappings, element, variableElement, getterElement, annotationMirror);
-        this.mappedBy = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "mappedBy");
-        this.orphanRemoval = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "orphanRemoval");
-        return this;
-    }
-
     public void load(MemberExplorer member) {
         AnnotationExplorer annotation = member.getAnnotation(javax.persistence.OneToOne.class).get();
         super.loadAttribute(member, annotation);

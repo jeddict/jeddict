@@ -65,10 +65,6 @@ public class BeanAttributes extends Attributes<BeanClass> {
     private List<ManyToManyAssociation> manyToMany;
 
     @Override
-    public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
-    }
-
-    @Override
     public void load(ClassExplorer clazz) {
         Collection<MemberExplorer> members = clazz.getMembers();
 
@@ -96,31 +92,60 @@ public class BeanAttributes extends Attributes<BeanClass> {
             }
 
             if (member.isTransient()) {
-                this.addTransient(Transient.load(member));
+                this.findTransient(member.getFieldName())
+                        .orElseGet(() -> {
+                            Transient _transient = new Transient();
+                            this.addTransient(_transient);
+                            return _transient;
+                        }).load(member);
             } else if (elementCollectionType) {
-                if (typeArgument.isPresent()) {
-                    this.addElementCollection(BeanCollectionAttribute.load(member, typeArgument.get().getClassName()));
-                } else {
-                    this.addElementCollection(BeanCollectionAttribute.load(member, STRING));
-                }
+                this.findElementCollection(member.getFieldName())
+                        .orElseGet(() -> {
+                    BeanCollectionAttribute elementCollection = new BeanCollectionAttribute();
+                    this.addElementCollection(elementCollection);
+                    return elementCollection;
+                        })
+                        .load(member,
+                                typeArgument.isPresent() ? typeArgument.get().getClassName() : STRING
+                        );
             } else if (relationType) {
                 if (collectionType || mapType) {
                     if (typeArgument.isPresent()) {
-                        ManyToManyAssociation manyToMany = ManyToManyAssociation.load(member, typeArgument.get());
-                        if (manyToMany != null) {
-                            this.addManyToMany(manyToMany);
+                        Optional<ManyToManyAssociation> manyToManyOpt = this.findManyToMany(member.getFieldName());
+                        if (manyToManyOpt.isPresent()) {
+                            ManyToManyAssociation.load(manyToManyOpt.get(), member, typeArgument.get());
+                        } else {
+                            ManyToManyAssociation manyToMany = ManyToManyAssociation.load(new ManyToManyAssociation(), member, typeArgument.get());
+                            if (manyToMany != null) {
+                                this.addManyToMany(manyToMany);
+                            }
                         }
                     } else {
-                        this.addElementCollection(BeanCollectionAttribute.load(member, STRING));
+                        this.findElementCollection(member.getFieldName())
+                                .orElseGet(() -> {
+                                    BeanCollectionAttribute elementCollection = new BeanCollectionAttribute();
+                                    this.addElementCollection(elementCollection);
+                                    return elementCollection;
+                                }).load(member, STRING);
                     }
                 } else {
-                    OneToOneAssociation oneToOne = OneToOneAssociation.load(member);
-                    if (oneToOne != null) {
-                        this.addOneToOne(oneToOne);
+                    Optional<OneToOneAssociation> oneToOneOpt = this.findOneToOne(member.getFieldName());
+                    if (oneToOneOpt.isPresent()) {
+                        OneToOneAssociation.load(oneToOneOpt.get(), member);
+                    } else {
+                        OneToOneAssociation oneToOne = OneToOneAssociation.load(new OneToOneAssociation(), member);
+                        if (oneToOne != null) {
+                            this.addOneToOne(oneToOne);
+                        }
                     }
                 }
             } else {
-                this.addBasic(BeanAttribute.load(member));
+                this.findBasic(member.getFieldName())
+                        .orElseGet(() -> {
+                            BeanAttribute basic = new BeanAttribute();
+                            this.addBasic(basic);
+                            return basic;
+                        }).load(member);
             }
         }
 
@@ -151,6 +176,10 @@ public class BeanAttributes extends Attributes<BeanClass> {
         return findById(basic, id);
     }
 
+    public Optional<BeanAttribute> findBasic(String name) {
+        return findByName(basic, name);
+    }
+
     public void addBasic(BeanAttribute attribute) {
         getBasic().add(attribute);
         attribute.setAttributes(this);
@@ -176,6 +205,10 @@ public class BeanAttributes extends Attributes<BeanClass> {
 
     public Optional<BeanCollectionAttribute> getElementCollection(String id) {
         return findById(elementCollection, id);
+    }
+
+    public Optional<BeanCollectionAttribute> findElementCollection(String name) {
+        return findByName(elementCollection, name);
     }
 
     public void addElementCollection(BeanCollectionAttribute attribute) {
@@ -205,6 +238,10 @@ public class BeanAttributes extends Attributes<BeanClass> {
         return findById(_transient, id);
     }
 
+    public Optional<Transient> findTransient(String name) {
+        return findByName(_transient, name);
+    }
+
     public void addTransient(Transient _transient) {
         getTransient().add(_transient);
         _transient.setAttributes(this);
@@ -230,6 +267,10 @@ public class BeanAttributes extends Attributes<BeanClass> {
 
     public Optional<ManyToOneAssociation> getManyToOne(String id) {
         return findById(manyToOne, id);
+    }
+
+    public Optional<ManyToOneAssociation> findManyToOne(String name) {
+        return findByName(manyToOne, name);
     }
 
     public void addManyToOne(ManyToOneAssociation manyToOne) {
@@ -259,6 +300,10 @@ public class BeanAttributes extends Attributes<BeanClass> {
         return findById(oneToMany, id);
     }
 
+    public Optional<OneToManyAssociation> findOneToMany(String name) {
+        return findByName(oneToMany, name);
+    }
+
     public void addOneToMany(OneToManyAssociation oneToMany) {
         getOneToMany().add(oneToMany);
         oneToMany.setAttributes(this);
@@ -286,6 +331,10 @@ public class BeanAttributes extends Attributes<BeanClass> {
         return findById(oneToOne, id);
     }
 
+    public Optional<OneToOneAssociation> findOneToOne(String name) {
+        return findByName(oneToOne, name);
+    }
+
     public void addOneToOne(OneToOneAssociation oneToOne) {
         getOneToOne().add(oneToOne);
         oneToOne.setAttributes(this);
@@ -311,6 +360,10 @@ public class BeanAttributes extends Attributes<BeanClass> {
 
     public Optional<ManyToManyAssociation> getManyToMany(String id) {
         return findById(manyToMany, id);
+    }
+
+    public Optional<ManyToManyAssociation> findManyToMany(String name) {
+        return findById(manyToMany, name);
     }
 
     public void addManyToMany(ManyToManyAssociation manyToMany) {

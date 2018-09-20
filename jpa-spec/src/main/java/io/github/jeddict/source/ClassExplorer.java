@@ -32,20 +32,23 @@ import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclar
 import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualify;
 import static io.github.jeddict.jcode.util.JavaUtil.getFieldName;
 import static io.github.jeddict.jcode.util.JavaUtil.isGetterMethod;
+import static io.github.jeddict.jcode.util.JavaUtil.isSetterMethod;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Collection;
 import static java.util.Collections.emptyMap;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import java.util.Optional;
 import java.util.function.Function;
 import static java.util.function.Function.identity;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import org.openide.util.Exceptions;
 
@@ -149,17 +152,27 @@ public class ClassExplorer extends AnnotatedMember {
                         if (!isFieldAccess()) {
                             classMember.setAnnotatedMember(method);
                         }
+                    } else if (isSetterMethod(methodName)) {
+                        String attributeName = getFieldName(methodName);
+                        MemberExplorer classMember = memberValue.apply(attributeName);
+                        classMember.setSetter(method);
                     }
                 }
             }
         }
-        return members.values()
-                .stream()
-                .filter(member -> nonNull(member.getField()))
-                //                .filter(member -> nonNull(member.getGetter()))
-                .filter(member -> nonNull(member.getAnnotatedMember()))
-                .collect(toList());
-        //record error or auto fix ??
+
+        List<MemberExplorer> memberExplorers = new ArrayList<>();
+        for (MemberExplorer member : members.values()) {
+            if (nonNull(member.getField()) && nonNull(member.getAnnotatedMember())) {
+                memberExplorers.add(member);
+            } else if (nonNull(member.getGetter()) && nonNull(member.getSetter())) {
+                if (isNull(member.getAnnotatedMember())) {
+                    member.setAnnotatedMember(member.getGetter());
+                }
+                memberExplorers.add(member);
+            }
+        }
+        return memberExplorers;
     }
 
     private boolean findFieldAccess() {

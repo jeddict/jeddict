@@ -27,8 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 public class OneToOneAssociation extends SingleAssociationAttribute {
 
-    public static OneToOneAssociation load(MemberExplorer member) {
-        OneToOneAssociation attribute = new OneToOneAssociation();
+    public static OneToOneAssociation load(OneToOneAssociation attribute, MemberExplorer member) {
         attribute.loadAttribute(member);
 
         Optional<BeanClass> beanClassOpt = member.getSource().findBeanClass(member.getTypeDeclaration());
