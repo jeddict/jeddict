@@ -85,11 +85,6 @@
             <artifactId>modeler-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--        <dependency>
-            <groupId>org.netbeans.modules</groupId>
-            <artifactId>org-netbeans-modules-maven-embedder</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>-->
     </dependencies>
     
     <repositories>
@@ -99,4 +94,25 @@
             <url>http://bits.netbeans.org/maven2/</url>
         </repository>
     </repositories>
+
+    <profiles>
+        <profile>
+            <id>netbeans82</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>netbeans90</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.netbeans.modules</groupId>
+                    <artifactId>org-netbeans-modules-maven-embedder</artifactId>
+                    <version>${netbeans.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>
