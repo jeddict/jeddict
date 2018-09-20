@@ -91,6 +91,7 @@ import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.util.NbBundle;
+import static org.openide.util.NbBundle.getMessage;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
@@ -364,34 +365,37 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         this.getModelerFile().getChildrenFile("DB").ifPresent(ModelerFile::close);
     }
 
-    @NbBundle.Messages({
-        "GENERATE_SRC=Generate Source Code",
-        "VIS_DB=Visualize DB",
-        "VIS_JSON=JSONB View",
-        "SEARCH=Search",
-        "PERSISTENCE_UNIT=Persistence.xml",
-        "RUN_JPQL=Run JPQL Query",
-        "SHARE=Share"
-    })
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
 
-        JMenuItem generateCode = new JMenuItem(Bundle.GENERATE_SRC(), GENERATE_SRC);
+        JMenuItem generateCode = new JMenuItem(
+                getMessage(JPAModelerScene.class, "JPAModelerScene.generateSource"),
+                GENERATE_SRC
+        );
         generateCode.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('G'), InputEvent.CTRL_DOWN_MASK));
         generateCode.addActionListener(e -> {
             JPAModelerUtil.generateSourceCode(JPAModelerScene.this.getModelerFile());
         });
 
-        JMenuItem visDB = new JMenuItem(Bundle.VIS_DB(), VIEW_DB);
+        JMenuItem visDB = new JMenuItem(
+                getMessage(JPAModelerScene.class, "JPAModelerScene.visualizeDB"),
+                VIEW_DB
+        );
         visDB.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('D'), InputEvent.CTRL_DOWN_MASK));
         visDB.addActionListener(e -> DBUtil.openDBModeler(this.getModelerFile()));
         
-        JMenuItem visJSONB = new JMenuItem(Bundle.VIS_JSON(), VIEW_JSONB);
+        JMenuItem visJSONB = new JMenuItem(
+                getMessage(JPAModelerScene.class, "JPAModelerScene.jsonbView"),
+                VIEW_JSONB
+        );
         visJSONB.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('B'), InputEvent.CTRL_DOWN_MASK));
         visJSONB.addActionListener(e -> JSONBUtil.openJSONBViewer(this.getModelerFile()));
 
-        JMenuItem openPUXML = new JMenuItem(Bundle.PERSISTENCE_UNIT(), PERSISTENCE_UNIT);
+        JMenuItem openPUXML = new JMenuItem(
+                getMessage(JPAModelerScene.class, "JPAModelerScene.persistenceXML"),
+                PERSISTENCE_UNIT
+        );
         openPUXML.addActionListener(e -> {
             Project project = JPAModelerScene.this.getModelerFile().getProject();
             try {
@@ -402,14 +406,22 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             }
         });
 
-        JMenuItem searchMenu = new JMenuItem(Bundle.SEARCH(), SEARCH_ICON);
+        JMenuItem searchMenu = new JMenuItem(
+                getMessage(JPAModelerScene.class, "JPAModelerScene.search"),
+                SEARCH_ICON
+        );
         searchMenu.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('F'), InputEvent.CTRL_DOWN_MASK));
         searchMenu.addActionListener(e -> getModelerFile().getModelerDiagramEngine().searchWidget());
 
-        JMenuItem openJPQLPanel = new JMenuItem(Bundle.RUN_JPQL(), RUN_JPQL_ICON);
+        JMenuItem openJPQLPanel = new JMenuItem(
+                getMessage(JPAModelerScene.class, "JPAModelerScene.runJPQL"),
+                RUN_JPQL_ICON
+        );
         openJPQLPanel.addActionListener(e -> new JPQLExternalEditorController().init(JPAModelerScene.this.getModelerFile()));
 
-        JMenu shareModeler = new JMenu(Bundle.SHARE());
+        JMenu shareModeler = new JMenu(
+                getMessage(JPAModelerScene.class, "JPAModelerScene.share")
+        );
         shareModeler.setIcon(SOCIAL_NETWORK_SHARING);
         shareModeler.add(TwitterSocialNetwork.getInstance().getComponent());
         shareModeler.add(LinkedInSocialNetwork.getInstance().getComponent());

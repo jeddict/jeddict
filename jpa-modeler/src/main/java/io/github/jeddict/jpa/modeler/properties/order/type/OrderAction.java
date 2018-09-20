@@ -25,6 +25,7 @@ import io.github.jeddict.jpa.spec.OrderType;
 import org.openide.nodes.Node;
 import org.openide.util.HelpCtx;
 import org.openide.util.NbBundle;
+import static org.openide.util.NbBundle.getMessage;
 import org.openide.util.actions.NodeAction;
 import org.openide.util.actions.Presenter;
 
@@ -41,10 +42,9 @@ public class OrderAction extends NodeAction implements Presenter.Popup, LeafNode
         return true;
     }
 
-    @NbBundle.Messages("OrderAction.name=Order Type")
     @Override
     public String getName() {
-        return Bundle.OrderAction_name();
+        return getMessage(OrderAction.class, "OrderAction.name");
     }
 
     @Override
@@ -52,21 +52,17 @@ public class OrderAction extends NodeAction implements Presenter.Popup, LeafNode
         return null;
     }
 
-    @NbBundle.Messages({
-        "Order.ASC=ASC",
-        "Order.DESC=DESC"
-    })
     @Override
     public JMenuItem getPopupPresenter() {
         JMenu submenu = new JMenu(this);
-        JRadioButtonMenuItem ASC_item = new JRadioButtonMenuItem(Bundle.Order_ASC());
+        JRadioButtonMenuItem ASC_item = new JRadioButtonMenuItem(getMessage(OrderAction.class, "OrderAction.asc"));
         ASC_item.addActionListener((ActionEvent e) -> {
             if (getNode() instanceof OrderTypeColumn) {
                 ((OrderTypeColumn) getNode()).setOrder(OrderType.ASC);
                 ASC_item.setSelected(true);
             }
         });
-        JRadioButtonMenuItem DESC_item = new JRadioButtonMenuItem(Bundle.Order_DESC());
+        JRadioButtonMenuItem DESC_item = new JRadioButtonMenuItem(getMessage(OrderAction.class, "OrderAction.desc"));
         DESC_item.addActionListener((ActionEvent e) -> {
             if (getNode() instanceof OrderTypeColumn) {
                 ((OrderTypeColumn) getNode()).setOrder(OrderType.DESC);

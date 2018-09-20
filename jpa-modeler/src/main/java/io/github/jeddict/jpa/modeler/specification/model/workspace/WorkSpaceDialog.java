@@ -31,7 +31,6 @@ import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.jpa.spec.workspace.WorkSpace;
 import io.github.jeddict.jpa.spec.workspace.WorkSpaceItem;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.WORKSPACE_ICON;
 import static io.github.jeddict.jpa.modeler.specification.model.workspace.WorkSpaceManager.findDependents;
 import org.netbeans.modeler.core.NBModelerUtil;
@@ -250,16 +249,11 @@ public class WorkSpaceDialog extends GenericDialog {
         cancelActionPerformed(evt);
     }//GEN-LAST:event_cancel_ButtonActionPerformed
 
-    @NbBundle.Messages({
-        "CREATE_BUTTON=Create",
-        "SAVE_BUTTON=Save"
-    })
     private String getSaveButtonText(){
-        if(createWorkSpace){
-            return Bundle.CREATE_BUTTON();
-        } else {
-            return Bundle.SAVE_BUTTON();
-        }
+        return NbBundle.getMessage(
+                WorkSpaceDialog.class,
+                createWorkSpace ? "WorkSpaceDialog.create_Button.text" : "WorkSpaceDialog.save_Button.text"
+        );
     }
 
     /**

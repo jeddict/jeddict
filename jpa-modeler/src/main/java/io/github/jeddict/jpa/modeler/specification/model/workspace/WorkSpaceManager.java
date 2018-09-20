@@ -43,11 +43,14 @@ import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.DELETE_IC
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.EDIT_ICON;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.HOME_ICON;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.WORKSPACE_ICON;
+import static javax.swing.JOptionPane.OK_OPTION;
+import static javax.swing.JOptionPane.YES_NO_OPTION;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.widget.design.NodeTextDesign;
 import org.netbeans.modeler.widget.design.PinTextDesign;
 import org.openide.util.NbBundle;
+import static org.openide.util.NbBundle.getMessage;
 import org.openide.windows.WindowManager;
 
 /**
@@ -63,7 +66,7 @@ public class WorkSpaceManager {
     
     public WorkSpaceManager(JPAModelerScene scene) {
         this.scene = scene;
-        workSpaceMenu = new JMenu(Bundle.WORK_SPACE());
+        workSpaceMenu = new JMenu(getMessage(WorkSpaceManager.class, "WorkSpaceManager.workspace"));
         workSpaceMenu.setIcon(WORKSPACE_ICON);
     }
     
@@ -71,8 +74,13 @@ public class WorkSpaceManager {
         ModelerFile file = scene.getModelerFile();
         boolean reload = force;
         if (!force) {
-            int option = JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), String.format(Bundle.OPEN_WORK_SPACE_CONTENT(), workSpace.getName()), Bundle.OPEN_WORK_SPACE_TITLE() , JOptionPane.YES_NO_OPTION);
-            reload = option == javax.swing.JOptionPane.OK_OPTION;
+            int option = JOptionPane.showConfirmDialog(
+                    WindowManager.getDefault().getMainWindow(),
+                    getMessage(WorkSpaceManager.class, "WorkSpaceManager.open.content", workSpace.getName()),
+                    getMessage(WorkSpaceManager.class, "WorkSpaceManager.open.title"),
+                    YES_NO_OPTION
+            );
+            reload = option == OK_OPTION;
         }
         if (reload) {
             invokeLater(() -> {
@@ -85,28 +93,18 @@ public class WorkSpaceManager {
         }
     }
 
-    @NbBundle.Messages({
-        "CREATE_WORK_SPACE=Create new",
-        "DELETE_ALL_WORK_SPACE=Delete All",
-        "UPDATE_CURRENT_WORK_SPACE=Modify ",
-        "DELETE_CURRENT_WORK_SPACE=Delete ",
-        "DELETE_WORK_SPACE_TITLE=Delete WorkSpace",
-        "DELETE_WORK_SPACE_CONTENT=Are you sure to delete workspace ?",
-        "DELETE_ALL_WORK_SPACE_TITLE=Delete all WorkSpace",
-        "DELETE_ALL_WORK_SPACE_CONTENT=Are you sure you want to delete all workspace ?",
-        "OPEN_WORK_SPACE_TITLE=Open WorkSpace",
-        "OPEN_WORK_SPACE_CONTENT=Are you want to open %s workspace now ?",
-        "WORK_SPACE=WorkSpace"
-    })
     public void loadWorkspaceUI() {
         EntityMappings entityMappings = scene.getBaseElementSpec();
         workSpaceMenu.removeAll();
 
-        JMenuItem createWPItem = new JMenuItem(Bundle.CREATE_WORK_SPACE(), CREATE_ICON);
+        JMenuItem createWPItem = new JMenuItem(
+                getMessage(WorkSpaceManager.class, "WorkSpaceManager.create"),
+                CREATE_ICON
+        );
         createWPItem.addActionListener(e -> {
             WorkSpaceDialog workSpaceDialog = new WorkSpaceDialog(scene, null);
             workSpaceDialog.setVisible(true);
-            if (workSpaceDialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
+            if (workSpaceDialog.getDialogResult() == OK_OPTION) {
                 WorkSpace workSpace = workSpaceDialog.getWorkSpace();
                 entityMappings.addWorkSpace(workSpace);
                 openWorkSpace(false, workSpace);
@@ -116,7 +114,10 @@ public class WorkSpaceManager {
         workSpaceMenu.add(createWPItem);
 
         if (entityMappings.getWorkSpaces().size() > 1) {
-            JMenuItem deleteAllWPItem = new JMenuItem(Bundle.DELETE_ALL_WORK_SPACE(), DELETE_ALL_ICON);
+            JMenuItem deleteAllWPItem = new JMenuItem(
+                    getMessage(WorkSpaceManager.class, "WorkSpaceManager.deleteAll"),
+                    DELETE_ALL_ICON
+            );
             deleteAllWPItem.addActionListener(e -> {
                 WorkSpaceTrashDialog workSpaceDialog = new WorkSpaceTrashDialog(scene);
                 workSpaceDialog.setVisible(true);
@@ -132,21 +133,32 @@ public class WorkSpaceManager {
         workSpaceMenu.addSeparator();
 
         if (entityMappings.getCurrentWorkSpace() != entityMappings.getRootWorkSpace()) {
-            JMenuItem updateWPItem = new JMenuItem(Bundle.UPDATE_CURRENT_WORK_SPACE() + entityMappings.getCurrentWorkSpace().getName(), EDIT_ICON);
+            JMenuItem updateWPItem = new JMenuItem(
+                    getMessage(WorkSpaceManager.class, "WorkSpaceManager.updateCurrent", entityMappings.getCurrentWorkSpace().getName()),
+                    EDIT_ICON
+            );
             updateWPItem.addActionListener(e -> {
                 WorkSpaceDialog workSpaceDialog = new WorkSpaceDialog(scene, entityMappings.getCurrentWorkSpace());
                 workSpaceDialog.setVisible(true);
-                if (workSpaceDialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
+                if (workSpaceDialog.getDialogResult() == OK_OPTION) {
                     openWorkSpace(true, entityMappings.getCurrentWorkSpace());
                 }
                 JeddictLogger.updateWorkSpace();
             });
             workSpaceMenu.add(updateWPItem);
 
-            JMenuItem deleteWPItem = new JMenuItem(Bundle.DELETE_CURRENT_WORK_SPACE() + entityMappings.getCurrentWorkSpace().getName(), DELETE_ICON);
+            JMenuItem deleteWPItem = new JMenuItem(
+                    getMessage(WorkSpaceManager.class, "WorkSpaceManager.deleteCurrent", entityMappings.getCurrentWorkSpace().getName()),
+                    DELETE_ICON
+            );
             deleteWPItem.addActionListener(e -> {
-                int option = JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), Bundle.DELETE_WORK_SPACE_CONTENT(), Bundle.DELETE_WORK_SPACE_TITLE(), JOptionPane.YES_NO_OPTION);
-                if (option == javax.swing.JOptionPane.OK_OPTION) {
+                int option = JOptionPane.showConfirmDialog(
+                        WindowManager.getDefault().getMainWindow(),
+                        getMessage(WorkSpaceManager.class, "WorkSpaceManager.delete.content"),
+                        getMessage(WorkSpaceManager.class, "WorkSpaceManager.delete.title"),
+                        JOptionPane.YES_NO_OPTION
+                );
+                if (option == OK_OPTION) {
                     entityMappings.removeWorkSpace(entityMappings.getCurrentWorkSpace());
                     entityMappings.setNextWorkSpace(entityMappings.getRootWorkSpace());
                     scene.getModelerPanelTopComponent().changePersistenceState(false);

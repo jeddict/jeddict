@@ -29,7 +29,9 @@ import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.Node;
+import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
+import static org.openide.util.NbBundle.getMessage;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
@@ -46,23 +48,18 @@ import org.openide.windows.WindowManager;
 @ActionID(category = "Window", id = "io.github.jeddict.jpa.modeler.navigator.dbview.OverrideViewNavigatorComponent")
 @ActionReference(path = "Menu/Window/JPA Modeler", position = 3333)
 @TopComponent.OpenActionRegistration(
-        displayName = "#CTL_OverrideViewNavigatorComponentAction",
+        displayName = "JPA Override View (Attribute/Association)",
         preferredID = "OverrideViewNavigatorComponent"
 )
-@Messages({
-    "CTL_OverrideViewNavigatorComponentAction=JPA Override View (Attribute/Association)",
-    "CTL_OverrideViewNavigatorComponent=JPA Override View",
-    "HINT_OverrideViewNavigatorComponent=JPA Override View"
-})
 public final class OverrideViewNavigatorComponent extends TopComponent implements ExplorerManager.Provider, PropertyChangeListener {
 
-    private transient ExplorerManager explorerManager = new ExplorerManager();
+    private final transient ExplorerManager explorerManager = new ExplorerManager();
     private boolean opened;
 
     public OverrideViewNavigatorComponent() {
         initComponents();
-        setName(Bundle.CTL_OverrideViewNavigatorComponent());
-        setToolTipText(Bundle.HINT_OverrideViewNavigatorComponent());
+        setName(getMessage(OverrideViewNavigatorComponent.class, "OverrideViewNavigatorComponent.name"));
+        setToolTipText(getMessage(OverrideViewNavigatorComponent.class, "OverrideViewNavigatorComponent.name"));
         associateLookup(ExplorerUtils.createLookup(explorerManager, getActionMap()));
         hideOverrideView();
     }

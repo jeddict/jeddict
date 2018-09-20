@@ -29,9 +29,8 @@ import javax.swing.ListCellRenderer;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.workspace.WorkSpace;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.properties.window.GenericDialog;
-import org.openide.util.NbBundle;
+import static org.openide.util.NbBundle.getMessage;
 import org.openide.windows.WindowManager;
 
 /**
@@ -188,16 +187,15 @@ public class WorkSpaceTrashDialog extends GenericDialog {
         return true;
     }
     
-   @NbBundle.Messages({
-        "DELETE_SELECTED_WORK_SPACE_TITLE=Delete WorkSpace",
-        "DELETE_SELECTED_WORK_SPACE_CONTENT=Are you sure you want to delete selected workspace ?"
-    })
     private void save_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_save_ButtonActionPerformed
         if (!validateField()) {
             return;
         }
-        int option = JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), Bundle.DELETE_SELECTED_WORK_SPACE_CONTENT(),
-                Bundle.DELETE_SELECTED_WORK_SPACE_TITLE(), JOptionPane.YES_NO_OPTION);
+        int option = JOptionPane.showConfirmDialog(
+                WindowManager.getDefault().getMainWindow(),
+                getMessage(WorkSpaceTrashDialog.class, "WorkSpaceTrashDialog.delete.selected.content"),
+                getMessage(WorkSpaceTrashDialog.class, "WorkSpaceTrashDialog.delete.selected.title"),
+                JOptionPane.YES_NO_OPTION);
         if (option == javax.swing.JOptionPane.OK_OPTION) {
             currentWorkSpaceDeleted = entityMappings.removeAllWorkSpace(getSelectedWorkSpace());
             scene.getModelerPanelTopComponent().changePersistenceState(false);
