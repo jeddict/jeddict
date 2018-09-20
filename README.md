@@ -20,11 +20,11 @@
     <a href="https://opencollective.com/imjeddict">
         <img src="https://img.shields.io/badge/donate-$-orange.svg?maxAge=2592000&amp;style=flat">
     </a>
+    <a href="https://twitter.com/strimziio">
+        <img src="https://img.shields.io/twitter/follow/imjeddict.svg?style=social&label=Follow&style=for-the-badge" alt="follow on Twitter">
+    </a>
     <a href="https://www.youtube.com/imjeddict">
         <img src="https://img.shields.io/badge/youtube-ImJeddict-red.svg" alt="Demo">
-    </a>
-    <a href="https://twitter.com/intent/follow?screen_name=imjeddict">
-        <img src="https://img.shields.io/twitter/follow/imjeddict.svg?style=social&logo=twitter" alt="follow on Twitter">
     </a>
 </p>
 
@@ -81,7 +81,7 @@ $ git clone https://github.com/jeddict/jeddict.git
 $ mvn -f "jeddict" clean install
 $ mvn -f "jeddict" nbm:run-ide -Dnetbeans.installation="C:\Program Files\NetBeans 8.2"
 ```
-Note: `netbeans.installation` properties refer to the NetBeans IDE 8.2 path.
+Note: `netbeans.installation` property refer to the NetBeans IDE 8.2 path.
 
 Optionally you may also build [jeddict-extensions](https://github.com/jeddict/jeddict-extensions)
 and [hipee](https://github.com/jeddict/hipee) for out of the box features.
