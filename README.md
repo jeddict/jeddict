@@ -84,7 +84,7 @@ $ mvn -f "jeddict" nbm:run-ide -Dnetbeans.installation="C:\Program Files\NetBean
 Note: `netbeans.installation` properties refer to the NetBeans IDE 8.2 path.
 
 Optionally you may also build [jeddict-extensions](https://github.com/jeddict/jeddict-extensions)
-and [hipee] (https://github.com/jeddict/hipee) for out of the box features.
+and [hipee](https://github.com/jeddict/hipee) for out of the box features.
 
 
 ## Contributing
