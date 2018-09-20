@@ -49,6 +49,9 @@
 <img src="https://jeddict.github.io/tutorial/Inheritance/JOINED.PNG" width="500">
 </p>
 
+## Quick Start
+
+See the [Quick Start](http://jeddict.github.io/tutorial/page.html?l=QuickStart) for demonstration, examples, and other information.
 
 ## Download
 
@@ -57,26 +60,41 @@ You can [download](https://jeddict.github.io/page.html?l=p/download) latest inst
 See the [Manual Installation](https://jeddict.github.io/page.html?l=p/installation) and [Update Center Installation](https://jeddict.github.io/page.html?l=p/ucinstallation) for installation instructions.
 
 
-## Quick Start
+## Getting help
 
-See the [Quick Start](http://jeddict.github.io/tutorial/page.html?l=QuickStart) for demonstration, examples, and other information.
-
-
-## Communication
-
-- Google Group: [Jeddict](https://groups.google.com/forum/#!forum/jeddict)
-- Twitter: [@ImJeddict](http://twitter.com/ImJeddict)
 - [GitHub Issues](https://github.com/jeddict/jeddict/issues)
+- Google Group: [Jeddict](https://groups.google.com/forum/#!forum/jeddict)
+
+## Stay Informed
+
+- Twitter: [@ImJeddict](http://twitter.com/ImJeddict)
 
 
-## Bugs and Feedback
+## Building from Source
 
-For bugs, questions and discussions please use the [Github Issues](https://github.com/jeddict/jeddict/issues).
+You can build Jeddict using JDK 8 and test with NetBeans IDE 8.2 :
+
+```bash
+$ git clone https://github.com/jeddict/netbeans-modeler.git
+$ mvn -f "netbeans-modeler" clean install
+$ git clone https://github.com/jeddict/jeddict.git
+$ mvn -f "jeddict" clean install
+$ mvn -f "jeddict" nbm:run-ide -Dnetbeans.installation="C:\Program Files\NetBeans 8.2"
+```
+Note: `netbeans.installation` properties refer to the NetBeans IDE 8.2 path.
+
+Optionally you may also build [jeddict-extensions](https://github.com/jeddict/jeddict-extensions)
+and [hipee] (https://github.com/jeddict/hipee) for out of the box features.
 
 
 ## Contributing
+
 Please take a look at our [contributing](https://github.com/jeddict/jeddict/blob/master/CONTRIBUTING.md) guidelines if you're interested in helping!
 
+
+## License
+
+Jeddict is Open Source software released under the [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html).
 
 
 #### If you like:heart: this project, don't forget:blush: to give us a star:star2: on GitHub!
