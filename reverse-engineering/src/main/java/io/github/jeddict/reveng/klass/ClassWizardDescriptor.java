@@ -429,7 +429,7 @@ public final class ClassWizardDescriptor extends BaseWizardDescriptor {
             if (!entityOpt.isPresent()) {
                 Entity entity;
                 javaClass = entity = new Entity();
-                javaClass.setClazz(clazz.getName());
+                javaClass.setClazz(className);
                 entityMappings.addEntity(entity);
                 entity.load(clazz);
             } else {
@@ -441,31 +441,31 @@ public final class ClassWizardDescriptor extends BaseWizardDescriptor {
             if (!mappedSuperclassOpt.isPresent()) {
                 MappedSuperclass mappedSuperclass;
                 javaClass = mappedSuperclass = new MappedSuperclass();
-                javaClass.setClazz(clazz.getName());
+                javaClass.setClazz(className);
                 entityMappings.addMappedSuperclass(mappedSuperclass);
                 mappedSuperclass.load(clazz);
             } else {
                 javaClass = mappedSuperclassOpt.get();
                 javaClass.load(clazz);
             }
-        } else if (clazz.isEmbeddable() && !entityMappings.isCompositePrimaryKeyClass(clazz.getName())) {
+        } else if (clazz.isEmbeddable() && !entityMappings.isCompositePrimaryKeyClass(className)) {
             Optional<Embeddable> embeddableOpt = entityMappings.findEmbeddable(className);
             if (!embeddableOpt.isPresent()) {
                 Embeddable embeddable;
                 javaClass = embeddable = new Embeddable();
-                javaClass.setClazz(clazz.getName());
+                javaClass.setClazz(className);
                 entityMappings.addEmbeddable(embeddable);
                 embeddable.load(clazz);
             } else {
                 javaClass = embeddableOpt.get();
                 javaClass.load(clazz);
             }
-        } else if (!clazz.isEnum() && !clazz.isInterface() && !entityMappings.isCompositePrimaryKeyClass(clazz.getName())) {
+        } else if (!clazz.isEnum() && !clazz.isInterface() && !entityMappings.isCompositePrimaryKeyClass(className)) {
             Optional<BeanClass> beanClassOpt = entityMappings.findBeanClass(className);
             if (!beanClassOpt.isPresent()) {
                 BeanClass beanClass;
                 javaClass = beanClass = new BeanClass();
-                javaClass.setClazz(clazz.getName());
+                javaClass.setClazz(className);
                 entityMappings.addBeanClass(beanClass);
                 beanClass.load(clazz);
             } else {

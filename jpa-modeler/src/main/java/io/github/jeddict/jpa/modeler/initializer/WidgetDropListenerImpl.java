@@ -21,12 +21,14 @@ import static io.github.jeddict.jcode.util.ProjectHelper.findSourceGroupForFile;
 import static io.github.jeddict.jcode.util.StringHelper.camelCase;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.JAVA_CLASS_ICON;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.PACKAGE_ICON;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.TABLE_ICON;
 import io.github.jeddict.jpa.modeler.widget.BeanClassWidget;
 import io.github.jeddict.jpa.modeler.widget.JavaClassWidget;
 import io.github.jeddict.jpa.modeler.widget.PersistenceClassWidget;
 import io.github.jeddict.jpa.spec.Basic;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.EnumType;
+import io.github.jeddict.jpa.spec.ManagedClass;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.jpa.spec.extend.ReferenceClass;
 import io.github.jeddict.reveng.JCREProcessor;
@@ -50,6 +52,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import org.netbeans.api.db.explorer.DatabaseMetaDataTransfer.Table;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.modeler.action.WidgetDropListener;
@@ -64,6 +67,7 @@ import org.openide.loaders.DataFolder;
 import org.openide.nodes.FilterNode;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
+import org.openide.util.datatransfer.MultiTransferObject;
 import org.openide.windows.WindowManager;
 
 /**
@@ -74,18 +78,23 @@ public class WidgetDropListenerImpl implements WidgetDropListener {
 
     private static final String PRIMARY_TYPE = "application";
     private static final String PACKAGE_TYPE = "x-java-org-netbeans-modules-java-project-packagenodednd";
+    private static final String DB_TYPE = "x-java-netbeans-dbexplorer-table";
 
     @Override
     public boolean isDroppable(Widget widget, Point point, Transferable transferable, IModelerScene scene) {
         if (widget == scene) {
             if (isJavaClassDrop(transferable)) {
                 drawImage(JAVA_CLASS_ICON, point, scene);
-            } else if (isPackageFlavor(transferable.getTransferDataFlavors())) {
+            } else if (isPackageFlavor(transferable)) {
                 drawImage(PACKAGE_ICON, point, scene);
+            } else if (isDBFlavor(transferable)) {
+                drawImage(TABLE_ICON, point, scene);
             }
         } else {
             if (isJavaClassDrop(transferable)) {
                 drawImageOnNodeWidget(JAVA_CLASS_ICON, point, scene, widget);
+            } else if (isDBFlavor(transferable)) {
+                drawImageOnNodeWidget(TABLE_ICON, point, scene, widget);
             }
         }
         return true;
@@ -94,14 +103,69 @@ public class WidgetDropListenerImpl implements WidgetDropListener {
     @Override
     public void drop(Widget widget, Point point, Transferable transferable, IModelerScene scene) {
         if (widget == scene) {
-            dropOnScene(widget, point, transferable, scene);
+            dropOnScene(transferable, scene);
         } else {
-            dropOnWidget(widget, point, transferable, scene);
+            dropOnWidget(widget, transferable, scene);
         }
     }
 
-    private void dropOnWidget(Widget widget, Point point, Transferable transferable, IModelerScene scene) {
+    private void dropOnScene(Transferable transferable, IModelerScene scene) {
+        JCREProcessor processor = Lookup.getDefault().lookup(JCREProcessor.class);
+        List<File> files = new ArrayList<>();
 
+        if (isJavaClassDrop(transferable)) {
+            try {
+                List<File> javaFiles = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                files.addAll(javaFiles.stream()
+                        .filter(file -> file.getPath().endsWith(JAVA_EXT_SUFFIX))
+                        .collect(toList()));
+            } catch (UnsupportedFlavorException | IOException ex) {
+                ErrorManager.getDefault().notify(ErrorManager.INFORMATIONAL, ex);
+            }
+
+        }
+
+        if (isPackageFlavor(transferable)) {
+            files.addAll(
+                    getPackageList(transferable)
+                            .stream()
+                            .map(FileUtil::toFile)
+                            .filter(File::isDirectory)
+                            .flatMap(dir -> Stream.of(dir.listFiles(file -> file.getPath().endsWith(JAVA_EXT_SUFFIX))))
+                            .collect(toList())
+            );
+        }
+
+        if (!files.isEmpty()) {
+            processor.processDropedClasses(scene.getModelerFile(), files);
+        }
+        files.clear();
+
+        try {
+            List<File> docs = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+            files.addAll(docs.stream()
+                    .filter(file
+                            -> file.getPath().toLowerCase().endsWith(".json")
+                    || file.getPath().toLowerCase().endsWith(".xml")
+                    || file.getPath().toLowerCase().endsWith(".yml")
+                    || file.getPath().toLowerCase().endsWith(".yaml")
+                    || file.getPath().toLowerCase().endsWith(".jpa")
+                    ).collect(toList()));
+            if (!files.isEmpty()) {
+                processor.processDropedDocument(scene.getModelerFile(), docs);
+            }
+        } catch (UnsupportedFlavorException | IOException ex) {
+            ErrorManager.getDefault().notify(ErrorManager.INFORMATIONAL, ex);
+        }
+
+        if (isDBFlavor(transferable)) {
+            List<Table> tables = getDBTableList(transferable);
+            processor.processDropedTables(scene.getModelerFile(), tables, Optional.empty());
+        }
+    }
+
+    private void dropOnWidget(Widget widget, Transferable transferable, IModelerScene scene) {
+        JCREProcessor processor = Lookup.getDefault().lookup(JCREProcessor.class);
         List<File> files = new ArrayList<>();
         if (isJavaClassDrop(transferable)) {
             try {
@@ -138,7 +202,6 @@ public class WidgetDropListenerImpl implements WidgetDropListener {
                 JavaClass javaClass = javaClassWidget.getBaseElementSpec();
 
                 if (javaClass.getClazz().equals(clazz)) {
-                    JCREProcessor processor = Lookup.getDefault().lookup(JCREProcessor.class);
                     processor.processDropedClasses(scene.getModelerFile(), files);
                 } else if (classExplorer.isInterface()) {
                     interfaceDropOption(widget, scene, classExplorer, clazzFQN);
@@ -146,6 +209,17 @@ public class WidgetDropListenerImpl implements WidgetDropListener {
                     classDropOption(widget, scene, classExplorer, clazzFQN);
                 } else if (classExplorer.isEnum()) {
                     enumDropOption(widget, clazzFQN);
+                }
+            }
+        }
+
+        if (isDBFlavor(transferable)) {
+            List<Table> tables = getDBTableList(transferable);
+            if (widget instanceof JavaClassWidget) {
+                JavaClassWidget<JavaClass> javaClassWidget = (JavaClassWidget) widget;
+                JavaClass javaClass = javaClassWidget.getBaseElementSpec();
+                if (javaClass == null || javaClass instanceof ManagedClass) {
+                    processor.processDropedTables(scene.getModelerFile(), tables, Optional.ofNullable(javaClass));
                 }
             }
         }
@@ -235,62 +309,12 @@ public class WidgetDropListenerImpl implements WidgetDropListener {
         }
     }
 
-
-    private void dropOnScene(Widget widget, Point point, Transferable transferable, IModelerScene scene) {
-        JCREProcessor processor = Lookup.getDefault().lookup(JCREProcessor.class);
-        List<File> files = new ArrayList<>();
-
-        if (isJavaClassDrop(transferable)) {
-            try {
-                List<File> javaFiles = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
-                files.addAll(javaFiles.stream()
-                        .filter(file -> file.getPath().endsWith(JAVA_EXT_SUFFIX))
-                        .collect(toList()));
-            } catch (UnsupportedFlavorException | IOException ex) {
-                ErrorManager.getDefault().notify(ErrorManager.INFORMATIONAL, ex);
-            }
-
-        }
-
-        if (isPackageFlavor(transferable.getTransferDataFlavors())) {
-            files.addAll(
-                    getPackageList(transferable)
-                            .stream()
-                            .map(FileUtil::toFile)
-                            .filter(File::isDirectory)
-                            .flatMap(dir -> Stream.of(dir.listFiles(file -> file.getPath().endsWith(JAVA_EXT_SUFFIX))))
-                            .collect(toList())
-            );
-        }
-
-        if (!files.isEmpty()) {
-            processor.processDropedClasses(scene.getModelerFile(), files);
-        }
-        files.clear();
-
-        try {
-            List<File> jsonFiles = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
-            files.addAll(jsonFiles.stream()
-                    .filter(file
-                            -> file.getPath().toLowerCase().endsWith(".json")
-                    || file.getPath().toLowerCase().endsWith(".xml")
-                    || file.getPath().toLowerCase().endsWith(".yml")
-                    || file.getPath().toLowerCase().endsWith(".yaml")
-                    || file.getPath().toLowerCase().endsWith(".jpa")
-                    ).collect(toList()));
-            if (!files.isEmpty()) {
-                processor.processDropedDocument(scene.getModelerFile(), jsonFiles.get(0));
-            }
-        } catch (UnsupportedFlavorException | IOException ex) {
-            ErrorManager.getDefault().notify(ErrorManager.INFORMATIONAL, ex);
-        }
-    }
-
     protected boolean isJavaClassDrop(Transferable transferable) {
         return transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor);
     }
 
-    private boolean isPackageFlavor(DataFlavor[] flavors) {
+    private boolean isPackageFlavor(Transferable transferable) {
+        DataFlavor[] flavors = transferable.getTransferDataFlavors();
         for (int i = 0; i < flavors.length; i++) {
             if (PACKAGE_TYPE.equals(flavors[i].getSubType())
                     && PRIMARY_TYPE.equals(flavors[i].getPrimaryType())) {
@@ -317,5 +341,58 @@ public class WidgetDropListenerImpl implements WidgetDropListener {
             }
         }
         return packages;
+    }
+
+    private boolean isDBFlavor(Transferable transferable) {
+        DataFlavor[] flavors = transferable.getTransferDataFlavors();
+        for (DataFlavor flavor : flavors) {
+            Object transferData = null;
+            try {
+                transferData = transferable.getTransferData(flavor);
+            } catch (UnsupportedFlavorException | IOException ex) {
+            }
+            if (DB_TYPE.equals(flavor.getSubType()) && PRIMARY_TYPE.equals(flavor.getPrimaryType())) {
+                return true;
+            } else if (transferData instanceof MultiTransferObject) {
+                MultiTransferObject multiTransfer = (MultiTransferObject) transferData;
+                for (int i = 0; i < multiTransfer.getCount(); i++) {
+                    if (isDBFlavor(multiTransfer.getTransferableAt(i))) {
+                        return true;
+                    }
+                }
+            } else if ("org.netbeans.modules.db.explorer.node.TableListNode"
+                    .equals(transferData.getClass().getName())
+                    || "org.netbeans.modules.db.explorer.node.SchemaNode"
+                            .equals(transferData.getClass().getName())
+                    || "org.netbeans.modules.db.explorer.node.ConnectionNode"
+                            .equals(transferData.getClass().getName())) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private List<Table> getDBTableList(Transferable transferable) {
+        List<Table> tables = new ArrayList<>();
+        DataFlavor[] flavors = transferable.getTransferDataFlavors();
+        for (DataFlavor flavor : flavors) {
+            Object transferData = null;
+            try {
+                transferData = transferable.getTransferData(flavor);
+            } catch (UnsupportedFlavorException | IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+            if (DB_TYPE.equals(flavor.getSubType()) && PRIMARY_TYPE.equals(flavor.getPrimaryType())) {
+                tables.add((Table) transferData);
+            } else if (transferData instanceof MultiTransferObject) {
+                MultiTransferObject multiTransfer = (MultiTransferObject) transferData;
+                for (int i = 0; i < multiTransfer.getCount(); i++) {
+                    if (isDBFlavor(multiTransfer.getTransferableAt(i))) {
+                        tables.addAll(getDBTableList(multiTransfer.getTransferableAt(i)));
+                    }
+                }
+            }
+        }
+        return tables;
     }
 }

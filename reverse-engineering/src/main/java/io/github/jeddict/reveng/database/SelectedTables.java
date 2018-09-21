@@ -16,7 +16,6 @@
 package io.github.jeddict.reveng.database;
 
 import static io.github.jeddict.jcode.util.ProjectHelper.getFolderForPackage;
-import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +46,6 @@ public final class SelectedTables {
         NO_JAVA_IDENTIFIER, JPA_QL_IDENTIFIER, ALREADY_EXISTS
     };
 
-    private final IPersistenceModelGenerator persistenceGen;
     private final Map<Table, String> table2ClassName = new HashMap<>();
     private final Map<Table, Set<Problem>> table2Problems = new TreeMap<>();
 //    private final Map<Table, UpdateType> table2UpdateType = new HashMap<Table, UpdateType>();
@@ -62,10 +60,7 @@ public final class SelectedTables {
 
     private Set<Table> validatedTables = Collections.emptySet();
 
-    public SelectedTables(IPersistenceModelGenerator persistenceGen, TableClosure tableClosure, SourceGroup location, String packageName) throws IOException {
-//        assert persistenceGen != null;
-
-        this.persistenceGen = persistenceGen;
+    public SelectedTables(TableClosure tableClosure, SourceGroup location, String packageName) throws IOException {
         setTableClosureAndTargetFolder(tableClosure, location, packageName);
     }
 
@@ -190,17 +185,6 @@ public final class SelectedTables {
         String className = table2ClassName.get(table);
         if (className == null) {
             className = EntityMember.makeClassName(table.getName());
-//            String exClassName = persistenceGen.getFQClassName(table.getName());
-//            if (exClassName != null) {
-//                int i = exClassName.lastIndexOf('.');
-//                if (i > -1) {
-//                    exClassName = exClassName.substring(i + 1);
-//                }
-//                className = persistenceGen.generateEntityName(exClassName);
-//            } else {
-//                className = EntityMember.makeClassName(table.getName());
-//                className = persistenceGen.generateEntityName(className);
-//            }
         }
         return className;
     }

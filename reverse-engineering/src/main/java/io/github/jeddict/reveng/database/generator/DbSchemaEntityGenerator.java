@@ -121,7 +121,7 @@ public class DbSchemaEntityGenerator {
      *
      * @param schemaElement The schema
      * @return A set of tables that reference another tables with primary key to
-     * promary key reference
+     * primary key reference
      */
     public static Set<String> getTablesReferencesOtherTablesWithPrimaryKeyMatch(SchemaElement schemaElement) {
         Set<String> tableNames = new HashSet<>();

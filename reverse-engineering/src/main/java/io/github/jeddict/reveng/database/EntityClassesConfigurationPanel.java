@@ -21,7 +21,6 @@ import static io.github.jeddict.jcode.util.ProjectHelper.getFolderSourceGroup;
 import static io.github.jeddict.jcode.util.ProjectHelper.getJavaSourceGroups;
 import static io.github.jeddict.jcode.util.ProjectHelper.getPackageForFolder;
 import static io.github.jeddict.jcode.util.ProjectHelper.isFolderWritable;
-import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -29,7 +28,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.ComboBoxModel;
-import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -39,19 +37,12 @@ import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.project.JavaProjectConstants;
-import org.netbeans.api.java.source.ClasspathInfo;
-import org.netbeans.api.java.source.JavaSource;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
 import org.netbeans.modules.j2ee.core.api.support.java.JavaIdentifiers;
-import org.netbeans.modules.j2ee.persistence.dd.common.Persistence;
 import org.netbeans.modules.j2ee.persistence.provider.Provider;
-import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
-import org.netbeans.modules.j2ee.persistence.util.SourceLevelChecker;
-import org.netbeans.modules.j2ee.persistence.wizard.Util;
-import org.netbeans.modules.j2ee.persistence.wizard.fromdb.RelatedCMPWizard;
 import org.netbeans.modules.j2ee.persistence.wizard.fromdb.SourceGroupUISupport;
 import org.netbeans.modules.j2ee.persistence.wizard.fromdb.TableClosure;
 import org.netbeans.modules.j2ee.persistence.wizard.fromdb.TableSource;
@@ -62,7 +53,6 @@ import org.openide.WizardDescriptor;
 import org.openide.filesystems.FileObject;
 import org.openide.util.ChangeSupport;
 import org.openide.util.HelpCtx;
-import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
 
 public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
@@ -73,19 +63,13 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
 
     private JTextComponent packageComboBoxEditor;
 
-    private IPersistenceModelGenerator persistenceGen;
     private Project project;
-    private String tableSourceName; //either Datasource or a connection
 
     private SelectedTables selectedTables;
-//    private final JMenuItem allToUpdateItem;
-//    private final JMenuItem allToRecreateItem;
 
     private EntityClassesConfigurationPanel() {
         initComponents();
 
-//        allToUpdateItem = tableActionsPopup.add(new AllToUpdateAction());
-//        allToRecreateItem = tableActionsPopup.add(new AllToRecreateAction());
         classNamesTable.getParent().setBackground(classNamesTable.getBackground());
         classNamesTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE); // NOI18N
 
@@ -134,8 +118,7 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
         return compile.findResource(notNullAnnotation.replace('.', '/') + ".class") != null;//NOI18N
     }
 
-    public void initialize(IPersistenceModelGenerator persistenceGen, Project project, FileObject targetFolder) {
-        this.persistenceGen = persistenceGen;
+    public void initialize(Project project, FileObject targetFolder) {
         this.project = project;
 
         projectTextField.setText(ProjectUtils.getInformation(project).getDisplayName());
@@ -158,51 +141,21 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
                 }
             }
         }
-
-        updatePersistenceUnitButton(true);
-        Sources sources = ProjectUtils.getSources(project);
-        SourceGroup groups[] = sources.getSourceGroups(JavaProjectConstants.SOURCES_TYPE_JAVA);
-        SourceGroup firstGroup = groups[0];
-        FileObject fo = firstGroup.getRootFolder();
-        ClasspathInfo classpathInfo = ClasspathInfo.create(fo);
-        JavaSource javaSource = JavaSource.create(classpathInfo);
-//        try {
-//            javaSource.runUserActionTask(new Task<CompilationController>() {
-//
-//                @Override
-//                public void run(CompilationController controller) throws IOException {
-//                    controller.toPhase(JavaSource.Phase.ELEMENTS_RESOLVED);
-//                    TypeElement jc = controller.getElements().getTypeElement("javax.xml.bind.annotation.XmlTransient"); //NOI18N
-//                    if (jc == null) {
-//                        generateJAXBCheckBox.setSelected(false);
-//                        generateJAXBCheckBox.setEnabled(false);
-//                    }
-//                }
-//            }, true);
-//        } catch (IOException ex) {
-//            //no need to throw exception as it just will not disable option possibly unsupported, it's not severe
-//            LOGGER.log(Level.FINE, "Fail to check if jaxb is supported");//NOI18N
-//        }
     }
 
     public void update(TableClosure tableClosure, String tableSourceName) {
         try {
             if (selectedTables == null) {
-                selectedTables = new SelectedTables(persistenceGen, tableClosure, getLocationValue(), getPackageName());
-                selectedTables.addChangeListener((ChangeEvent event) -> {
-                    changeSupport.fireChange();
-                });
+                selectedTables = new SelectedTables(tableClosure, getLocationValue(), getPackageName());
+                selectedTables.addChangeListener(e -> changeSupport.fireChange());
             } else {
                 selectedTables.setTableClosureAndTargetFolder(tableClosure, getLocationValue(), getPackageName());
             }
-//            selectedTables.ensureUniqueClassNames();
         } catch (IOException e) {
             ExceptionUtils.printStackTrace(e);
         }
 
         TableUISupport.connectClassNames(classNamesTable, selectedTables);
-        this.tableSourceName = tableSourceName;
-        updateSetAllButtons();
     }
 
     public SelectedTables getSelectedTables() {
@@ -252,63 +205,6 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
         }
     }
 
-    private void updatePersistenceUnitButton(boolean initial) {
-        String warning = " "; // NOI18N
-        if (warning.trim().length() == 0) {//may need to show warning about sourc level
-            String sourceLevel = SourceLevelChecker.getSourceLevel(project);
-            if (sourceLevel != null) {
-                if (sourceLevel.matches("1\\.[0-5]([^0-9].*)?")) {//1.0-1.5
-                    Provider provider = Util.getPreferredProvider(project);
-                    if (provider != null) {
-                        String ver = ProviderUtil.getVersion(provider);
-                        if ((ver != null && !Persistence.VERSION_1_0.equals(ver))) {
-                            if (Util.isJPAVersionSupported(project, ver)) {
-                                warning = NbBundle.getMessage(RelatedCMPWizard.class, "ERR_WrongSourceLevel", sourceLevel);
-                            } else {
-                                warning = NbBundle.getMessage(RelatedCMPWizard.class, "ERR_UnsupportedJpaVersion", ver, Util.getJPAVersionSupported(project, ver));
-                            }
-                        }
-                    }
-                }
-            }
-
-        }
-
-        if (warning.trim().length() > 0) {
-            Icon icon = ImageUtilities.loadImageIcon("org/netbeans/modules/j2ee/persistence/ui/resources/warning.gif", false);
-            createPUWarningLabel.setIcon(icon);
-            createPUWarningLabel.setText(warning);
-            createPUWarningLabel.setToolTipText(warning);
-        } else {
-            createPUWarningLabel.setIcon(null);
-            createPUWarningLabel.setText(" ");
-            createPUWarningLabel.setToolTipText(null);
-
-        }
-    }
-
-    private void updateSetAllButtons() {
-//        boolean update = false;
-//        boolean recreate = false;
-//        if (selectedTables != null) {
-//            for (Table table : selectedTables.getTables()) {
-//                if (!selectedTables.getUpdateType(table).equals(UpdateType.NEW)) {
-//                    if (selectedTables.getUpdateType(table).equals(UpdateType.UPDATE)) {
-//                        recreate = true;
-//                    } else {
-//                        update = true;
-//                    }
-//                    if (update && recreate) {
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//        tableActionsButton.setEnabled(update || recreate);
-//        allToUpdateItem.setEnabled(update);
-//        allToRecreateItem.setEnabled(recreate);
-    }
-
     private void updateSelectedTables() {
         if (selectedTables != null) {
             try {
@@ -340,7 +236,7 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
         packageComboBox = new javax.swing.JComboBox();
         spacerPanel = new javax.swing.JPanel();
         tableActionsButton = new javax.swing.JButton();
-        createPUWarningLabel = new ShyLabel();
+        warningLabel = new ShyLabel();
         fileNameTextField = new javax.swing.JTextField();
         fileNameLabel = new javax.swing.JLabel();
 
@@ -398,9 +294,9 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        org.openide.awt.Mnemonics.setLocalizedText(createPUWarningLabel, "  ");
-        createPUWarningLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        createPUWarningLabel.setMaximumSize(new java.awt.Dimension(1000, 29));
+        org.openide.awt.Mnemonics.setLocalizedText(warningLabel, "  ");
+        warningLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        warningLabel.setMaximumSize(new java.awt.Dimension(1000, 29));
 
         fileNameTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -414,7 +310,7 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(createPUWarningLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
+            .addComponent(warningLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(specifyNamesLabel)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -461,7 +357,7 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
                     .addComponent(fileNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(fileNameLabel))
                 .addGap(83, 83, 83)
-                .addComponent(createPUWarningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(warningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -487,7 +383,6 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
     private javax.swing.JLabel classNamesLabel;
     private javax.swing.JScrollPane classNamesScrollPane;
     private javax.swing.JTable classNamesTable;
-    private javax.swing.JLabel createPUWarningLabel;
     private javax.swing.JLabel fileNameLabel;
     private javax.swing.JTextField fileNameTextField;
     private javax.swing.JComboBox locationComboBox;
@@ -500,6 +395,7 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
     private javax.swing.JLabel specifyNamesLabel;
     private javax.swing.JButton tableActionsButton;
     private javax.swing.JPopupMenu tableActionsPopup;
+    private javax.swing.JLabel warningLabel;
     // End of variables declaration//GEN-END:variables
 
     public static final class WizardPanel implements WizardDescriptor.Panel, WizardDescriptor.FinishablePanel, ChangeListener {
@@ -545,7 +441,6 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
         @Override
         public HelpCtx getHelp() {
             return new HelpCtx(EntityClassesConfigurationPanel.class);
-
         }
 
         @Override
@@ -557,11 +452,10 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
             if (!componentInitialized) {
                 componentInitialized = true;
 
-                IPersistenceModelGenerator persistenceGen = null;
                 project = Templates.getProject(wizardDescriptor);
                 FileObject targetFolder = Templates.getTargetFolder(wizardDescriptor);
 
-                getComponent().initialize(persistenceGen, project, targetFolder);
+                getComponent().initialize(project, targetFolder);
             }
 
             TableSource tableSource = helper.getTableSource();

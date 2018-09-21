@@ -19,6 +19,7 @@ import java.util.List;
 import io.github.jeddict.jpa.spec.EmbeddedId;
 import io.github.jeddict.jpa.spec.Id;
 import io.github.jeddict.jpa.spec.Version;
+import java.util.Optional;
 
 /**
  *
@@ -108,11 +109,13 @@ public interface IPrimaryKeyAttributes extends IPersistenceAttributes {
 
     void removeVersion(Version version);
 
-    public void addId(Id id);
+    Optional<Id> findId(String name);
 
-    public void removeId(Id id);
+    void addId(Id id);
 
-    public Attribute getIdField();
+    void removeId(Id id);
+
+    Attribute getIdField();
     
     List<Id> getSuperId();
     

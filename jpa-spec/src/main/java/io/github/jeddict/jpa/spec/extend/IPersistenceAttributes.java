@@ -46,6 +46,8 @@ public interface IPersistenceAttributes extends IAttributes {
 
     Optional<Basic> getBasic(String id);
 
+    Optional<Basic> findBasic(String name);
+
     void addTransient(Transient _transient);
 
     void removeTransient(Transient _transient);
@@ -94,6 +96,8 @@ public interface IPersistenceAttributes extends IAttributes {
 
     Optional<ManyToMany> getManyToMany(String id);
 
+    Optional<ManyToMany> findManyToMany(String name);
+
     void addManyToMany(ManyToMany manyToMany);
 
     void removeManyToMany(ManyToMany manyToMany);
@@ -103,6 +107,8 @@ public interface IPersistenceAttributes extends IAttributes {
     void setManyToOne(List<ManyToOne> manyToOne);
 
     Optional<ManyToOne> getManyToOne(String id);
+
+    Optional<ManyToOne> findManyToOne(String name);
 
     void addManyToOne(ManyToOne manyToOne);
 
@@ -114,6 +120,8 @@ public interface IPersistenceAttributes extends IAttributes {
 
     Optional<OneToMany> getOneToMany(String id);
 
+    Optional<OneToMany> findOneToMany(String name);
+
     void addOneToMany(OneToMany oneToMany);
 
     void removeOneToMany(OneToMany oneToMany);
@@ -123,6 +131,8 @@ public interface IPersistenceAttributes extends IAttributes {
     void setOneToOne(List<OneToOne> oneToOne);
 
     Optional<OneToOne> getOneToOne(String id);
+
+    Optional<OneToOne> findOneToOne(String name);
 
     void addOneToOne(OneToOne oneToOne);
 

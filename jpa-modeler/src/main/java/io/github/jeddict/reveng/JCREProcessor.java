@@ -15,8 +15,11 @@
  */
 package io.github.jeddict.reveng;
 
+import io.github.jeddict.jpa.spec.extend.JavaClass;
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
+import org.netbeans.api.db.explorer.DatabaseMetaDataTransfer.Table;
 import org.netbeans.modeler.core.ModelerFile;
 
 /**
@@ -44,7 +47,17 @@ public interface JCREProcessor {
      * Drop doc in existing diagram
      *
      * @param modelerFile
-     * @param docFile
+     * @param docFiles
      */
-    void processDropedDocument(ModelerFile modelerFile, File docFile);
+    void processDropedDocument(ModelerFile modelerFile, List<File> docFiles);
+
+    /**
+     * Drop tables in existing diagram
+     *
+     * @param modelerFile
+     * @param tables
+     * @param javaClass
+     */
+    public void processDropedTables(ModelerFile modelerFile, List<Table> tables, Optional<JavaClass> javaClass);
+
 }

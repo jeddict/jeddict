@@ -15,6 +15,7 @@
  */
 package io.github.jeddict.reveng;
 
+import java.util.Collections;
 import static io.github.jeddict.jcode.util.Constants.JAVA_EXT_SUFFIX;
 import static io.github.jeddict.jcode.util.ProjectHelper.findSourceGroupForFile;
 import static io.github.jeddict.jcode.util.ProjectHelper.getFolderSourceGroup;
@@ -22,6 +23,9 @@ import io.github.jeddict.jpa.modeler.initializer.JPAFileActionListener;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
+import io.github.jeddict.reveng.database.DBImportWizardDescriptor;
+import io.github.jeddict.reveng.database.GenerateTablesImpl;
+import io.github.jeddict.reveng.database.ImportHelper;
 import io.github.jeddict.reveng.doc.DocWizardDescriptor;
 import io.github.jeddict.reveng.klass.ClassWizardDescriptor;
 import static io.github.jeddict.reveng.settings.RevengPanel.isIncludeReferencedClasses;
@@ -32,15 +36,27 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import static java.util.Objects.isNull;
+import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.showInputDialog;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import org.netbeans.api.db.explorer.DatabaseConnection;
+import org.netbeans.api.db.explorer.DatabaseMetaDataTransfer.Table;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.modeler.core.ModelerFile;
+import org.netbeans.modules.dbschema.SchemaElement;
 import org.netbeans.modules.j2ee.persistence.api.EntityClassScope;
+import org.netbeans.modules.j2ee.persistence.entitygenerator.EntityMember;
 import org.netbeans.modules.j2ee.persistence.wizard.EntityClosure;
+import org.netbeans.modules.j2ee.persistence.wizard.fromdb.DBSchemaManager;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
@@ -162,12 +178,19 @@ public class JCREProcessorImpl implements JCREProcessor {
 
 
     @Override
-    public void processDropedDocument(ModelerFile modelerFile, File docFile) {
+    public void processDropedDocument(ModelerFile modelerFile, List<File> docFiles) {
         try {
             Project project = modelerFile.getProject();
-            DocWizardDescriptor docWizardDescriptor = new DocWizardDescriptor(project, docFile.getAbsolutePath(), true, false, false);
+
+            DocWizardDescriptor docWizardDescriptor = new DocWizardDescriptor(
+                    project,
+                    docFiles.get(0).getAbsolutePath(),
+                    true,
+                    false,
+                    false
+            );
             EntityMappings entityMappings = (EntityMappings) modelerFile.getModelerScene().getBaseElementSpec();
-            docWizardDescriptor.instantiateJsonREProcess(
+            docWizardDescriptor.instantiateProcess(
                     entityMappings,
                     () -> {
                         modelerFile.save(true);
@@ -175,6 +198,55 @@ public class JCREProcessorImpl implements JCREProcessor {
                         JPAFileActionListener.open(modelerFile);
                     });
         } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+
+
+    @Override
+    public void processDropedTables(ModelerFile modelerFile, List<Table> tables, Optional<JavaClass> javaClass) {
+        try {
+            EntityMappings entityMappings = (EntityMappings) modelerFile.getModelerScene().getBaseElementSpec();
+            Project project = modelerFile.getProject();
+            SourceGroup sourceGroup = findSourceGroupForFile(modelerFile.getFileObject());
+            String packageName = "sample";
+            DBSchemaManager dbschemaManager = new DBSchemaManager();
+
+            SchemaElement schemaElement = null;
+            DatabaseConnection databaseConnection = null;
+            GenerateTablesImpl genTables = new GenerateTablesImpl();
+            for (Table table : tables) {
+                databaseConnection = table.getDatabaseConnection();
+                schemaElement = dbschemaManager.getSchemaElement(table.getDatabaseConnection());
+//              TableElement tableElement = schemaElement.getTable(DBIdentifier.create(table.getTableName()));
+
+                genTables.addTable(
+                        schemaElement.getCatalog().getName(),
+                        schemaElement.getSchema().getName(),
+                        table.getTableName(),
+                        sourceGroup.getRootFolder(),
+                        packageName,
+                        EntityMember.makeClassName(table.getTableName()),
+                        Collections.emptySet()
+                );
+            }
+
+            DBImportWizardDescriptor descriptor = new DBImportWizardDescriptor();
+            descriptor.initialize(project, entityMappings, javaClass);
+            ImportHelper importHelper = descriptor.getHelper();
+            importHelper.setLocation(sourceGroup);
+            importHelper.setPackageName(packageName);
+            importHelper.setTableSource(schemaElement, databaseConnection, "");
+            importHelper.buildBeans(genTables);
+            descriptor.instantiateProcess(() -> {
+                modelerFile.save(true);
+                modelerFile.close();
+                JPAFileActionListener.open(modelerFile);
+            });
+
+
+        } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
         }
     }

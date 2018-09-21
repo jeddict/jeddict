@@ -18,7 +18,7 @@ package io.github.jeddict.reveng.database;
 import io.github.jeddict.collaborate.issues.ExceptionUtils;
 import static io.github.jeddict.jcode.util.ProjectHelper.getFolderSourceGroup;
 import static io.github.jeddict.jcode.util.ProjectHelper.getJavaSourceGroups;
-import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
+import io.github.jeddict.reveng.database.generator.DBModelGenerator;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -86,7 +86,7 @@ public class DatabaseTablesSelectorPanel extends javax.swing.JPanel implements A
     private final ChangeSupport changeSupport = new ChangeSupport(this);
     private final DBSchemaManager dbschemaManager = new DBSchemaManager();
 
-    private IPersistenceModelGenerator persistenceGen;
+    private DBModelGenerator persistenceGen;
 
     private SchemaElement sourceSchemaElement;
     private DatabaseConnection dbconn;
@@ -119,7 +119,7 @@ public class DatabaseTablesSelectorPanel extends javax.swing.JPanel implements A
         changeSupport.addChangeListener(listener);
     }
 
-    public void initialize(final Project project, DBSchemaFileList dbschemaFileList, IPersistenceModelGenerator persistenceGen, TableSource tableSource, FileObject targetFolder) {
+    public void initialize(final Project project, DBSchemaFileList dbschemaFileList, DBModelGenerator persistenceGen, TableSource tableSource, FileObject targetFolder) {
         this.persistenceGen = persistenceGen;
         this.project = project;
         this.dbschemaFileList = dbschemaFileList;
@@ -1027,9 +1027,7 @@ public class DatabaseTablesSelectorPanel extends javax.swing.JPanel implements A
 
         @Override
         public HelpCtx getHelp() {
-
             return new HelpCtx(DatabaseTablesSelectorPanel.class);
-
         }
 
         @Override
@@ -1054,7 +1052,6 @@ public class DatabaseTablesSelectorPanel extends javax.swing.JPanel implements A
                 cmp = false;//RelatedCMPWizard.isCMP(wizardDescriptor);
                 ImportHelper helper = DBImportWizardDescriptor.getHelper(wizardDescriptor);
                 DBSchemaFileList dbschemaFileList = helper.getDBSchemaFileList();
-//                PersistenceGenerator persistenceGen = helper.getPersistenceGenerator();
                 TableSource tableSource = helper.getTableSource();
                 FileObject targetFolder = Templates.getTargetFolder(wizardDescriptor);
 

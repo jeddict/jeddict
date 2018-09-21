@@ -16,8 +16,8 @@
 package io.github.jeddict.reveng.database;
 
 import static io.github.jeddict.jcode.util.ProjectHelper.getFolderForPackage;
+import io.github.jeddict.reveng.database.generator.DBModelGenerator;
 import io.github.jeddict.reveng.database.generator.DbSchemaEntityGenerator;
-import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,7 +46,6 @@ public class ImportHelper {
 
     private final Project project;
     private final FileObject configFilesFolder;
-    private final IPersistenceModelGenerator persistenceGen;
     private final DBSchemaFileList dbschemaFileList;
 
     private SchemaElement schemaElement;
@@ -76,11 +75,9 @@ public class ImportHelper {
     private boolean regenTablesAttrs = false;
     private CollectionType collectionType = CollectionType.COLLECTION;
 
-    public ImportHelper(Project project, FileObject configFilesFolder, IPersistenceModelGenerator persistenceGen) {
+    public ImportHelper(Project project, FileObject configFilesFolder) {
         this.project = project;
         this.configFilesFolder = configFilesFolder;
-        this.persistenceGen = persistenceGen;
-
         tableSource = TableSource.get(project);
         dbschemaFileList = new DBSchemaFileList(project, configFilesFolder);
     }
@@ -91,10 +88,6 @@ public class ImportHelper {
 
     FileObject getConfigFilesFolder() {
         return configFilesFolder;
-    }
-
-    public IPersistenceModelGenerator getPersistenceGenerator() {
-        return persistenceGen;
     }
 
     public DBSchemaFileList getDBSchemaFileList() {
@@ -111,18 +104,9 @@ public class ImportHelper {
     }
 
     public void setSelectedTables(SelectedTables selectedTables) {
-//        assert selectedTables != null;
         this.selectedTables = selectedTables;
     }
 
-//    public PersistenceUnit getPersistenceUnit() {
-//        return persistenceUnit;
-//    }
-//
-//    public void setPersistenceUnit(PersistenceUnit persistenceUnit) {
-//        this.persistenceUnit = persistenceUnit;
-//    }
-//
     /**
      * Sets the source of the tables when the source is a database connection
      * (possibly retrieved from a data source).
@@ -258,24 +242,30 @@ public class ImportHelper {
         collectionType = type;
     }
 
-    /**
-     * Public because used in J2EE functional tests.
-     */
     public void buildBeans() {
         TableSource.put(project, tableSource);
 
-        GenerateTablesImpl genTables = new GenerateTablesImpl();
-        FileObject rootFolder = getLocation().getRootFolder();
-        String pkgName = getPackageName();
+        if (selectedTables != null) {
+            GenerateTablesImpl genTables = new GenerateTablesImpl();
+            FileObject rootFolder = getLocation().getRootFolder();
+            String pkgName = getPackageName();
 
-        for (Table table : selectedTables.getTables()) {
-            String pkg = pkgName;
-            genTables.addTable(table.getCatalog(), table.getSchema(), table.getName(), rootFolder, pkg,
-                    selectedTables.getClassName(table), table.getUniqueConstraints());
+            for (Table table : selectedTables.getTables()) {
+                genTables.addTable(
+                        table.getCatalog(),
+                        table.getSchema(),
+                        table.getName(),
+                        rootFolder,
+                        pkgName,
+                        selectedTables.getClassName(table),
+                        table.getUniqueConstraints()
+                );
+            }
+            buildBeans(genTables);
         }
+    }
 
-        // add the (possibly related) disabled tables, so that the relationships are created correctly
-        // XXX what if this adds related tables that the user didn't want, such as join tables?
+    public void buildBeans(GenerateTablesImpl genTables) {
         generator = new DbSchemaEntityGenerator(genTables, schemaElement, collectionType, useColumnNamesInRelationships, useDefaults, generateUnresolvedRelationships);
     }
 
@@ -330,68 +320,4 @@ public class ImportHelper {
         this.fileName = fileName;
     }
 
-    private static final class GenerateTablesImpl implements GeneratedTables {
-
-        private String catalog; // for all the tables
-        private String schema; // for all the tables
-        private final Set<String> tableNames = new HashSet<>();
-        private final Map<String, FileObject> rootFolders = new HashMap<>();
-        private final Map<String, String> packageNames = new HashMap<>();
-        private final Map<String, String> classNames = new HashMap<>();
-        private final Map<String, UpdateType> updateTypes = new HashMap<>();
-        private final Map<String, Set<List<String>>> allUniqueConstraints = new HashMap<>();
-
-        @Override
-        public Set<String> getTableNames() {
-            return Collections.unmodifiableSet(tableNames);
-        }
-
-        private void addTable(String catalogName, String schemaName, String tableName,
-                FileObject rootFolder, String packageName, String className,
-                Set<List<String>> uniqueConstraints) {
-            tableNames.add(tableName);
-            catalog = catalogName;
-            schema = schemaName;
-            rootFolders.put(tableName, rootFolder);
-            packageNames.put(tableName, packageName);
-            classNames.put(tableName, className);
-//            updateTypes.put(tableName, updateType);
-            allUniqueConstraints.put(tableName, uniqueConstraints);
-        }
-
-        @Override
-        public String getCatalog() {
-            return catalog;
-        }
-
-        @Override
-        public String getSchema() {
-            return schema;
-        }
-
-        @Override
-        public FileObject getRootFolder(String tableName) {
-            return rootFolders.get(tableName);
-        }
-
-        @Override
-        public String getPackageName(String tableName) {
-            return packageNames.get(tableName);
-        }
-
-        @Override
-        public String getClassName(String tableName) {
-            return classNames.get(tableName);
-        }
-
-        @Override
-        public UpdateType getUpdateType(String tableName) {
-            return updateTypes.get(tableName);
-        }
-
-        @Override
-        public Set<List<String>> getUniqueConstraints(String tableName) {
-            return this.allUniqueConstraints.get(tableName);
-        }
-    }
 }

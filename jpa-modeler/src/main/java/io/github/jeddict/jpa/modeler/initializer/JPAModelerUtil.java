@@ -193,6 +193,7 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
     public static String BOTO_ATTRIBUTE_ICON_PATH;
     public static String PK_UOTO_ATTRIBUTE_ICON_PATH;
     public static String PK_BOTO_ATTRIBUTE_ICON_PATH;
+    public static String TABLE_ICON_PATH;
     
     public static Image ID_ATTRIBUTE_ICON;
     public static Image BASIC_ATTRIBUTE_ICON;
@@ -244,6 +245,7 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
     public static Image MAPPED_SUPER_CLASS_ICON;
     public static Image EMBEDDABLE_ICON;
     public static Image PACKAGE_ICON;
+    public static Image TABLE_ICON;
 
     public static ImageIcon CREATE_ICON;
     public static ImageIcon EDIT_ICON;
@@ -337,6 +339,7 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
             BOTO_ATTRIBUTE_ICON_PATH = "io/github/jeddict/jpa/modeler/resource/image/boto-attribute.png";
             PK_UOTO_ATTRIBUTE_ICON_PATH = "io/github/jeddict/jpa/modeler/resource/image/pk-uoto-attribute.png";
             PK_BOTO_ATTRIBUTE_ICON_PATH = "io/github/jeddict/jpa/modeler/resource/image/pk-boto-attribute.png";
+            TABLE_ICON_PATH = "io/github/jeddict/jpa/modeler/resource/image/db/TABLE.gif";
 
             BASE_ELEMENT_ICONS.put(JavaClass.class, JAVA_CLASS_ICON_PATH);
             BASE_ELEMENT_ICONS.put(Entity.class, ENTITY_ICON_PATH);
@@ -396,6 +399,7 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
             SINGLE_VALUE_EMBEDDED_ATTRIBUTE_ICON = new ImageIcon(cl.getResource(SINGLE_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH)).getImage();
             TRANSIENT_ATTRIBUTE_ICON = new ImageIcon(cl.getResource(TRANSIENT_ATTRIBUTE_ICON_PATH)).getImage();
             VERSION_ATTRIBUTE_ICON = new ImageIcon(cl.getResource(VERSION_ATTRIBUTE_ICON_PATH)).getImage();
+            TABLE_ICON = new ImageIcon(cl.getResource(TABLE_ICON_PATH)).getImage();
 
             CREATE_ICON = new ImageIcon(cl.getResource("io/github/jeddict/jpa/modeler/resource/image/misc/add-element.png"));
             EDIT_ICON = new ImageIcon(cl.getResource("io/github/jeddict/jpa/modeler/resource/image/misc/edit-element.png"));

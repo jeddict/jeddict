@@ -15,6 +15,7 @@
  */
 package io.github.jeddict.reveng.database;
 
+import io.github.jeddict.reveng.database.generator.DBModelGenerator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,7 +29,6 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
-import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
 import org.netbeans.modules.dbschema.ColumnElement;
 import org.netbeans.modules.dbschema.ForeignKeyElement;
 import org.netbeans.modules.dbschema.SchemaElement;
@@ -48,17 +48,17 @@ import org.openide.filesystems.FileObject;
 public class DBSchemaTableProvider implements TableProvider {
 
     private final SchemaElement schemaElement;
-    private final IPersistenceModelGenerator persistenceGen;
+    private final DBModelGenerator persistenceGen;
     private final Set<Table> tables;
     private Set<String> tablesReferecedByOtherTables;
     private Project project;
 
-    public DBSchemaTableProvider(SchemaElement schemaElement, IPersistenceModelGenerator persistenceGen) {
+    public DBSchemaTableProvider(SchemaElement schemaElement, DBModelGenerator persistenceGen) {
         this(schemaElement, persistenceGen, null);
 
     }
 
-    public DBSchemaTableProvider(SchemaElement schemaElement, IPersistenceModelGenerator persistenceGen, Project project) {
+    public DBSchemaTableProvider(SchemaElement schemaElement, DBModelGenerator persistenceGen, Project project) {
         this.schemaElement = schemaElement;
         this.project = project;
         this.persistenceGen = persistenceGen;
@@ -179,7 +179,7 @@ public class DBSchemaTableProvider implements TableProvider {
         return uniqueConstraintsCols;
     }
 
-    private static List<DisabledReason> getDisabledReasons(TableElement tableElement, IPersistenceModelGenerator persistenceGen, ClassPath source) {
+    private static List<DisabledReason> getDisabledReasons(TableElement tableElement, DBModelGenerator persistenceGen, ClassPath source) {
         List<DisabledReason> result = new ArrayList<>();
 
         if (tableElement.isTable() && hasNoPrimaryKey(tableElement)) {
@@ -210,11 +210,11 @@ public class DBSchemaTableProvider implements TableProvider {
         // A set of unique constraints columns
         private Set<List<String>> uniqueConstraints;
 
-        public DBSchemaTable(String catalog, String schema, String name, boolean join, DisabledReason disabledReason, IPersistenceModelGenerator persistenceGen) {
+        public DBSchemaTable(String catalog, String schema, String name, boolean join, DisabledReason disabledReason, DBModelGenerator persistenceGen) {
             super(catalog, schema, name, join, disabledReason);
         }
 
-        public DBSchemaTable(String catalog, String schema, String name, boolean join, DisabledReason disabledReason, IPersistenceModelGenerator persistenceGen, boolean isTable) {
+        public DBSchemaTable(String catalog, String schema, String name, boolean join, DisabledReason disabledReason, DBModelGenerator persistenceGen, boolean isTable) {
             super(catalog, schema, name, join, disabledReason, isTable);
         }
 

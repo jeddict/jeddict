@@ -328,7 +328,7 @@ public class TableUISupport {
 
     private static final class TableClassNamesModel extends AbstractTableModel {
 
-        private SelectedTables selectedTables;
+        private final SelectedTables selectedTables;
         private final List<Table> tables;
 
         public TableClassNamesModel(SelectedTables selectedTables) {

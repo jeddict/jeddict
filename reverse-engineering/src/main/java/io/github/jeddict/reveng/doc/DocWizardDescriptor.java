@@ -133,7 +133,7 @@ public final class DocWizardDescriptor extends BaseWizardDescriptor {
         } else if (docFileLocation.toLowerCase().endsWith("jpa")) {
             parser = new ModelerParser(reporterConsumer, jpaSupport, jsonbSupport, jaxbSupport);
         }
-        instantiateJsonREProcess(null, null);
+        instantiateProcess(null, null);
         return Collections.singleton(DataFolder.findFolder(packageFileObject));
     }
 
@@ -142,7 +142,7 @@ public final class DocWizardDescriptor extends BaseWizardDescriptor {
         return NbBundle.getMessage(DocWizardDescriptor.class, "LBL_WizardTitle");
     }
 
-    public void instantiateJsonREProcess(final EntityMappings entityMappings, final Runnable callback) throws IOException {
+    public void instantiateProcess(final EntityMappings entityMappings, final Runnable runnable) throws IOException {
         final String title = NbBundle.getMessage(DocWizardDescriptor.class, "TITLE_Progress_Class_Diagram"); //NOI18N
         final ProgressContributor progressContributor = AggregateProgressFactory.createProgressContributor(title);
         final AggregateProgressHandle handle = AggregateProgressFactory.createHandle(title, new ProgressContributor[]{progressContributor}, null, null);
@@ -184,8 +184,8 @@ public final class DocWizardDescriptor extends BaseWizardDescriptor {
                 if (!first) {
                     RequestProcessor.getDefault().post(r);
                     progressPanel.open(progressComponent, title);
-                    if (nonNull(callback)) {
-                        callback.run();
+                    if (nonNull(runnable)) {
+                        runnable.run();
                     }
                 } else {
                     first = false;

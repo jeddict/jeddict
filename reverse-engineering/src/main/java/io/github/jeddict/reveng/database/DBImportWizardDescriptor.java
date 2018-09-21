@@ -18,14 +18,17 @@ package io.github.jeddict.reveng.database;
 import io.github.jeddict.analytics.JeddictLogger;
 import io.github.jeddict.collaborate.issues.ExceptionUtils;
 import static io.github.jeddict.jcode.util.ProjectHelper.getFolderForPackage;
+import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.reveng.BaseWizardDescriptor;
-import io.github.jeddict.reveng.database.generator.IPersistenceGeneratorProvider;
-import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
+import io.github.jeddict.reveng.database.generator.DBModelGenerator;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import static java.util.Objects.nonNull;
+import java.util.Optional;
 import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -47,7 +50,6 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObject;
-import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
 
@@ -62,18 +64,12 @@ import org.openide.util.RequestProcessor;
 public final class DBImportWizardDescriptor extends BaseWizardDescriptor {
 
     private static final String PROP_HELPER = "wizard-helper"; //NOI18N
-    private WizardDescriptor wizardDescriptor;
-    private IPersistenceModelGenerator generator;
+    private WizardDescriptor wizard;
     private ImportHelper helper;
     private ProgressPanel progressPanel;
     private Project project;
+    private DBModelGenerator generator;
     private final RequestProcessor RP = new RequestProcessor(DBImportWizardDescriptor.class.getSimpleName(), 5);
-
-    private static IPersistenceModelGenerator createPersistenceGenerator() {
-        return Lookup.getDefault()
-                .lookup(IPersistenceGeneratorProvider.class)
-                .createGenerator();
-    }
 
     static ImportHelper getHelper(WizardDescriptor wizardDescriptor) {
         return (ImportHelper) wizardDescriptor.getProperty(PROP_HELPER);
@@ -81,8 +77,10 @@ public final class DBImportWizardDescriptor extends BaseWizardDescriptor {
 
     @Override
     public Set<?> instantiate() throws IOException {
-        // TODO return set of FileObject (or DataObject) you have created
+        return instantiateProcess(null);
+    }
 
+    public Set<?> instantiateProcess(final Runnable runnable) throws IOException {
         final String title = NbBundle.getMessage(DBImportWizardDescriptor.class, "TXT_EntityClassesGeneration");
         final ProgressContributor progressContributor = AggregateProgressFactory.createProgressContributor(title);
         final AggregateProgressHandle handle
@@ -93,11 +91,10 @@ public final class DBImportWizardDescriptor extends BaseWizardDescriptor {
         final Runnable r = () -> {
             try {
                 handle.start();
-                createModel(wizardDescriptor, progressContributor);
-            } catch (Throwable t) {
+                createModel(progressContributor);
+            } catch (IOException t) {
                 ExceptionUtils.printStackTrace(t);
             } finally {
-                generator.uninit();
                 JeddictLogger.createModelerFile("DB-REV-ENG");
                 handle.finish();
             }
@@ -122,6 +119,9 @@ public final class DBImportWizardDescriptor extends BaseWizardDescriptor {
                 if (!first) {
                     RP.post(r);
                     progressPanel.open(progressComponent, title);
+                    if (nonNull(runnable)) {
+                        runnable.run();
+                    }
                 } else {
                     first = false;
                     SwingUtilities.invokeLater(this);
@@ -129,16 +129,6 @@ public final class DBImportWizardDescriptor extends BaseWizardDescriptor {
             }
         });
 
-        // The commented code below is the ideal state, but since there is not way to request
-        // TemplateWizard.Iterator.instantiate() be called asynchronously it
-        // would cause the wizard to stay visible until the bean generation process
-        // finishes. So for now just returning the package -- not a problem,
-        // JavaPersistenceGenerator.createdObjects() returns an empty set anyway.
-        // remember to wait for createBeans() to actually return!
-        // Set created = generator.createdObjects();
-        // if (created.size() == 0) {
-        //     created = Collections.singleton(SourceGroupSupport.getFolderForPackage(helper.getLocation(), helper.getPackageName()));
-        // }
         if (helper.getDBSchemaFile() != null) {//for now open persistence.xml in case of schema was used, as it's 99% will require persistence.xml update
             DataObject dObj = null;
             try {
@@ -154,9 +144,8 @@ public final class DBImportWizardDescriptor extends BaseWizardDescriptor {
                 getFolderForPackage(helper.getLocation(), helper.getPackageName(), true)));
     }
 
-    private void createModel(WizardDescriptor wiz, ProgressContributor handle) throws IOException {
+    public void createModel(ProgressContributor handle) throws IOException {
         try {
-            handle.start(1); //TODO: need the correct number of work units here
             handle.progress(NbBundle.getMessage(DBImportWizardDescriptor.class, "TXT_SavingSchema"));
             progressPanel.setText(NbBundle.getMessage(DBImportWizardDescriptor.class, "TXT_SavingSchema"));
 
@@ -173,13 +162,11 @@ public final class DBImportWizardDescriptor extends BaseWizardDescriptor {
             }
 
             String extracting = NbBundle.getMessage(DBImportWizardDescriptor.class, "TXT_ExtractingEntityClassesAndRelationships");
-
             handle.progress(extracting);
             progressPanel.setText(extracting);
 
             helper.buildBeans();
             generator.generateModel(progressPanel, helper, dbschemaFile, handle);
-
         } finally {
             handle.finish();
             SwingUtilities.invokeLater(progressPanel::close);
@@ -188,28 +175,31 @@ public final class DBImportWizardDescriptor extends BaseWizardDescriptor {
 
     @Override
     public void initialize(WizardDescriptor wizard) {
-        wizardDescriptor = wizard;
-
-        project = Templates.getProject(wizard);
-
-        panels = createPanels();
-        Wizards.mergeSteps(wizardDescriptor, panels.toArray(new WizardDescriptor.Panel[0]), createSteps());
-
-        generator = createPersistenceGenerator();
-
+        this.project = Templates.getProject(wizard);
+        generator = new DBModelGenerator(project);
         FileObject configFilesFolder = PersistenceLocation.getLocation(project);
+        this.helper = new ImportHelper(project, configFilesFolder);
 
-        helper = new ImportHelper(project, configFilesFolder, generator);
+        this.wizard = wizard;
+        panels = createPanels();
+        Wizards.mergeSteps(wizard, panels.toArray(new WizardDescriptor.Panel[0]), createSteps());
+        this.wizard.putProperty(PROP_HELPER, helper);
+    }
 
-        wizard.putProperty(PROP_HELPER, helper);
-
-        generator.init(wizard);
+    public void initialize(Project project, EntityMappings entityMappings, Optional<JavaClass> javaClass) {
+        this.project = project;
+        generator = new DBModelGenerator(project, entityMappings, javaClass);
+        FileObject configFilesFolder = PersistenceLocation.getLocation(project);
+        this.helper = new ImportHelper(project, configFilesFolder);
     }
 
     @Override
     public void uninitialize(WizardDescriptor wizard) {
         panels = null;
-        generator.uninit();
+    }
+
+    public ImportHelper getHelper() {
+        return helper;
     }
 
     private String[] createSteps() {
