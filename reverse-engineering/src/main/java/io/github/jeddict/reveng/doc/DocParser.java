@@ -91,7 +91,7 @@ public abstract class DocParser {
             if (jaxbSupport) {
                 attribute.setJaxbVariableType(JaxbVariableType.XML_ATTRIBUTE);
             }
-            updateAttributeName(attribute, name);
+            updateAttributeName(attribute, key);
         }
         return attribute;
     }

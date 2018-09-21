@@ -26,6 +26,7 @@ import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.reveng.database.DBImportWizardDescriptor;
 import io.github.jeddict.reveng.database.GenerateTablesImpl;
 import io.github.jeddict.reveng.database.ImportHelper;
+import io.github.jeddict.reveng.doc.DocOptions;
 import io.github.jeddict.reveng.doc.DocWizardDescriptor;
 import io.github.jeddict.reveng.klass.ClassWizardDescriptor;
 import static io.github.jeddict.reveng.settings.RevengPanel.isIncludeReferencedClasses;
@@ -40,13 +41,7 @@ import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.showInputDialog;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 import org.netbeans.api.db.explorer.DatabaseConnection;
 import org.netbeans.api.db.explorer.DatabaseMetaDataTransfer.Table;
 import org.netbeans.api.project.Project;
@@ -61,6 +56,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.util.lookup.ServiceProvider;
+import org.openide.windows.WindowManager;
 
 /**
  *
@@ -181,13 +177,19 @@ public class JCREProcessorImpl implements JCREProcessor {
     public void processDropedDocument(ModelerFile modelerFile, List<File> docFiles) {
         try {
             Project project = modelerFile.getProject();
+            
+            DocOptions docOptions = new DocOptions(docFiles.get(0).getName(), modelerFile.getFile().getName());
+            docOptions.setVisible(true);
+            if (docOptions.getDialogResult() != javax.swing.JOptionPane.OK_OPTION) {
+                return;
+            }
 
             DocWizardDescriptor docWizardDescriptor = new DocWizardDescriptor(
                     project,
                     docFiles.get(0).getAbsolutePath(),
-                    true,
-                    false,
-                    false
+                    docOptions.isJPASupport(),
+                    docOptions.isJSONBSupport(),
+                    docOptions.isJAXBSupport()
             );
             EntityMappings entityMappings = (EntityMappings) modelerFile.getModelerScene().getBaseElementSpec();
             docWizardDescriptor.instantiateProcess(
