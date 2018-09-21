@@ -20,7 +20,7 @@
     <a href="https://opencollective.com/imjeddict">
         <img src="https://img.shields.io/badge/donate-$-orange.svg?maxAge=2592000&amp;style=flat">
     </a>
-    <a href="https://twitter.com/strimziio">
+    <a href="https://twitter.com/imjeddict">
         <img src="https://img.shields.io/twitter/follow/imjeddict.svg?style=social&label=twitter&style=for-the-badge" alt="follow on Twitter">
     </a>
     <a href="https://www.youtube.com/imjeddict">
