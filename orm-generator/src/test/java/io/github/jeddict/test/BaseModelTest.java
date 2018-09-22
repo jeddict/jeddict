@@ -129,7 +129,8 @@ public class BaseModelTest {
                     ++lineNumber;
 
                     assertEquals(existingSourceLine, newSourceLine,
-                            Console.wrap("Failed : " + javaClass.getClazz() + " [" + fileName + "]", FG_DARK_RED)
+                            '\n'
+                            + Console.wrap("Failed : " + javaClass.getClazz() + " [" + fileName + "]", FG_DARK_RED)
                             + '\n'
                             + Console.wrap("Line number : " + lineNumber, FG_RED)
                             + '\n'
