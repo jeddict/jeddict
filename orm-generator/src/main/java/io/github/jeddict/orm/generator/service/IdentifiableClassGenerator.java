@@ -395,7 +395,7 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
         Set<AssociationOverride> sortedAssociationOverrrides
                 = new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
         sortedAssociationOverrrides.addAll(associationOverrides);
-        for (AssociationOverride associationOverride : associationOverrides) {
+        for (AssociationOverride associationOverride : sortedAssociationOverrrides) {
 
             List<JoinColumnSnippet> joinColumnsList = getJoinColumns(associationOverride.getJoinColumn(), false);
             JoinTableSnippet joinTable = getJoinTable(associationOverride.getJoinTable());
