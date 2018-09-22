@@ -1,5 +1,8 @@
 language: java
-
+cache:
+  timeout: 1000
+  directories:
+  - $HOME/.m2
 before_install:
     - git clone https://github.com/jeddict/netbeans-modeler.git ~/builds/netbeans-modeler
     - pushd ~/builds/netbeans-modeler/modeler-lib/repository/org/analytics/analytics/1.0
