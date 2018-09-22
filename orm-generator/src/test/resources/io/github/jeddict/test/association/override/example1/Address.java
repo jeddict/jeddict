@@ -2,7 +2,7 @@
  * 11.1.2 AssociationOverride Annotation
  * Example 1
  */
-package io.github.jeddict.test.association.override;
+package io.github.jeddict.test.association.override.example1;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
