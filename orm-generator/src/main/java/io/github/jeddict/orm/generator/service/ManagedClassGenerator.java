@@ -85,8 +85,10 @@ import io.github.jeddict.settings.diagram.ClassDiagramSettings;
 import java.util.ArrayList;
 import java.util.Collections;
 import static java.util.Collections.singletonList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import static java.util.stream.Collectors.toList;
 
 public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> extends ClassGenerator<T> {
@@ -489,44 +491,50 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
                 && attrHandler.getAttributeOverrides() == null) {
             attrHandler.setAttributeOverrides(new AttributeOverridesSnippet(repeatable));
         }
-        for (AttributeOverride parsedAttributeOverride : attributeOverrrides) {
-            AttributeOverrideSnippet attributeOverride = new AttributeOverrideSnippet();
-            ColumnDefSnippet columnDef = getColumnDef(parsedAttributeOverride.getColumn());
+        Set<AttributeOverride> sortedAttributeOverrides
+                = new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
+        sortedAttributeOverrides.addAll(attributeOverrrides);
+        for (AttributeOverride attributeOverride : sortedAttributeOverrides) {
+            AttributeOverrideSnippet attributeOverrideSnippet = new AttributeOverrideSnippet();
+            ColumnDefSnippet columnDef = getColumnDef(attributeOverride.getColumn());
             if (columnDef == null) {
                 continue;
             }
-            attributeOverride.setColumnDef(columnDef);
-            attributeOverride.setName(parsedAttributeOverride.getName());
-            attrHandler.getAttributeOverrides().add(attributeOverride);
+            attributeOverrideSnippet.setColumnDef(columnDef);
+            attributeOverrideSnippet.setName(attributeOverride.getName());
+            attrHandler.getAttributeOverrides().add(attributeOverrideSnippet);
         }
         if (attrHandler.getAttributeOverrides() != null && attrHandler.getAttributeOverrides().get().isEmpty()) {
             attrHandler.setAttributeOverrides(null);
         }
     }
 
-    protected void processInternalAssociationOverride(AssociationOverridesHandler assoHandler, Set<AssociationOverride> associationOverrrides) {
+    protected void processInternalAssociationOverride(AssociationOverridesHandler assoHandler, Set<AssociationOverride> associationOverrides) {
 
-        if (associationOverrrides != null && !associationOverrrides.isEmpty()
+        if (associationOverrides != null && !associationOverrides.isEmpty()
                 && assoHandler.getAssociationOverrides() == null) {
             assoHandler.setAssociationOverrides(new AssociationOverridesSnippet(repeatable));
         }
 
-        for (AssociationOverride parsedAssociationOverride : associationOverrrides) {
+        Set<AssociationOverride> sortedAssociationOverrrides
+                = new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
+        sortedAssociationOverrrides.addAll(associationOverrides);
+        for (AssociationOverride associationOverride : sortedAssociationOverrrides) {
 
-            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn(), false);
-            JoinTableSnippet joinTable = getJoinTable(parsedAssociationOverride.getJoinTable());
+            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(associationOverride.getJoinColumn(), false);
+            JoinTableSnippet joinTable = getJoinTable(associationOverride.getJoinTable());
 
             if (joinTable.isEmpty() && joinColumnsList.isEmpty()) {
                 continue;
             }
-            AssociationOverrideSnippet associationOverride = new AssociationOverrideSnippet();
-            associationOverride.setName(parsedAssociationOverride.getName());
-            associationOverride.setJoinColumns(joinColumnsList);
-            associationOverride.setJoinTable(joinTable);
+            AssociationOverrideSnippet associationOverrideSnippet = new AssociationOverrideSnippet();
+            associationOverrideSnippet.setName(associationOverride.getName());
+            associationOverrideSnippet.setJoinColumns(joinColumnsList);
+            associationOverrideSnippet.setJoinTable(joinTable);
 
-            associationOverride.setForeignKey(getForeignKey(parsedAssociationOverride.getForeignKey()));
+            associationOverrideSnippet.setForeignKey(getForeignKey(associationOverride.getForeignKey()));
 
-            assoHandler.getAssociationOverrides().add(associationOverride);
+            assoHandler.getAssociationOverrides().add(associationOverrideSnippet);
         }
         if (assoHandler.getAssociationOverrides() != null && assoHandler.getAssociationOverrides().get().isEmpty()) {
             assoHandler.setAssociationOverrides(null);
@@ -746,25 +754,28 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
     }
 
     protected AttributeOverridesSnippet processAttributeOverrides(
-            Set<AttributeOverride> parsedAttributeOverrides) {
+            Set<AttributeOverride> attributeOverrides) {
 
-        if (parsedAttributeOverrides == null || parsedAttributeOverrides.isEmpty()) {
+        if (attributeOverrides == null || attributeOverrides.isEmpty()) {
             return null;
         }
         AttributeOverridesSnippet attributeOverridesSnippet = new AttributeOverridesSnippet(repeatable);
 
-        for (AttributeOverride parsedAttributeOverride : parsedAttributeOverrides) {
+        Set<AttributeOverride> sortedAttributeOverrides
+                = new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
+        sortedAttributeOverrides.addAll(attributeOverrides);
+        for (AttributeOverride attributeOverride : sortedAttributeOverrides) {
 
-            ColumnDefSnippet columnDef = getColumnDef(parsedAttributeOverride.getColumn());
+            ColumnDefSnippet columnDef = getColumnDef(attributeOverride.getColumn());
             if (columnDef == null) {
                 continue;
             }
-            AttributeOverrideSnippet attributeOverride = new AttributeOverrideSnippet();
+            AttributeOverrideSnippet attributeOverrideSnippet = new AttributeOverrideSnippet();
 
-            attributeOverride.setColumnDef(columnDef);
-            attributeOverride.setName(parsedAttributeOverride.getName());
+            attributeOverrideSnippet.setColumnDef(columnDef);
+            attributeOverrideSnippet.setName(attributeOverride.getName());
 
-            attributeOverridesSnippet.add(attributeOverride);
+            attributeOverridesSnippet.add(attributeOverrideSnippet);
         }
 
         if (attributeOverridesSnippet.get().isEmpty()) {

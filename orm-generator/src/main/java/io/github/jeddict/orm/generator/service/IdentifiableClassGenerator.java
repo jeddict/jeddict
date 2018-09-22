@@ -98,6 +98,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 
 /**
@@ -382,29 +383,32 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
         return queryHints;
     }
 
-    protected void processAssociationOverrides(Set<AssociationOverride> parsedAssociationOverrides) {
+    protected void processAssociationOverrides(Set<AssociationOverride> associationOverrides) {
 
-        if (parsedAssociationOverrides == null
-                || parsedAssociationOverrides.isEmpty()) {
+        if (associationOverrides == null
+                || associationOverrides.isEmpty()) {
             return;
         }
 
         classDef.setAssociationOverrides(new AssociationOverridesSnippet(repeatable));
 
-        for (AssociationOverride parsedAssociationOverride : parsedAssociationOverrides) {
+        Set<AssociationOverride> sortedAssociationOverrrides
+                = new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
+        sortedAssociationOverrrides.addAll(associationOverrides);
+        for (AssociationOverride associationOverride : associationOverrides) {
 
-            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn(), false);
-            JoinTableSnippet joinTable = getJoinTable(parsedAssociationOverride.getJoinTable());
+            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(associationOverride.getJoinColumn(), false);
+            JoinTableSnippet joinTable = getJoinTable(associationOverride.getJoinTable());
 
             if ((joinTable == null || joinTable.isEmpty()) && joinColumnsList.isEmpty()) {
                 continue;
             }
-            AssociationOverrideSnippet associationOverride = new AssociationOverrideSnippet();
-            associationOverride.setName(parsedAssociationOverride.getName());
-            associationOverride.setJoinColumns(joinColumnsList);
-            associationOverride.setJoinTable(joinTable);
+            AssociationOverrideSnippet associationOverrideSnippet = new AssociationOverrideSnippet();
+            associationOverrideSnippet.setName(associationOverride.getName());
+            associationOverrideSnippet.setJoinColumns(joinColumnsList);
+            associationOverrideSnippet.setJoinTable(joinTable);
 
-            classDef.getAssociationOverrides().add(associationOverride);
+            classDef.getAssociationOverrides().add(associationOverrideSnippet);
         }
         if (classDef.getAssociationOverrides() != null && classDef.getAssociationOverrides().get().isEmpty()) {
             classDef.setAssociationOverrides(null);
