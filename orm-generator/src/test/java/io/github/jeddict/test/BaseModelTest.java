@@ -41,6 +41,15 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.openide.util.Utilities;
 
 /**
+ * Test flow :
+ * <br>
+ * - Parse the model
+ * <br>
+ * - Generates the source code
+ * <br>
+ * - Validate using java parser for compilation issue
+ * <br>
+ * - Compare with the existing source
  *
  * @author jGauravGupta
  */
