@@ -19,6 +19,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.printer.PrettyPrinter;
+import static io.github.jeddict.jcode.util.Constants.JAVA_EXT_SUFFIX;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.getEntityMapping;
 import io.github.jeddict.jpa.spec.DefaultClass;
 import io.github.jeddict.jpa.spec.Embeddable;
@@ -35,7 +36,13 @@ import io.github.jeddict.orm.generator.service.EmbeddableGenerator;
 import io.github.jeddict.orm.generator.service.EmbeddableIdClassGenerator;
 import io.github.jeddict.orm.generator.service.EntityGenerator;
 import io.github.jeddict.orm.generator.service.MappedSuperClassGenerator;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.StringReader;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import org.apache.commons.io.IOUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.openide.util.Utilities;
@@ -63,7 +70,7 @@ public class BaseModelTest {
     }
 
     private void generateClasses(EntityMappings entityMappings) throws Exception {
-        String packageName = "sample";
+        String packageName = this.getClass().getPackage().getName();
         for (Entity clazz : entityMappings.getEntity()) {
             testClass(clazz, new EntityGenerator(clazz, packageName), entityMappings);
         }
@@ -88,14 +95,46 @@ public class BaseModelTest {
     private void testClass(JavaClass javaClass, ClassGenerator generator, EntityMappings entityMappings) throws Exception {
         ClassDefSnippet classDef = generator.getClassDef();
         classDef.setJaxbSupport(entityMappings.getJaxbSupport());
-        String content = classDef.getSnippet();
-        assertNotNull(content);
+        String newSource = classDef.getSnippet();
+        assertNotNull(newSource);
 
         try {
-            CompilationUnit unit = JavaParser.parse(content);
+            CompilationUnit newUnit = JavaParser.parse(newSource);
+            assertNotNull(newUnit);
+
             PrettyPrinter prettyPrinter = new PrettyPrinter();
-            content = prettyPrinter.print(unit);
-            assertNotNull(unit);
+            newSource = prettyPrinter.print(newUnit);
+
+            InputStream existingSourceStream = this.getClass().getResourceAsStream(javaClass.getClazz() + JAVA_EXT_SUFFIX);
+            String existingSource = IOUtils.toString(existingSourceStream, UTF_8);
+
+            CompilationUnit existingUnit = JavaParser.parse(existingSource);
+            assertNotNull(existingUnit);
+
+            existingSource = prettyPrinter.print(existingUnit);
+
+            try (BufferedReader existingSourceReader = new BufferedReader(new StringReader(existingSource));
+                    BufferedReader newSourceReader = new BufferedReader(new StringReader(newSource));) {
+
+                String existingSourceLine;
+                String newSourceLine;
+                int lineNumber = 0;
+                while ((existingSourceLine = existingSourceReader.readLine()) != null && (newSourceLine = newSourceReader.readLine()) != null) {
+                   ++lineNumber;
+
+                    assertEquals(existingSourceLine, newSourceLine,
+                            "Class : " + javaClass.getClazz() + " failed"
+                            + '\n'
+                            + " Line number : " + lineNumber
+                            + '\n'
+                            + " existingSourceLine : " + '\n' + existingSourceLine
+                            + '\n'
+                            + " newSourceLine : " + '\n' + newSourceLine
+                    );
+                }
+            }
+
+            System.out.println("Class : " + javaClass.getClazz() + " passed");
         } catch (ParseProblemException ex) {
             fail(
                     "Class : "
@@ -103,7 +142,7 @@ public class BaseModelTest {
                     + '\n'
                     + "---------------------"
                     + '\n'
-                    + content
+                    + newSource
                     + '\n'
                     + "---------------------",
                     ex
