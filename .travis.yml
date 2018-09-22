@@ -1,5 +1,5 @@
 language: java
 
-before_install:
-    - git clone https://github.com/jeddict/netbeans-modeler.git ~/builds/netbeans-modeler
-    - mvn -f "~/builds/netbeans-modeler" clean install
+before_install: git clone https://github.com/jeddict/netbeans-modeler.git ~/builds/netbeans-modeler
+
+install: mvn -f "~/builds/netbeans-modeler" clean install
