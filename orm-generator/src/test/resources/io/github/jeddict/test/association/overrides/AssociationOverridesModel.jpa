@@ -36,11 +36,11 @@
         <jpa:nq e="false" name="PartTimeEmployee.findByHourlyWage">
             <jpa:query>Select p from PartTimeEmployee p where p.hourlyWage=:hourlyWage</jpa:query>
         </jpa:nq>
-        <jpa:association-override name="locker">
-            <jpa:join-column name="LCKR_ID" unique="false" nullable="true" insertable="true" updatable="true"/>
-        </jpa:association-override>
         <jpa:association-override name="address">
             <jpa:join-column name="ADDR_ID" unique="false" nullable="true" insertable="true" updatable="true"/>
+        </jpa:association-override>
+        <jpa:association-override name="locker">
+            <jpa:join-column name="LCKR_ID" unique="false" nullable="true" insertable="true" updatable="true"/>
         </jpa:association-override>
     </jpa:entity>
     <jpa:entity compositePrimaryKeyClass="AddressPK" abs="false" class="Address" v="true" jbn="false" xre="false" m="false" rootElement="_153760925004063" id="_153760933099773">
