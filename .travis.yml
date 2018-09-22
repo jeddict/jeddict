@@ -2,9 +2,9 @@ language: java
 
 before_install:
     - git clone https://github.com/jeddict/netbeans-modeler.git ~/builds/netbeans-modeler
-    - pushd "~/builds/netbeans-modeler/modeler-lib/repository/org/analytics/analytics/1.0"
+    - pushd ~/builds/netbeans-modeler/modeler-lib/repository/org/analytics/analytics/1.0
     - mvn install:install-file -Dfile=analytics-1.0.jar -DgroupId=org.analytics -DartifactId=analytics -Dversion=1.0 -Dpackaging=jar
     - popd
-    - pushd "~/builds/netbeans-modeler"
+    - pushd ~/builds/netbeans-modeler
     - mvn clean install
     - popd
