@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" pkg="com.mycompany.mavenproject27" v="2.5" rws="_14904144245061" Pws="_14904144245061" cws="_14904144245061" thm="PNBColorScheme" dbthm="DBColorScheme" sm="false" xs="false" jbs="false" id="_14736524804881" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+    <jpa:description>Entity				Employee			HR_EMP[HIRE_DATE,Salary,Last_Name,email]
+PrimaryKey				id	
+Basic String				firstName, lastName		FIRST_NAME
+Basic Boolean			active
+Basic Date				birthDate
+Basic Enum 				GenderType [Male. Female]
+Basic Lob				profilePic
+Basic Transient 			age
+Basic Version				version
+
+Basic ElementCollection			mobileNumbers,nickNames
+Embedded ElementCollection		Certification[name,issueDate],//Phone[type,areaCode,number]
+
+Relation 				11B:Employee[assignedCubicle]-Cubicle[residentEmployee],
+				MMB:Employee[projects]-Project[employees]
+				M1B Emp-Department
+SelfRelation				M1B:Employee[manager]-Employee[subordinates]
+
+Embedded 				Address[street, city, state, country, pincode]
+Nested Embedded 			Address[street, city, state, country,pincode],PinCode[mainCode,codeSuffix]
+Shared Embeddable			homeAddress,officeAddress -&gt; Address
+</jpa:description>
+    <jpa:entity lbl-ref="_14736561954113" xre="false" compositePrimaryKeyClass="EmployeePK" abs="false" class="Employee" v="true" m="false" rootElement="_14736524804881" id="_1473656190010">
+        <jpa:ts e="true"/>
+        <jpa:hc e="true"/>
+        <jpa:eq e="true"/>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" name="firstName" jbp="firstame" id="_14736561954113">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" name="lastName" id="_1473669254519280">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+            <jpa:basic attribute-type="GenderType" v="true" name="gender" id="_14736681627124">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+                <jpa:enumerated>DEFAULT</jpa:enumerated>
+            </jpa:basic>
+            <jpa:basic attribute-type="java.util.Date" v="true" name="birthDate" id="_14736681522643">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+                <jpa:temporal>DATE</jpa:temporal>
+                <jpa:column name="BIRTH_DATE" unique="false" nullable="true" insertable="true" updatable="true" length="255" precision="0" scale="0"/>
+            </jpa:basic>
+            <jpa:basic attribute-type="byte[]" v="true" name="profilePic" id="_14736682105388">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+                <jpa:lob/>
+            </jpa:basic>
+            <jpa:basic attribute-type="boolean" v="true" name="active" id="_14736681644955">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+            <jpa:many-to-one optional="true" primaryKey="false" connected-entity-id="_1473656190010" connected-attribute-id="_1473669158197235" v="true" name="manager" id="_1473669158197234">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:many-to-one>
+            <jpa:one-to-many orp="false" collection-type="java.util.List" connected-entity-id="_1473656190010" connected-attribute-id="_1473669158197234" v="true" name="subordinates" id="_1473669158197235">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:one-to-many>
+            <jpa:one-to-one own="true" orp="false" optional="true" primaryKey="false" connected-entity-id="_1473668954925" connected-attribute-id="_1473668977093154" v="true" name="assignedCubicle" id="_1473668977093153">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+                <jpa:join-table name="ACUB">
+                    <jpa:join-column name="EMP_ID" unique="false" nullable="true" insertable="true" updatable="true"/>
+                    <jpa:inverse-join-column name="AC_ID" unique="false" nullable="true" insertable="true" updatable="true"/>
+                </jpa:join-table>
+            </jpa:one-to-one>
+            <jpa:many-to-many own="true" collection-type="java.util.List" connected-entity-id="_1473669081752" connected-attribute-id="_1473669092707191" v="true" name="projects" id="_1473669092705190">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+                <jpa:join-table>
+                    <jpa:join-column name="EMPLOYEES_ID" unique="false" nullable="true" insertable="true" updatable="true"/>
+                </jpa:join-table>
+            </jpa:many-to-many>
+            <jpa:element-collection target-class="java.lang.String" collection-type="java.util.List" v="true" name="mobileNumbers" id="_14736562036924">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:element-collection>
+            <jpa:element-collection collection-type="java.util.List" connected-class-id="_1473668888686" v="true" name="certifications" id="_1473668912930150">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:element-collection>
+            <jpa:embedded connected-class-id="_1473668339069" v="true" name="homeAddress" id="_147366837660829">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+                <jpa:attribute-override name="state">
+                    <jpa:column name="HM_STATE" unique="false" nullable="true" insertable="true" updatable="true" length="255" precision="0" scale="0"/>
+                </jpa:attribute-override>
+                <jpa:attribute-override name="street">
+                    <jpa:column name="HM_STREET" unique="false" nullable="true" insertable="true" updatable="true" length="255" precision="0" scale="0"/>
+                </jpa:attribute-override>
+                <jpa:attribute-override name="city">
+                    <jpa:column name="HM_CITY" unique="false" nullable="true" insertable="true" updatable="true" length="255" precision="0" scale="0"/>
+                </jpa:attribute-override>
+                <jpa:attribute-override name="zipCode.codeSuffix">
+                    <jpa:column name="HM_CODESUFFIX" unique="false" nullable="true" insertable="true" updatable="true" length="255"/>
+                </jpa:attribute-override>
+                <jpa:attribute-override name="country">
+                    <jpa:column name="HM_COUNTRY" unique="false" nullable="true" insertable="true" updatable="true" length="255" precision="0" scale="0"/>
+                </jpa:attribute-override>
+                <jpa:attribute-override name="zipCode.maincode">
+                    <jpa:column name="HM_MAINCODE" unique="false" nullable="true" insertable="true" updatable="true" length="255"/>
+                </jpa:attribute-override>
+            </jpa:embedded>
+            <jpa:embedded connected-class-id="_1473668339069" v="true" name="officeAddress" id="_1473668844321146">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:embedded>
+            <jpa:transient attribute-type="int" v="true" name="age" id="_14736681690676">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:transient>
+            <jpa:id attribute-type="Long" v="true" name="id" id="_14736561900411">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+                <jpa:generated-value strategy="AUTO"/>
+            </jpa:id>
+            <jpa:version attribute-type="long" v="true" name="version" id="_14736681704187">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:version>
+        </jpa:attributes>
+        <jpa:nq e="false" name="manager.findAll">
+            <jpa:query>Select e from manager e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="manager.findByFirstName">
+            <jpa:query>Select e from manager e where e.firstName=:firstName</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="manager.findByBirthDate">
+            <jpa:query>Select e from manager e where e.birthDate=:birthDate</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="manager.findByGender">
+            <jpa:query>Select e from manager e where e.gender=:gender</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="manager.findByActive">
+            <jpa:query>Select e from manager e where e.active=:active</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="manager.findByProfilePic">
+            <jpa:query>Select e from manager e where e.profilePic=:profilePic</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="manager.findByAttribute1">
+            <jpa:query>Select e from manager e where e.attribute1=:attribute1</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Employee.findByLastName">
+            <jpa:query>Select e from Employee e where e.lastName=:lastName</jpa:query>
+        </jpa:nq>
+        <jpa:el/>
+        <jpa:discriminator-column/>
+    </jpa:entity>
+    <jpa:entity lbl-ref="_1473668954925151" xre="false" compositePrimaryKeyClass="CubiclePK" abs="false" class="Cubicle" v="true" m="false" rootElement="_14736524804881" id="_1473668954925">
+        <jpa:ts e="true"/>
+        <jpa:hc e="true"/>
+        <jpa:eq e="true"/>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" name="displayNumber" id="_149235457290035">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+            <jpa:one-to-one orp="false" optional="true" primaryKey="false" connected-entity-id="_1473656190010" connected-attribute-id="_1473668977093153" v="true" name="residentEmployee" id="_1473668977093154">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:one-to-one>
+            <jpa:id attribute-type="Long" v="true" name="id" id="_1473668954925151">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+                <jpa:generated-value strategy="AUTO"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Cubicle.findAll">
+            <jpa:query>Select e from Cubicle e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Cubicle.findByDisplayNumber">
+            <jpa:query>Select c from Cubicle c where c.displayNumber=:displayNumber</jpa:query>
+        </jpa:nq>
+        <jpa:el/>
+    </jpa:entity>
+    <jpa:entity lbl-ref="_148670181926531" xre="false" compositePrimaryKeyClass="ProjectPK" abs="false" class="Project" v="true" m="false" rootElement="_14736524804881" id="_1473669081752">
+        <jpa:ts e="true"/>
+        <jpa:hc e="true"/>
+        <jpa:eq e="true"/>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" name="name" id="_148670181926531">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+            <jpa:many-to-many collection-type="java.util.List" connected-entity-id="_1473656190010" connected-attribute-id="_1473669092705190" v="true" name="employees" id="_1473669092707191">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:many-to-many>
+            <jpa:id attribute-type="Long" v="true" name="id" id="_1473669081752188">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+                <jpa:generated-value strategy="AUTO"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Project.findAll">
+            <jpa:query>Select e from Project e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Project.findByName">
+            <jpa:query>Select p from Project p where p.name=:name</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Project.findByAttribute">
+            <jpa:query>Select p from Project p where p.attribute=:attribute</jpa:query>
+        </jpa:nq>
+        <jpa:el/>
+    </jpa:entity>
+    <jpa:entity lbl-ref="_14736561954113" xre="false" compositePrimaryKeyClass="ContractEmployeePK" abs="false" class="ContractEmployee" superclassId="_1473656190010" v="true" m="false" rootElement="_14736524804881" id="_1473838037466">
+        <jpa:ts e="true"/>
+        <jpa:hc e="true"/>
+        <jpa:eq e="true"/>
+        <jpa:attributes>
+            <jpa:basic attribute-type="int" v="true" name="dailyRate" id="_1473840519647120">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+            <jpa:basic attribute-type="int" v="true" name="term" id="_1473840541281121">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+        </jpa:attributes>
+        <jpa:nq e="false" name="ContractEmployee.findAll">
+            <jpa:query>Select e from ContractEmployee e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="ContractEmployee.findByDailyRate">
+            <jpa:query>Select c from ContractEmployee c where c.dailyRate=:dailyRate</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="ContractEmployee.findByTerm">
+            <jpa:query>Select c from ContractEmployee c where c.term=:term</jpa:query>
+        </jpa:nq>
+        <jpa:el/>
+    </jpa:entity>
+    <jpa:entity lbl-ref="_14736561954113" xre="false" compositePrimaryKeyClass="CompanyEmployeePK" abs="false" class="CompanyEmployee" superclassId="_1473656190010" v="true" m="false" rootElement="_14736524804881" id="_1473838040941">
+        <jpa:ts e="true"/>
+        <jpa:hc e="true"/>
+        <jpa:eq e="true"/>
+        <jpa:attributes>
+            <jpa:basic attribute-type="int" v="true" name="vacation" id="_1473840548675122">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+        </jpa:attributes>
+        <jpa:nq e="false" name="CompanyEmployee.findAll">
+            <jpa:query>Select e from CompanyEmployee e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="CompanyEmployee.findByVacation">
+            <jpa:query>Select c from CompanyEmployee c where c.vacation=:vacation</jpa:query>
+        </jpa:nq>
+        <jpa:el/>
+    </jpa:entity>
+    <jpa:entity lbl-ref="_14736561954113" xre="false" compositePrimaryKeyClass="FullTimeEmployeePK" abs="false" class="FullTimeEmployee" superclassId="_1473838040941" v="true" m="false" rootElement="_14736524804881" id="_1473838115729">
+        <jpa:ts e="true"/>
+        <jpa:hc e="true"/>
+        <jpa:eq e="true"/>
+        <jpa:attributes>
+            <jpa:basic attribute-type="long" v="true" name="salary" id="_1473840611253124">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+            <jpa:basic attribute-type="long" v="true" name="pension" id="_1473840611457125">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+        </jpa:attributes>
+        <jpa:nq e="false" name="FullTimeEmployee.findAll">
+            <jpa:query>Select e from FullTimeEmployee e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="FullTimeEmployee.findBySalary">
+            <jpa:query>Select f from FullTimeEmployee f where f.salary=:salary</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="FullTimeEmployee.findByPension">
+            <jpa:query>Select f from FullTimeEmployee f where f.pension=:pension</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="FullTimeEmployee.findByAttribute2">
+            <jpa:query>Select f from FullTimeEmployee f where f.attribute2=:attribute2</jpa:query>
+        </jpa:nq>
+        <jpa:el/>
+    </jpa:entity>
+    <jpa:entity lbl-ref="_14736561954113" xre="false" compositePrimaryKeyClass="PartTimeEmployeePK" abs="false" class="PartTimeEmployee" superclassId="_1473838040941" v="true" m="false" rootElement="_14736524804881" id="_1473838119359">
+        <jpa:ts e="true"/>
+        <jpa:hc e="true"/>
+        <jpa:eq e="true"/>
+        <jpa:attributes>
+            <jpa:basic attribute-type="float" v="true" name="hourlyRate" id="_1473840590311123">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+        </jpa:attributes>
+        <jpa:nq e="false" name="PartTimeEmployee.findAll">
+            <jpa:query>Select e from PartTimeEmployee e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="PartTimeEmployee.findByHourlyRate">
+            <jpa:query>Select p from PartTimeEmployee p where p.hourlyRate=:hourlyRate</jpa:query>
+        </jpa:nq>
+        <jpa:el/>
+    </jpa:entity>
+    <jpa:embeddable abs="false" class="Address" v="true" m="false" rootElement="_14736524804881" id="_1473668339069">
+        <jpa:ts e="true"/>
+        <jpa:hc e="true"/>
+        <jpa:eq e="true"/>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" name="street" id="_147366835683225">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" name="city" id="_147366835703626">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" name="state" id="_147366835725427">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" name="country" id="_147366835747328">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+            <jpa:embedded connected-class-id="_1473669325246" v="true" name="zipCode" id="_1473669356465329">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:embedded>
+        </jpa:attributes>
+    </jpa:embeddable>
+    <jpa:embeddable abs="false" class="Certification" v="true" m="false" rootElement="_14736524804881" id="_1473668888686">
+        <jpa:ts e="true"/>
+        <jpa:hc e="true"/>
+        <jpa:eq e="true"/>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" name="name" id="_1473668892535148">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" name="issueDate" id="_1473668892769149">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+        </jpa:attributes>
+    </jpa:embeddable>
+    <jpa:embeddable abs="false" class="ZipCode" v="true" m="false" rootElement="_14736524804881" id="_1473669325246">
+        <jpa:ts e="true"/>
+        <jpa:hc e="true"/>
+        <jpa:eq e="true"/>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" name="maincode" id="_1473669334478327">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" name="codeSuffix" id="_1473669337676328">
+                <jpa:bv/>
+                <jpa:kbv/>
+                <jpa:vbv/>
+            </jpa:basic>
+        </jpa:attributes>
+    </jpa:embeddable>
+    <jpa:snp loc="BEFORE_PACKAGE" e="true">/**
+ * This file was generated by the JPA Modeler
+ */</jpa:snp>
+    <jpa:c>
+        <ct>java.util.List</ct>
+        <ct>java.util.Set</ct>
+        <ct>java.util.Map</ct>
+        <ct>java.util.Collection</ct>
+    </jpa:c>
+    <jpa:jbdf/>
+    <jpa:jbnf/>
+    <jpa:wsl>
+        <jpa:ws n="Main" id="_14904144245061">
+            <i ref="_1473668339069" x="649" y="347">
+                <el/>
+            </i>
+            <i ref="_1473656190010" x="305" y="97">
+                <el/>
+            </i>
+            <i ref="_1473669325246" x="850" y="180">
+                <el/>
+            </i>
+            <i ref="_1473838040941" x="510" y="614">
+                <el/>
+            </i>
+            <i ref="_1473838119359" x="649" y="762">
+                <el/>
+            </i>
+            <i ref="_1473669081752" x="51" y="41">
+                <el/>
+            </i>
+            <i ref="_1473668954925" x="14" y="410">
+                <el/>
+            </i>
+            <i ref="_1473838115729" x="386" y="762">
+                <el/>
+            </i>
+            <i ref="_1473838037466" x="128" y="614">
+                <el/>
+            </i>
+            <i ref="_1473668888686" x="529" y="41">
+                <el/>
+            </i>
+        </jpa:ws>
+        <jpa:ws n="Office" id="_149235455589028">
+            <i ref="_1473656190010" x="310" y="106">
+                <el/>
+            </i>
+            <i ref="_1473669081752" x="794" y="372">
+                <el/>
+            </i>
+            <i ref="_1473668954925" x="59" y="28">
+                <el/>
+            </i>
+            <i ref="_1473668888686" x="590" y="141">
+                <el/>
+            </i>
+        </jpa:ws>
+        <jpa:ws n="EmpHierarchy" id="_149235670989737">
+            <i ref="_1473656190010" x="298" y="30">
+                <el/>
+            </i>
+            <i ref="_1473838040941" x="562" y="442">
+                <el/>
+            </i>
+            <i ref="_1473838119359" x="832" y="588">
+                <el/>
+            </i>
+            <i ref="_1473838115729" x="298" y="588">
+                <el/>
+            </i>
+            <i ref="_1473838037466" x="32" y="442">
+                <el/>
+            </i>
+        </jpa:ws>
+        <jpa:ws n="EmployeeInfo" id="_149235679723448">
+            <i ref="_1473668339069"/>
+            <i ref="_1473656190010"/>
+            <i ref="_1473669325246"/>
+        </jpa:ws>
+    </jpa:wsl>
+</jpa:entity-mappings>

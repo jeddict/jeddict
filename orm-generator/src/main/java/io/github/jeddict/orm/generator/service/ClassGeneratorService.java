@@ -88,7 +88,7 @@ public class ClassGeneratorService implements ModuleGenerator {
 
             generateMappedSuperClasses();
             generateEntityClasses();
-            generateEmbededClasses();
+            generateEmbeddableClasses();
             generateDefaultClasses();
             generateBeanClasses();
         } catch (InvalidDataException | IOException ex) {
@@ -131,7 +131,7 @@ public class ClassGeneratorService implements ModuleGenerator {
         }
     }
     
-    private void generateEmbededClasses() throws InvalidDataException, IOException {
+    private void generateEmbeddableClasses() throws InvalidDataException, IOException {
         List<Embeddable> parsedEmbeddables = entityMappings.getEmbeddable()
                 .stream()
                 .filter(e -> e.getGenerateSourceCode())

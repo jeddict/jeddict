@@ -241,7 +241,7 @@ public class ORMConverterUtil {
                 destDir.getAbsolutePath(),
                 writableSnippet.getClassHelper().getSourcePath(),
                 writableSnippet.getClassHelper().getClassNameWithSourceSuffix());
-        final FileObject fo = FileUtil.toFileObject(sourceFile);
+        final FileObject sourceFileObject = FileUtil.toFileObject(sourceFile);
        
         try {
             String content = writableSnippet.getSnippet();
@@ -250,7 +250,7 @@ public class ORMConverterUtil {
             Exceptions.printStackTrace(ex);
         }
 
-        return fo;
+        return sourceFileObject;
     }
 
     public static String getFormattedText(String textToFormat, String ext) {

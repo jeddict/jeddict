@@ -35,8 +35,7 @@ public class ClassesRepository {
         return instance;
     }
 
-    public void addWritableSnippet(
-            ClassType classType, WritableSnippet writableSnippet) {
+    public void addWritableSnippet(ClassType classType, WritableSnippet writableSnippet) {
 
         List<WritableSnippet> writableSnippets = repository.get(classType);
 
@@ -79,15 +78,14 @@ public class ClassesRepository {
     }
 
     private WritableSnippet searchSnippet(
-            List<WritableSnippet> writableSnippets, ClassHelper classHelper) {
+            List<WritableSnippet> writableSnippets,
+            ClassHelper classHelper) {
 
         for (WritableSnippet writableSnippet : writableSnippets) {
 
             ClassHelper snippetClassHelper = writableSnippet.getClassHelper();
 
-            if (snippetClassHelper.getFQClassName().equals(
-                    classHelper.getFQClassName())) {
-
+            if (snippetClassHelper.getFQClassName().equals(classHelper.getFQClassName())) {
                 return writableSnippet;
             }
         }
