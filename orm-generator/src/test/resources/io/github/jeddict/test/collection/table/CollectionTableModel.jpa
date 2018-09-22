@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" ptype="MONOLITH" ppkg="io.github.jeddict.test" epkg="collection.table" v="5.1" rws="_1537627700174431" Pws="_1537627700174431" cws="_1537627700174431" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_1537627700174430" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+    <jpa:entity compositePrimaryKeyClass="PersonPK" abs="false" class="Person" v="true" jbn="false" xre="false" m="false" rootElement="_1537627700174430" id="_1537627738423437">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="name" id="_1537627755295440">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:element-collection target-class="java.lang.String" collection-type="java.util.Set" cit="java.util.HashSet" v="true" xvt="" name="nickNames" id="_1537627813130445">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:column name="name" unique="false" nullable="true" insertable="true" updatable="true" length="50"/>
+            </jpa:element-collection>
+            <jpa:embedded connected-class-id="_1537627710584432" v="true" xvt="" name="address" id="_15376280089029">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:embedded>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="ssn" id="_1537627738423438">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Person.findAll">
+            <jpa:query>Select e from Person e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Person.findByName">
+            <jpa:query>Select p from Person p where p.name=:name</jpa:query>
+        </jpa:nq>
+        <jpa:discriminator-column/>
+    </jpa:entity>
+    <jpa:entity compositePrimaryKeyClass="WealthyPersonPK" abs="false" class="WealthyPerson" superclassId="_1537627738423437" v="true" jbn="false" xre="false" m="false" rootElement="_1537627700174430" id="_1537627775292441">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:element-collection collection-type="java.util.List" cit="java.util.ArrayList" connected-class-id="_1537627710584432" v="true" xvt="" name="vacationHomes" id="_153762801383111">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:attribute-override name="city">
+                    <jpa:column name="HOME_CITY" unique="false" nullable="true" insertable="true" updatable="true"/>
+                </jpa:attribute-override>
+                <jpa:attribute-override name="state">
+                    <jpa:column name="HOME_STATE" unique="false" nullable="true" insertable="true" updatable="true"/>
+                </jpa:attribute-override>
+                <jpa:attribute-override name="street">
+                    <jpa:column name="HOME_STREET" unique="false" nullable="true" insertable="true" updatable="true"/>
+                </jpa:attribute-override>
+                <jpa:collection-table name="HOMES"/>
+            </jpa:element-collection>
+        </jpa:attributes>
+        <jpa:nq e="false" name="WealthyPerson.findAll">
+            <jpa:query>Select e from WealthyPerson e</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:embeddable abs="false" class="Address" v="true" jbn="false" xre="false" m="false" rootElement="_1537627700174430" id="_1537627710584432">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="street" id="_1537627721835434">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="city" id="_1537627724408435">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="state" id="_1537627727721436">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+        </jpa:attributes>
+    </jpa:embeddable>
+    <jpa:snp loc="BEFORE_PACKAGE" e="true">/**
+ * 11.1.8 CollectionTable Annotation
+ */</jpa:snp>
+    <jpa:c>
+        <ct>java.util.List</ct>
+        <ct>java.util.Set</ct>
+        <ct>java.util.Map</ct>
+        <ct>java.util.Collection</ct>
+        <cit>java.util.ArrayList</cit>
+        <cit>java.util.HashSet</cit>
+        <cit>java.util.LinkedList</cit>
+        <cit>java.util.TreeSet</cit>
+        <cit>java.util.HashMap</cit>
+    </jpa:c>
+    <jpa:wsl>
+        <jpa:ws n="Main" id="_1537627700174431">
+            <i ref="_1537627775292441" x="96" y="401"/>
+            <i ref="_1537627738423437" x="182" y="113"/>
+            <i ref="_1537627710584432" x="486" y="301"/>
+        </jpa:ws>
+    </jpa:wsl>
+</jpa:entity-mappings>
