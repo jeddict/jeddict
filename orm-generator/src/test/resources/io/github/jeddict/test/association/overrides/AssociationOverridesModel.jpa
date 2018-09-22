@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" ptype="MONOLITH" ppkg="io.github.jeddict.test" epkg="association.override.example1" v="5.1" rws="_153760925004064" Pws="_153760925004064" cws="_153760925004064" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_153760925004063" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" ptype="MONOLITH" ppkg="io.github.jeddict.test" epkg="association.overrides" v="5.1" rws="_153760925004064" Pws="_153760925004064" cws="_153760925004064" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_153760925004063" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
     <jpa:mapped-superclass compositePrimaryKeyClass="EmployeePK" abs="false" class="Employee" v="true" jbn="false" xre="false" m="false" rootElement="_153760925004063" id="_153760927640965">
         <jpa:ath>jGauravGupta</jpa:ath>
         <jpa:attributes>
@@ -7,6 +7,10 @@
                 <jpa:xwm/>
                 <jpa:xm/>
             </jpa:many-to-one>
+            <jpa:one-to-one own="true" orp="false" optional="true" primaryKey="false" connected-entity-id="_1537615548849222" v="true" xvt="" name="locker" id="_1537615568125226">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:one-to-one>
             <jpa:id attribute-type="Long" v="true" xvt="" am="PROTECTED" name="id" id="_153760930699071">
                 <jpa:xwm/>
                 <jpa:xm/>
@@ -24,7 +28,6 @@
             <jpa:basic attribute-type="Float" v="true" xvt="" name="hourlyWage" id="_153760948550379">
                 <jpa:xwm/>
                 <jpa:xm/>
-                <jpa:column name="WAGE" unique="false" nullable="true" insertable="true" updatable="true" precision="0" scale="0"/>
             </jpa:basic>
         </jpa:attributes>
         <jpa:nq e="false" name="PartTimeEmployee.findAll">
@@ -33,6 +36,9 @@
         <jpa:nq e="false" name="PartTimeEmployee.findByHourlyWage">
             <jpa:query>Select p from PartTimeEmployee p where p.hourlyWage=:hourlyWage</jpa:query>
         </jpa:nq>
+        <jpa:association-override name="locker">
+            <jpa:join-column name="LCKR_ID" unique="false" nullable="true" insertable="true" updatable="true"/>
+        </jpa:association-override>
         <jpa:association-override name="address">
             <jpa:join-column name="ADDR_ID" unique="false" nullable="true" insertable="true" updatable="true"/>
         </jpa:association-override>
@@ -50,13 +56,26 @@
             <jpa:query>Select e from Address e</jpa:query>
         </jpa:nq>
     </jpa:entity>
+    <jpa:entity compositePrimaryKeyClass="LockerPK" abs="false" class="Locker" v="true" jbn="false" xre="false" m="false" rootElement="_153760925004063" id="_1537615548849222">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_1537615548849223">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value strategy="DEFAULT"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Locker.findAll">
+            <jpa:query>Select e from Locker e</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
     <jpa:snp loc="BEFORE_PACKAGE" e="true">/**&#xD;
- * 11.1.2 AssociationOverride Annotation&#xD;
- * Example 1&#xD;
+ * 11.1.3 AssociationOverrides Annotation&#xD;
  */</jpa:snp>
     <jpa:c/>
     <jpa:wsl>
         <jpa:ws n="Main" id="_153760925004064">
+            <i ref="_1537615548849222" x="632" y="90"/>
             <i ref="_153760927640965" x="307" y="139"/>
             <i ref="_153760929865667" x="174" y="371"/>
             <i ref="_153760933099773" x="588" y="337"/>

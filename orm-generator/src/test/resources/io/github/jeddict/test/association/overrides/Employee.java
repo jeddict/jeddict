@@ -1,12 +1,12 @@
 /**
- * 11.1.2 AssociationOverride Annotation
- * Example 1
+ * 11.1.3 AssociationOverrides Annotation
  */
-package io.github.jeddict.test.association.override.example1;
+package io.github.jeddict.test.association.overrides;
 
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToOne;
 import javax.persistence.Version;
 
 @MappedSuperclass
@@ -14,6 +14,9 @@ public class Employee {
 
     @Id
     protected Long id;
+
+    @OneToOne
+    private Locker locker;
 
     @ManyToOne
     protected Address address;
@@ -27,6 +30,14 @@ public class Employee {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Locker getLocker() {
+        return locker;
+    }
+
+    public void setLocker(Locker locker) {
+        this.locker = locker;
     }
 
     public Address getAddress() {
