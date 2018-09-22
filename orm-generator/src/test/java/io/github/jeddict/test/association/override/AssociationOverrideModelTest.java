@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.jeddict.test.employee;
+package io.github.jeddict.test.association.override;
 
 import io.github.jeddict.test.BaseModelTest;
 import org.junit.jupiter.api.*;
@@ -22,11 +22,11 @@ import org.junit.jupiter.api.*;
  *
  * @author jGauravGupta
  */
-public class EmployeeModelTest extends BaseModelTest {
+public class AssociationOverrideModelTest extends BaseModelTest {
 
     @Test
     void test() throws Exception {
-        testModelerFile("EmployeeModel.jpa");
+        testModelerFile("AssociationOverrideModel.jpa");
     }
 
 }

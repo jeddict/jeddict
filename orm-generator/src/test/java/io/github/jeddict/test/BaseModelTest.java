@@ -19,6 +19,9 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.printer.PrettyPrinter;
+import io.github.jeddict.jcode.console.Console;
+import static io.github.jeddict.jcode.console.Console.FG_DARK_GREEN;
+import static io.github.jeddict.jcode.console.Console.FG_RED;
 import static io.github.jeddict.jcode.util.Constants.JAVA_EXT_SUFFIX;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.getEntityMapping;
 import io.github.jeddict.jpa.spec.DefaultClass;
@@ -66,33 +69,35 @@ public class BaseModelTest {
         File file = Utilities.toFile(this.getClass().getResource(fileName).toURI());
         EntityMappings entityMappings = getEntityMapping(file);
         assertNotNull(entityMappings);
-        generateClasses(entityMappings);
+
+        fileName = fileName.substring(0, fileName.lastIndexOf('.'));
+        generateClasses(entityMappings, fileName);
     }
 
-    private void generateClasses(EntityMappings entityMappings) throws Exception {
+    private void generateClasses(EntityMappings entityMappings, String fileName) throws Exception {
         String packageName = this.getClass().getPackage().getName();
         for (Entity clazz : entityMappings.getEntity()) {
-            testClass(clazz, new EntityGenerator(clazz, packageName), entityMappings);
+            testClass(clazz, new EntityGenerator(clazz, packageName), entityMappings, fileName);
         }
         for (MappedSuperclass clazz : entityMappings.getMappedSuperclass()) {
-            testClass(clazz, new MappedSuperClassGenerator(clazz, packageName), entityMappings);
+            testClass(clazz, new MappedSuperClassGenerator(clazz, packageName), entityMappings, fileName);
         }
         for (Embeddable clazz : entityMappings.getEmbeddable()) {
-            testClass(clazz, new EmbeddableGenerator(clazz, packageName), entityMappings);
+            testClass(clazz, new EmbeddableGenerator(clazz, packageName), entityMappings, fileName);
         }
         for (DefaultClass clazz : entityMappings.getDefaultClass()) {
             if (clazz.isEmbeddable()) {
-                testClass(clazz, new EmbeddableIdClassGenerator(clazz, packageName), entityMappings);
+                testClass(clazz, new EmbeddableIdClassGenerator(clazz, packageName), entityMappings, fileName);
             } else {
-                testClass(clazz, new DefaultClassGenerator(clazz, packageName), entityMappings);
+                testClass(clazz, new DefaultClassGenerator(clazz, packageName), entityMappings, fileName);
             }
         }
         for (BeanClass clazz : entityMappings.getBeanClass()) {
-            testClass(clazz, new BeanClassGenerator(clazz, packageName), entityMappings);
+            testClass(clazz, new BeanClassGenerator(clazz, packageName), entityMappings, fileName);
         }
     }
 
-    private void testClass(JavaClass javaClass, ClassGenerator generator, EntityMappings entityMappings) throws Exception {
+    private void testClass(JavaClass javaClass, ClassGenerator generator, EntityMappings entityMappings, String fileName) throws Exception {
         ClassDefSnippet classDef = generator.getClassDef();
         classDef.setJaxbSupport(entityMappings.getJaxbSupport());
         String newSource = classDef.getSnippet();
@@ -120,31 +125,39 @@ public class BaseModelTest {
                 String newSourceLine;
                 int lineNumber = 0;
                 while ((existingSourceLine = existingSourceReader.readLine()) != null && (newSourceLine = newSourceReader.readLine()) != null) {
-                   ++lineNumber;
+                    ++lineNumber;
 
                     assertEquals(existingSourceLine, newSourceLine,
-                            "Class : " + javaClass.getClazz() + " failed"
-                            + '\n'
-                            + " Line number : " + lineNumber
-                            + '\n'
-                            + " existingSourceLine : " + '\n' + existingSourceLine
-                            + '\n'
-                            + " newSourceLine : " + '\n' + newSourceLine
+                            Console.wrap(
+                                    "Failed : " + javaClass.getClazz() + " [" + fileName + "]"
+                                    + '\n'
+                                    + " Line number : " + lineNumber
+                                    + '\n'
+                                    + " existingSourceLine : " + '\n' + existingSourceLine
+                                    + '\n'
+                                    + " newSourceLine : " + '\n' + newSourceLine,
+                                    FG_RED
+                            )
                     );
                 }
             }
 
-            System.out.println("Class : " + javaClass.getClazz() + " passed");
+            System.out.println(Console.wrap(
+                    "Passed : " + javaClass.getClazz() + " [" + fileName + "]",
+                    FG_DARK_GREEN
+            ));
         } catch (ParseProblemException ex) {
-            fail(
-                    "Class : "
-                    + javaClass.getClazz()
+            fail(Console.wrap(
+                    "Compilation Failed : "
+                    + javaClass.getClazz() + " [" + fileName + "]"
                     + '\n'
                     + "---------------------"
                     + '\n'
                     + newSource
                     + '\n'
                     + "---------------------",
+                    FG_RED
+            ),
                     ex
             );
         }
