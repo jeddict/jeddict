@@ -11,7 +11,7 @@
 <h4 align="center">Java EE 8 (Jakarta EE) & MicroProfile 2.0 application generator and modeler</h4>
 
 <p align="center">
-    <a href="https://travis-ci.org/jeddict/jeddict#">
+    <a href="https://travis-ci.org/jeddict/jeddict">
         <img src="https://travis-ci.org/jeddict/jeddict.svg?branch=master" alt="Build status">
     </a>
     <a href="https://github.com/jeddict/jeddict/releases">
@@ -101,5 +101,3 @@ Jeddict is Open Source software released under the [Apache 2.0 license](http://w
 
 
 #### If you like:heart: this project, don't forget:blush: to give us a star:star2: on GitHub!
-
-
