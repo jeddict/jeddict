@@ -111,6 +111,7 @@ public class BaseModelTest {
             PrettyPrinter prettyPrinter = new PrettyPrinter();
             newSource = prettyPrinter.print(newUnit);
 
+//            String fqn = this.getClass().getPackage().getName() +'.'+ javaClass.getClazz();
             InputStream existingSourceStream = this.getClass().getResourceAsStream(javaClass.getClazz() + JAVA_EXT_SUFFIX);
             String existingSource = IOUtils.toString(existingSourceStream, UTF_8);
 
@@ -130,7 +131,7 @@ public class BaseModelTest {
 
                     assertEquals(existingSourceLine, newSourceLine,
                             '\n'
-                            + Console.wrap("Failed : " + javaClass.getClazz() + " [" + fileName + "]", FG_DARK_RED)
+                            + Console.wrap("Failed : " + javaClass.getFQN() + " [" + fileName + "]", FG_DARK_RED)
                             + '\n'
                             + Console.wrap("Line number : " + lineNumber, FG_RED)
                             + '\n'
@@ -143,13 +144,13 @@ public class BaseModelTest {
             }
 
             System.out.println(Console.wrap(
-                    "Passed : " + javaClass.getClazz() + " [" + fileName + "]",
+                    "Passed : " + javaClass.getFQN() + " [" + fileName + "]",
                     FG_DARK_GREEN
             ));
         } catch (ParseProblemException ex) {
             fail(Console.wrap(
                     "Compilation Failed : "
-                    + javaClass.getClazz() + " [" + fileName + "]"
+                    + javaClass.getFQN() + " [" + fileName + "]"
                     + '\n'
                     + "---------------------"
                     + '\n'
