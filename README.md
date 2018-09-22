@@ -101,3 +101,4 @@ Jeddict is Open Source software released under the [Apache 2.0 license](http://w
 
 
 #### If you like:heart: this project, don't forget:blush: to give us a star:star2: on GitHub!
+
