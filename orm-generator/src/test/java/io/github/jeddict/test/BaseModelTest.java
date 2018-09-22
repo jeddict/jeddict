@@ -21,6 +21,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.printer.PrettyPrinter;
 import io.github.jeddict.jcode.console.Console;
 import static io.github.jeddict.jcode.console.Console.FG_DARK_GREEN;
+import static io.github.jeddict.jcode.console.Console.FG_DARK_RED;
 import static io.github.jeddict.jcode.console.Console.FG_RED;
 import static io.github.jeddict.jcode.util.Constants.JAVA_EXT_SUFFIX;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.getEntityMapping;
@@ -128,16 +129,14 @@ public class BaseModelTest {
                     ++lineNumber;
 
                     assertEquals(existingSourceLine, newSourceLine,
-                            Console.wrap(
-                                    "Failed : " + javaClass.getClazz() + " [" + fileName + "]"
-                                    + '\n'
-                                    + " Line number : " + lineNumber
-                                    + '\n'
-                                    + " existingSourceLine : " + '\n' + existingSourceLine
-                                    + '\n'
-                                    + " newSourceLine : " + '\n' + newSourceLine,
-                                    FG_RED
-                            )
+                            Console.wrap("Failed : " + javaClass.getClazz() + " [" + fileName + "]", FG_DARK_RED)
+                            + '\n'
+                            + Console.wrap("Line number : " + lineNumber, FG_RED)
+                            + '\n'
+                            + Console.wrap("existingSourceLine : " + existingSourceLine, FG_DARK_RED)
+                            + '\n'
+                            + Console.wrap("newSourceLine : " + newSourceLine, FG_DARK_RED)
+                            + '\n'
                     );
                 }
             }
