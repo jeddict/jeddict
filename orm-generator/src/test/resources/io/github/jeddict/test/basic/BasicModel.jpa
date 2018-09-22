@@ -21,9 +21,9 @@
         </jpa:nq>
     </jpa:entity>
     <jpa:snp loc="BEFORE_PACKAGE" e="true">/**&#xD;
-        * 11.1.6 Basic Annotation&#xD;
-        * Example 2&#xD;
-        */</jpa:snp>
+ * 11.1.6 Basic Annotation&#xD;
+ * Example 2&#xD;
+ */</jpa:snp>
     <jpa:wsl>
         <jpa:ws n="Main" id="_1537626051046412">
             <i ref="_1537626057947413" x="356" y="338"/>
