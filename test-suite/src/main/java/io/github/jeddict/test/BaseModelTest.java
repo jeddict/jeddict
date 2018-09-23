@@ -48,6 +48,7 @@ import io.github.jeddict.orm.generator.service.EmbeddableGenerator;
 import io.github.jeddict.orm.generator.service.EmbeddableIdClassGenerator;
 import io.github.jeddict.orm.generator.service.EntityGenerator;
 import io.github.jeddict.orm.generator.service.MappedSuperClassGenerator;
+import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 import io.github.jeddict.reveng.klass.ClassWizardDescriptor;
 import java.io.BufferedReader;
 import java.io.File;
@@ -101,6 +102,38 @@ public class BaseModelTest {
         fileName = fileName.substring(0, fileName.lastIndexOf('.'));
         generateClasses(entityMappings, fileName);
     }
+
+    protected void generateClasses(EntityMappings entityMappings, FileObject sourceGroup) throws Exception {
+        File sourceRoot = FileUtil.toFile(sourceGroup);
+        String packageName = this.getClass().getPackage().getName();
+        for (Entity clazz : entityMappings.getEntity()) {
+            generateClass(new EntityGenerator(clazz, packageName), entityMappings, sourceRoot);
+        }
+        for (MappedSuperclass clazz : entityMappings.getMappedSuperclass()) {
+            generateClass(new MappedSuperClassGenerator(clazz, packageName), entityMappings, sourceRoot);
+        }
+        for (Embeddable clazz : entityMappings.getEmbeddable()) {
+            generateClass(new EmbeddableGenerator(clazz, packageName), entityMappings, sourceRoot);
+        }
+        for (DefaultClass clazz : entityMappings.getDefaultClass()) {
+            if (clazz.isEmbeddable()) {
+                generateClass(new EmbeddableIdClassGenerator(clazz, packageName), entityMappings, sourceRoot);
+            } else {
+                generateClass(new DefaultClassGenerator(clazz, packageName), entityMappings, sourceRoot);
+            }
+        }
+        for (BeanClass clazz : entityMappings.getBeanClass()) {
+            generateClass(new BeanClassGenerator(clazz, packageName), entityMappings, sourceRoot);
+        }
+    }
+
+    private void generateClass(ClassGenerator generator, EntityMappings entityMappings, File sourceRoot) throws Exception {
+        ClassDefSnippet classDef = generator.getClassDef();
+        classDef.setJaxbSupport(entityMappings.getJaxbSupport());
+        classDef.getSnippet();
+        ORMConverterUtil.writeSnippet(classDef, sourceRoot);
+    }
+
 
     protected void generateClasses(EntityMappings entityMappings, String fileName) throws Exception {
         String packageName = this.getClass().getPackage().getName();
@@ -208,7 +241,7 @@ public class BaseModelTest {
             Project project = createProject();
             EntityMappings entityMappings = createEntityMappings();
 
-            FileObject src = project.getProjectDirectory().getFileObject(SRC);
+            FileObject src = getJavaSourceGroup(project);
 
             String packageName = this.getClass().getPackage().getName();
             Set<String> classFqns = new HashSet<>();
@@ -233,7 +266,7 @@ public class BaseModelTest {
             ClassWizardDescriptor descriptor = new ClassWizardDescriptor();
             descriptor.loadSource(getProgressReporter(), entityMappings, src, classFqns, false);
 
-            generateClasses(entityMappings, null);
+            generateClasses(entityMappings, (String) null);
         } catch (Exception ex) {
             fail(Arrays.toString(classes) + " reverse engineering failed", ex);
         }
@@ -288,6 +321,10 @@ public class BaseModelTest {
         Project project = ProjectManager.getDefault().findProject(projectFileObject);
         FileObject src = FileUtil.createFolder(projectFileObject, SRC);
         return project;
+    }
+
+    protected FileObject getJavaSourceGroup(Project project) {
+        return project.getProjectDirectory().getFileObject(SRC);
     }
 
     protected ProgressReporter getProgressReporter() {
