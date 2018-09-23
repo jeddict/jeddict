@@ -24,6 +24,7 @@ import static io.github.jeddict.reveng.doc.DocSetupPanelVisual.JPA_SUPPORT;
 import static io.github.jeddict.reveng.doc.DocSetupPanelVisual.JSONB_SUPPORT;
 import static io.github.jeddict.reveng.doc.DocSetupPanelVisual.JSON_FILE;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -79,7 +80,12 @@ public final class DocWizardDescriptor extends BaseWizardDescriptor {
     public DocWizardDescriptor() {
     }
 
-    public DocWizardDescriptor(Project project, String docFileLocation, boolean jpaSupport, boolean jsonbSupport, boolean jaxbSupport) {
+    public DocWizardDescriptor(
+            Project project,
+            String docFileLocation,
+            boolean jpaSupport,
+            boolean jsonbSupport,
+            boolean jaxbSupport) {
         this.project = project;
         this.docFileLocation = docFileLocation;
         if (docFileLocation.toLowerCase().endsWith("json")) {
@@ -148,17 +154,16 @@ public final class DocWizardDescriptor extends BaseWizardDescriptor {
         final AggregateProgressHandle handle = AggregateProgressFactory.createHandle(title, new ProgressContributor[]{progressContributor}, null, null);
         final ProgressPanel progressPanel = new ProgressPanel();
         final JComponent progressComponent = AggregateProgressFactory.createProgressComponent(handle);
-        reporter = new ProgressReporterDelegate(progressContributor, progressPanel);
+        ProgressReporterDelegate reporter = new ProgressReporterDelegate(progressContributor, progressPanel);
         final Runnable r = () -> {
-            File jsonFile = new File(docFileLocation);
-            try (Reader reader = new FileReader(jsonFile)) {
+            try {
                 handle.start();
                 int progressStepCount = getProgressStepCount(10);
                 progressContributor.start(progressStepCount);
                 if (entityMappings != null) {
-                    parser.generateModel(entityMappings, reader);
+                    generate(reporter, entityMappings);
                 } else {
-                    EntityMappings entityMappingsResult = parser.generateModel(entityMappings, reader);
+                    EntityMappings entityMappingsResult = generate(reporter, entityMappings);
                     JPAModelerUtil.createNewModelerFile(entityMappingsResult, packageFileObject, fileName, true, true);
                 }
                 progressContributor.progress(progressStepCount);
@@ -193,6 +198,13 @@ public final class DocWizardDescriptor extends BaseWizardDescriptor {
                 }
             }
         });
+    }
+
+    public EntityMappings generate(final ProgressReporter reporter, final EntityMappings entityMappings) throws FileNotFoundException, IOException, ProcessInterruptedException {
+        this.reporter = reporter;
+        File file = new File(docFileLocation);
+        Reader reader = new FileReader(file);
+        return parser.generateModel(entityMappings, reader);
     }
 
     public static int getProgressStepCount(int baseCount) {

@@ -85,6 +85,8 @@ import org.openide.util.Utilities;
  */
 public class BaseModelTest {
 
+    private static final String SRC = "src/main/java";
+
     protected void testModelerFile(String fileName) throws Exception {
         File file = Utilities.toFile(this.getClass().getResource(fileName).toURI());
         EntityMappings entityMappings = getEntityMapping(file);
@@ -197,34 +199,10 @@ public class BaseModelTest {
 
     protected void reverseEngineeringTest(String... classes) {
         try {
-            NbTestCase nbtest = new NbTestCase(this.getClass().getSimpleName()) {
-            };
-            nbtest.clearWorkDir();
-            FileObject projectFileObject = FileUtil.toFileObject(nbtest.getWorkDir());
-            writeFile(projectFileObject,
-                    "pom.xml",
-                    "<project xmlns='http://maven.apache.org/POM/4.0.0'>"
-                    + "  <modelVersion>4.0.0</modelVersion>"
-                    + "  <groupId>grp</groupId>"
-                    + "  <artifactId>art</artifactId>"
-                    + "  <packaging>jar</packaging>"
-                    + "  <version>1.0-SNAPSHOT</version>"
-                    + "  <name>Test</name>"
-                    + "  <dependencies>\n"
-                    + "      <dependency>\n"
-                    + "          <groupId>javax.persistence</groupId>\n"
-                    + "          <artifactId>javax.persistence-api</artifactId>\n"
-                    + "          <version>2.2</version>\n"
-                    + "      </dependency>\n"
-                    + "  </dependencies>\n"
-                    + "  <properties>\n"
-                    + "      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\n"
-                    + "      <maven.compiler.source>1.8</maven.compiler.source>\n"
-                    + "      <maven.compiler.target>1.8</maven.compiler.target>\n"
-                    + "  </properties>"
-                    + "</project>");
-            Project project = ProjectManager.getDefault().findProject(projectFileObject);
-            FileObject src = FileUtil.createFolder(projectFileObject, "src/main/java");
+            Project project = createProject();
+            EntityMappings entityMappings = createEntityMappings();
+
+            FileObject src = project.getProjectDirectory().getFileObject(SRC);
 
             String packageName = this.getClass().getPackage().getName();
             Set<String> classFqns = new HashSet<>();
@@ -246,19 +224,56 @@ public class BaseModelTest {
                 classFileObject.copy(classPackage, clazz, JAVA_EXT);
             }
 
-            EntityMappings entityMappings = EntityMappings.getNewInstance(JPAModelerUtil.getModelerFileVersion());
-            entityMappings.setEntityPackage(packageName);
-            boolean includeReference = false;
-
             ClassWizardDescriptor descriptor = new ClassWizardDescriptor();
-            ProgressReporter reporter = (message, index) -> System.out.println(wrap(message, FG_DARK_YELLOW));
-            descriptor.loadSource(reporter, entityMappings, src, classFqns, includeReference);
+            descriptor.loadSource(getProgressReporter(), entityMappings, src, classFqns, false);
+
             generateClasses(entityMappings, null);
         } catch (Exception ex) {
             fail(Arrays.toString(classes) + " reverse engineering failed", ex);
         }
     }
 
+    protected EntityMappings createEntityMappings() throws IOException {
+        String packageName = this.getClass().getPackage().getName();
+        EntityMappings entityMappings = EntityMappings.getNewInstance(JPAModelerUtil.getModelerFileVersion());
+        entityMappings.setEntityPackage(packageName);
+        return entityMappings;
+    }
+    protected Project createProject() throws IOException {
+        NbTestCase nbtest = new NbTestCase(this.getClass().getSimpleName()) {
+        };
+        nbtest.clearWorkDir();
+        FileObject projectFileObject = FileUtil.toFileObject(nbtest.getWorkDir());
+        writeFile(projectFileObject,
+                "pom.xml",
+                "<project xmlns='http://maven.apache.org/POM/4.0.0'>"
+                + "  <modelVersion>4.0.0</modelVersion>"
+                + "  <groupId>grp</groupId>"
+                + "  <artifactId>art</artifactId>"
+                + "  <packaging>jar</packaging>"
+                + "  <version>1.0-SNAPSHOT</version>"
+                + "  <name>Test</name>"
+                + "  <dependencies>"
+                + "      <dependency>"
+                + "          <groupId>javax.persistence</groupId>"
+                + "          <artifactId>javax.persistence-api</artifactId>"
+                + "          <version>2.2</version>"
+                + "      </dependency>"
+                + "  </dependencies>"
+                + "  <properties>"
+                + "      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>"
+                + "      <maven.compiler.source>1.8</maven.compiler.source>"
+                + "      <maven.compiler.target>1.8</maven.compiler.target>"
+                + "  </properties>"
+                + "</project>");
+        Project project = ProjectManager.getDefault().findProject(projectFileObject);
+        FileObject src = FileUtil.createFolder(projectFileObject, SRC);
+        return project;
+    }
+
+    protected ProgressReporter getProgressReporter() {
+        return (message, index) -> System.out.println(wrap(message, FG_DARK_YELLOW));
+    }
     /**
      * Create a new data file with specified initial contents.No file events
      * should be fired until the resulting file is complete (see
