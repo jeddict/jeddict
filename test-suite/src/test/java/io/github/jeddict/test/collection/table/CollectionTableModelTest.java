@@ -25,8 +25,17 @@ import org.junit.jupiter.api.*;
 public class CollectionTableModelTest extends BaseModelTest {
 
     @Test
-    void test() throws Exception {
+    void testGenerator() throws Exception {
         testModelerFile("CollectionTableModel.jpa");
+    }
+
+//    @Test
+    void testReveng() throws Exception {
+        reverseEngineeringTest(
+                "Address",
+                "Person",
+                "WealthyPerson"
+        );
     }
 
 }

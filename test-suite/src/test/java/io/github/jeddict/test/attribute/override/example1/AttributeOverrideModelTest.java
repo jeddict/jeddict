@@ -25,8 +25,16 @@ import org.junit.jupiter.api.*;
 public class AttributeOverrideModelTest extends BaseModelTest {
 
     @Test
-    void test() throws Exception {
+    void testGenerator() throws Exception {
         testModelerFile("AttributeOverrideModel.jpa");
+    }
+
+    @Test
+    void testReveng() throws Exception {
+        reverseEngineeringTest(
+                "Employee",
+                "PartTimeEmployee"
+        );
     }
 
 }

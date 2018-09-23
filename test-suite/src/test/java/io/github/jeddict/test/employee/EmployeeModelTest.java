@@ -25,8 +25,24 @@ import org.junit.jupiter.api.*;
 public class EmployeeModelTest extends BaseModelTest {
 
     @Test
-    void test() throws Exception {
+    void testGenerator() throws Exception {
         testModelerFile("EmployeeModel.jpa");
+    }
+
+//    @Test
+    void testReveng() throws Exception {
+        reverseEngineeringTest(
+                "Address",
+                "Certification",
+                "CompanyEmployee",
+                "ContractEmployee",
+                "Cubicle",
+                "Employee",
+                "FullTimeEmployee",
+                "PartTimeEmployee",
+                "Project",
+                "ZipCode"
+        );
     }
 
 }

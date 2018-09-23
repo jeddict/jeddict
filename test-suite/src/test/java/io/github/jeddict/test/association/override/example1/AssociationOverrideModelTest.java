@@ -25,8 +25,18 @@ import org.junit.jupiter.api.*;
 public class AssociationOverrideModelTest extends BaseModelTest {
 
     @Test
-    void test() throws Exception {
+    void testGenerator() throws Exception {
         testModelerFile("AssociationOverrideModel.jpa");
     }
+
+    @Test
+    void testReveng() throws Exception {
+        reverseEngineeringTest(
+                "Address",
+                "Employee",
+                "PartTimeEmployee"
+        );
+    }
+
 
 }

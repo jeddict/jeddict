@@ -25,8 +25,15 @@ import org.junit.jupiter.api.*;
 public class BasicModelTest extends BaseModelTest {
 
     @Test
-    void test() throws Exception {
+    void testGenerator() throws Exception {
         testModelerFile("BasicModel.jpa");
+    }
+
+    @Test
+    void testReveng() throws Exception {
+        reverseEngineeringTest(
+                "Student"
+        );
     }
 
 }
