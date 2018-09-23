@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" ptype="MONOLITH" ppkg="io.github.jeddict.jpa" epkg="attribute.override.example1" v="5.1" rws="_153760925004064" Pws="_153760925004064" cws="_153760925004064" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_153760925004063" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+    <jpa:mapped-superclass compositePrimaryKeyClass="EmployeePK" abs="false" class="Employee" v="true" jbn="false" xre="false" m="false" rootElement="_153760925004063" id="_153760927640965">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="address" id="_1537619649925295">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:id attribute-type="Long" v="true" xvt="" am="PROTECTED" name="id" id="_153760930699071">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value/>
+            </jpa:id>
+            <jpa:version attribute-type="long" v="true" xvt="" am="PROTECTED" name="version" id="_153760931344472">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:version>
+        </jpa:attributes>
+    </jpa:mapped-superclass>
+    <jpa:entity compositePrimaryKeyClass="PartTimeEmployeePK" abs="false" class="PartTimeEmployee" superclassId="_153760927640965" v="true" jbn="false" xre="false" m="false" rootElement="_153760925004063" id="_153760929865667">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="Float" v="true" xvt="" name="hourlyWage" id="_153760948550379">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+        </jpa:attributes>
+        <jpa:nq e="false" name="PartTimeEmployee.findAll">
+            <jpa:query>Select e from PartTimeEmployee e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="PartTimeEmployee.findByHourlyWage">
+            <jpa:query>Select p from PartTimeEmployee p where p.hourlyWage=:hourlyWage</jpa:query>
+        </jpa:nq>
+        <jpa:attribute-override name="address">
+            <jpa:column name="ADDR" unique="false" nullable="true" insertable="true" updatable="true"/>
+        </jpa:attribute-override>
+    </jpa:entity>
+    <jpa:snp loc="BEFORE_PACKAGE" e="true">/**&#xD;
+ * 11.1.4 AttributeOverride Annotation&#xD;
+ * Example 1&#xD;
+ */</jpa:snp>
+    <jpa:c/>
+    <jpa:wsl>
+        <jpa:ws n="Main" id="_153760925004064">
+            <i ref="_153760927640965" x="307" y="139"/>
+            <i ref="_153760929865667" x="174" y="371"/>
+        </jpa:ws>
+    </jpa:wsl>
+</jpa:entity-mappings>
