@@ -44,7 +44,7 @@ public class DocumentReverseEngineeringTest extends BaseModelTest {
     }
 
     private void parseDocument(String name) throws Exception {
-        Project project = createProject();
+        Project project = createProject("document-reverse-engineering-test");
         EntityMappings entityMappings = createEntityMappings();
 
         boolean jpaSupport = true;

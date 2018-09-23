@@ -61,10 +61,17 @@ import java.io.StringReader;
 import java.net.URISyntaxException;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.Arrays;
+import static java.util.Collections.singletonList;
 import java.util.HashSet;
 import java.util.Set;
 import javax.xml.bind.JAXBException;
 import org.apache.commons.io.IOUtils;
+import org.apache.maven.shared.invoker.DefaultInvocationRequest;
+import org.apache.maven.shared.invoker.DefaultInvoker;
+import org.apache.maven.shared.invoker.InvocationRequest;
+import org.apache.maven.shared.invoker.InvocationResult;
+import org.apache.maven.shared.invoker.Invoker;
+import org.apache.maven.shared.invoker.MavenInvocationException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -74,7 +81,6 @@ import org.netbeans.junit.NbTestCase;
 import org.netbeans.modules.j2ee.persistence.wizard.jpacontroller.ProgressReporter;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
-import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
 
 
@@ -238,7 +244,7 @@ public class BaseModelTest {
 
     protected void reverseEngineeringTest(String... classes) {
         try {
-            Project project = createProject();
+            Project project = createProject("reverse-engineering-test");
             EntityMappings entityMappings = createEntityMappings();
 
             FileObject src = getJavaSourceGroup(project);
@@ -291,33 +297,12 @@ public class BaseModelTest {
         throw new IllegalStateException("Unable to load file : " + fileName);
     }
 
-    protected Project createProject() throws IOException {
-        NbTestCase nbtest = new NbTestCase(this.getClass().getSimpleName()) {
+    protected Project createProject(String appName) throws IOException {
+        NbTestCase nbtest = new NbTestCase(appName) {
         };
         nbtest.clearWorkDir();
         FileObject projectFileObject = FileUtil.toFileObject(nbtest.getWorkDir());
-        writeFile(projectFileObject,
-                "pom.xml",
-                "<project xmlns='http://maven.apache.org/POM/4.0.0'>"
-                + "  <modelVersion>4.0.0</modelVersion>"
-                + "  <groupId>grp</groupId>"
-                + "  <artifactId>art</artifactId>"
-                + "  <packaging>jar</packaging>"
-                + "  <version>1.0-SNAPSHOT</version>"
-                + "  <name>Test</name>"
-                + "  <dependencies>"
-                + "      <dependency>"
-                + "          <groupId>javax.persistence</groupId>"
-                + "          <artifactId>javax.persistence-api</artifactId>"
-                + "          <version>2.2</version>"
-                + "      </dependency>"
-                + "  </dependencies>"
-                + "  <properties>"
-                + "      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>"
-                + "      <maven.compiler.source>1.8</maven.compiler.source>"
-                + "      <maven.compiler.target>1.8</maven.compiler.target>"
-                + "  </properties>"
-                + "</project>");
+        writeFile(projectFileObject, "pom.xml", getPom(appName));
         Project project = ProjectManager.getDefault().findProject(projectFileObject);
         FileObject src = FileUtil.createFolder(projectFileObject, SRC);
         return project;
@@ -358,4 +343,70 @@ public class BaseModelTest {
         }
         return root.getFileObject(path);
     }
+
+    protected InvocationResult fireMavenBuild(Project project) {
+        String mavenHome = System.getenv("M2_HOME");
+        InvocationRequest request = new DefaultInvocationRequest();
+        request.setPomFile(new File(project.getProjectDirectory().getPath() + "/pom.xml"));
+        request.setGoals(singletonList("install"));
+        Invoker invoker = new DefaultInvoker();
+        invoker.setMavenHome(new File(mavenHome));
+
+        InvocationResult result = null;
+        try {
+            result = invoker.execute(request);
+            assertEquals(0, result.getExitCode(), "Maven build failed");
+        } catch (MavenInvocationException ex) {
+            ex.printStackTrace();
+            fail("Maven build failed", ex);
+        }
+        return result;
+    }
+
+    private String getPom(String appName) {
+        return POM.replace("${applicationName}", appName);
+    }
+
+    private static final String POM = "<project xmlns='http://maven.apache.org/POM/4.0.0'>\n"
+            + "  <modelVersion>4.0.0</modelVersion>\n"
+            + "  <groupId>io.github.jeddict</groupId>\n"
+            + "  <artifactId>${applicationName}</artifactId>\n"
+            + "  <packaging>war</packaging>\n"
+            + "  <version>1.0-SNAPSHOT</version>\n"
+            + "  <name>${applicationName}</name>\n"
+            + "  <properties>\n"
+            + "      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\n"
+            + "      <maven.compiler.source>1.8</maven.compiler.source>\n"
+            + "      <maven.compiler.target>1.8</maven.compiler.target>\n"
+            + "  </properties>\n"
+            + "  <dependencies>\n"
+            + "      <dependency>\n"
+            + "          <groupId>javax</groupId>\n"
+            + "          <artifactId>javaee-web-api</artifactId>\n"
+            + "          <version>8.0</version>\n"
+            + "          <scope>provided</scope>\n"
+            + "      </dependency>\n"
+            + "  </dependencies>\n"
+            + "  <build>\n"
+            + "      <plugins>\n"
+            + "          <plugin>\n"
+            + "              <groupId>org.apache.maven.plugins</groupId>\n"
+            + "              <artifactId>maven-compiler-plugin</artifactId>\n"
+            + "              <version>3.8.0</version>\n"
+            + "              <configuration>\n"
+            + "                  <source>${maven.compiler.source}</source>\n"
+            + "                  <target>${maven.compiler.target}</target>\n"
+            + "              </configuration>\n"
+            + "          </plugin>\n"
+            + "          <plugin>\n"
+            + "              <groupId>org.apache.maven.plugins</groupId>\n"
+            + "              <artifactId>maven-war-plugin</artifactId>\n"
+            + "              <version>3.2.2</version>\n"
+            + "              <configuration>\n"
+            + "                  <failOnMissingWebXml>false</failOnMissingWebXml>\n"
+            + "              </configuration>\n"
+            + "          </plugin>\n"
+            + "      </plugins>\n"
+            + "  </build>\n"
+            + "</project>";
 }
