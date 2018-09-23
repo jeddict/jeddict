@@ -57,10 +57,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.net.URISyntaxException;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import javax.xml.bind.JAXBException;
 import org.apache.commons.io.IOUtils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -71,6 +73,7 @@ import org.netbeans.junit.NbTestCase;
 import org.netbeans.modules.j2ee.persistence.wizard.jpacontroller.ProgressReporter;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
 
 
@@ -88,8 +91,7 @@ public class BaseModelTest {
     private static final String SRC = "src/main/java";
 
     protected void testModelerFile(String fileName) throws Exception {
-        File file = Utilities.toFile(this.getClass().getResource(fileName).toURI());
-        EntityMappings entityMappings = getEntityMapping(file);
+        EntityMappings entityMappings = loadEntityMappings(fileName);
         assertNotNull(entityMappings);
 
         fileName = fileName.substring(0, fileName.lastIndexOf('.'));
@@ -239,6 +241,19 @@ public class BaseModelTest {
         entityMappings.setEntityPackage(packageName);
         return entityMappings;
     }
+
+    protected EntityMappings loadEntityMappings(String fileName) {
+        try {
+            File file = Utilities.toFile(this.getClass().getResource(fileName).toURI());
+            return getEntityMapping(file);
+        } catch (JAXBException ex) {
+            fail(fileName + " file jaxb parsing error", ex);
+        } catch (URISyntaxException ex) {
+            fail(fileName + " file uri syntax error", ex);
+        }
+        throw new IllegalStateException("Unable to load file : " + fileName);
+    }
+
     protected Project createProject() throws IOException {
         NbTestCase nbtest = new NbTestCase(this.getClass().getSimpleName()) {
         };
