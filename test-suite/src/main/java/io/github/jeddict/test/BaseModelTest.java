@@ -78,13 +78,17 @@ import org.openide.util.Utilities;
 
 
 /**
- * Test floutil - PaUtilitiesdel
+ * Test flow :
+ * <br>
+ * - Parse the model
  * <br>
  * - Generates the source code
  * <br>
  * - Validate using java parser for compilation issue
  * <br>
- * - Compthor jGauravGupta
+ * - Compare with the existing source
+ *
+ * @author jGauravGupta
  */
 public class BaseModelTest {
 
