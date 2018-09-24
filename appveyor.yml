@@ -16,9 +16,9 @@ install:
   - cmd: mvn --version
   - cmd: java -version
   - cmd: git clone https://github.com/jeddict/netbeans-modeler.git ~/builds/netbeans-modeler
-  - cmd: pushd "~/builds/netbeans-modeler/modeler-lib/repository/org/analytics/analytics/1.0"
-  - cmd: mvn install:install-file -Dfile=analytics-1.0.jar -DgroupId=org.analytics -DartifactId=analytics -Dversion=1.0 -Dpackaging=jar
-  - cmd: popd
+#  - cmd: pushd "~/builds/netbeans-modeler/modeler-lib/repository/org/analytics/analytics/1.0"
+#  - cmd: mvn install:install-file -Dfile=analytics-1.0.jar -DgroupId=org.analytics -DartifactId=analytics -Dversion=1.0 -Dpackaging=jar
+#  - cmd: popd
   - cmd: pushd "~/builds/netbeans-modeler"
   - cmd: mvn clean install
   - cmd: popd
