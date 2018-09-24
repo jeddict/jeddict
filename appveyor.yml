@@ -1,14 +1,12 @@
 version: '{build}'
 environment:
-  MAVEN_VERSION: 3.5.4
+  MAVEN_VERSION: 3.5.0
 install:
   - ps: |
       Add-Type -AssemblyName System.IO.Compression.FileSystem
-      if (!(Test-Path -Path "C:\maven\apache-maven-%MAVEN_VERSION%" )) {
-        (new-object System.Net.WebClient).DownloadFile(
-          'http://www-us.apache.org/dist/maven/maven-3/%MAVEN_VERSION%/binaries/apache-maven-%MAVEN_VERSION%-bin.zip',
-          'C:\maven-bin.zip'
-        )
+      if (!(Test-Path -Path "C:\maven" )) {
+        Write-Host "Downloading Maven $env:MAVEN_VERSION"
+        (new-object System.Net.WebClient).DownloadFile("https://repo1.maven.org/maven2/org/apache/maven/apache-maven/$env:MAVEN_VERSION/apache-maven-$env:MAVEN_VERSION-bin.zip", 'C:\maven-bin.zip')
         [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\maven-bin.zip", "C:\maven")
       }
   - cmd: SET M2_HOME=C:\maven\apache-maven-%MAVEN_VERSION%
