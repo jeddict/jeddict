@@ -41,9 +41,13 @@ import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static javax.swing.JOptionPane.YES_NO_OPTION;
+import static javax.swing.JOptionPane.YES_OPTION;
+import static javax.swing.JOptionPane.showConfirmDialog;
 import static javax.swing.JOptionPane.showInputDialog;
 import org.netbeans.api.db.explorer.DatabaseConnection;
 import org.netbeans.api.db.explorer.DatabaseMetaDataTransfer.Table;
+import static org.netbeans.api.java.classpath.ClassPath.EMPTY;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.modeler.core.ModelerFile;
@@ -117,15 +121,18 @@ public class JCREProcessorImpl implements JCREProcessor {
      * Drop classes in existing diagram
      *
      * @param modelerFile
-     * @param entityFiles
+     * @param javaClasses
      */
     @Override
-    public void processDropedClasses(ModelerFile modelerFile, List<File> entityFiles) {
+    public void processDropedClasses(ModelerFile modelerFile, List<File> javaClasses) {
+        if (!consent("java classes")) {
+            return;
+        }
 
         Project project = modelerFile.getProject();
         ClassWizardDescriptor classWizardDescriptor = new ClassWizardDescriptor(project);
         List<FileObject> fileObjects
-                = entityFiles
+                = javaClasses
                         .stream()
                         .map(FileUtil::toFileObject)
                         .collect(toList());
@@ -209,6 +216,11 @@ public class JCREProcessorImpl implements JCREProcessor {
     @Override
     public void processDropedTables(ModelerFile modelerFile, List<Table> tables, Optional<JavaClass> javaClass) {
         try {
+            if (!consent("db tables"
+                    + (javaClass.isPresent() ? " in " + javaClass.get().getClazz() + " Class" : EMPTY))) {
+                return;
+            }
+
             EntityMappings entityMappings = (EntityMappings) modelerFile.getModelerScene().getBaseElementSpec();
             Project project = modelerFile.getProject();
             SourceGroup sourceGroup = findSourceGroupForFile(modelerFile.getFileObject());
@@ -251,6 +263,15 @@ public class JCREProcessorImpl implements JCREProcessor {
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
         }
+    }
+
+    private static boolean consent(String param) {
+        return YES_OPTION == showConfirmDialog(
+                WindowManager.getDefault().getMainWindow(),
+                String.format("Would You like to import %s ?", param),
+                "Import file",
+                YES_NO_OPTION
+        );
     }
 
 }
