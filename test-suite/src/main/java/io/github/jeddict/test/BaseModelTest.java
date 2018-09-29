@@ -341,26 +341,25 @@ public class BaseModelTest {
     }
 
     protected InvocationResult fireMavenBuild(Project project, List<String> goals, List<String> profiles, Properties properties) {
-        String mavenHome = System.getenv("M2_HOME");
-        if (mavenHome == null) {
-            mavenHome = System.getenv("MAVEN_HOME");
-        }
-        InvocationRequest request = new DefaultInvocationRequest();
-        request.setPomFile(new File(project.getProjectDirectory().getPath() + "/pom2.xml"));
-        System.out.println("Project : " + request.getPomFile().getAbsolutePath());
-        request.setGoals(goals);
-        request.setProfiles(profiles);
-        request.setProperties(properties);
-
-        Invoker invoker = new DefaultInvoker();
-        invoker.setMavenHome(new File(mavenHome));
-        System.out.println("Maven Home : " + mavenHome);
-
         InvocationResult result = null;
         try {
+            String mavenHome = System.getenv("M2_HOME");
+            if (mavenHome == null) {
+                mavenHome = System.getenv("MAVEN_HOME");
+            }
+            InvocationRequest request = new DefaultInvocationRequest();
+            request.setPomFile(new File(project.getProjectDirectory().getPath() + "/pom.xml"));
+            System.out.println("Project : " + request.getPomFile().getAbsolutePath());
+            request.setGoals(goals);
+            request.setProfiles(profiles);
+            request.setProperties(properties);
+
+            Invoker invoker = new DefaultInvoker();
+            invoker.setMavenHome(new File(mavenHome));
+            System.out.println("Maven Home : " + mavenHome);
             result = invoker.execute(request);
             assertEquals(0, result.getExitCode(), "Maven build failed : " + result.getExecutionException().getMessage());
-        } catch (MavenInvocationException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
             fail("Maven build failed", ex);
         }
