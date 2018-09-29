@@ -69,6 +69,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import javax.xml.bind.JAXBException;
@@ -344,42 +345,42 @@ public class BaseModelTest {
         return root.getFileObject(path);
     }
 
-    protected InvocationResult fireMavenBuild(Project project, List<String> goals, List<String> profiles, Properties properties) {
-        InvocationResult result = null;
-        try {
-            String mavenHome = System.getenv("M2_HOME");
-            if (mavenHome == null) {
-                mavenHome = System.getenv("MAVEN_HOME");
-            }
-            InvocationRequest request = new DefaultInvocationRequest();
-            request.setPomFile(new File(project.getProjectDirectory().getPath() + "/pom.xml"));
-            System.out.println("Project : " + request.getPomFile().getAbsolutePath());
-            request.setGoals(goals);
-            request.setProfiles(profiles);
-            request.setProperties(properties);
+//    protected InvocationResult fireMavenBuild(Project project, List<String> goals, List<String> profiles, Properties properties) {
+//        InvocationResult result = null;
+//        try {
+//            String mavenHome = System.getenv("M2_HOME");
+//            if (mavenHome == null) {
+//                mavenHome = System.getenv("MAVEN_HOME");
+//            }
+//            InvocationRequest request = new DefaultInvocationRequest();
+//            request.setPomFile(new File(project.getProjectDirectory().getPath() + "/pom.xml"));
+//            System.out.println("Project : " + request.getPomFile().getAbsolutePath());
+//            request.setGoals(goals);
+//            request.setProfiles(profiles);
+//            request.setProperties(properties);
+//
+//            Invoker invoker = new DefaultInvoker();
+//            invoker.setMavenHome(new File(mavenHome));
+//            System.out.println("Maven Home : " + mavenHome);
+//            result = invoker.execute(request);
+//            assertEquals(0, result.getExitCode(), "Maven build failed : " + result.getExecutionException().getMessage());
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//            fail("Maven build failed", ex);
+//        }
+//        return result;
+//    }
 
-            Invoker invoker = new DefaultInvoker();
-            invoker.setMavenHome(new File(mavenHome));
-            System.out.println("Maven Home : " + mavenHome);
-            result = invoker.execute(request);
-            if (result == null) {
-                fireMavenProcess(project, goals, profiles, properties);
-            } else {
-                assertEquals(0, result.getExitCode(), "Maven build failed : " + result.getExecutionException().getMessage());
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            fail("Maven build failed", ex);
-        }
-        return result;
-    }
-
-    protected int fireMavenProcess(Project project, List<String> goals, List<String> profiles, Properties properties) {
+    protected int fireMavenBuild(Project project, List<String> goals, List<String> profiles, Properties properties) {
         int code = 0;
         String mavenHome = System.getenv("M2_HOME");
         if (mavenHome == null) {
             mavenHome = System.getenv("MAVEN_HOME");
         }
+        if (mavenHome == null) {
+            throw new IllegalStateException("MAVEN_HOME or M2_HOME path not defined");
+        }
+
         try {
             String cmd = (System.getProperty("os.name").startsWith("Windows")) ? "mvn.cmd" : "mvn";
             cmd = mavenHome + File.separator + "bin" + File.separator + cmd;
@@ -388,6 +389,7 @@ public class BaseModelTest {
             args.addAll(goals);
             args.add("-P");
             args.addAll(profiles);
+            properties.entrySet().forEach(e -> args.add("-D" + e.getKey() + "=" + e.getValue()));
 
             ProcessBuilder pb = new ProcessBuilder(args.toArray(new String[]{}));
             pb.directory(FileUtil.toFile(project.getProjectDirectory()));
