@@ -56,12 +56,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.lang.ProcessBuilder.Redirect;
 import java.net.URISyntaxException;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -358,12 +362,63 @@ public class BaseModelTest {
             invoker.setMavenHome(new File(mavenHome));
             System.out.println("Maven Home : " + mavenHome);
             result = invoker.execute(request);
-            assertEquals(0, result.getExitCode(), "Maven build failed : " + result.getExecutionException().getMessage());
+            if (result == null) {
+                fireMavenProcess(project, goals, profiles, properties);
+            } else {
+                assertEquals(0, result.getExitCode(), "Maven build failed : " + result.getExecutionException().getMessage());
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
             fail("Maven build failed", ex);
         }
         return result;
+    }
+
+    protected int fireMavenProcess(Project project, List<String> goals, List<String> profiles, Properties properties) {
+        int code = 0;
+        String mavenHome = System.getenv("M2_HOME");
+        if (mavenHome == null) {
+            mavenHome = System.getenv("MAVEN_HOME");
+        }
+        try {
+            String cmd = (System.getProperty("os.name").startsWith("Windows")) ? "mvn.cmd" : "mvn";
+            cmd = mavenHome + File.separator + "bin" + File.separator + cmd;
+            List<String> args = new ArrayList<>();
+            args.add(cmd);
+            args.addAll(goals);
+            args.add("-P");
+            args.addAll(profiles);
+
+            ProcessBuilder pb = new ProcessBuilder(args.toArray(new String[]{}));
+            pb.directory(FileUtil.toFile(project.getProjectDirectory()));
+            Process process = pb.start();
+
+            redirectOutput(process.getInputStream(), System.out);
+            redirectOutput(process.getErrorStream(), System.err);
+            code = process.waitFor();
+            if (code != 0) {
+                assertEquals(0, code, "Maven Process build failed : " + code);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            fail("Maven Process build failed", ex);
+        }
+        return code;
+    }
+
+    private void redirectOutput(final InputStream input, final PrintStream output) {
+        new Thread(() -> {
+            StringBuilder sb = new StringBuilder();
+            String line;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                    output.println(line);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }).start();
     }
 
     private String getPom(String appName) {
