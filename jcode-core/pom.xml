@@ -33,7 +33,7 @@
                         <dependency>
                             <id>org.netbeans.modules:org-netbeans-modules-maven-embedder</id>
                             <type>impl</type>
-                         </dependency>
+                        </dependency>
                     </moduleDependencies>
                 </configuration>
             </plugin>
@@ -101,15 +101,52 @@
             <artifactId>org-netbeans-modules-maven-embedder</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-awt</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
-               <dependency>
+        <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-dialogs</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.graalvm</groupId>
+            <artifactId>graal-sdk</artifactId>
+            <version>1.0.0-rc6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.graalvm</groupId>
+            <artifactId>tregex</artifactId>
+            <version>1.0.0-rc6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.graalvm</groupId>
+            <artifactId>graaljs</artifactId>
+            <version>1.0.0-rc6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.graalvm</groupId>
+            <artifactId>graaljs-scriptengine</artifactId>
+            <version>1.0.0-rc6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.truffle</groupId>
+            <artifactId>truffle-api</artifactId>
+            <version>1.0.0-rc6</version>
+        </dependency>
+
     </dependencies>
+
+
+
+    <repositories>
+        <repository>
+            <id>local-repository</id>
+            <url>file:${project.basedir}\repository</url>
+        </repository>
+    </repositories>
+
 </project>

@@ -15,6 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
+ * Portions Copyright 2013-2018 Gaurav Gupta
+ *
 */
 
 'use strict';
@@ -141,28 +143,11 @@ function getIncludePath(path, options) {
   if (path.charAt(0) == '/') {
     includePath = exports.resolveInclude(path.replace(/^\/*/,''), options.root || '/', true);
   }
-  // Relative paths
-  else {
-    // Look relative to a passed filename first
-    if (options.filename) {
-      filePath = exports.resolveInclude(path, options.filename);
-      if (fs.existsSync(filePath)) {
-        includePath = filePath;
+  else {  // jeddict patch block
+      if (!options.filename) {
+          throw new Error('`include` use relative path requires the \'filename\' option.');
       }
-    }
-    // Then look in any views directories
-    if (!includePath) {
-      if (Array.isArray(views) && views.some(function (v) {
-        filePath = exports.resolveInclude(path, v, true);
-        return fs.existsSync(filePath);
-      })) {
-        includePath = filePath;
-      }
-    }
-    if (!includePath) {
-      throw new Error('Could not find the include file "' +
-          options.escapeFunction(path) + '"');
-    }
+    includePath = exports.resolveInclude(path, options.filename);
   }
   return includePath;
 }
@@ -207,8 +192,9 @@ function handleCache(options, template) {
     if (!filename) {
       throw new Error('Internal EJS error: no file name or template '
                     + 'provided');
-    }
-    template = fileLoader(filename).toString().replace(_BOM, '');
+                        }
+      var virtualFilename = filename.substring(1, filename.lastIndexOf('.')); //jeddict patch
+      template = getValue(getValue(options, "ext"), virtualFilename);  //jeddict patch //fileLoader(filename).toString().replace(_BOM, '');
   }
   func = exports.compile(template, options);
   if (options.cache) {
@@ -305,7 +291,7 @@ function includeSource(path, options) {
   var includePath;
   var template;
   includePath = getIncludePath(path, opts);
-  template = fileLoader(includePath).toString().replace(_BOM, '');
+  template = getValue(getValue(options, "ext"), path);// jeddict patch // fileLoader(includePath).toString().replace(_BOM, '');
   opts.filename = includePath;
   var templ = new Template(template, opts);
   templ.generateSource();
@@ -495,7 +481,7 @@ function Template(text, opts) {
   options.escapeFunction = opts.escape || utils.escapeXML;
   options.compileDebug = opts.compileDebug !== false;
   options.debug = !!opts.debug;
-  options.filename = opts.filename;
+  options.filename = getValue(opts, "filename");//jeddict patch
   options.delimiter = opts.delimiter || exports.delimiter || _DEFAULT_DELIMITER;
   options.strict = opts.strict || false;
   options.context = opts.context;
@@ -504,7 +490,7 @@ function Template(text, opts) {
   options.root = opts.root;
   options.localsName = opts.localsName || exports.localsName || _DEFAULT_LOCALS_NAME;
   options.views = opts.views;
-
+  options.ext = getValue(opts, "ext"); //jeddict patch
   if (options.strict) {
     options._with = false;
   }
@@ -1531,3 +1517,11 @@ module.exports={
 
 },{}]},{},[1])(1)
 });
+
+function getValue(opts, key) {
+    if (Java.isScriptObject(opts)) {
+        return opts[key];
+    } else {
+        return opts.get(key);
+    }
+}

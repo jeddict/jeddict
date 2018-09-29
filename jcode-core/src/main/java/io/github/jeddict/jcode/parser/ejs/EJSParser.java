@@ -15,35 +15,34 @@
  */
 package io.github.jeddict.jcode.parser.ejs;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import static io.github.jeddict.jcode.util.FileUtil.copy;
+import static io.github.jeddict.jcode.util.FileUtil.loadResource;
+import static io.github.jeddict.jcode.util.FileUtil.readString;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.nio.charset.Charset;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.ArrayList;
-import java.util.Arrays;
+import static java.util.Arrays.asList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipInputStream;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
@@ -54,23 +53,31 @@ import javax.script.CompiledScript;
 import javax.script.Invocable;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
-import org.apache.commons.io.IOUtils;
 import org.openide.util.Exceptions;
 
 public final class EJSParser {
 
     private ScriptEngine engine;
-    private final List<Map<String, Object>> contexts = new ArrayList<>();
-    private final StringBuilder scripts = new StringBuilder();
+
     private Character delimiter;
+
     private Map<String, String> importTemplate;
-    private static final Set<String> SKIP_FILE_TYPE = new HashSet<>(
-            Arrays.asList("png", "jpeg", "jpg", "gif"));
 
     private static String base;
     private static String ejs;
+
+    private final List<Map<String, Object>> contexts = new ArrayList<>();
+
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    private final StringBuilder scripts = new StringBuilder();
+
+    private static final Set<String> SKIP_FILE_TYPE
+            = new HashSet<>(asList("png", "jpeg", "jpg", "gif"));
+
+    private static final String TEMPLATES = "io/github/jeddict/jcode/parser/ejs/resources/";
 
     private final static Jsonb JSONB = JsonbBuilder.create(
             new JsonbConfig().withPropertyVisibilityStrategy(new PropertyVisibilityStrategy() {
@@ -85,77 +92,69 @@ public final class EJSParser {
                 }
             })
     );
+
+    static {
+        Properties props = System.getProperties();
+        props.setProperty("polyglot.js.nashorn-compat", "true");
+        props.setProperty("polyglot.js.syntax-extensions", "true");
+    }
     
     private ScriptEngine createEngine() {
-        CompiledScript cscript;
+        CompiledScript compiledScript;
         Bindings bindings;
-        ScriptEngine scriptEngine = new NashornScriptEngineFactory().getScriptEngine("--language=es6");//engine = new ScriptEngineManager().getEngineByName("nashorn");
+        ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("Graal.js");
         try {
-            try {
-                if (base == null) {
-                    base = IOUtils.toString(EJSParser.class.getClassLoader().getResourceAsStream("io/github/jeddict/jcode/parser/ejs/resources/base.js"), "UTF-8");
-                }
-                if (ejs == null) {
-                    ejs = IOUtils.toString(EJSParser.class.getClassLoader().getResourceAsStream("io/github/jeddict/jcode/parser/ejs/resources/ejs.js"), "UTF-8");
-                }
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
+            if (base == null) {
+                base = readString(loadResource(TEMPLATES + "base.js"));
             }
-     
+            if (ejs == null) {
+                ejs = readString(loadResource(TEMPLATES + "ejs.js"));
+            }
+
             scriptEngine.eval(base);
             Compilable compilingEngine = (Compilable) scriptEngine;
-            cscript = compilingEngine.compile(ejs);
+            compiledScript = compilingEngine.compile(ejs);
             bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
-            cscript.eval(bindings);
+            compiledScript.eval(bindings);
             scriptEngine.eval(scripts.toString());
 
             for (Map<String, Object> context : contexts) {
-                context.keySet()
-                        .stream()
-                        .forEach((key) -> {
-                            try {
-                                bindings.put(key, context.get(key));
-                                if (context.get(key) instanceof Collection) {
-                                    scriptEngine.eval(String.format("%s = Java.from(%s);", key, key));
+                context.entrySet()
+                        .forEach(entry -> {
+                                Object value = entry.getValue();
+                                if (value instanceof Collection || value instanceof Map) {
+                                        value = toJson(scriptEngine, value);
                                 }
-                            } catch (ScriptException ex) {
-                                Exceptions.printStackTrace(ex);
-                            }
+                                bindings.put(entry.getKey(), value);
                         });
             }
-
         } catch (ScriptException ex) {
             Exceptions.printStackTrace(ex);
         }
         return scriptEngine;
     }
 
-    public void addContext(Map<String, Object> context) {
-        contexts.add(context);
+    private Object toJson(ScriptEngine scriptEngine, Object value) {
+        try {
+            return scriptEngine.eval("JSON.parse('" + mapper.writeValueAsString(value) + "')");
+        } catch (JsonProcessingException | ScriptException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new IllegalStateException("Error in converting to Json Object " + value, ex);
+        }
     }
 
     public void addContext(Object context) {
         if (context != null) {
             try {
-                addContext(introspect(context));
+                addContext(mapper.convertValue(context, Map.class));
             } catch (Exception ex) {
-                Logger.getLogger(EJSParser.class.getName()).log(Level.SEVERE, null, ex);
+                Exceptions.printStackTrace(ex);
             }
         }
     }
 
-    private Map<String, Object> introspect(Object obj) {
-        ObjectMapper m = new ObjectMapper();
-        Map<String, Object> mappedObject = m.convertValue(obj, Map.class);
-//        String json = JSONB.toJson(obj);
-//        Map<String, Object> mappedObject = new HashMap<>();//jsonb.fromJson(), Map.class);
-//        try (JsonReader jsonReader = Json.createReader(new StringReader(json))) {
-//            JsonObject object = jsonReader.readObject();
-//            object.forEach((k,v) -> { 
-//                mappedObject.put(k, v.toString());
-//            });
-//        }
-        return mappedObject;
+    public void addContext(Map<String, Object> context) {
+        contexts.add(context);
     }
 
     public String parse(String template) throws ScriptException {
@@ -185,7 +184,7 @@ public final class EJSParser {
     public String parse(Reader reader) throws ScriptException, IOException {
         String parsed;
         try (StringWriter writer = new StringWriter()) {
-            IOUtils.copy(reader, writer);
+            copy(reader, writer);
             parsed = parse(writer.toString());
         }
         return parsed;
@@ -224,9 +223,6 @@ public final class EJSParser {
         this.importTemplate = importTemplate;
     }
 
-//    private static final Set<String> PARSER_FILE_TYPE = new HashSet<>(Arrays.asList(
-//            "html", "js", "css", "scss", "json", "properties", "ts", "ejs", "txt", "webapp", "yml", "sh"));
-
     public static boolean isTextFile(String file) {
         return true;
     }
@@ -236,26 +232,25 @@ public final class EJSParser {
     }
 
     public Consumer<FileTypeStream> getParserManager(List<String> skipFile) {
-        return (fileType) -> {
+        return (FileTypeStream fileType) -> {
             try {
                 if (SKIP_FILE_TYPE.contains(fileType.getFileType())
                         || (skipFile != null && skipFile.contains(fileType.getFileName()))
                         || fileType.isSkipParsing()) {
-                    IOUtils.copy(fileType.getInputStream(), fileType.getOutputStream());
+                    copy(fileType.getInputStream(), fileType.getOutputStream());
                     if (!(fileType.getInputStream() instanceof ZipInputStream)) {
                         fileType.getInputStream().close();
                     }
                     fileType.getOutputStream().close();
                 } else {
-                    Charset charset = Charset.forName("UTF-8");
-                    Reader reader = new BufferedReader(new InputStreamReader(fileType.getInputStream(), charset));
-                    Writer writer = new BufferedWriter(new OutputStreamWriter(fileType.getOutputStream(), charset));
-                    IOUtils.write(parse(reader), writer);
-                    if (!(fileType.getInputStream() instanceof ZipInputStream)) {
-                        reader.close();
+                    Reader reader = new BufferedReader(new InputStreamReader(fileType.getInputStream(), UTF_8));
+                    try (Writer writer = new BufferedWriter(new OutputStreamWriter(fileType.getOutputStream(), UTF_8))) {
+                        writer.write(parse(reader));
+                        if (!(fileType.getInputStream() instanceof ZipInputStream)) {
+                            reader.close();
+                        }
+                        writer.flush();
                     }
-                    writer.flush();
-                    writer.close();
                 }
 
             } catch (ScriptException | IOException ex) {
