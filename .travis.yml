@@ -3,6 +3,29 @@ cache:
   timeout: 1000
   directories:
   - $HOME/.m2
+jdk:
+- openjdk8
+- openjdk9
+- openjdk10
+- openjdk11
+matrix:
+  include:
+    - os: linux
+      jdk: openjdk8
+    - os: linux
+      jdk: openjdk9
+    - os: linux
+      jdk: openjdk10
+    - os: linux
+      jdk: openjdk11
+    - os: osx
+      jdk: openjdk8
+    - os: osx
+      jdk: openjdk9
+    - os: osx
+      jdk: openjdk10
+    - os: osx
+      jdk: openjdk11
 before_install:
     - git clone https://github.com/jeddict/netbeans-modeler.git ~/builds/netbeans-modeler
     - pushd ~/builds/netbeans-modeler/modeler-lib/repository/org/analytics/analytics/1.0
