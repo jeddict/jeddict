@@ -17,6 +17,7 @@ package io.github.jeddict.jcode.util;
 
 import static io.github.jeddict.jcode.util.Constants.JAVA_EXT;
 import static io.github.jeddict.jcode.util.Constants.JAVA_EXT_SUFFIX;
+import static io.github.jeddict.jcode.util.Constants.WEB_INF;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -118,15 +119,41 @@ public class ProjectHelper {
             return sourceGroups[0].getRootFolder();
         }
         try {
-            return project.getProjectDirectory()
-                    .getFileObject("src/main")
-                    .createFolder("webapp");
+            return getFileObject(project.getProjectDirectory(), "src/main/webapp", "/");
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
             return null;
         }
     }
-    
+
+    public static FileObject getProjectWebInf(Project project) {
+        FileObject webInf = null;
+        FileObject webRoot = getProjectWebRoot(project);
+        if (webRoot != null) {
+            webInf = webRoot.getFileObject(WEB_INF);
+            if (webInf == null) {
+                try {
+                    webInf = webRoot.createFolder(WEB_INF);
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                    return null;
+                }
+            }
+        }
+        return webInf;
+    }
+
+    public static FileObject getFileObject(FileObject current, String path, String seperator) throws IOException {
+        for (String folder : path.split(seperator)) {
+            FileObject childFolder = current.getFileObject(folder);
+            if (childFolder == null) {
+                current = current.createFolder(folder);
+            } else {
+                current = childFolder;
+            }
+        }
+        return current;
+    }
     
     /**
      * when ever there is need for non-java files creation or lookup,
@@ -681,7 +708,7 @@ public class ProjectHelper {
         return paths;
     }
 
-    public static final String TYPE_DOC_ROOT = "doc_root"; //NOI18N
+    private static final String TYPE_DOC_ROOT = "doc_root"; //NOI18N
 
     public static SourceGroup[] getSourceGroups(Project project) {
         SourceGroup[] sourceGroups = null;

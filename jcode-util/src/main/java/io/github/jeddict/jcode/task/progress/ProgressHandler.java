@@ -43,19 +43,25 @@ public interface ProgressHandler {
     void info(String title, String message);
     
     void help(String title, String message);
-    
+
+    @Deprecated
     void error(String title, String message, Project project);
-    
+
+    @Deprecated
     void warning(String title, String message, Project project);
-    
+
+    @Deprecated
     void info(String title, String message, Project project);
-    
+
+    @Deprecated
     void help(String title, String message, Project project);
 
     void finish();
-    
+
+    @Deprecated
     void addDynamicVariable(String key, Object value);
-    
+
+    @Deprecated
     void removeDynamicVariable(String key);
 
 }

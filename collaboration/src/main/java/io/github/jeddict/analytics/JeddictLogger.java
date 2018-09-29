@@ -51,7 +51,7 @@ public class JeddictLogger {
     public static void logGenerateEvent(ApplicationConfigData applicationConfigData) {
         logEvent(GENERATE_CATEGORY, DOMAIN, JPA);
         logEvent(GENERATE_CATEGORY, DOMAIN, JPA_CLASS_COUNT, applicationConfigData.getEntityMappings().getJavaClass().size());
-        logSourceGenerationEvent(applicationConfigData.getBussinesTechContext(), applicationConfigData.isCompleteApplication());
+        logSourceGenerationEvent(applicationConfigData.getRepositoryTechContext(), applicationConfigData.isCompleteApplication());
         logSourceGenerationEvent(applicationConfigData.getControllerTechContext(), applicationConfigData.isCompleteApplication());
         logSourceGenerationEvent(applicationConfigData.getViewerTechContext(), applicationConfigData.isCompleteApplication());
     }

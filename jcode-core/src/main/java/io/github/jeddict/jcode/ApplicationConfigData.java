@@ -15,16 +15,11 @@
  */
 package io.github.jeddict.jcode;
 
-import static io.github.jeddict.jcode.util.POMManager.addNBActionMappingGoal;
-import static io.github.jeddict.jcode.util.POMManager.addNBActionMappingProfile;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.extend.ProjectType;
 import java.io.Serializable;
-import java.util.ArrayList;
-import static java.util.Arrays.asList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.netbeans.api.project.Project;
@@ -51,22 +46,16 @@ public class ApplicationConfigData implements Serializable {
     private boolean completeApplication;
     private EntityMappings entityMappings;
 
-    private TechContext bussinesTechContext;
+    private TechContext repositoryTechContext;
     private TechContext controllerTechContext;
     private TechContext viewerTechContext;
 
     private final Map<Project, StringBuilder> webDescriptorContent = new HashMap<>();
     private final Map<Project, StringBuilder> webDescriptorTestContent = new HashMap<>();
 
-    private final Set<String> profiles = new LinkedHashSet<>();
-    private final Set<String> goals = new LinkedHashSet<>();
-    private final List<String> buildProperties = new ArrayList<>();
-    
-    private RegistryType registryType = RegistryType.CONSUL;
+    private final Set<Environment> environments = new LinkedHashSet<>();
 
-    private final Map<String, String> commonConfig = new HashMap<>();
-    private final Map<String, String> devConfig = new HashMap<>();
-    private final Map<String, String> prodConfig = new HashMap<>();
+    private RegistryType registryType = RegistryType.CONSUL;
 
     public void addWebDescriptorContent(String content, Project project) {
         StringBuilder sb = webDescriptorContent.get(project);
@@ -94,102 +83,12 @@ public class ApplicationConfigData implements Serializable {
         return webDescriptorTestContent;
     }
 
-    public void addProfile(String profile) {
-        profiles.add(profile);
+    public TechContext getRepositoryTechContext() {
+        return repositoryTechContext;
     }
 
-    public void removeProfile(String profile) {
-        profiles.remove(profile);
-    }
-
-    public String getProfiles() {
-        return String.join(",", profiles);
-    }
-    
-    public void addProfileAndActivate(Project project, String profile) {
-        addProfile(profile);
-
-        Map<String, String> properties = new HashMap<>();
-
-        addNBActionMappingProfile("build", project,
-                asList("install"),
-                asList(profile),
-                properties);
-
-        addNBActionMappingProfile("rebuild", project,
-                asList("clean", "install"),
-                asList(profile),
-                properties);
-
-        properties.put("netbeans.deploy", "true");
-        addNBActionMappingProfile("run", project,
-                asList("package"),
-                asList(profile),
-                properties);
-
-        properties.put("netbeans.deploy.clientUrlPart", "${webpagePath}");
-        addNBActionMappingProfile("run.single.deploy", project,
-                asList("package"),
-                asList(profile),
-                properties);
-
-        properties = new HashMap<>();
-        properties.put("netbeans.deploy", "true");
-        properties.put("netbeans.deploy.debugmode", "true");
-        addNBActionMappingProfile("debug", project,
-                asList("package"),
-                asList(profile),
-                properties);
-
-        properties = new HashMap<>();
-        properties.put("netbeans.deploy", "true");
-        properties.put("netbeans.deploy.debugmode", "true");
-        properties.put("netbeans.deploy.clientUrlPart", "${webpagePath}");
-        addNBActionMappingProfile("debug.single.deploy", project,
-                asList("package"),
-                asList(profile),
-                properties);
-    }
-    
-    public void addGoal(String goal) {
-        goals.add(goal);
-    }
-
-    public void removeGoal(String goal) {
-        goals.remove(goal);
-    }
-
-    public String getGoals() {
-        return String.join(" ", goals);
-    }
-    
-    public void addGoalAndActivate(Project project, String goal) {
-        addGoal(goal);
-        addNBActionMappingGoal("run", project, asList(goal));
-        addNBActionMappingGoal("run.single.deploy", project, asList(goal));
-        addNBActionMappingGoal("debug", project, asList(goal));
-        addNBActionMappingGoal("debug.single.deploy", project, asList(goal));
-    }
-    
-    public void addBuildProperty(String propertyName, String propertyValue) {
-        String buildProperty = "-D" + propertyName + '=' + propertyValue;
-        buildProperties.add(buildProperty);
-    }
-
-    public void removeBuildProperty(String propertyName) {
-        buildProperties.removeIf(element -> element.startsWith("-D" + propertyName + '='));
-    }
-
-    public String getBuildProperties() {
-        return String.join(" ", buildProperties);
-    }
-
-    public TechContext getBussinesTechContext() {
-        return bussinesTechContext;
-    }
-
-    public void setBussinesTechContext(TechContext bussinesTechContext) {
-        this.bussinesTechContext = bussinesTechContext;
+    public void setRepositoryTechContext(TechContext bussinesTechContext) {
+        this.repositoryTechContext = bussinesTechContext;
     }
 
     public TechContext getControllerTechContext() {
@@ -402,40 +301,19 @@ public class ApplicationConfigData implements Serializable {
         this.registryType = registryType;
     }
 
-    public Map<String, String> getCommonConfig() {
-        return commonConfig;
+    public Environment getEnvironment(String name) {
+        return environments.stream()
+                .filter(env -> env.getName().equals(name))
+                .findAny()
+                .orElseGet(() -> {
+            Environment environment = new Environment(name);
+            environments.add(environment);
+            return environment;
+        });
     }
 
-    public void addCommonConfig(String key, String value) {
-        commonConfig.put(key, value);
-    }
-
-    public void removeCommonConfig(String key) {
-        commonConfig.remove(key);
-    }
-
-    public Map<String, String> getDevConfig() {
-        return devConfig;
-    }
-
-    public void addDevConfig(String key, String value) {
-        devConfig.put(key, value);
-    }
-
-    public void removeDevConfig(String key) {
-        devConfig.remove(key);
-    }
-
-    public Map<String, String> getProdConfig() {
-        return prodConfig;
-    }
-
-    public void addProdConfig(String key, String value) {
-        prodConfig.put(key, value);
-    }
-
-    public void removeProdConfig(String key) {
-        prodConfig.remove(key);
+    public Set<Environment> getEnvironments() {
+        return environments;
     }
 
 }

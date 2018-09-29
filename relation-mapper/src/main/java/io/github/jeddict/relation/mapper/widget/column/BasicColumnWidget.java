@@ -57,7 +57,7 @@ public class BasicColumnWidget<E extends DBColumn<Attribute>> extends ColumnWidg
         Attribute attribute = this.getBaseElementSpec().getAttribute();
         if (attribute instanceof ColumnHandler) {
             ColumnHandler baseAttribute = (ColumnHandler) attribute;
-            baseAttribute.getColumn().setName(this.name);
+            baseAttribute.getColumn().setName(newName);
         } else {
             throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
         }

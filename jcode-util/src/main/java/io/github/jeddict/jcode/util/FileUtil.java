@@ -32,8 +32,10 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.Charset;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -44,7 +46,9 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.api.queries.FileEncodingQuery;
+//import org.netbeans.libs.freemarker.FreemarkerFactory;
 import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
@@ -59,9 +63,11 @@ import org.openide.util.LookupEvent;
 public class FileUtil {
     
     private static final Logger LOG = Logger.getLogger(FileUtil.class.getName());
-    
+
+    private static final int DEFAULT_BUFFER_SIZE = 8192;
+
     public static URL getResourceURL(String resource) {
-           if (resource.startsWith("/")) { // NOI18N
+        if (resource.startsWith("/")) {
                 resource = resource.substring(1);
             }
         return getLoader().getResource(resource);
@@ -76,7 +82,56 @@ public class FileUtil {
         }
         return inputStream;
     }
-    
+
+    public static String readString(final InputStream resource) {
+        try (final InputStreamReader input
+                = new InputStreamReader(resource, UTF_8);
+                final StringWriter output = new StringWriter();) {
+            char[] buffer = new char[DEFAULT_BUFFER_SIZE];
+            int nRead;
+            while ((nRead = input.read(buffer, 0, DEFAULT_BUFFER_SIZE)) >= 0) {
+                output.write(buffer, 0, nRead);
+            }
+            return output.toString();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return EMPTY;
+    }
+
+    public static void copy(final InputStream input, final OutputStream output) {
+        try {
+            byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+            int nRead;
+            while ((nRead = input.read(buffer, 0, DEFAULT_BUFFER_SIZE)) >= 0) {
+                output.write(buffer, 0, nRead);
+            }
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    public static void copy(final Reader input, final Writer output) {
+        Objects.requireNonNull(input, "input");
+        Objects.requireNonNull(output, "output");
+        try {
+            char[] buffer = new char[DEFAULT_BUFFER_SIZE];
+            int nRead;
+            while ((nRead = input.read(buffer, 0, DEFAULT_BUFFER_SIZE)) >= 0) {
+                output.write(buffer, 0, nRead);
+            }
+
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    public static void copy(final InputStream input, final Writer output)
+            throws IOException {
+        final InputStreamReader in = new InputStreamReader(input, UTF_8);
+        copy(in, output);
+    }
+
     private static volatile Object currentLoader;
     private static Lookup.Result<ClassLoader> loaderQuery = null;
     private static boolean noLoaderWarned = false;
@@ -259,6 +314,7 @@ public class FileUtil {
      * org.netbeans.modules.templates.ScriptingCreateFromTemplateHandler}.
      */
     private static ScriptEngine getScriptEngine() {
+        ScriptEngine engine;
         if (manager == null) {
             synchronized (FileUtil.class) {
                 if (manager == null) {
@@ -266,7 +322,12 @@ public class FileUtil {
                 }
             }
         }
-        return manager.getEngineByName("freemarker");
+        engine = manager.getEngineByName("freemarker");
+//        if (engine == null) {
+//            FreemarkerFactory freemarkerFactory = new FreemarkerFactory();
+//            engine = freemarkerFactory.getScriptEngine();
+//        }
+        return engine;
     }
 
     public static FileObject createFolder(FileObject folder, String name) throws IOException {

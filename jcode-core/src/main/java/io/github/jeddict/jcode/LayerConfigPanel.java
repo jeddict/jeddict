@@ -15,7 +15,6 @@
  */
 package io.github.jeddict.jcode;
 
-import io.github.jeddict.jcode.LayerConfigData;
 import java.awt.Panel;
 import java.awt.event.KeyAdapter;
 import java.lang.reflect.ParameterizedType;

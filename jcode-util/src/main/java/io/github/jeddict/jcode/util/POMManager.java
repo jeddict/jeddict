@@ -114,6 +114,7 @@ public class POMManager extends BuildManager {
         copy(inputResources);
     }
     
+    @Override
     public POMManager copy(String... inputResources) {
         Map<String, ?> properties = Collections.singletonMap(ModelReader.IS_STRICT, false);
         ModelReader reader = EmbedderFactory.getProjectEmbedder().lookupComponent(ModelReader.class);
@@ -128,6 +129,7 @@ public class POMManager extends BuildManager {
         return this;
     }
         
+    @Override
     public POMManager copy(Reader... inputResources) {
         Map<String, ?> properties = Collections.singletonMap(ModelReader.IS_STRICT, false);
         ModelReader reader = EmbedderFactory.getProjectEmbedder().lookupComponent(ModelReader.class);
@@ -221,6 +223,7 @@ public class POMManager extends BuildManager {
         }
     }
 
+    @Override
     public POMManager setExtensionOverrideFilter(BiFunction<Xpp3Dom, POMExtensibilityElement, Boolean> extensionOverrideFilter) {
         this.extensionOverrideFilter = extensionOverrideFilter;
         return this;
@@ -619,6 +622,10 @@ public class POMManager extends BuildManager {
             if (actionMapping == null) {
                 actionMapping = ModelHandle2.getDefaultMapping(actionName, project);
             }
+            if (actionMapping == null) {
+                actionMapping = new NetbeansActionMapping();
+                actionMapping.setActionName(actionName);
+            }
             Set<String> existingGoals = new HashSet<>(actionMapping.getGoals());
             for (String goal : goals) {
                 if (!existingGoals.contains(goal)) {
@@ -647,18 +654,22 @@ public class POMManager extends BuildManager {
     
     public static void addNBActionMappingGoal(String actionName, Project project, List<String> goals) {
         try {
-            M2ConfigProvider usr = project.getLookup().lookup(M2ConfigProvider.class);
-            NetbeansActionMapping mapp = ModelHandle2.getMapping(actionName, project, usr.getActiveConfiguration());
-            if (mapp == null) {
-                mapp = ModelHandle2.getDefaultMapping(actionName, project);
+            M2ConfigProvider configProvider = project.getLookup().lookup(M2ConfigProvider.class);
+            NetbeansActionMapping actionMapping = ModelHandle2.getMapping(actionName, project, configProvider.getActiveConfiguration());
+            if (actionMapping == null) {
+                actionMapping = ModelHandle2.getDefaultMapping(actionName, project);
             }
-            Set<String> existingGoals = new HashSet<>(mapp.getGoals());
+            if (actionMapping == null) {
+                actionMapping = new NetbeansActionMapping();
+                actionMapping.setActionName(actionName);
+            }
+            Set<String> existingGoals = new HashSet<>(actionMapping.getGoals());
             for (String goal : goals) {
                 if (!existingGoals.contains(goal)) {
-                    mapp.addGoal(goal);
+                    actionMapping.addGoal(goal);
                 }
             }
-            ModelHandle2.putMapping(mapp, project, usr.getActiveConfiguration());
+            ModelHandle2.putMapping(actionMapping, project, configProvider.getActiveConfiguration());
         } catch (Exception e) {
             Exceptions.attachMessage(e, "Cannot persist action configuration.");
             Exceptions.printStackTrace(e);

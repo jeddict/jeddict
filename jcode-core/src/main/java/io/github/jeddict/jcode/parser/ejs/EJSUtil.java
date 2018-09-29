@@ -19,6 +19,7 @@ import io.github.jeddict.jcode.console.Console;
 import static io.github.jeddict.jcode.console.Console.FG_BLUE;
 import static io.github.jeddict.jcode.console.Console.FG_DARK_RED;
 import io.github.jeddict.jcode.task.progress.ProgressHandler;
+import static io.github.jeddict.jcode.util.FileUtil.copy;
 import static io.github.jeddict.jcode.util.FileUtil.loadResource;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -33,14 +34,13 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
@@ -74,7 +74,7 @@ public class EJSUtil {
                 handler.progress(targetPath);
                 FileObject target = org.openide.filesystems.FileUtil.createData(webRoot, targetPath);
                 FileLock lock = target.lock();
-                try (OutputStream outputStream = target.getOutputStream(lock);) {
+                try (OutputStream outputStream = target.getOutputStream(lock)) {
                     parserManager.accept(new FileTypeStream(entryName, zipInputStream, outputStream, skipParsing));
                     zipInputStream.closeEntry();
                 } finally {
@@ -91,7 +91,7 @@ public class EJSUtil {
         if(StringUtils.isEmpty(needleContent)){
             return;
         }
-        Charset charset = Charset.forName("UTF-8");
+        Charset charset = UTF_8;
         BufferedReader reader;
         BufferedWriter writer;
         if (source.endsWith("json")) {
@@ -122,7 +122,7 @@ public class EJSUtil {
                 content.append(thisLine).append("\n");
             }
             
-            IOUtils.write(content.toString(), writer);
+            writer.write(content.toString());
             
             try {
                     reader.close();
@@ -175,7 +175,7 @@ public class EJSUtil {
                     continue;
                 }
                 StringWriter writer = new StringWriter();
-                IOUtils.copy(zipInputStream, writer, StandardCharsets.UTF_8.name());
+                copy(zipInputStream, writer);
                 String fileName = entry.getName();
                 fileName = fileName.substring(fileName.lastIndexOf('/') + 1, fileName.lastIndexOf('.'));
                 data.put(fileName, writer.toString());

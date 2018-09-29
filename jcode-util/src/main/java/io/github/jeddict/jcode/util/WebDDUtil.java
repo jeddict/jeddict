@@ -17,6 +17,8 @@ package io.github.jeddict.jcode.util;
 
 import static io.github.jeddict.jcode.util.Constants.WEB_INF;
 import static io.github.jeddict.jcode.util.FileUtil.expandTemplate;
+import static io.github.jeddict.jcode.util.ProjectHelper.getFileObject;
+import static io.github.jeddict.jcode.util.ProjectHelper.getProjectWebInf;
 import java.io.IOException;
 import java.util.Map;
 import org.netbeans.api.project.Project;
@@ -57,9 +59,8 @@ public class WebDDUtil {
             }
         }
 
-        WebApp webApp = null;
         if (webXml != null) {
-            webApp = DDProvider.getDefault().getDDRoot(webXml);
+            WebApp webApp = DDProvider.getDefault().getDDRoot(webXml);
 
             if (text.length() == 0) {
                 webApp.setWelcomeFileList(null);
@@ -98,18 +99,16 @@ public class WebDDUtil {
         return true;
     }
     
-    public static FileObject createDD(Project project,
+    public static FileObject createDD(
+            Project project,
             String ddTemplatePath,
             Map<String, Object> params,
             Predicate<FileObject> condition) {
         FileObject fileObject = null;
         try {
-            Sources sources = ProjectUtils.getSources(project);
-            SourceGroup sourceGroups[] = sources.getSourceGroups(WebProjectConstants.TYPE_DOC_ROOT);
-            FileObject webRoot = sourceGroups[0].getRootFolder();
-            FileObject targetDir = FileUtil.createFolder(webRoot, WEB_INF);
-            if (condition.test(targetDir)) {
-                fileObject = expandTemplate(ddTemplatePath, targetDir, DD_NAME, params);
+            FileObject webInf = getProjectWebInf(project);
+            if (webInf != null && condition.test(webInf)) {
+                fileObject = expandTemplate(ddTemplatePath, webInf, DD_NAME, params);
             }
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);

@@ -204,17 +204,17 @@ public class GenerateCodeDialog extends GenericDialog {
         boolean nonePanel = techContext.getTechnology().panel() == LayerConfigPanel.class;
         switch (techContext.getTechnology().type()) {
             case BUSINESS:
-                getConfigData().setBussinesTechContext(techContext);
-                addLayerTab(getConfigData().getBussinesTechContext());
+                getConfigData().setRepositoryTechContext(techContext);
+                addLayerTab(getConfigData().getRepositoryTechContext());
                 getConfigData().setControllerTechContext(null);
                 getConfigData().setViewerTechContext(null);
                 if (nonePanel) {
-                    getConfigData().setBussinesTechContext(null);
+                    getConfigData().setRepositoryTechContext(null);
                 }
                 break;
             case CONTROLLER:
                 getConfigData().setControllerTechContext(techContext);
-                addLayerTab(getConfigData().getBussinesTechContext());
+                addLayerTab(getConfigData().getRepositoryTechContext());
                 addLayerTab(getConfigData().getControllerTechContext());
                 getConfigData().setViewerTechContext(null);
                 if (nonePanel) {
@@ -223,7 +223,7 @@ public class GenerateCodeDialog extends GenericDialog {
                 break;
             case VIEWER:
                 getConfigData().setViewerTechContext(techContext);
-                addLayerTab(getConfigData().getBussinesTechContext());
+                addLayerTab(getConfigData().getRepositoryTechContext());
                 addLayerTab(getConfigData().getControllerTechContext());
                 addLayerTab(getConfigData().getViewerTechContext());
                 if (nonePanel) {

@@ -21,8 +21,10 @@ import io.github.jeddict.jcode.console.Console;
 import static io.github.jeddict.jcode.console.Console.*;
 import io.github.jeddict.jcode.generator.ApplicationGenerator;
 import io.github.jeddict.jcode.task.AbstractNBTask;
+import io.github.jeddict.jcode.task.ITaskSupervisor;
 import io.github.jeddict.jcode.task.progress.ProgressConsoleHandler;
 import io.github.jeddict.jcode.task.progress.ProgressHandler;
+import static io.github.jeddict.jcode.util.FileUtil.readString;
 import io.github.jeddict.jpa.modeler.initializer.PreExecutionUtil;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.orm.generator.IPersistenceXMLGenerator;
@@ -32,7 +34,6 @@ import io.github.jeddict.orm.generator.SourceCodeGeneratorType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import org.apache.commons.io.IOUtils;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.modeler.core.ModelerFile;
@@ -48,19 +49,23 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
     private final Runnable afterExecution;
 
     private final static int SUBTASK_TOT = 1;
-    private static String BANNER_TXT;
+    private static final String BANNER_TXT;
+
+    static {
+        String text = "Jeddict <https://jeddict.github.io>";
+        try (InputStream stream = SourceCodeGeneratorTask.class.getResourceAsStream("banner")) {
+            text = Console.wrap(readString(stream), FG_MAGENTA);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } finally {
+            BANNER_TXT = text;
+        }
+    }
 
     public SourceCodeGeneratorTask(ModelerFile modelerFile, ApplicationConfigData appConfigData, Runnable afterExecution) {
         this.modelerFile = modelerFile;
         this.appConfigData = appConfigData;
         this.afterExecution=afterExecution;
-        if (BANNER_TXT == null) {
-            try (InputStream stream = getClass().getResourceAsStream("banner")) {
-                BANNER_TXT = Console.wrap(IOUtils.toString(stream), FG_MAGENTA);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        }
         initialize();
     }
 
@@ -78,9 +83,12 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
     protected void begin() {
         PreExecutionUtil.preExecution(modelerFile);
         try {
-            exportCode();
+            EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
+            exportCode(appConfigData, entityMappings, this);
         } catch (Throwable t) {
             modelerFile.handleException(t);
+        } finally {
+            JeddictLogger.logGenerateEvent(appConfigData);
         }
     }
 
@@ -96,42 +104,45 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
      * @param elements The collection of elements to generate for
      *
      */
-    private void exportCode() {
-        ProgressHandler handler = new ProgressConsoleHandler(this);
+    public static void exportCode(
+            ApplicationConfigData appConfigData,
+            EntityMappings entityMappings,
+            ITaskSupervisor task) {
+
+        ProgressHandler handler = new ProgressConsoleHandler(task);
         handler.append(BANNER_TXT);
-        
+
         ISourceCodeGeneratorFactory sourceGeneratorFactory = Lookup.getDefault().lookup(ISourceCodeGeneratorFactory.class);
-        ISourceCodeGenerator sourceGenerator = sourceGeneratorFactory.getSourceGenerator(SourceCodeGeneratorType.JPA);
-        EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
+        ISourceCodeGenerator domainGenerator = sourceGeneratorFactory.getSourceGenerator(SourceCodeGeneratorType.JPA);
         ApplicationGenerator applicationGenerator = null;
         
         appConfigData.setEntityMappings(entityMappings);
-        if (appConfigData.getBussinesTechContext()!= null) {
+        if (appConfigData.getRepositoryTechContext()!= null) {
             applicationGenerator = new ApplicationGenerator();
             applicationGenerator.initialize(appConfigData, handler);
             applicationGenerator.preGeneration();
         }
         
         if (appConfigData.isMonolith() || appConfigData.isMicroservice()) {
-            sourceGenerator.generate(this, appConfigData);
+            domainGenerator.generate(task, appConfigData);
         }
         if (appConfigData.isGateway()) {
             Lookup.getDefault()
                     .lookup(IPersistenceXMLGenerator.class)
                     .generatePersistenceXML(
-                            this,
+                            task,
                             appConfigData.getGatewayProject(), 
                             appConfigData.getGatewaySourceGroup(),
                             entityMappings,
                             Collections.emptyList());
         }
         
-        if (appConfigData.getBussinesTechContext()!= null) {
+        if (appConfigData.getRepositoryTechContext()!= null) {
             applicationGenerator.generate();
             applicationGenerator.postGeneration();
         }
         entityMappings.cleanRuntimeArtifact();
-        JeddictLogger.logGenerateEvent(appConfigData);
+
     }
 
 }

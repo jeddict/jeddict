@@ -53,7 +53,11 @@
                         <dependency>
                             <id>org.netbeans.modules:org-netbeans-modules-j2ee-core-utilities</id>
                             <type>impl</type>
-                         </dependency>
+                        </dependency>
+                        <dependency>
+                            <id>org.netbeans.modules:org-netbeans-libs-freemarker</id>
+                            <type>impl</type>
+                        </dependency>
                     </moduleDependencies>
                 </configuration>
             </plugin>
@@ -262,5 +266,10 @@
             <artifactId>org-netbeans-modules-websvc-jaxws21api</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <!--        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-libs-freemarker</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>-->
     </dependencies>
 </project>

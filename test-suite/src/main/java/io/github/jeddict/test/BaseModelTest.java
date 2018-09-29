@@ -30,6 +30,8 @@ import static io.github.jeddict.jcode.console.Console.FG_RED;
 import static io.github.jeddict.jcode.console.Console.wrap;
 import static io.github.jeddict.jcode.util.Constants.JAVA_EXT;
 import static io.github.jeddict.jcode.util.Constants.JAVA_EXT_SUFFIX;
+import static io.github.jeddict.jcode.util.FileUtil.readString;
+import static io.github.jeddict.jcode.util.ProjectHelper.getFileObject;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.getEntityMapping;
 import io.github.jeddict.jpa.spec.DefaultClass;
@@ -61,11 +63,11 @@ import java.io.StringReader;
 import java.net.URISyntaxException;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.Arrays;
-import static java.util.Collections.singletonList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import javax.xml.bind.JAXBException;
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
 import org.apache.maven.shared.invoker.InvocationRequest;
@@ -101,6 +103,8 @@ public class BaseModelTest {
 
     private static final String SRC = "src/main/java";
 
+    private static final String WEBAPP = "src/main/webapp";
+
     protected void testModelerFile(String fileName) throws Exception {
         EntityMappings entityMappings = loadEntityMappings(fileName);
         assertNotNull(entityMappings);
@@ -111,7 +115,7 @@ public class BaseModelTest {
 
     protected void generateClasses(EntityMappings entityMappings, FileObject sourceGroup) throws Exception {
         File sourceRoot = FileUtil.toFile(sourceGroup);
-        String packageName = this.getClass().getPackage().getName();
+        String packageName = entityMappings.getPackage();
         for (Entity clazz : entityMappings.getEntity()) {
             generateClass(new EntityGenerator(clazz, packageName), entityMappings, sourceRoot);
         }
@@ -175,7 +179,7 @@ public class BaseModelTest {
 
         try (InputStream existingSourceStream
                 = this.getClass().getResourceAsStream(javaClass.getClazz() + JAVA_EXT_SUFFIX);) {
-            existingSource = IOUtils.toString(existingSourceStream, UTF_8);
+            existingSource = readString(existingSourceStream);
             existingUnit = JavaParser.parse(existingSource);
             assertNotNull(existingUnit);
             existingSource = prettyPrinter.print(existingUnit);
@@ -252,16 +256,7 @@ public class BaseModelTest {
             String packageName = this.getClass().getPackage().getName();
             Set<String> classFqns = new HashSet<>();
             for (String clazz : classes) {
-                FileObject classPackage = src;
-
-                for (String folder : packageName.split("\\.")) {
-                    FileObject childFolder = classPackage.getFileObject(folder);
-                    if (childFolder == null) {
-                        classPackage = classPackage.createFolder(folder);
-                    } else {
-                        classPackage = childFolder;
-                    }
-                }
+                FileObject classPackage = getFileObject(src, packageName, "\\.");
 
                 classFqns.add(packageName + '.' + clazz);
                 File classFile = Utilities.toFile(this.getClass().getResource(clazz + JAVA_EXT_SUFFIX).toURI());
@@ -305,6 +300,7 @@ public class BaseModelTest {
         writeFile(projectFileObject, "pom.xml", getPom(appName));
         Project project = ProjectManager.getDefault().findProject(projectFileObject);
         FileObject src = FileUtil.createFolder(projectFileObject, SRC);
+        FileObject webapp = FileUtil.createFolder(projectFileObject, WEBAPP);
         return project;
     }
 
@@ -344,12 +340,20 @@ public class BaseModelTest {
         return root.getFileObject(path);
     }
 
-    protected InvocationResult fireMavenBuild(Project project) {
+    protected InvocationResult fireMavenBuild(Project project, List<String> goals, List<String> profiles, Properties properties) {
         String mavenHome = System.getenv("M2_HOME");
+        if (mavenHome == null) {
+            mavenHome = System.getenv("MAVEN_HOME");
+        }
         InvocationRequest request = new DefaultInvocationRequest();
         request.setPomFile(new File(project.getProjectDirectory().getPath() + "/pom.xml"));
-        request.setGoals(singletonList("install"));
+        request.setGoals(goals);
+        request.setProfiles(profiles);
+        request.setProperties(properties);
+
         Invoker invoker = new DefaultInvoker();
+        System.out.println("invoker " + invoker);
+        System.out.println("mavenHome " + mavenHome);
         invoker.setMavenHome(new File(mavenHome));
 
         InvocationResult result = null;

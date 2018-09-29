@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import org.openide.util.Exceptions;
@@ -42,6 +43,7 @@ public class TechContext {
 
     private Generator generator;
     private Technology technology;
+    private LayerConfigData configData;
     private LayerConfigPanel panel;
     private List<TechContext> siblingTechContext;
     private Class<? extends Generator> generatorClass;
@@ -122,6 +124,17 @@ public class TechContext {
         }
     }
 
+    public LayerConfigData getConfigData() {
+        if (configData == null) {
+            return getPanel().getConfigData();
+        }
+        return configData;
+    }
+
+    public void setConfigData(LayerConfigData configData) {
+        this.configData = configData;
+    }
+
     /**
      * @return the generator
      */
@@ -190,6 +203,12 @@ public class TechContext {
 
     public void setSiblingTechContext(List<TechContext> siblingTechContext) {
         this.siblingTechContext = siblingTechContext;
+    }
+
+    public Optional<TechContext> findSiblingTechContext(Class<? extends Generator> generatorClass) {
+        return getSiblingTechContext().stream()
+                .filter(context -> context.getGeneratorClass() == generatorClass)
+                .findAny();
     }
 
     public boolean addSiblingTechContext(TechContext e) {
