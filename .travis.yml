@@ -3,11 +3,6 @@ cache:
   timeout: 1000
   directories:
   - $HOME/.m2
-jdk:
-- openjdk8
-- openjdk9
-- openjdk10
-- openjdk11
 matrix:
   include:
     - os: linux
