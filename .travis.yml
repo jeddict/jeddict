@@ -11,13 +11,12 @@ before_install:
     - pushd ~/builds/netbeans-modeler
     - mvn clean install
     - popd
-    - git clone https://github.com/jeddict/jeddict.git ~/builds/jeddict
-    - pushd ~/builds/jeddict/jcode-core/repository/org/graalvm/graalvm/graaljs/1.0.0-rc6
+    - pushd jcode-core/repository/org/graalvm/graalvm/graaljs/1.0.0-rc6
     - mvn install:install-file -Dfile=graaljs-1.0.0-rc6.jar -DgroupId=org.graalvm -DartifactId=graaljs -Dversion=1.0.0-rc6 -Dpackaging=jar
     - popd
-    - pushd ~/builds/jeddict/jcode-core/repository/org/graalvm/graalvm/graaljs-scriptengine/1.0.0-rc6
-    - mvn install:install-file -Dfile=graaljs-1.0.0-rc6.jar -DgroupId=org.graalvm -DartifactId=graaljs-scriptengine -Dversion=1.0.0-rc6 -Dpackaging=jar
+    - pushd jcode-core/repository/org/graalvm/graalvm/graaljs-scriptengine/1.0.0-rc6
+    - mvn install:install-file -Dfile=graaljs-scriptengine-1.0.0-rc6.jar -DgroupId=org.graalvm -DartifactId=graaljs-scriptengine -Dversion=1.0.0-rc6 -Dpackaging=jar
     - popd
-    - pushd ~/builds/jeddict/jcode-core/repository/org/graalvm/graalvm/tregex/1.0.0-rc6
-    - mvn install:install-file -Dfile=graaljs-1.0.0-rc6.jar -DgroupId=org.graalvm -DartifactId=tregex -Dversion=1.0.0-rc6 -Dpackaging=jar
+    - pushd jcode-core/repository/org/graalvm/graalvm/tregex/1.0.0-rc6
+    - mvn install:install-file -Dfile=tregex-1.0.0-rc6.jar -DgroupId=org.graalvm -DartifactId=tregex -Dversion=1.0.0-rc6 -Dpackaging=jar
     - popd
