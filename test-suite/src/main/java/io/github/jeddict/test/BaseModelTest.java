@@ -346,20 +346,20 @@ public class BaseModelTest {
             mavenHome = System.getenv("MAVEN_HOME");
         }
         InvocationRequest request = new DefaultInvocationRequest();
-        request.setPomFile(new File(project.getProjectDirectory().getPath() + "/pom.xml"));
+        request.setPomFile(new File(project.getProjectDirectory().getPath() + "/pom2.xml"));
+        System.out.println("Project : " + request.getPomFile().getAbsolutePath());
         request.setGoals(goals);
         request.setProfiles(profiles);
         request.setProperties(properties);
 
         Invoker invoker = new DefaultInvoker();
-        System.out.println("invoker " + invoker);
-        System.out.println("mavenHome " + mavenHome);
         invoker.setMavenHome(new File(mavenHome));
+        System.out.println("Maven Home : " + mavenHome);
 
         InvocationResult result = null;
         try {
             result = invoker.execute(request);
-            assertEquals(0, result.getExitCode(), "Maven build failed");
+            assertEquals(0, result.getExitCode(), "Maven build failed : " + result.getExecutionException().getMessage());
         } catch (MavenInvocationException ex) {
             ex.printStackTrace();
             fail("Maven build failed", ex);
