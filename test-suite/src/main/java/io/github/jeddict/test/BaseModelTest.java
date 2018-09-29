@@ -378,9 +378,13 @@ public class BaseModelTest {
             cmd = mavenHome + File.separator + "bin" + File.separator + cmd;
             List<String> args = new ArrayList<>();
             args.add(cmd);
-            args.addAll(goals);
-            args.add("-P");
-            args.addAll(profiles);
+            if (goals != null && !goals.isEmpty()) {
+                args.addAll(goals);
+            }
+            if (profiles != null && !profiles.isEmpty()) {
+                args.add("-P");
+                args.addAll(profiles);
+            }
             if (properties != null) {
                 properties.entrySet().forEach(e -> args.add("-D" + e.getKey() + "=" + e.getValue()));
             }
