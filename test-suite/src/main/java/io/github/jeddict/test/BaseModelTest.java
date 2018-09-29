@@ -62,23 +62,15 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
-import java.lang.ProcessBuilder.Redirect;
 import java.net.URISyntaxException;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import javax.xml.bind.JAXBException;
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.DefaultInvoker;
-import org.apache.maven.shared.invoker.InvocationRequest;
-import org.apache.maven.shared.invoker.InvocationResult;
-import org.apache.maven.shared.invoker.Invoker;
-import org.apache.maven.shared.invoker.MavenInvocationException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -389,7 +381,9 @@ public class BaseModelTest {
             args.addAll(goals);
             args.add("-P");
             args.addAll(profiles);
-            properties.entrySet().forEach(e -> args.add("-D" + e.getKey() + "=" + e.getValue()));
+            if (properties != null) {
+                properties.entrySet().forEach(e -> args.add("-D" + e.getKey() + "=" + e.getValue()));
+            }
 
             ProcessBuilder pb = new ProcessBuilder(args.toArray(new String[]{}));
             pb.directory(FileUtil.toFile(project.getProjectDirectory()));
