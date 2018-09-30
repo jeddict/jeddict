@@ -18,7 +18,8 @@
         <module>db-modeler</module>
         <module>reverse-engineering</module>
         <module>installer</module>
-        <module>test-suite</module>
+        <module>tests</module>
+        <module>examples</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -114,6 +115,22 @@
                     <version>${netbeans.version}</version>
                 </dependency>
             </dependencies>
+        </profile>
+        <profile>
+            <id>release</id>
+            <modules>
+                <module>jpa-modeler</module>
+                <module>collaboration</module>
+                <module>jcode-core</module>
+                <module>jcode-util</module>
+                <module>jpa-spec</module>
+                <module>orm-generator</module>
+                <module>relation-mapper</module>
+                <module>jsonb-modeler</module>
+                <module>db-modeler</module>
+                <module>reverse-engineering</module>
+                <module>installer</module>
+            </modules>
         </profile>
     </profiles>
 </project>
