@@ -15,8 +15,6 @@
  */
 package io.github.jeddict.test;
 
-import io.github.jeddict.test.mock.MockActiveDocumentProvider;
-import io.github.jeddict.test.mock.MockEnvironmentFactory;
 import io.github.jeddict.jcode.ApplicationConfigData;
 import io.github.jeddict.jcode.TechContext;
 import io.github.jeddict.jcode.console.Console;
@@ -29,13 +27,11 @@ import io.github.jeddict.jpa.spec.extend.ProjectType;
 import static io.github.jeddict.jpa.spec.extend.ProjectType.GATEWAY;
 import static io.github.jeddict.jpa.spec.extend.ProjectType.MICROSERVICE;
 import static io.github.jeddict.jpa.spec.extend.ProjectType.MONOLITH;
+import static io.github.jeddict.test.ProjectBuilder.SRC;
 import io.github.jeddict.test.mock.MockTaskSupervisor;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.netbeans.api.project.Project;
-import org.netbeans.junit.MockServices;
 import org.openide.filesystems.FileObject;
 
 /**
@@ -69,11 +65,12 @@ public abstract class FullStackApplicationTest extends BaseModelTest {
         try {
 //            MockServices.setServices(MockEnvironmentFactory.class, MockActiveDocumentProvider.class);
 
-            project = createProject(applicationName);
+            ProjectBuilder projectBuilder = new ProjectBuilder(applicationName);
+            project = projectBuilder.get();
             EntityMappings entityMappings = loadEntityMappings(modelerFile);
             assertNotNull(entityMappings);
 
-            FileObject source = getJavaSourceGroup(project);
+            FileObject source = projectBuilder.getSrc();
             assertNotNull(source);
             printProjectPath(project);
 
@@ -83,7 +80,7 @@ public abstract class FullStackApplicationTest extends BaseModelTest {
             if (gatewayProject == null) {
                 gatewayProject = project;
             }
-            FileObject gatewaySource = getJavaSourceGroup(gatewayProject);
+            FileObject gatewaySource = gatewayProject.getProjectDirectory().getFileObject(SRC);
             assertNotNull(gatewaySource);
 
             ApplicationConfigData configData = new ApplicationConfigData();

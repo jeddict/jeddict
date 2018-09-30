@@ -18,6 +18,7 @@ package io.github.jeddict.docs;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.reveng.doc.DocWizardDescriptor;
 import io.github.jeddict.test.BaseModelTest;
+import io.github.jeddict.test.ProjectBuilder;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.netbeans.api.project.Project;
@@ -44,7 +45,7 @@ public class DocumentReverseEngineeringTest extends BaseModelTest {
     }
 
     private void parseDocument(String name) throws Exception {
-        Project project = createProject("document-reverse-engineering-test");
+        Project project = new ProjectBuilder("document-reverse-engineering-test").get();
         EntityMappings entityMappings = createEntityMappings();
 
         boolean jpaSupport = true;

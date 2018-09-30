@@ -98,16 +98,6 @@ import org.openide.util.Utilities;
  */
 public class BaseModelTest {
 
-    private static final String SRC = "src/main/java";
-
-    private static final String RESOURCES = "src/main/resources";
-
-    private static final String TEST_SRC = "src/test/java";
-
-    private static final String TEST_RESOURCES = "src/test/resources";
-
-    private static final String WEBAPP = "src/main/webapp";
-
     protected void testModelerFile(String fileName) throws Exception {
         EntityMappings entityMappings = loadEntityMappings(fileName);
         assertNotNull(entityMappings);
@@ -181,7 +171,7 @@ public class BaseModelTest {
         CompilationUnit newUnit;
 
         try (InputStream existingSourceStream
-                = this.getClass().getResourceAsStream(javaClass.getClazz() + JAVA_EXT_SUFFIX);) {
+                = this.getClass().getResourceAsStream(javaClass.getClazz() + JAVA_EXT_SUFFIX)) {
             existingSource = readString(existingSourceStream);
             existingUnit = JavaParser.parse(existingSource);
             assertNotNull(existingUnit);
@@ -251,10 +241,9 @@ public class BaseModelTest {
 
     protected void reverseEngineeringTest(String... classes) {
         try {
-            Project project = createProject("reverse-engineering-test");
+            ProjectBuilder projectBuilder = new ProjectBuilder("reverse-engineering-test");
+            FileObject src = projectBuilder.getSrc();
             EntityMappings entityMappings = createEntityMappings();
-
-            FileObject src = getJavaSourceGroup(project);
 
             String packageName = this.getClass().getPackage().getName();
             Set<String> classFqns = new HashSet<>();
@@ -293,25 +282,6 @@ public class BaseModelTest {
             fail(fileName + " file uri syntax error", ex);
         }
         throw new IllegalStateException("Unable to load file : " + fileName);
-    }
-
-    protected Project createProject(String appName) throws IOException {
-        NbTestCase nbtest = new NbTestCase(appName) {
-        };
-        nbtest.clearWorkDir();
-        FileObject projectFileObject = FileUtil.toFileObject(nbtest.getWorkDir());
-        writeFile(projectFileObject, "pom.xml", getPom(appName));
-        Project project = ProjectManager.getDefault().findProject(projectFileObject);
-        FileObject src = FileUtil.createFolder(projectFileObject, SRC);
-        FileObject resources = FileUtil.createFolder(projectFileObject, RESOURCES);
-        FileObject webapp = FileUtil.createFolder(projectFileObject, WEBAPP);
-        FileObject testSrc = FileUtil.createFolder(projectFileObject, TEST_SRC);
-        FileObject testResources = FileUtil.createFolder(projectFileObject, TEST_RESOURCES);
-        return project;
-    }
-
-    protected FileObject getJavaSourceGroup(Project project) {
-        return project.getProjectDirectory().getFileObject(SRC);
     }
 
     protected ProgressReporter getProgressReporter() {
@@ -430,50 +400,4 @@ public class BaseModelTest {
         }).start();
     }
 
-    private String getPom(String appName) {
-        return POM.replace("${applicationName}", appName);
-    }
-
-    private static final String POM = "<project xmlns='http://maven.apache.org/POM/4.0.0'>\n"
-            + "  <modelVersion>4.0.0</modelVersion>\n"
-            + "  <groupId>io.github.jeddict</groupId>\n"
-            + "  <artifactId>${applicationName}</artifactId>\n"
-            + "  <packaging>war</packaging>\n"
-            + "  <version>1.0-SNAPSHOT</version>\n"
-            + "  <name>${applicationName}</name>\n"
-            + "  <properties>\n"
-            + "      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\n"
-            + "      <maven.compiler.source>1.8</maven.compiler.source>\n"
-            + "      <maven.compiler.target>1.8</maven.compiler.target>\n"
-            + "  </properties>\n"
-            + "  <dependencies>\n"
-            + "      <dependency>\n"
-            + "          <groupId>javax</groupId>\n"
-            + "          <artifactId>javaee-web-api</artifactId>\n"
-            + "          <version>8.0</version>\n"
-            + "          <scope>provided</scope>\n"
-            + "      </dependency>\n"
-            + "  </dependencies>\n"
-            + "  <build>\n"
-            + "      <plugins>\n"
-            + "          <plugin>\n"
-            + "              <groupId>org.apache.maven.plugins</groupId>\n"
-            + "              <artifactId>maven-compiler-plugin</artifactId>\n"
-            + "              <version>3.8.0</version>\n"
-            + "              <configuration>\n"
-            + "                  <source>${maven.compiler.source}</source>\n"
-            + "                  <target>${maven.compiler.target}</target>\n"
-            + "              </configuration>\n"
-            + "          </plugin>\n"
-            + "          <plugin>\n"
-            + "              <groupId>org.apache.maven.plugins</groupId>\n"
-            + "              <artifactId>maven-war-plugin</artifactId>\n"
-            + "              <version>3.2.2</version>\n"
-            + "              <configuration>\n"
-            + "                  <failOnMissingWebXml>false</failOnMissingWebXml>\n"
-            + "              </configuration>\n"
-            + "          </plugin>\n"
-            + "      </plugins>\n"
-            + "  </build>\n"
-            + "</project>";
 }
