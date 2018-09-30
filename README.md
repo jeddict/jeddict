@@ -73,26 +73,42 @@ See the [Manual Installation](https://jeddict.github.io/page.html?l=p/installati
 - Twitter: [@ImJeddict](http://twitter.com/ImJeddict)
 
 
-## Building from Source
+## Contributing
 
-You can build Jeddict using JDK 8 and test with NetBeans IDE 8.2 :
+Please take a look at our [contributing](https://github.com/jeddict/jeddict/blob/master/CONTRIBUTING.md) guidelines if you're interested in helping!
 
+
+## Build and run from Source
+
+You can build Jeddict using JDK 8+ and test with NetBeans IDE 8.2 :
+
+### Build
 ```bash
 $ git clone https://github.com/jeddict/netbeans-modeler.git
 $ mvn -f "netbeans-modeler" clean install
 $ git clone https://github.com/jeddict/jeddict.git
 $ mvn -f "jeddict" clean install
+$ git clone https://github.com/jeddict/jeddict-extension.git
+$ mvn -f "jeddict-extension" clean install
+$ git clone https://github.com/jeddict/hipee.git
+$ mvn -f "hipee" clean install
+```
+### Run
+```bash
 $ mvn -f "jeddict" nbm:run-ide -Dnetbeans.installation="C:\Program Files\NetBeans 8.2"
 ```
 Note: `netbeans.installation` property refers to the NetBeans IDE 8.2 path.
 
-Optionally you may also build [jeddict-extensions](https://github.com/jeddict/jeddict-extensions)
-and [hipee](https://github.com/jeddict/hipee) for out of the box features.
+### Test Suite
+To setup the test suite first follow the above build instructions.
 
+```bash
+$ git clone https://github.com/jeddict/jeddict-test-suite.git
+$ mvn -f "jeddict-test-suite" clean install
 
-## Contributing
-
-Please take a look at our [contributing](https://github.com/jeddict/jeddict/blob/master/CONTRIBUTING.md) guidelines if you're interested in helping!
+$ mvn -f "jeddict" test
+$ mvn -f "jeddict-test-suite" test
+```
 
 
 ## License
