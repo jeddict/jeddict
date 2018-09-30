@@ -48,8 +48,8 @@ public interface Generator {
         return context;
     }
 
-//    static List<TechContext> getBusinessService() {
-//        return getTechContexts(null, Technology.Type.BUSINESS);
+//    static List<TechContext> getRepositoryService() {
+//        return getTechContexts(null, Technology.Type.REPOSITORY);
 //    }
 //
 //    static List<TechContext> getController(TechContext parentCodeGenerator) {
@@ -61,8 +61,8 @@ public interface Generator {
 //    }
 
         
-    static List<TechContext> getBusinessService(boolean microservices) {
-        return getTechContexts(null, Technology.Type.BUSINESS, microservices);
+    static List<TechContext> getRepositoryService(boolean microservices) {
+        return getTechContexts(null, Technology.Type.REPOSITORY, microservices);
     }
 
     static List<TechContext> getController(TechContext parentCodeGenerator, boolean microservices) {

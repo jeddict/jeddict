@@ -17,7 +17,7 @@ package io.github.jeddict.jcode.impl;
 
 import io.github.jeddict.jcode.Generator;
 import io.github.jeddict.jcode.annotation.Technology;
-import static io.github.jeddict.jcode.annotation.Technology.Type.BUSINESS;
+import static io.github.jeddict.jcode.annotation.Technology.Type.REPOSITORY;
 import java.io.IOException;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -26,8 +26,8 @@ import org.openide.util.lookup.ServiceProvider;
  * @author jGauravGupta <gaurav.gupta.jc@gmail.com>
  */
 @ServiceProvider(service=Generator.class)
-@Technology(type=BUSINESS, microservice = true, listIndex = 0)
-public class DefaultBusinessLayer implements Generator {
+@Technology(type=REPOSITORY, microservice = true, listIndex = 0)
+public class DefaultRepositoryLayer implements Generator {
 
     @Override
     public void execute() throws IOException {

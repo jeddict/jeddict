@@ -56,7 +56,7 @@ public @interface Technology {
     boolean microservice() default false;
     
     enum Type {
-        BUSINESS("Repository"), CONTROLLER("Controller"), VIEWER("Viewer"), NONE("Other");
+        REPOSITORY("Repository"), CONTROLLER("Controller"), VIEWER("Viewer"), NONE("Other");
 
         private final String displayLabel;
 

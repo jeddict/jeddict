@@ -84,18 +84,18 @@ You can build Jeddict using JDK 8+ and test with NetBeans IDE 8.2 :
 
 ### Build
 ```bash
-$ git clone https://github.com/jeddict/netbeans-modeler.git
-$ mvn -f "netbeans-modeler" clean install
-$ git clone https://github.com/jeddict/jeddict.git
-$ mvn -f "jeddict" clean install
-$ git clone https://github.com/jeddict/jeddict-extension.git
-$ mvn -f "jeddict-extension" clean install
-$ git clone https://github.com/jeddict/hipee.git
-$ mvn -f "hipee" clean install
+git clone https://github.com/jeddict/netbeans-modeler.git
+git clone https://github.com/jeddict/jeddict.git
+git clone https://github.com/jeddict/jeddict-extensions.git
+git clone https://github.com/jeddict/hipee.git
+mvn -f "netbeans-modeler" clean install
+mvn -f "jeddict" clean install
+mvn -f "jeddict-extensions" clean install
+mvn -f "hipee" clean install
 ```
 ### Run
 ```bash
-$ mvn -f "jeddict" nbm:run-ide -Dnetbeans.installation="C:\Program Files\NetBeans 8.2"
+mvn -f "jeddict" nbm:run-ide -Dnetbeans.installation="C:\Program Files\NetBeans 8.2"
 ```
 Note: `netbeans.installation` property refers to the NetBeans IDE 8.2 path.
 
@@ -103,17 +103,27 @@ Note: `netbeans.installation` property refers to the NetBeans IDE 8.2 path.
 To setup the test suite first follow the above build instructions.
 
 ```bash
-$ git clone https://github.com/jeddict/jeddict-test-suite.git
-$ mvn -f "jeddict-test-suite" clean install
+git clone https://github.com/jeddict/jeddict-test-suite.git
+mvn -f "jeddict-test-suite" clean install -DskipTests
 
-$ mvn -f "jeddict" test
-$ mvn -f "jeddict-test-suite" test
+mvn -f "jeddict\tests" test
+mvn -f "jeddict-test-suite" test
 ```
+
+### Create nbm and cluster
+```bash
+mvn -f "netbeans-modeler" clean install nbm:nbm nbm:cluster nbm:autoupdate -Dnbm.build.dir=
+mvn -f "jeddict" clean install nbm:nbm nbm:cluster nbm:autoupdate -P release -Dnbm.build.dir=
+mvn -f "jeddict-extensions" clean install nbm:nbm nbm:cluster nbm:autoupdate -Dnbm.build.dir=
+mvn -f "hipee" clean install nbm:nbm nbm:cluster nbm:autoupdate -Dnbm.build.dir=
+```
+
+Copy the nbm & clusters from `target\netbeans_site` & `target\netbeans_clusters`.
 
 
 ## License
 
-Jeddict is Open Source software released under the [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html).
+Jeddict is Open Source [Jakarta EE](https://jakarta.ee/) application development platform released under the [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html).
 
 
 #### If you like:heart: this project, don't forget:blush: to give us a star:star2: on GitHub!

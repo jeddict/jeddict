@@ -6,7 +6,7 @@
         <artifactId>jeddict</artifactId>
         <version>5.1</version>
     </parent>
-    <artifactId>test-suite</artifactId>
+    <artifactId>tests</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -15,7 +15,7 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.2.0</version>
         </dependency>
-        
+
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-symbol-solver-core</artifactId>
@@ -79,7 +79,7 @@
             <artifactId>reverse-engineering</artifactId>
             <version>${project.version}</version>
         </dependency>
- 
+
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>org.eclipse.persistence.jpa</artifactId>
@@ -171,5 +171,5 @@
             </plugin>
         </plugins>
     </build>
-    <name>Test Suite</name>
+    <name>Jeddict Tests</name>
 </project>

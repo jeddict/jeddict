@@ -11,3 +11,7 @@
 /relation-mapper/target/
 /reverse-engineering/target/
 /test-suite/target/
+/tests/target/
+/examples/generator-example/target/
+/generator-example/target/
+/examples/target/

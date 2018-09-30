@@ -391,6 +391,9 @@ public class BaseModelTest {
             String line;
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
                 while ((line = reader.readLine()) != null) {
+                    if (line.startsWith("Progress (")) { // skip verbose lines
+                        continue;
+                    }
                     sb.append(line);
                     output.println(line);
                 }
