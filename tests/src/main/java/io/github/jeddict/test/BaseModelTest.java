@@ -357,6 +357,8 @@ public class BaseModelTest {
             cmd = mavenHome + File.separator + "bin" + File.separator + cmd;
             List<String> args = new ArrayList<>();
             args.add(cmd);
+            args.add("-B");
+
             if (goals != null && !goals.isEmpty()) {
                 args.addAll(goals);
             }
@@ -391,11 +393,6 @@ public class BaseModelTest {
             String line;
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
                 while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("Progress (")
-                            || line.contains("org.netbeans.api.progress.aggregate.ProgressContributor")
-                            || line.contains("org.netbeans.modules.maven.embedder.exec.ProgressTransferListener")) { // skip verbose lines
-                        continue;
-                    }
                     sb.append(line);
                     output.println(line);
                 }
