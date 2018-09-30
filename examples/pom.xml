@@ -8,6 +8,7 @@
     </parent>
     <artifactId>examples</artifactId>
     <packaging>nbm</packaging>
+    <name>Generator Examples</name>
 
     <properties>
         <root.dir>${basedir}/../</root.dir>
@@ -34,7 +35,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-annotations-common</artifactId>
-            <version>RELEASE81</version>
+            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -54,38 +55,37 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-filesystems</artifactId>
-            <version>RELEASE82</version>
+            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util</artifactId>
-            <version>RELEASE82</version>
+            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-projectapi</artifactId>
-            <version>RELEASE82</version>
+            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-awt</artifactId>
-            <version>RELEASE82</version>
+            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-websvc-saas-codegen-java</artifactId>
-            <version>RELEASE82</version>
+            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-libs-javacapi</artifactId>
-            <version>RELEASE82</version>
+            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-java-project-ui</artifactId>
-            <version>RELEASE82</version>
+            <version>${netbeans.version}</version>
         </dependency>
     </dependencies>
-    <name>Generator Examples</name>
 </project>
