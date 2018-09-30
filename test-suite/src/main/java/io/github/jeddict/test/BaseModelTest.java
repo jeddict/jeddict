@@ -100,6 +100,12 @@ public class BaseModelTest {
 
     private static final String SRC = "src/main/java";
 
+    private static final String RESOURCES = "src/main/resources";
+
+    private static final String TEST_SRC = "src/test/java";
+
+    private static final String TEST_RESOURCES = "src/test/resources";
+
     private static final String WEBAPP = "src/main/webapp";
 
     protected void testModelerFile(String fileName) throws Exception {
@@ -297,7 +303,10 @@ public class BaseModelTest {
         writeFile(projectFileObject, "pom.xml", getPom(appName));
         Project project = ProjectManager.getDefault().findProject(projectFileObject);
         FileObject src = FileUtil.createFolder(projectFileObject, SRC);
+        FileObject resources = FileUtil.createFolder(projectFileObject, RESOURCES);
         FileObject webapp = FileUtil.createFolder(projectFileObject, WEBAPP);
+        FileObject testSrc = FileUtil.createFolder(projectFileObject, TEST_SRC);
+        FileObject testResources = FileUtil.createFolder(projectFileObject, TEST_RESOURCES);
         return project;
     }
 
