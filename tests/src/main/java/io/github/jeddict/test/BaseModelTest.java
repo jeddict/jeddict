@@ -391,7 +391,9 @@ public class BaseModelTest {
             String line;
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
                 while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("Progress (")) { // skip verbose lines
+                    if (line.startsWith("Progress (")
+                            || line.contains("org.netbeans.api.progress.aggregate.ProgressContributor")
+                            || line.contains("org.netbeans.modules.maven.embedder.exec.ProgressTransferListener")) { // skip verbose lines
                         continue;
                     }
                     sb.append(line);
