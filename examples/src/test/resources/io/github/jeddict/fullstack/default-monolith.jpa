@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" ptype="MONOLITH" ppkg="io.github.jeddict.fullstack" epkg="domain" v="5.1" rws="_1537626051046412" Pws="_1537626051046412" cws="_1537626051046412" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_1537626051046411" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+    <jpa:entity compositePrimaryKeyClass="StudentPK" abs="false" class="Student" v="true" jbn="false" xre="false" m="false" rootElement="_1537626051046411" id="_1537626057947413">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic fetch="LAZY" attribute-type="String" v="true" xvt="" name="name" id="_1537626068534416">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_1537626057948414">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value strategy="DEFAULT"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Student.findAll">
+            <jpa:query>Select e from Student e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Student.findByName">
+            <jpa:query>Select s from Student s where s.name=:name</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:wsl>
+        <jpa:ws n="Main" id="_1537626051046412">
+            <i ref="_1537626057947413" x="356" y="338"/>
+        </jpa:ws>
+    </jpa:wsl>
+</jpa:entity-mappings>

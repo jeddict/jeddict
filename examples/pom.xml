@@ -33,6 +33,12 @@
     </build>
     <dependencies>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>tests</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>   
+        <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-annotations-common</artifactId>
             <version>${netbeans.version}</version>
@@ -86,6 +92,6 @@
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-java-project-ui</artifactId>
             <version>${netbeans.version}</version>
-        </dependency>
+        </dependency>   
     </dependencies>
 </project>
