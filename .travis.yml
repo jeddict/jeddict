@@ -10,7 +10,7 @@ os:
   - linux
   - osx
 before_install:
-    - export M2_HOME=/usr/local/maven-3.5.2
+    - export M2_HOME=$(readlink -m $(dirname $(readlink -f $(which mvn)))/../)
 
     - git clone https://github.com/jeddict/netbeans-modeler.git ~/builds/netbeans-modeler
     - pushd ~/builds/netbeans-modeler
