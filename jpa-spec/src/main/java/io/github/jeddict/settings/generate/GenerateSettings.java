@@ -125,7 +125,7 @@ public final class GenerateSettings extends javax.swing.JPanel {
         generateFluentAPIComp.setSelected(isGenerateFluentAPI());
         fluentAPIPrefixComp.setText(getFluentAPIPrefix());
         generateDefaultValueComp.setSelected(isGenerateDefaultValue());
-        enableIntrospectionComp.setSelected(isEnableIntrospection());
+        enableIntrospectionComp.setSelected(isIntrospectionEnabled());
     }
 
     void store() {
@@ -216,16 +216,21 @@ public final class GenerateSettings extends javax.swing.JPanel {
         return generateDefaultValue;
     }
 
-    public static boolean isEnableIntrospection() {
+    public static boolean isIntrospectionEnabled() {
         if (enableIntrospection == null) {
             enableIntrospection = pref.getBoolean("enableIntrospection", Boolean.FALSE);
         }
         return enableIntrospection;
     }
 
+    public static void setIntrospectionEnabled(boolean status) {
+        enableIntrospection = status;
+        pref.putBoolean("enableIntrospection", status);
+    }
+
     public static String getIntrospectionPrefix(boolean booleanTypeAttribute) {
         if (booleanTypeAttribute) {
-            return isEnableIntrospection() ? "get" : "is";
+            return isIntrospectionEnabled() ? "get" : "is";
         } else {
             return "get";
         }
