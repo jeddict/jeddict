@@ -15,14 +15,19 @@
  */
 package io.github.jeddict.installer.update.version;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
+import static java.util.logging.Level.INFO;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.WARNING_MESSAGE;
 import org.netbeans.api.autoupdate.UpdateElement;
 import org.netbeans.api.autoupdate.UpdateManager;
 import org.netbeans.api.autoupdate.UpdateUnit;
 import org.openide.*;
 import org.openide.modules.ModuleInstall;
-import org.openide.util.NbBundle;
+import static org.openide.util.NbBundle.getMessage;
 import org.openide.util.RequestProcessor;
 import org.openide.windows.OnShowing;
 import org.openide.windows.WindowManager;
@@ -41,18 +46,29 @@ public class JeddictInstaller extends ModuleInstall implements Runnable {
     public static Boolean READY = false;
     public static String lastFile = null;
     public static long lastTime = 0;
+    static boolean LOOKUP_BOOTSTRAP_UPDATE = true;
 
     @Override
     public void run() {
-        JeddictInstaller.VERSION = JeddictInstaller.getPluginVersion();
-        JeddictInstaller.IDE_VERSION = System.getProperty("netbeans.buildnumber");
-        JeddictInstaller.log.log(Level.INFO, "Initializing Jeddict v{0} (https://jeddict.github.io/)", JeddictInstaller.VERSION);
-
-        JeddictInstaller.info("Finished initializing Jeddict...");
-        lookupUpdates();
+        Set<String> versions = JeddictInstaller.getPluginVersion();
+        if (versions.isEmpty()) {
+            // unknown
+        } else if (versions.size() == 1) {
+            JeddictInstaller.VERSION = versions.iterator().next();
+            JeddictInstaller.IDE_VERSION = System.getProperty("netbeans.buildnumber");
+            log.log(INFO, "Initializing Jeddict v{0} (https://jeddict.github.io/)", JeddictInstaller.VERSION);
+            log.info("Finished initializing Jeddict...");
+            lookupUpdates();
+        } else {
+            // multiple version found
+            JOptionPane.showMessageDialog(
+                    WindowManager.getDefault().getMainWindow(),
+                    getMessage(JeddictInstaller.class, "MultipleVersion.text", versions),
+                    getMessage(JeddictInstaller.class, "MultipleVersion.title"),
+                    WARNING_MESSAGE
+            );
+        }
     }
-
-    static boolean LOOKUP_BOOTSTRAP_UPDATE = true;
 
     /**
      * Generic method can be called either on IDE startup or modeler file
@@ -70,8 +86,7 @@ public class JeddictInstaller extends ModuleInstall implements Runnable {
     }
 
     private static int getUpdateStartTime() {
-        String s = NbBundle.getMessage(JeddictInstaller.class, "UpdateHandler.StartTime");
-        return Integer.parseInt(s);
+        return Integer.parseInt(getMessage(JeddictInstaller.class, "UpdateHandler.StartTime"));
     }
 
     public static void info(String msg) {
@@ -96,13 +111,16 @@ public class JeddictInstaller extends ModuleInstall implements Runnable {
         log.log(Level.CONFIG, msg);
     }
 
-    public static String getPluginVersion() {
+    public static Set<String> getPluginVersion() {
+        Set<String> versions = new HashSet<>();
         for (UpdateUnit updateUnit : UpdateManager.getDefault().getUpdateUnits()) {
             UpdateElement updateElement = updateUnit.getInstalled();
-            if (updateElement != null)
-                if (JeddictInstaller.CATEGORY.equals(updateElement.getCategory()))
-                    return updateElement.getSpecificationVersion();
+            if (updateElement != null) {
+                if (JeddictInstaller.CATEGORY.equals(updateElement.getCategory())) {
+                    versions.add(updateElement.getSpecificationVersion());
+                }
+            }
         }
-        return "Unknown";
+        return versions;
     }
 }
