@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.github.jeddict</groupId>
         <artifactId>jeddict</artifactId>
-        <version>5.1</version>
+        <version>5.2</version>
     </parent>
     <artifactId>examples</artifactId>
     <packaging>nbm</packaging>
@@ -24,6 +24,10 @@
                     <moduleDependencies>
                         <dependency>
                             <id>org.netbeans.modules:org-netbeans-modules-db-metadata-model</id>
+                            <type>impl</type>
+                        </dependency>
+                        <dependency>
+                            <id>org.netbeans.modules:org-netbeans-modules-maven-embedder</id>
                             <type>impl</type>
                         </dependency>
                     </moduleDependencies>

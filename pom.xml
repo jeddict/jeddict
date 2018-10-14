@@ -4,7 +4,7 @@
     <groupId>io.github.jeddict</groupId>
     <artifactId>jeddict</artifactId>
     <name>Jeddict</name>
-    <version>5.1</version>
+    <version>5.2</version>
     <packaging>pom</packaging>
     <modules>
         <module>jpa-modeler</module>
@@ -19,7 +19,6 @@
         <module>reverse-engineering</module>
         <module>installer</module>
         <module>tests</module>
-        <module>examples</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -117,19 +116,14 @@
             </dependencies>
         </profile>
         <profile>
-            <id>release</id>
+            <id>dev</id>
+            <activation>
+                <property>
+                    <name>!skipDev</name>
+                </property>
+            </activation>
             <modules>
-                <module>jpa-modeler</module>
-                <module>collaboration</module>
-                <module>jcode-core</module>
-                <module>jcode-util</module>
-                <module>jpa-spec</module>
-                <module>orm-generator</module>
-                <module>relation-mapper</module>
-                <module>jsonb-modeler</module>
-                <module>db-modeler</module>
-                <module>reverse-engineering</module>
-                <module>installer</module>
+                <module>examples</module>
             </modules>
         </profile>
     </profiles>

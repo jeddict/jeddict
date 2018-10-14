@@ -35,7 +35,6 @@ import io.github.jeddict.jpa.spec.OneToOne;
 import io.github.jeddict.jpa.spec.Table;
 import io.github.jeddict.jpa.spec.TemporalType;
 import io.github.jeddict.jpa.spec.UniqueConstraint;
-import io.github.jeddict.jpa.spec.bean.BeanAttributes;
 import io.github.jeddict.jpa.spec.extend.IAttributes;
 import io.github.jeddict.jpa.spec.extend.IPersistenceAttributes;
 import io.github.jeddict.jpa.spec.extend.IPrimaryKeyAttributes;
@@ -81,7 +80,7 @@ public class DBModelGenerator {
 
     private EntityMappings entityMappings;
 
-    private Optional<JavaClass> javaClass;
+    private Optional<JavaClass> javaClass = Optional.empty();
 
     public DBModelGenerator(Project project) {
         init(project);
