@@ -100,11 +100,11 @@ public class JavaClassSyncHandler {
                         .getAllAttribute()
                         .stream()
                         .filter(attr -> Objects.nonNull(attr.getPreviousName()))
-                        .collect(toMap(Attribute::getPreviousName, identity()));
+                        .collect(toMap(Attribute::getPreviousName, identity(), (a1, a2) -> a1));
 
         Map<String, ImportDeclaration> imports = existingSource.getImports()
                 .stream()
-                .collect(toMap(importDec -> unqualify(importDec.getNameAsString()), identity()));
+                .collect(toMap(importDec -> unqualify(importDec.getNameAsString()), identity(), (i1, i2) -> i1));
 
         NodeList<TypeDeclaration<?>> types = existingSource.getTypes();
 
