@@ -25,18 +25,25 @@ import org.junit.jupiter.api.*;
  */
 public class IntrospectTest extends BaseModelTest {
 
+    @BeforeAll
+    static void setup() {
+        GenerateSettings.setIntrospectionEnabled(true);
+    }
+
     @Test
     void testGenerator() throws Exception {
-        GenerateSettings.setIntrospectionEnabled(true);
         testModelerFile("IntrospectModel.jpa");
     }
 
     @Test
     void testReveng() throws Exception {
-        GenerateSettings.setIntrospectionEnabled(true);
         reverseEngineeringTest(
                 "Student"
         );
     }
 
+    @AfterAll
+    static void tear() {
+        GenerateSettings.setIntrospectionEnabled(false);
+    }
 }
