@@ -12,6 +12,7 @@
         
     <properties>
         <root.dir>${basedir}/../</root.dir>
+        <graalvm.version>1.0.0-rc10</graalvm.version>
     </properties>
     
     <build>
@@ -127,39 +128,21 @@
         </dependency>
 
         <dependency>
-            <groupId>org.graalvm</groupId>
-            <artifactId>graal-sdk</artifactId>
-            <version>1.0.0-rc6</version>
+            <groupId>org.graalvm.js</groupId>
+            <artifactId>js</artifactId>
+            <version>${graalvm.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.ibm.icu</groupId>
+                    <artifactId>icu4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.graalvm</groupId>
-            <artifactId>tregex</artifactId>
-            <version>1.0.0-rc6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.graalvm</groupId>
-            <artifactId>graaljs</artifactId>
-            <version>1.0.0-rc6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.graalvm</groupId>
-            <artifactId>graaljs-scriptengine</artifactId>
-            <version>1.0.0-rc6</version>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.truffle</groupId>
-            <artifactId>truffle-api</artifactId>
-            <version>1.0.0-rc6</version>
+            <groupId>org.graalvm.js</groupId>
+            <artifactId>js-scriptengine</artifactId>
+            <version>${graalvm.version}</version>
         </dependency>
     </dependencies>
-
-
-
-    <repositories>
-        <repository>
-            <id>local-repository</id>
-            <url>file:${project.basedir}/repository</url>
-        </repository>
-    </repositories>
 
 </project>

@@ -1,6 +1,0 @@
-Ticket for maven central lib : https://github.com/graalvm/graaljs/issues/17
-How to w/o maven central : https://stackoverflow.com/questions/50738198/how-to-use-graaljs-is-there-a-place-where-to-get-a-jar-file-files
-
-mvn install:install-file -Dfile=graaljs-scriptengine.jar -DgroupId=org.graalvm -DartifactId=graaljs-scriptengine -Dversion=1.0.0-rc6 -Dpackaging=jar
-mvn install:install-file -Dfile=tregex.jar -DgroupId=org.graalvm -DartifactId=tregex -Dversion=1.0.0-rc6 -Dpackaging=jar
-mvn install:install-file -Dfile=graaljs.jar -DgroupId=org.graalvm -DartifactId=graaljs -Dversion=1.0.0-rc6 -Dpackaging=jar
