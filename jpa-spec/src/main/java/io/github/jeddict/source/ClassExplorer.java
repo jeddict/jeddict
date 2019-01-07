@@ -18,8 +18,6 @@ package io.github.jeddict.source;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
-import static com.github.javaparser.ast.Modifier.ABSTRACT;
-import static com.github.javaparser.ast.Modifier.STATIC;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -111,12 +109,12 @@ public class ClassExplorer extends AnnotatedMember {
         return fieldAccess;
     }
 
-    public EnumSet<Modifier> getModifiers() {
+    public NodeList<Modifier> getModifiers() {
         return type.getModifiers();
     }
 
     public boolean isAbstract() {
-        return type.getModifiers().contains(ABSTRACT);
+        return type.getModifiers().contains(Modifier.abstractModifier());
     }
 
     public Collection<MemberExplorer> getMembers() {
@@ -135,7 +133,7 @@ public class ClassExplorer extends AnnotatedMember {
                     FieldDeclaration field = (FieldDeclaration) member;
                     String attributeName = field.getVariable(0).getNameAsString();
                     MemberExplorer classMember = memberValue.apply(attributeName);
-                    if(field.getModifiers().contains(STATIC)) {
+                    if(field.getModifiers().contains(Modifier.staticModifier())) {
                         continue;
                     }
                     classMember.setField(field);
