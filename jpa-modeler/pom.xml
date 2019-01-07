@@ -64,6 +64,10 @@
                             <id>org.netbeans.modules:org-netbeans-modules-maven-embedder</id>
                             <type>impl</type>
                         </dependency>
+                        <dependency>
+                            <id>org.netbeans.api:org-netbeans-modules-db</id>
+                            <type>impl</type>
+                        </dependency>
                     </moduleDependencies>
                 </configuration>
             </plugin>
