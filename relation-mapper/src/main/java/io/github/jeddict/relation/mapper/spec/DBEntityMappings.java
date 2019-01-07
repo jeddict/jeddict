@@ -82,7 +82,7 @@ public class DBEntityMappings extends XMLEntityMappings {
         setConverters(new ArrayList<>());
         setTypeConverters(new ArrayList<>());
         setObjectTypeConverters(new ArrayList<>());
-        setSerializedConverters(new ArrayList<>());
+//        setSerializedConverters(new ArrayList<>()); // uncomment on upgrade to eclipselink v2.7.2+
         setStructConverters(new ArrayList<>());
         setTableGenerators(new ArrayList<>());
         setUuidGenerators(new ArrayList<>());

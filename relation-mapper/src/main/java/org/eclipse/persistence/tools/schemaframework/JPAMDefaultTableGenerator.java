@@ -600,10 +600,11 @@ public class JPAMDefaultTableGenerator {
                         resetFieldTypeForLOB((DirectToFieldMapping) mapping);
                     }
 
-                    if (converter instanceof SerializedObjectConverter) {
-                        //serialized object mapping field should be BLOB/IMAGE
-                        getFieldDefFromDBField(mapping.getField()).setType(((SerializedObjectConverter) converter).getSerializer().getType());
-                    }
+                    // uncomment on upgrade to eclipselink v2.7.2+
+//                    if (converter instanceof SerializedObjectConverter) {
+//                        //serialized object mapping field should be BLOB/IMAGE
+//                        getFieldDefFromDBField(mapping.getField()).setType(((SerializedObjectConverter) converter).getSerializer().getType());
+//                    }
                 }
             } else if (mapping.isAggregateCollectionMapping()) {
                 //need to figure out the target foreign key field and add it into the aggregate target table

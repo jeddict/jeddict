@@ -250,15 +250,14 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-j2ee-eclipselink</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-modules-j2ee-persistence</artifactId>
             <version>${netbeans.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.netbeans.api</groupId>
-                    <artifactId>org-netbeans-modules-j2ee-eclipselink</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.netbeans.modules</groupId>

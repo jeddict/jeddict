@@ -49,10 +49,6 @@
                              <id>org.netbeans.modules:org-netbeans-modules-maven-embedder</id>
                              <type>impl</type>
                          </dependency>
-<!--                         <dependency>
-                             <id>org.netbeans.api:org-netbeans-modules-j2ee-eclipselink</id>
-                             <type>impl</type>
-                         </dependency>-->
                     </moduleDependencies>
                 </configuration>
             </plugin>
@@ -80,32 +76,6 @@
                 </exclusion>-->
             </exclusions>
         </dependency>
-<!--        <dependency>
-            <groupId>org.netbeans.external</groupId>
-            <artifactId>com-google-guava</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>-->
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
-            <version>2.7.2</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.glassfish</groupId>
-                    <artifactId>javax.json</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>org.eclipse.persistence.jpa.jpql</artifactId>
-            <version>2.7.2</version>
-        </dependency>
-        <!--<dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-netbeans-modules-j2ee-eclipselink</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>-->
 
         <dependency>
             <groupId>io.github.jeddict.modeler</groupId>
@@ -196,6 +166,11 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-projectapi</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-j2ee-eclipselink</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
     </dependencies>
