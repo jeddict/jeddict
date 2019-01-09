@@ -128,12 +128,6 @@
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-modules-j2ee-persistence</artifactId>
             <version>${netbeans.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.netbeans.api</groupId>
-                    <artifactId>org-netbeans-modules-j2ee-eclipselink</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.netbeans.modules</groupId>
@@ -223,6 +217,11 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-xml-jaxb-api</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-maven-embedder</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
     </dependencies>

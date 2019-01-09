@@ -58,6 +58,14 @@
                             <id>org.netbeans.modules:org-netbeans-libs-freemarker</id>
                             <type>impl</type>
                         </dependency>
+                        <dependency>
+                            <id>org.netbeans.modules:org-netbeans-modules-websvc-jaxws21</id>
+                            <type>impl</type>
+                        </dependency>
+                        <dependency>
+                            <id>org.netbeans.modules:org-netbeans-modules-j2ee-persistenceapi</id>
+                            <type>impl</type>
+                        </dependency>
                     </moduleDependencies>
                 </configuration>
             </plugin>
@@ -163,12 +171,6 @@
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-modules-j2ee-persistence</artifactId>
             <version>${netbeans.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.netbeans.api</groupId>
-                    <artifactId>org-netbeans-modules-j2ee-eclipselink</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
@@ -266,10 +268,20 @@
             <artifactId>org-netbeans-modules-websvc-jaxws21api</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
-        <!--        <dependency>
+        <dependency>
             <groupId>org.netbeans.modules</groupId>
-            <artifactId>org-netbeans-libs-freemarker</artifactId>
+            <artifactId>org-netbeans-modules-websvc-jaxws21</artifactId>
             <version>${netbeans.version}</version>
-        </dependency>-->
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-j2ee-eclipselink</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-j2ee-persistenceapi</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
     </dependencies>
 </project>
