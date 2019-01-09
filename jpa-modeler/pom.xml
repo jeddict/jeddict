@@ -77,18 +77,6 @@
     <dependencies>
         
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-scratchpad</artifactId>
-            <version>3.14</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-codec</groupId>
-                    <artifactId>commons-codec</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        
-        <dependency>
             <groupId>io.github.jeddict.modeler</groupId>
             <artifactId>modeler-api</artifactId>
             <version>${project.version}</version>

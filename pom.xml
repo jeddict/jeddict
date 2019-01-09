@@ -141,5 +141,16 @@
                 <module>examples</module>
             </modules>
         </profile>
+        <profile>
+            <id>incubation</id>
+            <activation>
+                <property>
+                    <name>!skipIncubation</name>
+                </property>
+            </activation>
+            <modules>
+                <module>incubation</module>
+            </modules>
+        </profile>
     </profiles>
 </project>
