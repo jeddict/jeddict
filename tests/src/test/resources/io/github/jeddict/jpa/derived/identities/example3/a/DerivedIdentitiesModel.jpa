@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" ptype="MONOLITH" ppkg="io.github.jeddict.jpa.derived.identities.example3" epkg="a" v="5.1" rws="_1537626051046412" Pws="_1537626051046412" cws="_1537626051046412" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_1537626051046411" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+    <jpa:entity compositePrimaryKeyType="EMBEDDEDID" compositePrimaryKeyClass="EmployeeId" abs="false" class="Employee" v="true" jbn="false" xre="false" m="false" rootElement="_1537626051046411" id="_1537626057947413">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:id attribute-type="String" v="true" xvt="" name="firstName" id="_1537626057948414">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value/>
+            </jpa:id>
+            <jpa:id attribute-type="String" v="true" xvt="" name="lastName" id="_154882378570840">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value/>
+            </jpa:id>
+            <jpa:embedded-id v="true" xvt="" name="empId" id="_15488249461086">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:embedded-id>
+        </jpa:attributes>
+    </jpa:entity>
+    <jpa:entity compositePrimaryKeyType="IDCLASS" compositePrimaryKeyClass="DependentId" abs="false" class="Dependent" v="true" jbn="false" xre="false" m="false" rootElement="_1537626051046411" id="_154881703374740">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:many-to-one optional="true" primaryKey="true" connected-entity-id="_1537626057947413" v="true" xvt="" name="emp" id="_154881707198544">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:join-column name="FK1" rc="FIRSTNAME" unique="false" nullable="true" insertable="true" updatable="true"/>
+                <jpa:join-column name="FK2" rc="LASTNAME" unique="false" nullable="true" insertable="true" updatable="true"/>
+            </jpa:many-to-one>
+            <jpa:id attribute-type="String" v="true" xvt="" name="name" id="_154881703374741">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:column name="dep_name" unique="false" nullable="true" insertable="true" updatable="true"/>
+                <jpa:generated-value/>
+            </jpa:id>
+        </jpa:attributes>
+    </jpa:entity>
+    <jpa:snp loc="BEFORE_PACKAGE" e="true">/**&#xD;
+ * 2.4.1.3 Examples of Derived Identities&#xD;
+ * Example 3 : Case (a)&#xD;
+ * &#xD;
+ */</jpa:snp>
+    <jpa:c/>
+    <jpa:wsl>
+        <jpa:ws n="Main" id="_1537626051046412">
+            <i ref="_1537626057947413" x="514" y="510"/>
+            <i ref="_154881703374740" x="117" y="527"/>
+        </jpa:ws>
+    </jpa:wsl>
+</jpa:entity-mappings>
