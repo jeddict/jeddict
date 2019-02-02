@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" ptype="MONOLITH" ppkg="io.github.jeddict" epkg="bean" v="5.1" rws="_1537626051046412" Pws="_1537626051046412" cws="_1537626051046412" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_1537626051046411" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+    <jpa:beanClass abs="false" class="Student" v="true" jbn="false" xre="false" m="false" rootElement="_1537626051046411" id="_15487720992403">
+        <jpa:ts e="true">
+            <jpa:a>_15487720992554</jpa:a>
+        </jpa:ts>
+        <jpa:hc e="true">
+            <jpa:a>_15487720992554</jpa:a>
+            <jpa:a>_15487721121076</jpa:a>
+        </jpa:hc>
+        <jpa:eq e="true">
+            <jpa:a>_15487720992554</jpa:a>
+            <jpa:a>_15487721121076</jpa:a>
+        </jpa:eq>
+        <jpa:con am="PUBLIC" e="true">
+            <jpa:a>_15487720992554</jpa:a>
+        </jpa:con>
+        <jpa:con am="PUBLIC" e="true"/>
+        <jpa:ext e="true" n="java.lang.Object"/>
+        <jpa:inf e="true" n="java.lang.Cloneable"/>
+        <jpa:snp loc="BEFORE_FIELD" e="true">// before field snippet</jpa:snp>
+        <jpa:snp loc="BEFORE_METHOD" e="true">// before method snippet</jpa:snp>
+        <jpa:snp loc="AFTER_METHOD" e="true">// after method snippet</jpa:snp>
+        <jpa:snp loc="AFTER_CLASS" e="true">// after class snippet</jpa:snp>
+        <jpa:snp loc="BEFORE_PACKAGE" e="true">// before package snippet</jpa:snp>
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <attributes>
+            <basic attribute-type="java.lang.String" v="true" xvt="" name="name" pname="attribute" id="_15487720992554">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </basic>
+            <basic attribute-type="int" v="true" xvt="" name="age" pname="attribute" id="_15487721121076">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </basic>
+        </attributes>
+    </jpa:beanClass>
+    <jpa:wsl>
+        <jpa:ws n="Main" id="_1537626051046412">
+            <i ref="_15487720992403" x="270" y="230"/>
+        </jpa:ws>
+    </jpa:wsl>
+</jpa:entity-mappings>
