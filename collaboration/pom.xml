@@ -27,12 +27,6 @@
                         <publicPackage>io.github.jeddict.network.social</publicPackage>
                         <publicPackage>io.github.jeddict.collaborate.enhancement</publicPackage>
                     </publicPackages>
-                    <moduleDependencies>
-                        <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-maven-embedder</id>
-                            <type>impl</type>
-                        </dependency>
-                    </moduleDependencies>
                 </configuration>
             </plugin>
         </plugins>
