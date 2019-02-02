@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" ptype="MONOLITH" ppkg="io.github.jeddict.jpa" epkg="orderby" v="5.1" rws="_1537626051046412" Pws="_1537626051046412" cws="_1537626051046412" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_1537626051046411" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+    <jpa:entity compositePrimaryKeyClass="StudentPK" abs="false" class="Student" v="true" jbn="false" xre="false" m="false" rootElement="_1537626051046411" id="_1537626057947413">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="firstName" id="_1548832779781206">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="lastname" id="_1548832784845207">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:many-to-many collection-type="java.util.List" cit="java.util.ArrayList" connected-entity-id="_1548832578750152" connected-attribute-id="_1548832642237159" v="true" xvt="" name="courses" id="_1548832642237160">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:many-to-many>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_1537626057948414">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Student.findAll">
+            <jpa:query>Select e from Student e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Student.findByName">
+            <jpa:query>Select s from Student s where s.name=:name</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Student.findByFirstName">
+            <jpa:query>Select s from Student s where s.firstName=:firstName</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Student.findByLastname">
+            <jpa:query>Select s from Student s where s.lastname=:lastname</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Student.findByAttribute">
+            <jpa:query>Select s from Student s where s.attribute=:attribute</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:entity compositePrimaryKeyClass="CoursePK" abs="false" class="Course" v="true" jbn="false" xre="false" m="false" rootElement="_1537626051046411" id="_1548832578750152">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:many-to-many own="true" collection-type="java.util.List" cit="java.util.ArrayList" connected-entity-id="_1537626057947413" connected-attribute-id="_1548832642237160" v="true" xvt="" name="students" id="_1548832642237159">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:ob>
+                    <jpa:a c="lastname"/>
+                </jpa:ob>
+            </jpa:many-to-many>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_1548832578755153">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Course.findAll">
+            <jpa:query>Select e from Course e</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:entity compositePrimaryKeyClass="PersonPK" abs="false" class="Person" v="true" jbn="false" xre="false" m="false" rootElement="_1537626051046411" id="_1548832580175155">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:element-collection collection-type="java.util.List" cit="java.util.ArrayList" connected-class-id="_1548832663811161" v="true" xvt="" name="residences" id="_1548832715516173">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:ob>
+                    <jpa:a c="zipcode.zip"/>
+                    <jpa:a c="zipcode.plusFour"/>
+                </jpa:ob>
+            </jpa:element-collection>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_1548832580175156">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Person.findAll">
+            <jpa:query>Select e from Person e</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:embeddable abs="false" class="Address" v="true" jbn="false" xre="false" m="false" rootElement="_1537626051046411" id="_1548832663811161">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="street" id="_1548832677236165">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="city" id="_1548832680601166">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="state" id="_1548832684640167">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:embedded connected-class-id="_1548832665275163" v="true" xvt="" name="zipcode" id="_1548832700267171">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:embedded>
+        </jpa:attributes>
+    </jpa:embeddable>
+    <jpa:embeddable abs="false" class="Zipcode" v="true" jbn="false" xre="false" m="false" rootElement="_1537626051046411" id="_1548832665275163">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="zip" id="_1548832692352168">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="plusFour" id="_1548832695464169">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+        </jpa:attributes>
+    </jpa:embeddable>
+    <jpa:snp loc="BEFORE_PACKAGE" e="true">/**&#xD;
+ * 11.1.42 OrderBy Annotation&#xD;
+ * Table 39&#xD;
+ */</jpa:snp>
+    <jpa:c>
+        <ct>java.util.List</ct>
+        <ct>java.util.Set</ct>
+        <ct>java.util.Map</ct>
+        <ct>java.util.Collection</ct>
+        <cit>java.util.ArrayList</cit>
+        <cit>java.util.LinkedList</cit>
+        <cit>java.util.HashSet</cit>
+        <cit>java.util.TreeSet</cit>
+        <cit>java.util.HashMap</cit>
+    </jpa:c>
+    <jpa:wsl>
+        <jpa:ws n="Main" id="_1537626051046412">
+            <i ref="_1537626057947413" x="502" y="190"/>
+            <i ref="_1548832665275163" x="676" y="676"/>
+            <i ref="_1548832580175155" x="111" y="439"/>
+            <i ref="_1548832578750152" x="97" y="133"/>
+            <i ref="_1548832663811161" x="420" y="439"/>
+        </jpa:ws>
+    </jpa:wsl>
+</jpa:entity-mappings>
