@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" ptype="MONOLITH" ppkg="io.github.jeddict.jpa" epkg="mapkey.example1" v="5.1" rws="_1537626051046412" Pws="_1537626051046412" cws="_1537626051046412" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_1537626051046411" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+    <jpa:entity compositePrimaryKeyClass="DepartmentPK" abs="false" class="Department" v="true" jbn="false" xre="false" m="false" rootElement="_1537626051046411" id="_1537626057947413">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:one-to-many orp="false" collection-type="java.util.Map" cit="java.util.HashMap" mkat-ref="_1548876375270497" connected-entity-id="_1548876375270496" connected-attribute-id="_1548876407038500" v="true" xvt="" name="employees" id="_1548876407038501">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:one-to-many>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_1537626057948414">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Department.findAll">
+            <jpa:query>Select e from Department e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Department.findByName">
+            <jpa:query>Select s from Department s where s.name=:name</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Department.findByReport">
+            <jpa:query>Select s from Department s where s.report=:report</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Department.findByPic">
+            <jpa:query>Select s from Department s where s.pic=:pic</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:entity compositePrimaryKeyClass="EmployeePK" abs="false" class="Employee" v="true" jbn="false" xre="false" m="false" rootElement="_1537626051046411" id="_1548876375270496">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:many-to-one optional="true" primaryKey="false" connected-entity-id="_1537626057947413" connected-attribute-id="_1548876407038501" v="true" xvt="" name="department" id="_1548876407038500">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:join-column name="DEPT_ID" unique="false" nullable="true" insertable="true" updatable="true"/>
+            </jpa:many-to-one>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="empId" id="_1548876375270497">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value />
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Employee.findAll">
+            <jpa:query>Select e from Employee e</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:snp loc="BEFORE_PACKAGE" e="true">/**&#xD;
+ * 11.1.31 MapKey Annotation&#xD;
+ * Example 1&#xD;
+ */</jpa:snp>
+    <jpa:c>
+        <ct>java.util.Map</ct>
+        <ct>java.util.List</ct>
+        <ct>java.util.Set</ct>
+        <ct>java.util.Collection</ct>
+        <cit>java.util.HashMap</cit>
+        <cit>java.util.ArrayList</cit>
+        <cit>java.util.LinkedList</cit>
+        <cit>java.util.HashSet</cit>
+        <cit>java.util.TreeSet</cit>
+    </jpa:c>
+    <jpa:wsl>
+        <jpa:ws n="Main" id="_1537626051046412">
+            <i ref="_1537626057947413" x="456" y="334"/>
+            <i ref="_1548876375270496" x="122" y="334"/>
+        </jpa:ws>
+    </jpa:wsl>
+</jpa:entity-mappings>
