@@ -15,8 +15,10 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
+import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.NEW_LINE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import java.util.Collection;
@@ -69,6 +71,20 @@ public interface Snippet {
                     .append(value)
                     .append(QUOTE)
                     .append(COMMA);
+        }
+        return builder.toString();
+    }
+    
+    default String buildStringln(String key, String value) throws InvalidDataException {
+        StringBuilder builder = new StringBuilder();
+        if (isNotBlank(value)) {
+            builder.append(key)
+                    .append("=")
+                    .append(QUOTE)
+                    .append(value)
+                    .append(QUOTE)
+                    .append(COMMA)
+                    .append(NEW_LINE);
         }
         return builder.toString();
     }

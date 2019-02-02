@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" ptype="MONOLITH" ppkg="io.github.jeddict.jpa" epkg="generator.table" v="5.1" rws="_1537626051046412" Pws="_1537626051046412" cws="_1537626051046412" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_1537626051046411" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+    <jpa:entity compositePrimaryKeyClass="EmployeePK" abs="false" class="Employee" v="true" jbn="false" xre="false" m="false" rootElement="_1537626051046411" id="_1537626057947413">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_1537626057948414">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value strategy="TABLE" generator="empGen"/>
+                <jpa:table-generator name="empGen" table="ID_GEN" catalog="" schema="" pk-column-name="GEN_KEY" value-column-name="GEN_VALUE" pk-column-value="EMP_ID" initial-value="0" allocation-size="1"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Employee.findAll">
+            <jpa:query>Select e from Employee e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Employee.findByName">
+            <jpa:query>Select s from Employee s where s.name=:name</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:entity compositePrimaryKeyClass="AddressPK" abs="false" class="Address" v="true" jbn="false" xre="false" m="false" rootElement="_1537626051046411" id="_1548875462260490">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_1548875462260491">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value strategy="TABLE" generator="addressGen"/>
+                <jpa:table-generator name="addressGen" table="ID_GEN" catalog="" schema="" pk-column-name="GEN_KEY" value-column-name="GEN_VALUE" pk-column-value="ADDR_ID" initial-value="0" allocation-size="50"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:nq e="false" name="Address.findAll">
+            <jpa:query>Select e from Address e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="Address.findByName">
+            <jpa:query>Select s from Address s where s.name=:name</jpa:query>
+        </jpa:nq>
+    </jpa:entity>
+    <jpa:snp loc="BEFORE_PACKAGE" e="true">/**&#xD;
+ * 11.1.50 TableGenerator Annotation&#xD;
+ */</jpa:snp>
+    <jpa:wsl>
+        <jpa:ws n="Main" id="_1537626051046412">
+            <i ref="_1537626057947413" x="355" y="337"/>
+            <i ref="_1548875462260490" x="700" y="372"/>
+        </jpa:ws>
+    </jpa:wsl>
+</jpa:entity-mappings>

@@ -30,7 +30,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
  */
 public class StaticMetamodelClassDefSnippet extends ClassDefSnippet {
 
-    private static final String STATIC_METAMODEL_TEMPLATE_FILENAME = "staticmetamodel.vm";
+    private static final String STATIC_METAMODEL_TEMPLATE_FILENAME = "staticmetamodel.ftl";
 
     private String value;//i.e: @StaticMetamodel( Person.class )   Class being modelled by the annotated class. //entity, mapped superclass, or embeddable class
     private final ClassHelper entityClassHelper = new ClassHelper();

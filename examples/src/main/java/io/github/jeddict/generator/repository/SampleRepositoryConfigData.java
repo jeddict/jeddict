@@ -18,6 +18,7 @@ package io.github.jeddict.generator.repository;
 import io.github.jeddict.jcode.LayerConfigData;
 import java.util.Collections;
 import java.util.List;
+import javax.json.bind.annotation.JsonbProperty;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -27,7 +28,10 @@ import org.apache.commons.lang.StringUtils;
 public class SampleRepositoryConfigData extends LayerConfigData {
 
     private String prefixName;
+
     private String suffixName;
+
+    @JsonbProperty("package")
     private String _package;
 
     /**
@@ -44,7 +48,7 @@ public class SampleRepositoryConfigData extends LayerConfigData {
         this._package = _package;
     }
     
-        /**
+    /**
      * @return the suffixName
      */
     public String getSuffixName() {

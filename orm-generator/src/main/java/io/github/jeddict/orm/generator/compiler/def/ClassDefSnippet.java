@@ -452,11 +452,11 @@ public abstract class ClassDefSnippet implements WritableSnippet {
     @Override
     public String getSnippet() throws InvalidDataException {
         try {
-            Map velocityContext = new HashMap();
-            velocityContext.put("classDef", this);
-            velocityContext.put("n", NEW_LINE);
-            velocityContext.put("fluentAPI", GenerateSettings.isGenerateFluentAPI());
-            return ORMConverterUtil.writeToTemplate(getTemplateName(), velocityContext);
+            Map context = new HashMap();
+            context.put("classDef", this);
+            context.put("n", NEW_LINE);
+            context.put("fluentAPI", GenerateSettings.isGenerateFluentAPI());
+            return ORMConverterUtil.writeToTemplate(getTemplateName(), context);
         } catch (Exception e) {
             throw new InvalidDataException("Class name : " + classHelper.getFQClassName(), e);
         }

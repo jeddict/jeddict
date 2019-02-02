@@ -24,7 +24,7 @@ import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.util.ImportSet;
 
 public class ManagedClassDefSnippet extends ClassDefSnippet implements AttributeOverridesHandler, AssociationOverridesHandler {
-    private static final String JPA_TEMPLATE_FILENAME = "jpatemplate.vm";
+    private static final String JPA_TEMPLATE_FILENAME = "beanclasstemplate.ftl";
 
     private ConvertsSnippet converts;
     private AssociationOverridesSnippet associationOverrides;

@@ -20,7 +20,7 @@ import io.github.jeddict.orm.generator.util.ImportSet;
 
 public class DefaultClassDefSnippet extends ClassDefSnippet {
     
-    private static final String DEFAULT_TEMPLATE_FILENAME = "classtemplate.vm";
+    private static final String DEFAULT_TEMPLATE_FILENAME = "classtemplate.ftl";
 
     @Override
     protected String getTemplateName() {

@@ -288,7 +288,9 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     }
 
     public String getImplementationType() {
+        System.out.println("@@@1 " + "--" + name + "--" + this.getTypeIdentifier());
         if (this.getTypeIdentifier() != null) {
+        System.out.println("@@@2 " + "--" + name + "--" + this.getTypeIdentifier() + "--" + this.getTypeIdentifier().getImplementationType());
             return this.getTypeIdentifier().getImplementationType();
         } else {
             return null;

@@ -15,6 +15,7 @@
  */
 package io.github.jeddict.orm.generator.util;
 
+import static io.github.jeddict.jcode.util.FileUtil.expandTemplate;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.spec.WritableSnippet;
 import java.io.BufferedWriter;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,9 +36,6 @@ import java.util.Map;
 import java.util.Properties;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
 import org.netbeans.editor.BaseDocument;
 import org.netbeans.modules.editor.indent.api.Reformat;
 import org.openide.cookies.EditorCookie;
@@ -181,23 +180,10 @@ public class ORMConverterUtil {
         return new String(getBytes(file), charsetName);
     }
 
-    static {
-        try {
-            Properties properties = new Properties();
-            properties.load(ORMConverterUtil.class.getClassLoader().getResourceAsStream("velocity.properties"));
-            Velocity.init(properties);
-        } catch (Exception ex) {
-            Exceptions.printStackTrace(ex);
-        }
-    }
-
     public static String writeToTemplate(String templateName, Map<String, Object> context) throws Exception {
-        Template template = Velocity.getTemplate(templateName);
         ByteArrayOutputStream generatedClass = new ByteArrayOutputStream();
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(generatedClass, "UTF-8"))) {
-            if (template != null) {
-                template.merge(new VelocityContext(context), writer);
-            }
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(generatedClass, UTF_8))) {
+            expandTemplate(templateName, writer, context);
             writer.flush();
         }
         return generatedClass.toString();

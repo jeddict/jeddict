@@ -23,7 +23,7 @@ import org.apache.commons.lang.StringUtils;
 
 public class PackageInfoClassDefSnippet extends ClassDefSnippet {
 
-    private static final String JAXB_PACKAGE_INFO_TEMPLATE_FILENAME = "package-info.vm";
+    private static final String JAXB_PACKAGE_INFO_TEMPLATE_FILENAME = "package-info.ftl";
 
     private String namespace;//ex : @XmlSchema(namespace = "http://www.example.org/customer", elementFormDefault = XmlNsForm.QUALIFIED)
 

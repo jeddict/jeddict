@@ -23,7 +23,7 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 
 public class EmbeddableIdDefSnippet extends ClassDefSnippet {
 
-    private static final String DEFAULT_TEMPLATE_FILENAME = "classtemplate.vm";
+    private static final String DEFAULT_TEMPLATE_FILENAME = "classtemplate.ftl";
 
     @Override
     protected String getTemplateName() {

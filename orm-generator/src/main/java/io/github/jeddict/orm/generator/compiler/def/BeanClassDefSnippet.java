@@ -20,7 +20,7 @@ import io.github.jeddict.orm.generator.util.ImportSet;
 
 public class BeanClassDefSnippet extends ClassDefSnippet {
 
-    private static final String BEAN_CLASS_TEMPLATE_FILENAME = "beanclasstemplate.vm";
+    private static final String BEAN_CLASS_TEMPLATE_FILENAME = "beanclasstemplate.ftl";
 
     @Override
     protected String getTemplateName() {
