@@ -16,15 +16,8 @@
 package io.github.jeddict.jpa.modeler.widget.attribute.association;
 
 import io.github.jeddict.jpa.modeler.properties.PropertiesHandler;
-import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getMapKeyConvertProperties;
-import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getMapKeyConvertProperty;
-import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getOrderProperty;
-import io.github.jeddict.jpa.modeler.rules.attribute.AttributeValidator;
 import io.github.jeddict.jpa.spec.bean.MultiAssociationAttribute;
-import io.github.jeddict.jpa.spec.extend.MapKeyConvertContainerHandler;
-import io.github.jeddict.jpa.spec.extend.MapKeyConvertHandler;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
