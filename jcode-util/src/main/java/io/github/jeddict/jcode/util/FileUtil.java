@@ -216,7 +216,7 @@ public class FileUtil {
     }
     
     public static void expandTemplate(String inputTemplatePath, FileObject toFile, Map<String, Object> params) throws IOException {
-        InputStream contentStream = io.github.jeddict.jcode.util.FileUtil.loadResource(inputTemplatePath);
+        InputStream contentStream = loadResource(inputTemplatePath);
         expandTemplate(contentStream, toFile, params);
     }
 
@@ -245,7 +245,9 @@ public class FileUtil {
     public static void expandTemplate(Reader reader, Writer writer, Map<String, Object> values, Charset targetEncoding) throws IOException {
         ScriptEngine eng = getScriptEngine();
         Bindings bind = eng.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
-        bind.putAll(values);
+        if (values != null) {
+            bind.putAll(values);
+        }
         bind.put(ENCODING_PROPERTY_NAME, targetEncoding.name());
 
         try {
@@ -260,23 +262,19 @@ public class FileUtil {
         }
     }
     
-    public static String expandTemplate(String inputTemplatePath, Map<String, Object> values) {
+    public static void expandTemplate(String inputTemplatePath, Writer writer, Map<String, Object> values) throws IOException {
         InputStream contentStream = loadResource(inputTemplatePath);
+        Reader reader = new InputStreamReader(contentStream);
+        expandTemplate(reader, writer, values, Charset.defaultCharset());
+    }
+
+    public static String expandTemplate(String inputTemplatePath, Map<String, Object> values) {
         StringWriter writer = new StringWriter();
-        ScriptEngine eng = getScriptEngine();
-        Bindings bind = eng.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
-        if (values != null) {
-            bind.putAll(values);
-        }
-        bind.put(ENCODING_PROPERTY_NAME, Charset.defaultCharset().name());
-        eng.getContext().setWriter(writer);
-        Reader is = new InputStreamReader(contentStream);
         try {
-            eng.eval(is);
-        } catch (ScriptException ex) {
+            expandTemplate(inputTemplatePath, writer, values);
+        } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-
         return writer.toString();
     }
 
