@@ -16,8 +16,18 @@
 package io.github.jeddict.jcode.util;
 
 import static io.github.jeddict.jcode.util.Constants.JAVA_EXT;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import static org.apache.commons.lang.StringUtils.EMPTY;
@@ -176,5 +186,37 @@ public class JavaUtil {
 
     public static <R> Predicate<R> not(Predicate<R> predicate) {
         return predicate.negate();
+    }
+
+    public static Map<String, Object> convertToMap(Object object) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(object.getClass());
+            for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
+                Method reader = pd.getReadMethod();
+                if (reader != null) {
+                    result.put(pd.getName(), reader.invoke(object));
+                }
+            }
+
+            for (Field field : getAllFields(object.getClass())) {
+                if (!result.containsKey(field.getName())) {
+                    field.setAccessible(true);
+                    result.put(field.getName(), field.get(object));
+                }
+            }
+        } catch (IntrospectionException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            ex.printStackTrace();
+        }
+        return result;
+    }
+
+    private static List<Field> getAllFields(Class clazz) {
+        List<Field> fields = new ArrayList<>();
+        do {
+            Collections.addAll(fields, clazz.getDeclaredFields());
+            clazz = clazz.getSuperclass();
+        } while (clazz != null);
+        return fields;
     }
 }

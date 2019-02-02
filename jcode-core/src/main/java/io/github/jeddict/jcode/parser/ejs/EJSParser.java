@@ -15,11 +15,10 @@
  */
 package io.github.jeddict.jcode.parser.ejs;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import static io.github.jeddict.jcode.util.FileUtil.copy;
 import static io.github.jeddict.jcode.util.FileUtil.loadResource;
 import static io.github.jeddict.jcode.util.FileUtil.readString;
+import static io.github.jeddict.jcode.util.JavaUtil.convertToMap;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -69,8 +68,6 @@ public final class EJSParser {
     private static String ejs;
 
     private final List<Map<String, Object>> contexts = new ArrayList<>();
-
-    private final ObjectMapper mapper = new ObjectMapper();
 
     private final StringBuilder scripts = new StringBuilder();
 
@@ -136,8 +133,8 @@ public final class EJSParser {
 
     private Object toJson(ScriptEngine scriptEngine, Object value) {
         try {
-            return scriptEngine.eval("JSON.parse('" + mapper.writeValueAsString(value) + "')");
-        } catch (JsonProcessingException | ScriptException ex) {
+            return scriptEngine.eval("JSON.parse('" + JSONB.toJson(value) + "')");
+        } catch (ScriptException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException("Error in converting to Json Object " + value, ex);
         }
@@ -146,7 +143,7 @@ public final class EJSParser {
     public void addContext(Object context) {
         if (context != null) {
             try {
-                addContext(mapper.convertValue(context, Map.class));
+                addContext(convertToMap(context));
             } catch (Exception ex) {
                 Exceptions.printStackTrace(ex);
             }

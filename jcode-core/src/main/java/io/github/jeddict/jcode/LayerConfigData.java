@@ -15,9 +15,9 @@
  */
 package io.github.jeddict.jcode;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.List;
+import javax.json.bind.annotation.JsonbTransient;
 
 /**
  *
@@ -25,12 +25,12 @@ import java.util.List;
  */
 public abstract class LayerConfigData<T extends LayerConfigData> implements Serializable {
 
+    @JsonbTransient
     private T parentLayerConfigData;
 
     /**
      * @return the parentLayerConfigData
      */
-    @JsonIgnore
     public T getParentLayerConfigData() {
         return parentLayerConfigData;
     }
@@ -43,12 +43,12 @@ public abstract class LayerConfigData<T extends LayerConfigData> implements Seri
         onLayerConnection();
     }
 
-    @JsonIgnore
+    @JsonbTransient
     protected void onLayerConnection() {
 
     }
 
-    @JsonIgnore
+    @JsonbTransient
     public abstract List<String> getUsageDetails();
 
 }

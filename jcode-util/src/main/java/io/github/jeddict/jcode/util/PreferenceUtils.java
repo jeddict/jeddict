@@ -15,10 +15,6 @@
  */
 package io.github.jeddict.jcode.util;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import static io.github.jeddict.jcode.util.StringHelper.kebabCase;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,29 +26,33 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.prefs.Preferences;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
+import javax.json.bind.JsonbException;
+import javax.json.bind.config.PropertyVisibilityStrategy;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.openide.util.Exceptions;
 
 public class PreferenceUtils {
 
-    private final static ObjectMapper MAPPER = new ObjectMapper()
-            .setSerializationInclusion(Include.NON_NULL)
-            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-//    private final static Jsonb JSONB = JsonbBuilder.create(
-//            new JsonbConfig().withPropertyVisibilityStrategy(new PropertyVisibilityStrategy() {
-//                @Override
-//                public boolean isVisible(Field field) {
-//                    return true;
-//                }
-//
-//                @Override
-//                public boolean isVisible(Method method) {
-//                    return false;
-//                }
-//            })
-//    );
+    private final static Jsonb JSONB = JsonbBuilder.create(
+            new JsonbConfig().withPropertyVisibilityStrategy(new PropertyVisibilityStrategy() {
+                @Override
+                public boolean isVisible(Field field) {
+                    return true;
+                }
+
+                @Override
+                public boolean isVisible(Method method) {
+                    return false;
+                }
+            })
+    );
 
     private static void serialize(Serializable obj, OutputStream outputStream) {
         if (outputStream == null) {
@@ -127,17 +127,14 @@ public class PreferenceUtils {
         T newInstance = null;
         try {
             newInstance = _class.newInstance();
-//            return (T) JSONB.fromJson(
-            return (T) MAPPER.readValue(
+            return (T) JSONB.fromJson(
                     pref.get(
                             kebabCase(_class.getSimpleName()),
-                            //                            JSONB.toJson(newInstance)
-                            MAPPER.writeValueAsString(newInstance)
+                              JSONB.toJson(newInstance)
                     ),
                     _class
             );
-        } catch (IOException ex) {
-//        } catch(JsonbException ex){
+        } catch(JsonbException ex){
             Exceptions.printStackTrace(ex);
             return newInstance;
         } catch (InstantiationException | IllegalAccessException ex) {
@@ -152,19 +149,14 @@ public class PreferenceUtils {
     }
 
     public static <T> void set(Preferences pref, T t) {
-        try {
-            //        pref.put(kebabCase(t.getClass().getSimpleName()), JSONB.toJson(t));
-            pref.put(kebabCase(t.getClass().getSimpleName()), MAPPER.writeValueAsString(t));
-        } catch (JsonProcessingException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+          pref.put(kebabCase(t.getClass().getSimpleName()), JSONB.toJson(t));
     }
 
 }
 
 class ClassLoaderObjectInputStream extends ObjectInputStream {
 
-    private ClassLoader classLoader;
+    private final ClassLoader classLoader;
 
     public ClassLoaderObjectInputStream(ClassLoader classLoader, InputStream in) throws IOException {
         super(in);
