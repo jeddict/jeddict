@@ -49,9 +49,7 @@ public abstract class MultiRelationAttributeWidget<E extends MultiRelationAttrib
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         MultiRelationAttribute relationAttribute = this.getBaseElementSpec();
-        if (relationAttribute.isOwner()) {
-            set.put("JPA_PROP", getOrderProperty(this));
-        }
+        set.put("JPA_PROP", getOrderProperty(this));
         if (relationAttribute instanceof MapKeyConvertContainerHandler) {//Relation<Embedded, Y>
             set.put("JPA_PROP", getMapKeyConvertProperties(this, this.getModelerScene(), (MapKeyConvertContainerHandler) relationAttribute));
         }
