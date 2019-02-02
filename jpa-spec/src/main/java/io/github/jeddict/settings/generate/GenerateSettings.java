@@ -195,6 +195,11 @@ public final class GenerateSettings extends javax.swing.JPanel {
         return fluentAPIJavaDoc;
     }
 
+    public static void setFluentAPIEnabled(boolean status) {
+        generateFluentAPI = status;
+        pref.putBoolean("generateFluentAPI", status);
+    }
+
     public static boolean isGenerateFluentAPI() {
         if (generateFluentAPI == null) {
             generateFluentAPI = pref.getBoolean("generateFluentAPI", Boolean.FALSE);
