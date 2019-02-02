@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+OpenIDE-Module: io.github.jeddict.lib
+OpenIDE-Module-Display-Category: Jeddict

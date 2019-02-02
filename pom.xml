@@ -18,6 +18,7 @@
         <module>db-modeler</module>
         <module>reverse-engineering</module>
         <module>installer</module>
+        <module>jeddict-lib</module>
         <module>tests</module>
     </modules>
     <properties>
@@ -34,9 +35,9 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
-                <version>${nbm.maven.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
+                    <!--<verifyRuntime>warn</verifyRuntime>-->
                     <author>Jeddict team</author>
                     <homePageUrl>https://jeddict.github.io/</homePageUrl>
                     <requiresRestart>true</requiresRestart>
@@ -72,6 +73,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>nbm-maven-plugin</artifactId>
+                    <version>${nbm.maven.plugin.version}</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.maven.shared</groupId>
@@ -123,11 +125,6 @@
         <profile>
             <id>netbeans90</id>
             <dependencies>
-                <dependency>
-                    <groupId>org.netbeans.modules</groupId>
-                    <artifactId>org-netbeans-modules-maven-embedder</artifactId>
-                    <version>${netbeans.version}</version>
-                </dependency>
             </dependencies>
         </profile>
         <profile>

@@ -6,7 +6,8 @@
         <artifactId>jeddict</artifactId>
         <version>5.2</version>
     </parent>
-    <artifactId>tests</artifactId>
+    <artifactId>jeddict-tests</artifactId>
+    <name>Jeddict Tests</name>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -14,34 +15,16 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>jpa-modeler</artifactId>
             <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.netbeans.modules</groupId>
-                    <artifactId>org-netbeans-modules-maven-embedder</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>orm-generator</artifactId>
             <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.netbeans.modules</groupId>
-                    <artifactId>org-netbeans-modules-maven-embedder</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>reverse-engineering</artifactId>
             <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.netbeans.modules</groupId>
-                    <artifactId>org-netbeans-modules-maven-embedder</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -110,6 +93,11 @@
             <artifactId>guava</artifactId>
             <version>14.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-maven-embedder</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -131,10 +119,10 @@
                 <version>2.22.0</version>
                 <configuration>
                     <printSummary>true</printSummary>
-                    <!--<includes>
-                        <include>XXX.java</include>
-                    </includes>-->
-                    <!--<argLine>${argLine} -Xms256m -Xmx2048m</argLine>
+                    <includes>
+                        <include>MapKeyModelTest*</include>
+                    </includes><!--
+                    <argLine>${argLine} -Xms256m -Xmx2048m</argLine>
                     <forkCount>1</forkCount>
                     <runOrder>random</runOrder>-->
                 </configuration>
@@ -161,5 +149,4 @@
             </plugin>
         </plugins>
     </build>
-    <name>Jeddict Tests</name>
 </project>

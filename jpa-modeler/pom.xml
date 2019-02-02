@@ -41,7 +41,7 @@
                             <type>impl</type>
                         </dependency>
                         <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-db-metadata-model</id>
+                             <id>org.netbeans.modules:org-netbeans-modules-db-metadata-model</id>
                             <type>impl</type>
                         </dependency>
                         <dependency>
@@ -58,10 +58,6 @@
                         </dependency>
                         <dependency>
                             <id>org.netbeans.modules:org-netbeans-modules-websvc-jaxws21</id>
-                            <type>impl</type>
-                        </dependency>
-                        <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-maven-embedder</id>
                             <type>impl</type>
                         </dependency>
                         <dependency>
@@ -290,11 +286,6 @@
         <dependency>
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-modules-websvc-jaxws21</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.netbeans.modules</groupId>
-            <artifactId>org-netbeans-modules-maven-embedder</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>

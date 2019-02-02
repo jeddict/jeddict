@@ -18,9 +18,9 @@ package io.github.jeddict.source;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
-import edu.emory.mathcs.backport.java.util.Collections;
 import io.github.jeddict.jpa.spec.extend.ReferenceClass;
 import static io.github.jeddict.source.AnnotatedMember.*;
+import static java.util.Collections.singletonList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -98,7 +98,7 @@ public class AnnotationExplorer {
             return getClassNameAttributes(annotationExpr, attributeName);
         } catch (IllegalStateException ex) {
             if (ex.getMessage().contains("not an ArrayInitializerExpr")) {
-                return Collections.singletonList(getClassName(attributeName));
+                return singletonList(getClassName(attributeName).get());
             } else {
                 throw ex;
             }

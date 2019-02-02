@@ -30,10 +30,6 @@
                              <id>org.netbeans.modules:org-netbeans-modules-db-metadata-model</id>
                              <type>impl</type>
                          </dependency>
-                         <dependency>
-                             <id>org.netbeans.modules:org-netbeans-modules-maven-embedder</id>
-                             <type>impl</type>
-                         </dependency>
                     </moduleDependencies>
                 </configuration>
             </plugin>

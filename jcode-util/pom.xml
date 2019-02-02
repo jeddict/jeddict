@@ -23,7 +23,6 @@
                 <configuration>
                     <publicPackages>
                         <publicPackage>io.github.jeddict.jcode.*</publicPackage>
-                        <publicPackage>com.fasterxml.jackson.*</publicPackage>
                     </publicPackages>
                     <moduleDependencies>
                         <dependency>
@@ -55,10 +54,6 @@
                             <type>impl</type>
                         </dependency>
                         <dependency>
-                            <id>org.netbeans.modules:org-netbeans-libs-freemarker</id>
-                            <type>impl</type>
-                        </dependency>
-                        <dependency>
                             <id>org.netbeans.modules:org-netbeans-modules-websvc-jaxws21</id>
                             <type>impl</type>
                         </dependency>
@@ -74,16 +69,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.9.8</version>
+            <groupId>io.github.jeddict</groupId>
+            <artifactId>jeddict-lib</artifactId>
+            <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.9.8</version>
-        </dependency>
-        
         <dependency>
             <groupId>io.github.jeddict.modeler</groupId>
             <artifactId>modeler-properties</artifactId>

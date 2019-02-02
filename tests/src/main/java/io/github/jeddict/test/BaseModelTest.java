@@ -63,6 +63,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.URISyntaxException;
+import java.net.URL;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -196,6 +197,7 @@ public class BaseModelTest {
             assertNotNull(newUnit);
             newSource = prettyPrinter.print(newUnit);
 
+//            System.out.println("newSource " + newSource);
             try (BufferedReader existingSourceReader = new BufferedReader(new StringReader(existingSource));
                     BufferedReader newSourceReader = new BufferedReader(new StringReader(newSource));) {
 
@@ -203,6 +205,8 @@ public class BaseModelTest {
                 String newSourceLine;
                 int lineNumber = 0;
                 while ((existingSourceLine = existingSourceReader.readLine()) != null && (newSourceLine = newSourceReader.readLine()) != null) {
+//                    System.out.println("new " + newSourceLine);
+//                    System.out.println("ext " + existingSourceLine);
                     ++lineNumber;
                     assertEquals(existingSourceLine, newSourceLine,
                             '\n'
@@ -274,7 +278,9 @@ public class BaseModelTest {
 
     protected EntityMappings loadEntityMappings(String fileName) {
         try {
-            File file = Utilities.toFile(this.getClass().getResource(fileName).toURI());
+            URL resource = this.getClass().getResource(fileName);
+            assertNotNull(resource, fileName + " not found");
+            File file = Utilities.toFile(resource.toURI());
             return getEntityMapping(file);
         } catch (JAXBException ex) {
             fail(fileName + " file jaxb parsing error", ex);
