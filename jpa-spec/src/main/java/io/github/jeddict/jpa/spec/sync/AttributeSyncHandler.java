@@ -37,12 +37,11 @@ import static io.github.jeddict.jcode.util.JavaUtil.isGetterMethod;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.AttributeAnnotation;
 import io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType;
-import static io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType.GETTER;
 import static io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType.PROPERTY;
-import static io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType.SETTER;
 import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
 import io.github.jeddict.snippet.AttributeSnippet;
 import io.github.jeddict.snippet.AttributeSnippetLocationType;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.GETTER;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.GETTER_JAVADOC;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.GETTER_THROWS;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.IMPORT;
@@ -51,6 +50,7 @@ import static io.github.jeddict.snippet.AttributeSnippetLocationType.POST_SETTER
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.PRE_GETTER;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.PRE_SETTER;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.PROPERTY_JAVADOC;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.SETTER;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.SETTER_JAVADOC;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.SETTER_THROWS;
 import java.util.ArrayList;
@@ -86,7 +86,7 @@ public class AttributeSyncHandler {
         boolean getterMethod = isGetterMethod(methodName);
 
         syncJavadoc(method.getComment(), getterMethod ? GETTER_JAVADOC : SETTER_JAVADOC);
-        syncAnnotation(method.getAnnotations(), getterMethod ? GETTER : SETTER, imports);
+        syncAnnotation(method.getAnnotations(), getterMethod ? AttributeAnnotationLocationType.GETTER : AttributeAnnotationLocationType.SETTER, imports);
         syncThrows(method, getterMethod, imports);
         syncMethodBody(name, method, getterMethod, imports);
     }
@@ -181,8 +181,17 @@ public class AttributeSyncHandler {
                     if (bridgeLines.contains(deleteWhitespace(statement))) {
                         locationType = getterMethod ? POST_GETTER : POST_SETTER;
                     } else {
+                      List<AttributeSnippet> preSnippets = attribute.getSnippets(getterMethod ? PRE_GETTER : PRE_SETTER, statement);
+                      List<AttributeSnippet> bodySnippets = attribute.getSnippets(getterMethod ? GETTER : SETTER, statement);
+                      List<AttributeSnippet> postSnippets = attribute.getSnippets(getterMethod ? POST_GETTER : POST_SETTER, statement);
+                      if(!preSnippets.isEmpty()) {
+                      } else  if(!bodySnippets.isEmpty()) {
+                          locationType = getterMethod ? POST_GETTER : POST_SETTER;
+                      } else  if(!postSnippets.isEmpty()) {
+                      } else {
                         attribute.addRuntimeSnippet(new AttributeSnippet(statement, locationType));
                         addImportSnippet(statement, imports);
+                      }
                     }
                 }
             }

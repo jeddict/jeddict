@@ -89,6 +89,7 @@ import io.github.jeddict.jsonb.spec.JsonbNumberFormat;
 import io.github.jeddict.jsonb.spec.JsonbTypeHandler;
 import io.github.jeddict.settings.diagram.ClassDiagramSettings;
 import io.github.jeddict.snippet.AttributeSnippet;
+import io.github.jeddict.snippet.AttributeSnippetLocationType;
 import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.MemberExplorer;
@@ -105,6 +106,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -1082,6 +1084,20 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
             snippets = new ArrayList<>();
         }
         return snippets;
+    }
+
+    /**
+     * @param locationType
+     * @param value
+     * @return the filtered snippets
+     */
+    public List<AttributeSnippet> getSnippets(AttributeSnippetLocationType locationType, String value) {
+        return getSnippets()
+                .stream()
+                .filter(snippet -> snippet.isEnable())
+                .filter(snippet -> snippet.getLocationType() == locationType)
+                .filter(snippet -> snippet.getValue().trim().equals(value.trim()))
+                .collect(toList());
     }
 
     /**
