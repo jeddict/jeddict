@@ -16,6 +16,7 @@
 package io.github.jeddict.jpa.spec.extend;
 
 import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualify;
+import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualifyGeneric;
 import java.util.Objects;
 import static java.util.stream.Collectors.joining;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -91,7 +92,7 @@ public class Constructor extends ClassMembers {
     public String getSignature() {
         String sign = getAttributes()
                 .stream()
-                .map(a -> unqualify(a.getDataTypeLabel()))
+                .map(a -> unqualifyGeneric(a.getDataTypeLabel()))
                 .collect(joining(", "));
         if(StringUtils.isBlank(sign)){
             sign = "";

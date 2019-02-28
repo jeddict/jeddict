@@ -94,8 +94,11 @@ public final class JavaIdentifiers {
      * a valid fully qualified name.
      */
     public static String unqualify(String fqn){
+        if(AttributeType.isPrimitive(fqn)){
+            return fqn;
+        }
         checkFQN(fqn);  
-        int lastDot = fqn.lastIndexOf("."); //NOI18N
+        int lastDot = fqn.lastIndexOf('.');
         if (lastDot < 0){
             return fqn;
         }

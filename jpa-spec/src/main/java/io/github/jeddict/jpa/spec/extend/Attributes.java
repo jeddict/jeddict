@@ -156,7 +156,9 @@ public abstract class Attributes<T extends JavaClass> implements IAttributes {
         this._class = _class;
         addChangeListener(evt -> {
             if (REMOVE_ATTRIBUTE_PROPERTY.equals(evt.getPropertyName())) {
-                getJavaClass().removedAttribute((Attribute) evt.getSource());
+                if (evt.getSource() instanceof Attribute) {
+                    getJavaClass().removedAttribute((Attribute) evt.getSource());
+                }
             }
         });
     }
