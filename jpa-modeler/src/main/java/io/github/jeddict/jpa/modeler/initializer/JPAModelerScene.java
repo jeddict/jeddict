@@ -17,6 +17,7 @@ package io.github.jeddict.jpa.modeler.initializer;
 
 import io.github.jeddict.collaborate.enhancement.EnhancementRequestHandler;
 import io.github.jeddict.jcode.util.JavaSourceHelper;
+import io.github.jeddict.jcode.util.PersistenceUtil;
 import io.github.jeddict.jcode.util.StringHelper;
 import static io.github.jeddict.jcode.util.StringHelper.getNext;
 import io.github.jeddict.jpa.modeler.external.jpqleditor.JPQLExternalEditorController;
@@ -27,6 +28,7 @@ import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.SEARCH_IC
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.SOCIAL_NETWORK_SHARING;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.VIEW_DB;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.VIEW_JSONB;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.WARNING_ICON;
 import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getClassSnippet;
 import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getConverterProperties;
 import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
@@ -58,10 +60,13 @@ import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.network.social.LinkedInSocialNetwork;
 import io.github.jeddict.network.social.TwitterSocialNetwork;
 import java.awt.event.InputEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -85,13 +90,24 @@ import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
 import org.netbeans.modeler.widget.node.IWidget;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
+import org.netbeans.modules.j2ee.persistence.api.PersistenceLocation;
+import org.netbeans.modules.j2ee.persistence.dd.PersistenceUtils;
+import org.netbeans.modules.j2ee.persistence.dd.common.Persistence;
 import org.netbeans.modules.j2ee.persistence.provider.InvalidPersistenceXmlException;
 import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
+import static org.netbeans.modules.j2ee.persistence.provider.ProviderUtil.getDDFile;
+import static org.netbeans.modules.j2ee.persistence.provider.ProviderUtil.getPUDataObject;
 import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
+import org.netbeans.modules.openfile.OpenFile;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
-import org.openide.util.NbBundle;
+import org.openide.awt.NotificationDisplayer;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileSystem;
+import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 import static org.openide.util.NbBundle.getMessage;
+import org.openide.util.Parameters;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
@@ -399,9 +415,20 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         openPUXML.addActionListener(e -> {
             Project project = JPAModelerScene.this.getModelerFile().getProject();
             try {
-                PUDataObject pud = ProviderUtil.getPUDataObject(project);
-                org.netbeans.modules.openfile.OpenFile.open(pud.getPrimaryFile(), -1);
-            } catch (InvalidPersistenceXmlException ex) {
+                PUDataObject pud = PersistenceUtil.getPUDataObject(project);
+                if (nonNull(pud)) {
+                    OpenFile.open(pud.getPrimaryFile(), -1);
+                } else {
+                    NotificationDisplayer
+                            .getDefault()
+                            .notify(
+                                    "Warning",
+                                    WARNING_ICON,
+                                    getMessage(JPAModelerScene.class, "JPAModelerScene.persistenceXMLNotSupported", project.getProjectDirectory().getName()),
+                                    null
+                            );
+                }
+            } catch (Exception ex) {
                 this.getModelerFile().handleException(ex);
             }
         });
@@ -417,7 +444,27 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                 getMessage(JPAModelerScene.class, "JPAModelerScene.runJPQL"),
                 RUN_JPQL_ICON
         );
-        openJPQLPanel.addActionListener(e -> new JPQLExternalEditorController().init(JPAModelerScene.this.getModelerFile()));
+        openJPQLPanel.addActionListener(e -> {
+            ModelerFile modelerFile = JPAModelerScene.this.getModelerFile();
+            Project project = modelerFile.getProject();
+            try {
+                PUDataObject pud = PersistenceUtil.getPUDataObject(project);
+                if (nonNull(pud)) {
+                    new JPQLExternalEditorController(modelerFile, pud).init();
+                } else {
+                    NotificationDisplayer
+                            .getDefault()
+                            .notify(
+                                    "Warning",
+                                    WARNING_ICON,
+                                    getMessage(JPAModelerScene.class, "JPAModelerScene.persistenceXMLNotSupported", project.getProjectDirectory().getName()),
+                                    null
+                            );
+                }
+            } catch (Exception ex) {
+                this.getModelerFile().handleException(ex);
+            }
+        });
 
         JMenu shareModeler = new JMenu(
                 getMessage(JPAModelerScene.class, "JPAModelerScene.share")

@@ -15,6 +15,7 @@
  */
 package io.github.jeddict.jcode.util;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -22,13 +23,18 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.project.Project;
+import org.netbeans.modules.j2ee.persistence.api.PersistenceLocation;
+import org.netbeans.modules.j2ee.persistence.dd.PersistenceUtils;
+import org.netbeans.modules.j2ee.persistence.dd.common.Persistence;
 import org.netbeans.modules.j2ee.persistence.dd.common.PersistenceUnit;
 import org.netbeans.modules.j2ee.persistence.dd.common.Properties;
 import org.netbeans.modules.j2ee.persistence.dd.common.Property;
 import org.netbeans.modules.j2ee.persistence.provider.InvalidPersistenceXmlException;
 import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
 import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
+import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
+import org.openide.util.Parameters;
 
 /**
  *
@@ -118,6 +124,39 @@ public class PersistenceUtil {
         } catch (InvalidPersistenceXmlException ex) {
             Exceptions.printStackTrace(ex);
         }
+    }
+
+    public static synchronized PUDataObject getPUDataObject(Project project) throws InvalidPersistenceXmlException {
+        Parameters.notNull("project", project);
+
+        FileObject puFileObject = ProviderUtil.getDDFile(project);
+        if (puFileObject == null) {
+            try {
+                puFileObject = createPersistenceDDFile(project);
+            } catch (IOException e) {
+                puFileObject = null;
+            }
+        }
+        if (puFileObject == null) {
+            return null;
+        }
+        return ProviderUtil.getPUDataObject(puFileObject);
+    }
+
+    private static FileObject createPersistenceDDFile(Project project) throws IOException {
+        final FileObject persistenceLocation = PersistenceLocation.createLocation(project);
+        if (persistenceLocation == null) {
+            return null;
+        }
+        final FileObject[] dd = new FileObject[1];
+        String persistenceVersion = PersistenceUtils.getJPAVersion(project);
+        final String version = persistenceVersion != null ? persistenceVersion : Persistence.VERSION_1_0;
+
+        persistenceLocation.getFileSystem().runAtomicAction(() -> {
+            dd[0] = org.openide.filesystems.FileUtil.copyFile(org.openide.filesystems.FileUtil.getConfigFile(
+                    "org-netbeans-modules-j2ee-persistence/persistence-" + version + ".xml"), persistenceLocation, "persistence"); //NOI18N
+        });
+        return dd[0];
     }
 
 }

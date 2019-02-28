@@ -15,12 +15,9 @@
  */
 package io.github.jeddict.jpa.modeler.external.jpqleditor;
 
-import org.netbeans.api.project.Project;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modules.j2ee.persistence.jpqleditor.JPQLEditorController;
 import org.netbeans.modules.j2ee.persistence.jpqleditor.ui.JPQLEditorTopComponent;
-import org.netbeans.modules.j2ee.persistence.provider.InvalidPersistenceXmlException;
-import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
 import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
@@ -33,23 +30,27 @@ import org.openide.util.lookup.InstanceContent;
  */
 public class JPQLExternalEditorController extends JPQLEditorController {
 
-    public void init(ModelerFile modelerFile) {
+    private ModelerFile modelerFile;
+    private PUDataObject pud;
+
+    public JPQLExternalEditorController(ModelerFile modelerFile, PUDataObject pud) {
+        this.modelerFile = modelerFile;
+        this.pud = pud;
+    }
+
+    public void init() {
         JPQLEditorTopComponent editorTopComponent = new JPQLEditorTopComponent(this);
         editorTopComponent.open();
         editorTopComponent.requestActive();
         editorTopComponent.setFocusToEditor();
-        PUDataObject pud;
+
         try {
-            Project project = modelerFile.getProject();
-            pud = ProviderUtil.getPUDataObject(project);
-            
             InstanceContent lookupContent = new InstanceContent();
             lookupContent.add(pud);
             AbstractLookup lookup = new AbstractLookup(lookupContent);
             AbstractNode node = new AbstractNode(Children.LEAF, lookup);
-            
             editorTopComponent.fillPersistenceConfigurations(new Node[]{node});
-        } catch (InvalidPersistenceXmlException ex) {
+        } catch (Exception ex) {
             modelerFile.handleException(ex);
         }
     }
