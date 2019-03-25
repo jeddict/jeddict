@@ -4,14 +4,21 @@
     
     <folder name="Databases">
         <folder name="Explorer">
-            <folder name="TableList">
+            <folder name="Schema">
                 <folder name="Actions">
-                    <file name="Separator3.instance">
+                    <file name="Separator1.instance">
                         <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
-                        <attr name="position" intvalue="400"/>
+                        <attr name="position" intvalue="600"/>
                     </file>
                     <file name="io-github-jeddict-db-modeler-action-DBViewerAction.instance">
-                        <attr name="position" intvalue="450"/>
+                        <attr name="position" intvalue="650"/>
+                    </file>
+                </folder>
+            </folder>
+            <folder name="TableList">
+                <folder name="Actions">
+                    <file name="io-github-jeddict-db-modeler-action-DBViewerAction.instance">
+                        <attr name="position" intvalue="180"/>
                     </file>
                 </folder>
             </folder>

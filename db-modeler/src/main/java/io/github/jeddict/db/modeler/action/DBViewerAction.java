@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2018 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -24,6 +24,8 @@ import javax.swing.SwingUtilities;
 import org.netbeans.api.db.explorer.node.BaseNode;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modules.db.explorer.DatabaseConnection;
+import org.netbeans.modules.db.explorer.node.SchemaNode;
+import org.netbeans.modules.db.explorer.node.TableListNode;
 import org.netbeans.modules.db.explorer.node.TableNode;
 import org.netbeans.modules.db.metadata.model.api.MetadataElementHandle;
 import org.netbeans.modules.db.metadata.model.api.MetadataModel;
@@ -33,21 +35,26 @@ import org.netbeans.modules.db.metadata.model.api.Table;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
+import static org.openide.util.HelpCtx.DEFAULT_HELP;
+import org.openide.util.NbBundle;
+import static org.openide.util.NbBundle.getMessage;
 import org.openide.util.RequestProcessor;
 import org.openide.util.actions.NodeAction;
 
 public class DBViewerAction extends NodeAction {
 
     private static final RequestProcessor RP = new RequestProcessor(DBViewerAction.class);
+    
+    private String name;
 
     @Override
     public String getName() {
-        return "View DB";
+        return name;
     }
 
     @Override
     public HelpCtx getHelpCtx() {
-        return HelpCtx.DEFAULT_HELP;
+        return DEFAULT_HELP;
     }
 
     @Override
@@ -56,8 +63,15 @@ public class DBViewerAction extends NodeAction {
         BaseNode previousBaseNode = null;   // return false, if table and tablelist selected
         for(Node activatedNode : activatedNodes){
             BaseNode baseNode = activatedNode.getLookup().lookup(BaseNode.class);
-            if(baseNode == null){
+            if(baseNode == null){ //this
                 return false;
+            }
+            if(baseNode.getClass() == SchemaNode.class) {
+                name = getMessage(DBViewerAction.class, "SchemaNode.title");
+            } else if(baseNode.getClass() == TableListNode.class) {
+                name = getMessage(DBViewerAction.class, "TableListNode.title");
+            } else if(baseNode.getClass() == TableNode.class) {
+                name = getMessage(DBViewerAction.class, "TableNode.title");
             }
             if (previousBaseNode == null) {
                 previousBaseNode = baseNode;
