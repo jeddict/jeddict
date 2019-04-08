@@ -58,6 +58,7 @@ import org.netbeans.modeler.properties.spec.ComboBoxValue;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
+import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 
 public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> extends PersistenceClassWidget<E> {
 
@@ -79,6 +80,8 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
             scanReservedDefaultClass(oldName, newName);
 //            scanDuplicateDefaultClass(oldName, newName);
         });
+        PropertyVisibilityHandler noSQLDisabled = () -> !this.getBaseElementSpec().getNoSQL();
+        this.addPropertyVisibilityHandler("Listeners", noSQLDisabled);
     }
 
     @Override
@@ -187,9 +190,10 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
         if (this instanceof EntityWidget) {
             ((EntityWidget) this).scanKeyError();
         }
-        this.getAllSubclassWidgets().stream().filter((classWidget) -> (classWidget instanceof EntityWidget)).forEach((classWidget) -> {
-            ((EntityWidget) classWidget).scanKeyError();
-        });
+        this.getAllSubclassWidgets()
+                .stream()
+                .filter(classWidget -> classWidget instanceof EntityWidget)
+                .forEach(classWidget -> ((EntityWidget) classWidget).scanKeyError());
         isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute
         scanDuplicateAttributes(null, id.getName());
         return attributeWidget;

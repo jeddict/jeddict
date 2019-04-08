@@ -15,10 +15,11 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import static io.github.jeddict.jcode.util.Constants.LANG_PACKAGE;
 import io.github.jeddict.jpa.spec.AccessType;
 import io.github.jeddict.jpa.spec.Column;
+import io.github.jeddict.jpa.spec.ManagedClass;
 import io.github.jeddict.jpa.spec.TemporalType;
 import io.github.jeddict.source.MemberExplorer;
 import javax.lang.model.element.Element;
@@ -154,6 +155,10 @@ public abstract class PersistenceBaseAttribute extends BaseAttribute implements 
     @Override
     public void setColumn(Column value) {
         this.column = value;
+    }
+    
+    public boolean isNoSQL() {
+        return ((ManagedClass)this.getJavaClass()).getNoSQL();
     }
     
 }

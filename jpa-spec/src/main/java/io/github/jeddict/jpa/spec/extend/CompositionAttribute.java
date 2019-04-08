@@ -20,6 +20,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlIDREF;
 import io.github.jeddict.jaxb.spec.JaxbVariableType;
+import io.github.jeddict.jpa.spec.ManagedClass;
 
 /**
  *
@@ -63,5 +64,9 @@ public abstract class CompositionAttribute<T extends JavaClass> extends BaseAttr
         jaxbVariableTypeList.add(JaxbVariableType.XML_TRANSIENT);
         jaxbVariableTypeList.add(JaxbVariableType.XML_ELEMENT_REF);
         return jaxbVariableTypeList;
+    }
+
+    public boolean isNoSQL() {
+        return ((ManagedClass) this.getJavaClass()).getNoSQL();
     }
 }

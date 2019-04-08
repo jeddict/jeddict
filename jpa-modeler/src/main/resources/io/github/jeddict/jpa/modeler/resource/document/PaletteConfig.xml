@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <palette-config>
-    <category-node id="JPA_CLASS" name="JPA Class">
+    <category-node id="CLASS" name="Classes">
         <subcategory-node  id="Entity" name="Entity"  >
             <palette-document icon="io/github/jeddict/jpa/modeler/resource/image/java/ENTITY_ICON.png" />
         </subcategory-node>
@@ -17,7 +17,18 @@
             <palette-document icon="io/github/jeddict/jpa/modeler/resource/image/java/JAVA_CLASS_ICON.png" />
         </subcategory-node>
     </category-node>
-    <category-node id="JPA_ATTR" name="Attributes">
+<!--    <category-node id="JNOSQL_CLASS" name="JNoSQL Classes">
+        <subcategory-node  id="JNoSQL_Entity" name="Entity"  >
+            <palette-document icon="io/github/jeddict/jpa/modeler/resource/image/java/JNOSQL_ENTITY_ICON.png" />
+        </subcategory-node>
+        <subcategory-node  id="JNoSQL_MappedSuperclass" name="MappedSuperclass"  >
+            <palette-document icon="io/github/jeddict/jpa/modeler/resource/image/java/JNOSQL_MAPPED_SUPER_CLASS_ICON.png" />
+        </subcategory-node>
+        <subcategory-node  id="JNoSQL_Embeddable" name="Embeddable"  >
+            <palette-document icon="io/github/jeddict/jpa/modeler/resource/image/java/JNOSQL_EMBEDDABLE_ICON.png" />
+        </subcategory-node>
+    </category-node>-->
+    <category-node id="ATTR" name="Attributes">
         <subcategory-node  id="Id" name="Id"  >
             <palette-document icon="io/github/jeddict/jpa/modeler/resource/image/id-attribute.png" />
         </subcategory-node>

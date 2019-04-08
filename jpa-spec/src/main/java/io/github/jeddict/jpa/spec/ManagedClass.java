@@ -25,6 +25,9 @@ public abstract class ManagedClass<T extends IPersistenceAttributes> extends Jav
 
     @XmlAttribute
     protected AccessType access;
+    
+    @XmlAttribute
+    protected Boolean noSQL;
 
     @Override
     public void load(ClassExplorer clazz) {
@@ -56,4 +59,16 @@ public abstract class ManagedClass<T extends IPersistenceAttributes> extends Jav
     public Set<String> getAllConvert(){
         return getAttributes().getAllConvert();
     }
+
+    public Boolean getNoSQL() {
+        if (noSQL == null) {
+            return false;
+        }
+        return noSQL;
+    }
+
+    public void setNoSQL(Boolean noSQL) {
+        this.noSQL = noSQL;
+    }
+
 }

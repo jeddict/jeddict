@@ -158,12 +158,15 @@
             <attributes>
                 <attribute id="table_name" groupId="TABLE_PROP" class="java.lang.String" name="name">
                     <display-name>name</display-name>
+                    <visible><![CDATA[node.getNoSQL()==false]]></visible>
                 </attribute>
                 <attribute id="catalog" groupId="TABLE_PROP" class="java.lang.String" name="catalog">
                     <display-name>catalog</display-name>
+                    <visible><![CDATA[node.getNoSQL()==false]]></visible>
                 </attribute>
                 <attribute id="schema" groupId="TABLE_PROP" class="java.lang.String" name="schema">
                     <display-name>schema</display-name>
+                    <visible><![CDATA[node.getNoSQL()==false]]></visible>
                 </attribute>
             </attributes>
         </element>
@@ -207,6 +210,13 @@
                 </attribute>
                  <attribute id="columnDefinition" groupId="COLUMN_PROP" class="java.lang.String" name="columnDefinition">
                     <display-name>Column Definition</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="ManagedClass" class="io.github.jeddict.jpa.spec.ManagedClass">
+            <attributes>
+                <attribute id="noSQL" groupId="ENTITY_PROP" class="java.lang.Boolean" name="noSQL" refresh-onchange="true" after="entityName">
+                    <display-name>No SQL</display-name>
                 </attribute>
             </attributes>
         </element>
@@ -572,7 +582,7 @@
                         && ((node.getAttributeConstraintsMap().get("FutureOrPresent").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("FutureOrPresent").selected==false)
                     ]]></visible>
         </element>
-                <element id="PastOrPresent" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="io.github.jeddict.bv.constraints.PastOrPresent">
+        <element id="PastOrPresent" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="io.github.jeddict.bv.constraints.PastOrPresent">
             <attributes>
                 <attribute id="pastorpresent.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@PastOrPresent</display-name>

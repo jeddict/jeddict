@@ -16,9 +16,13 @@
 package io.github.jeddict.jpa.modeler.widget;
 
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.MAPPED_SUPER_CLASS_ICON;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.MAPPED_SUPER_CLASS_ICON_PATH;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.NOSQL_MAPPED_SUPER_CLASS_ICON;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.NOSQL_MAPPED_SUPER_CLASS_ICON_PATH;
 import io.github.jeddict.jpa.spec.MappedSuperclass;
 import java.awt.Image;
+import static java.lang.Boolean.TRUE;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 
 /**
@@ -56,16 +60,29 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSupe
 
     @Override
     public String getIconPath() {
-        return JPAModelerUtil.MAPPED_SUPER_CLASS_ICON_PATH;
+        if (TRUE.equals(this.getBaseElementSpec().getNoSQL())) {
+            return NOSQL_MAPPED_SUPER_CLASS_ICON_PATH;
+        } else {
+            return MAPPED_SUPER_CLASS_ICON_PATH;
+        }
     }
 
     @Override
     public Image getIcon() {
-        return JPAModelerUtil.MAPPED_SUPER_CLASS_ICON;
+        if (TRUE.equals(this.getBaseElementSpec().getNoSQL())) {
+            return NOSQL_MAPPED_SUPER_CLASS_ICON;
+        } else {
+            return MAPPED_SUPER_CLASS_ICON;
+        }
     }
     
     @Override
     public MappedSuperclass createBaseElementSpec() {
-        return new MappedSuperclass();
+        MappedSuperclass mappedSuperclass = new MappedSuperclass();
+        Boolean isNoSQL = isNoSQL();
+        if (isNoSQL != null) {
+            mappedSuperclass.setNoSQL(isNoSQL);
+        }
+        return mappedSuperclass;
     }
 }

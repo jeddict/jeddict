@@ -16,7 +16,14 @@
 package io.github.jeddict.jpa.modeler.widget;
 
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.ABSTRACT_ENTITY_ICON;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.ENTITY_ICON;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.ENTITY_ICON_PATH;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.NOSQL_ABSTRACT_ENTITY_ICON;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.NOSQL_ABSTRACT_ENTITY_ICON_PATH;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.NOSQL_ENTITY_ICON;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.NOSQL_ENTITY_ICON_PATH;
 import io.github.jeddict.jpa.modeler.properties.PropertiesHandler;
 import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getCacheableProperty;
 import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getConvertProperties;
@@ -42,7 +49,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.WARNING;
@@ -65,10 +72,19 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         });
         PropertyVisibilityHandler overridePropertyHandler = () -> {
             InheritanceStateType inheritanceState = this.getInheritanceState(true);
-            return inheritanceState == InheritanceStateType.BRANCH || inheritanceState == InheritanceStateType.LEAF;
+            return (inheritanceState == BRANCH || inheritanceState == LEAF) && !this.getBaseElementSpec().getNoSQL();
         };
         this.addPropertyVisibilityHandler("AttributeOverrides", overridePropertyHandler);
         this.addPropertyVisibilityHandler("AssociationOverrides", overridePropertyHandler);
+        
+        PropertyVisibilityHandler noSQLDisabled = () -> !this.getBaseElementSpec().getNoSQL();
+        this.addPropertyVisibilityHandler("NamedQueries", noSQLDisabled);
+        this.addPropertyVisibilityHandler("NamedStoredProcedureQueries", noSQLDisabled);
+        this.addPropertyVisibilityHandler("ResultSetMappings", noSQLDisabled);
+        this.addPropertyVisibilityHandler("NamedNativeQueries", noSQLDisabled);
+        this.addPropertyVisibilityHandler("NamedEntityGraphs", noSQLDisabled);
+        this.addPropertyVisibilityHandler("cacheable", noSQLDisabled);
+        this.addPropertyVisibilityHandler("converters", noSQLDisabled);
     }
 
     @Override
@@ -77,7 +93,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         Entity entity = this.getBaseElementSpec();
         if (entity.getAttributes().getAllAttribute().isEmpty() && this.getModelerScene().getModelerFile().isLoaded()) {
             addIdAttribute("id");
-        }
+        }   
 
         if (entity.getClazz() == null || entity.getClazz().isEmpty()) {
             entity.setClazz(this.getModelerScene().getNextClassName("Entity_"));
@@ -88,23 +104,40 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         setLabel(entity.getClazz());
         this.setImage(getIcon());
         validateName(null, this.getName());
+        scanKeyError();
     }
     
     @Override
     public String getIconPath() {
-        if (this.getBaseElementSpec().getAbstract()) {
-            return JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH;
+        if (TRUE.equals(this.getBaseElementSpec().getNoSQL())) {
+            if (this.getBaseElementSpec().getAbstract()) {
+                return NOSQL_ABSTRACT_ENTITY_ICON_PATH;
+            } else {
+                return NOSQL_ENTITY_ICON_PATH;
+            }
         } else {
-            return JPAModelerUtil.ENTITY_ICON_PATH;
+            if (this.getBaseElementSpec().getAbstract()) {
+                return ABSTRACT_ENTITY_ICON_PATH;
+            } else {
+                return ENTITY_ICON_PATH;
+            }
         }
     }
 
     @Override
     public Image getIcon() {
-        if (this.getBaseElementSpec().getAbstract()) {
-            return JPAModelerUtil.ABSTRACT_ENTITY_ICON;
+        if (TRUE.equals(this.getBaseElementSpec().getNoSQL())) {
+            if (this.getBaseElementSpec().getAbstract()) {
+                return NOSQL_ABSTRACT_ENTITY_ICON;
+            } else {
+                return NOSQL_ENTITY_ICON;
+            }
         } else {
-            return JPAModelerUtil.ENTITY_ICON;
+            if (this.getBaseElementSpec().getAbstract()) {
+                return ABSTRACT_ENTITY_ICON;
+            } else {
+                return ENTITY_ICON;
+            }
         }
     }
     
@@ -120,10 +153,9 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         }
         set.put("ENTITY_PROP", getCacheableProperty(this));
         set.put("ENTITY_PROP", getConvertProperties(this.getModelerScene(), entity));
-        
-        set.put("ENTITY_PROP", PropertiesHandler.getPrimaryKeyJoinColumnsProperty("PrimaryKeyJoinColumns", "PrimaryKey Join Columns", "", this, entity));
-        set.put("ENTITY_PROP", PropertiesHandler.getAttributeOverridesProperty("AttributeOverrides", "Attribute Overrides", "", this.getModelerScene(), entity.getAttributeOverride()));
-        set.put("ENTITY_PROP", PropertiesHandler.getAssociationOverridesProperty("AssociationOverrides", "Association Overrides", "", this.getModelerScene(), entity.getAssociationOverride()));
+        set.put("ENTITY_PROP", PropertiesHandler.getPrimaryKeyJoinColumnsProperty(this, entity));
+        set.put("ENTITY_PROP", PropertiesHandler.getAttributeOverridesProperty(this.getModelerScene(), entity.getAttributeOverride()));
+        set.put("ENTITY_PROP", PropertiesHandler.getAssociationOverridesProperty(this.getModelerScene(), entity.getAssociationOverride()));
                 
         set.put("UI_PROP", getEntityDisplayProperty(this));
 
@@ -302,6 +334,10 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         Boolean isAbstract = isAbstractEntity();
         if (isAbstract != null) {
             entity.setAbstract(isAbstract);
+        }
+        Boolean isNoSQL = isNoSQL();
+        if (isNoSQL != null) {
+            entity.setNoSQL(isNoSQL);
         }
         return entity;
     }

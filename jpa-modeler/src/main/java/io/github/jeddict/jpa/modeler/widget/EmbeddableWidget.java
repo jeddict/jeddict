@@ -25,8 +25,11 @@ import io.github.jeddict.jpa.modeler.widget.flow.EmbeddableFlowWidget;
 import io.github.jeddict.jpa.spec.Embeddable;
 import io.github.jeddict.jpa.spec.EmbeddableAttributes;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
-import io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.EMBEDDABLE_ICON;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.EMBEDDABLE_ICON_PATH;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.NOSQL_EMBEDDABLE_ICON;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.NOSQL_EMBEDDABLE_ICON_PATH;
+import static java.lang.Boolean.TRUE;
 import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 
@@ -134,19 +137,32 @@ public class EmbeddableWidget extends PersistenceClassWidget<Embeddable> {
         return true;
     }
      
-     @Override
+    @Override
     public String getIconPath() {
-        return JPAModelerUtil.EMBEDDABLE_ICON_PATH;
+        if (TRUE.equals(this.getBaseElementSpec().getNoSQL())) {
+            return NOSQL_EMBEDDABLE_ICON_PATH;
+        } else {
+            return EMBEDDABLE_ICON_PATH;
+        }
     }
 
     @Override
     public Image getIcon() {
-        return JPAModelerUtil.EMBEDDABLE_ICON;
+        if (TRUE.equals(this.getBaseElementSpec().getNoSQL())) {
+            return NOSQL_EMBEDDABLE_ICON;
+        } else {
+            return EMBEDDABLE_ICON;
+        }
     }
     
     @Override
     public Embeddable createBaseElementSpec() {
-        return new Embeddable();
+        Embeddable embeddable = new Embeddable();
+        Boolean isNoSQL = isNoSQL();
+        if (isNoSQL != null) {
+            embeddable.setNoSQL(isNoSQL);
+        }
+        return embeddable;
     }
 
 }

@@ -25,6 +25,7 @@ import io.github.jeddict.jpa.spec.Entity;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.FetchType;
 import io.github.jeddict.jpa.spec.JoinTable;
+import io.github.jeddict.jpa.spec.ManagedClass;
 import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.MemberExplorer;
@@ -39,7 +40,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 
 /**
  *
@@ -330,6 +331,10 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
     @Override
     public String getDataTypeLabel() {
         return getTargetEntity();
+    }
+    
+    public boolean isNoSQL() {
+        return ((ManagedClass) this.getJavaClass()).getNoSQL();
     }
 
 }

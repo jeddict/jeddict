@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import org.atteo.evo.inflector.English;
 import org.netbeans.api.visual.widget.Widget;
 import io.github.jeddict.jcode.util.StringHelper;
@@ -96,9 +96,17 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
     private final List<SingleValueEmbeddedAttributeWidget> singleValueEmbeddedAttributeWidgets = new ArrayList<>();
     private final List<MultiValueEmbeddedAttributeWidget> multiValueEmbeddedAttributeWidgets = new ArrayList<>();
     private final List<RelationFlowWidget> inverseSideRelationFlowWidgets = new ArrayList<>();
-       
+
+    private Boolean noSQL;
+
     public PersistenceClassWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
+        if (nodeWidgetInfo.getModelerDocument().getId().startsWith("JNoSQL_")) {
+            setNoSQL(true);
+        }
+        this.addPropertyChangeListener("noSQL", (oldValue, value) -> {
+            setImage(getIcon());
+        });
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (oldValue, tableName) -> {
             if (tableName != null && !tableName.trim().isEmpty()) {
                 if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
@@ -778,5 +786,13 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
                     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        }
             }
         }
+    }
+
+    public Boolean isNoSQL() {
+        return noSQL;
+    }
+
+    public void setNoSQL(Boolean noSQL) {
+        this.noSQL = noSQL;
     }
 }

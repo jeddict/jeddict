@@ -73,4 +73,8 @@ public class Transient extends BaseAttribute {
         this.setAttributeType(member.getType());
     }
 
+    public boolean isNoSQL() {
+        return ((ManagedClass) this.getJavaClass()).getNoSQL();
+    }
+
 }
