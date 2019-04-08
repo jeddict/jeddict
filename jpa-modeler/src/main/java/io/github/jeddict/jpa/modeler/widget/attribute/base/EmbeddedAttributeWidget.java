@@ -60,9 +60,9 @@ public abstract class EmbeddedAttributeWidget<E extends CompositionAttribute> ex
         if (attribute instanceof MapKeyConvertHandler) {//ElementCollectio<X, Y>
             set.put("JPA_PROP", getMapKeyConvertProperty(this, this.getModelerScene(), (MapKeyConvertHandler) attribute));
         }
-        set.put("JPA_PROP", PropertiesHandler.getAttributeOverridesProperty("AttributeOverrides", "Attribute Overrides", "", this.getModelerScene(), attribute.getAttributeOverride()));
+        set.put("JPA_PROP", PropertiesHandler.getAttributeOverridesProperty(this.getModelerScene(), attribute.getAttributeOverride()));
         if (attribute instanceof AssociationOverrideHandler) {
-            set.put("JPA_PROP", PropertiesHandler.getAssociationOverridesProperty("AssociationOverrides", "Association Overrides", "", this.getModelerScene(), ((AssociationOverrideHandler) attribute).getAssociationOverride()));
+            set.put("JPA_PROP", PropertiesHandler.getAssociationOverridesProperty(this.getModelerScene(), ((AssociationOverrideHandler) attribute).getAssociationOverride()));
         }
     }
 

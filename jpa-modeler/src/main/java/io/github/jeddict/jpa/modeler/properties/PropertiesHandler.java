@@ -47,6 +47,9 @@ import io.github.jeddict.jpa.modeler.properties.pkjoincolumn.PrimaryKeyJoinColum
 import io.github.jeddict.jpa.modeler.rules.attribute.AttributeValidator;
 import io.github.jeddict.jpa.modeler.widget.EntityWidget;
 import io.github.jeddict.jpa.modeler.widget.InheritanceStateType;
+import static io.github.jeddict.jpa.modeler.widget.InheritanceStateType.BRANCH;
+import static io.github.jeddict.jpa.modeler.widget.InheritanceStateType.LEAF;
+import static io.github.jeddict.jpa.modeler.widget.InheritanceStateType.SINGLETON;
 import io.github.jeddict.jpa.modeler.widget.JavaClassWidget;
 import io.github.jeddict.jpa.modeler.widget.PersistenceClassWidget;
 import io.github.jeddict.jpa.modeler.widget.attribute.AttributeWidget;
@@ -120,9 +123,9 @@ import java.util.function.Predicate;
 import static java.util.stream.Collectors.toList;
 import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
-import org.apache.commons.lang.StringUtils;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import io.github.jeddict.util.StringUtils;
+import static io.github.jeddict.util.StringUtils.EMPTY;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.combobox.ActionHandler;
@@ -608,8 +611,8 @@ public class PropertiesHandler {
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
-    public static PropertySupport getAttributeOverridesProperty(String id, String name, String desc, JPAModelerScene modelerScene, final Set<AttributeOverride> attributeOverridesSpec) {
-        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+    public static PropertySupport getAttributeOverridesProperty(JPAModelerScene modelerScene, final Set<AttributeOverride> attributeOverridesSpec) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity("AttributeOverrides", "Attribute Overrides", "");
         attributeEntity.setCountDisplay(new String[]{"No AttributeOverrides exist", "One AttributeOverride exist", "AttributeOverrides exist"});
 
         attributeEntity.setColumns(Arrays.asList(
@@ -621,8 +624,8 @@ public class PropertiesHandler {
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
-    public static PropertySupport getAssociationOverridesProperty(String id, String name, String desc, JPAModelerScene modelerScene, final Set<AssociationOverride> associationOverridesSpec) {
-        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+    public static PropertySupport getAssociationOverridesProperty(JPAModelerScene modelerScene, final Set<AssociationOverride> associationOverridesSpec) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity("AssociationOverrides", "Association Overrides", "");
         attributeEntity.setCountDisplay(new String[]{"No AssociationOverrides exist", "One AssociationOverride exist", "AssociationOverrides exist"});
 
         attributeEntity.setColumns(Arrays.asList(
@@ -635,10 +638,10 @@ public class PropertiesHandler {
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
-    public static PropertySupport getPrimaryKeyJoinColumnsProperty(String id, String name, String desc, EntityWidget entityWidget, Entity entity) {
+    public static PropertySupport getPrimaryKeyJoinColumnsProperty(EntityWidget entityWidget, Entity entity) {
         JPAModelerScene modelerScene = entityWidget.getModelerScene();
         final List<? extends PrimaryKeyJoinColumn> primaryKeyJoinColumnsSpec = entity.getPrimaryKeyJoinColumn();
-        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+        final NAttributeEntity attributeEntity = new NAttributeEntity("PrimaryKeyJoinColumns", "PrimaryKey Join Columns", "");
         attributeEntity.setCountDisplay(new String[]{"No PrimaryKeyJoinColumns exist", "One PrimaryKeyJoinColumn exist", "PrimaryKeyJoinColumns exist"});
 
         List<Column> columns = new ArrayList<>();
@@ -649,8 +652,8 @@ public class PropertiesHandler {
         attributeEntity.setTableDataListener(new NEntityDataListener<>(primaryKeyJoinColumnsSpec,
                 t -> Arrays.asList(t.getName(), t.getReferencedColumnName())));
         entityWidget.addPropertyVisibilityHandler("PrimaryKeyJoinColumns", () -> {
-            InheritanceStateType inheritanceState = entityWidget.getInheritanceState();
-            return inheritanceState == InheritanceStateType.BRANCH || inheritanceState == InheritanceStateType.LEAF;
+            InheritanceStateType state = entityWidget.getInheritanceState();
+            return (state == BRANCH || state == LEAF) && !entity.getNoSQL();
         });
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
@@ -892,10 +895,10 @@ public class PropertiesHandler {
     }
 
     public static EmbeddedPropertySupport getInheritanceProperty(EntityWidget entityWidget) {
-
+        ModelerFile modelerFile = entityWidget.getModelerScene().getModelerFile();
         GenericEmbedded entity = new GenericEmbedded("inheritance", "Inheritance", "");
         try {
-            entity.setEntityEditor(new InheritancePanel(entityWidget.getModelerScene().getModelerFile(), entityWidget));
+            entity.setEntityEditor(new InheritancePanel(modelerFile, entityWidget));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -950,9 +953,9 @@ public class PropertiesHandler {
         });
 
         entityWidget.addPropertyVisibilityHandler("inheritance", () -> {
-            return entityWidget.getInheritanceState() != InheritanceStateType.SINGLETON;
+            return entityWidget.getInheritanceState() != SINGLETON && !entityWidget.getBaseElementSpec().getNoSQL();
         });
-        return new EmbeddedPropertySupport(entityWidget.getModelerScene().getModelerFile(), entity);
+        return new EmbeddedPropertySupport(modelerFile, entity);
     }
 
     public static EmbeddedPropertySupport getEqualsHashcodeProperty(JavaClassWidget<? extends JavaClass> classWidget) {

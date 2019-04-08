@@ -15,22 +15,16 @@
  */
 package io.github.jeddict.jcode.util;
 
-import static io.github.jeddict.jcode.util.Constants.WEB_INF;
 import static io.github.jeddict.jcode.util.FileUtil.expandTemplate;
-import static io.github.jeddict.jcode.util.ProjectHelper.getFileObject;
 import static io.github.jeddict.jcode.util.ProjectHelper.getProjectWebInf;
 import java.io.IOException;
 import java.util.Map;
 import org.netbeans.api.project.Project;
-import org.netbeans.api.project.ProjectUtils;
-import org.netbeans.api.project.SourceGroup;
-import org.netbeans.api.project.Sources;
 import org.netbeans.modules.j2ee.common.dd.DDHelper;
 import org.netbeans.modules.j2ee.dd.api.web.DDProvider;
 import org.netbeans.modules.j2ee.dd.api.web.WebApp;
 import org.netbeans.modules.j2ee.dd.api.web.WelcomeFileList;
 import org.netbeans.modules.web.api.webmodule.WebModule;
-import org.netbeans.modules.web.api.webmodule.WebProjectConstants;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;

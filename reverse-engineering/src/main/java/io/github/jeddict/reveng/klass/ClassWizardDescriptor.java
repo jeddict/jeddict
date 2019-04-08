@@ -56,7 +56,7 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static io.github.jeddict.util.StringUtils.isEmpty;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.AggregateProgressHandle;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
