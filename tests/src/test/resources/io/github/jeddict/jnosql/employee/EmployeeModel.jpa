@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" ptype="MONOLITH" ppkg="io.github.jeddict.jpa" epkg="employee" v="2.5" rws="_14904144245061" Pws="_14904144245061" cws="_14904144245061" thm="PNBColorScheme" dbthm="DBColorScheme" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_14736524804881" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" ptype="MONOLITH" ppkg="io.github.jeddict.jnosql" epkg="employee" v="2.5" rws="_14904144245061" Pws="_14904144245061" cws="_14904144245061" thm="PNBColorScheme" dbthm="DBColorScheme" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_14736524804881" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
     <jpa:description>Entity				Employee			HR_EMP[HIRE_DATE,Salary,Last_Name,email]
 PrimaryKey				id	
 Basic String				firstName, lastName		FIRST_NAME
@@ -22,7 +22,7 @@ Embedded 				Address[street, city, state, country, pincode]
 Nested Embedded 			Address[street, city, state, country,pincode],PinCode[mainCode,codeSuffix]
 Shared Embeddable			homeAddress,officeAddress -&gt; Address
 </jpa:description>
-    <jpa:entity lbl-ref="_14736561954113" compositePrimaryKeyClass="EmployeePK" abs="false" class="Employee" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473656190010">
+    <jpa:entity lbl-ref="_14736561954113" compositePrimaryKeyClass="EmployeePK" noSQL="true" abs="false" class="Employee" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473656190010">
         <jpa:attributes>
             <jpa:basic attribute-type="String" v="true" xvt="" name="firstName" jbp="firstame" id="_14736561954113">
                 <jpa:xwm/>
@@ -63,15 +63,6 @@ Shared Embeddable			homeAddress,officeAddress -&gt; Address
             <jpa:embedded connected-class-id="_1473668339069" v="true" xvt="" name="homeAddress" id="_147366837660829">
                 <jpa:xwm/>
                 <jpa:xm/>
-                <jpa:attribute-override name="state">
-                    <jpa:column name="HM_STATE" unique="false" nullable="true" insertable="true" updatable="true" length="255" precision="0" scale="0"/>
-                </jpa:attribute-override>
-                <jpa:attribute-override name="city">
-                    <jpa:column name="HM_CITY" unique="false" nullable="true" insertable="true" updatable="true" length="255" precision="0" scale="0"/>
-                </jpa:attribute-override>
-                <jpa:attribute-override name="zipCode.codeSuffix">
-                    <jpa:column name="HM_CODESUFFIX" unique="false" nullable="true" insertable="true" updatable="true" length="255"/>
-                </jpa:attribute-override>
                 <jpa:attribute-override name="country">
                     <jpa:column name="HM_COUNTRY" unique="false" nullable="true" insertable="true" updatable="true" length="255" precision="0" scale="0"/>
                 </jpa:attribute-override>
@@ -80,6 +71,15 @@ Shared Embeddable			homeAddress,officeAddress -&gt; Address
                 </jpa:attribute-override>
                 <jpa:attribute-override name="zipCode.maincode">
                     <jpa:column name="HM_MAINCODE" unique="false" nullable="true" insertable="true" updatable="true" length="255"/>
+                </jpa:attribute-override>
+                <jpa:attribute-override name="city">
+                    <jpa:column name="HM_CITY" unique="false" nullable="true" insertable="true" updatable="true" length="255" precision="0" scale="0"/>
+                </jpa:attribute-override>
+                <jpa:attribute-override name="zipCode.codeSuffix">
+                    <jpa:column name="HM_CODESUFFIX" unique="false" nullable="true" insertable="true" updatable="true" length="255"/>
+                </jpa:attribute-override>
+                <jpa:attribute-override name="state">
+                    <jpa:column name="HM_STATE" unique="false" nullable="true" insertable="true" updatable="true" length="255" precision="0" scale="0"/>
                 </jpa:attribute-override>
             </jpa:embedded>
             <jpa:embedded connected-class-id="_1473668339069" v="true" xvt="" name="officeAddress" id="_1473668844321146">
@@ -149,7 +149,7 @@ Shared Embeddable			homeAddress,officeAddress -&gt; Address
         </jpa:nq>
         <jpa:discriminator-column/>
     </jpa:entity>
-    <jpa:entity lbl-ref="_1473668954925151" compositePrimaryKeyClass="CubiclePK" abs="false" class="Cubicle" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473668954925">
+    <jpa:entity name="Cubicle" lbl-ref="_1473668954925151" compositePrimaryKeyClass="CubiclePK" noSQL="true" abs="false" class="Cubicle" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473668954925">
         <jpa:attributes>
             <jpa:basic attribute-type="String" v="true" xvt="" name="displayNumber" id="_149235457290035">
                 <jpa:xwm/>
@@ -159,9 +159,10 @@ Shared Embeddable			homeAddress,officeAddress -&gt; Address
                 <jpa:xwm/>
                 <jpa:xm/>
             </jpa:one-to-one>
-            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_1473668954925151">
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" pname="id" id="_1473668954925151">
                 <jpa:xwm/>
                 <jpa:xm/>
+                <jpa:column name="id" unique="false" nullable="true" insertable="true" updatable="true"/>
                 <jpa:generated-value strategy="AUTO"/>
             </jpa:id>
         </jpa:attributes>
@@ -172,7 +173,7 @@ Shared Embeddable			homeAddress,officeAddress -&gt; Address
             <jpa:query>Select c from Cubicle c where c.displayNumber=:displayNumber</jpa:query>
         </jpa:nq>
     </jpa:entity>
-    <jpa:entity lbl-ref="_148670181926531" compositePrimaryKeyClass="ProjectPK" abs="false" class="Project" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473669081752">
+    <jpa:entity lbl-ref="_148670181926531" compositePrimaryKeyClass="ProjectPK" noSQL="true" abs="false" class="Project" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473669081752">
         <jpa:attributes>
             <jpa:basic attribute-type="String" v="true" xvt="" name="name" id="_148670181926531">
                 <jpa:xwm/>
@@ -198,7 +199,7 @@ Shared Embeddable			homeAddress,officeAddress -&gt; Address
             <jpa:query>Select p from Project p where p.attribute=:attribute</jpa:query>
         </jpa:nq>
     </jpa:entity>
-    <jpa:entity lbl-ref="_14736561954113" compositePrimaryKeyClass="ContractEmployeePK" abs="false" class="ContractEmployee" superclassId="_1473656190010" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473838037466">
+    <jpa:entity lbl-ref="_14736561954113" compositePrimaryKeyClass="ContractEmployeePK" noSQL="true" abs="false" class="ContractEmployee" superclassId="_1473656190010" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473838037466">
         <jpa:attributes>
             <jpa:basic attribute-type="int" v="true" xvt="" name="dailyRate" id="_1473840519647120">
                 <jpa:xwm/>
@@ -219,7 +220,7 @@ Shared Embeddable			homeAddress,officeAddress -&gt; Address
             <jpa:query>Select c from ContractEmployee c where c.term=:term</jpa:query>
         </jpa:nq>
     </jpa:entity>
-    <jpa:entity lbl-ref="_14736561954113" compositePrimaryKeyClass="CompanyEmployeePK" abs="false" class="CompanyEmployee" superclassId="_1473656190010" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473838040941">
+    <jpa:entity lbl-ref="_14736561954113" compositePrimaryKeyClass="CompanyEmployeePK" noSQL="true" abs="false" class="CompanyEmployee" superclassId="_1473656190010" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473838040941">
         <jpa:attributes>
             <jpa:basic attribute-type="int" v="true" xvt="" name="vacation" id="_1473840548675122">
                 <jpa:xwm/>
@@ -233,7 +234,7 @@ Shared Embeddable			homeAddress,officeAddress -&gt; Address
             <jpa:query>Select c from CompanyEmployee c where c.vacation=:vacation</jpa:query>
         </jpa:nq>
     </jpa:entity>
-    <jpa:entity lbl-ref="_14736561954113" compositePrimaryKeyClass="FullTimeEmployeePK" abs="false" class="FullTimeEmployee" superclassId="_1473838040941" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473838115729">
+    <jpa:entity lbl-ref="_14736561954113" compositePrimaryKeyClass="FullTimeEmployeePK" noSQL="true" abs="false" class="FullTimeEmployee" superclassId="_1473838040941" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473838115729">
         <jpa:attributes>
             <jpa:basic attribute-type="long" v="true" xvt="" name="salary" id="_1473840611253124">
                 <jpa:xwm/>
@@ -257,7 +258,7 @@ Shared Embeddable			homeAddress,officeAddress -&gt; Address
             <jpa:query>Select f from FullTimeEmployee f where f.attribute2=:attribute2</jpa:query>
         </jpa:nq>
     </jpa:entity>
-    <jpa:entity lbl-ref="_14736561954113" compositePrimaryKeyClass="PartTimeEmployeePK" abs="false" class="PartTimeEmployee" superclassId="_1473838040941" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473838119359">
+    <jpa:entity lbl-ref="_14736561954113" compositePrimaryKeyClass="PartTimeEmployeePK" noSQL="true" abs="false" class="PartTimeEmployee" superclassId="_1473838040941" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473838119359">
         <jpa:attributes>
             <jpa:basic attribute-type="float" v="true" xvt="" name="hourlyRate" id="_1473840590311123">
                 <jpa:xwm/>
@@ -271,7 +272,7 @@ Shared Embeddable			homeAddress,officeAddress -&gt; Address
             <jpa:query>Select p from PartTimeEmployee p where p.hourlyRate=:hourlyRate</jpa:query>
         </jpa:nq>
     </jpa:entity>
-    <jpa:embeddable abs="false" class="Address" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473668339069">
+    <jpa:embeddable noSQL="true" abs="false" class="Address" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473668339069">
         <jpa:attributes>
             <jpa:basic attribute-type="String" v="true" xvt="" name="street" id="_147366835683225">
                 <jpa:xwm/>
@@ -295,7 +296,7 @@ Shared Embeddable			homeAddress,officeAddress -&gt; Address
             </jpa:embedded>
         </jpa:attributes>
     </jpa:embeddable>
-    <jpa:embeddable abs="false" class="Certification" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473668888686">
+    <jpa:embeddable noSQL="true" abs="false" class="Certification" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473668888686">
         <jpa:attributes>
             <jpa:basic attribute-type="String" v="true" xvt="" name="name" id="_1473668892535148">
                 <jpa:xwm/>
@@ -307,7 +308,7 @@ Shared Embeddable			homeAddress,officeAddress -&gt; Address
             </jpa:basic>
         </jpa:attributes>
     </jpa:embeddable>
-    <jpa:embeddable abs="false" class="ZipCode" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473669325246">
+    <jpa:embeddable noSQL="true" abs="false" class="ZipCode" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473669325246">
         <jpa:attributes>
             <jpa:basic attribute-type="String" v="true" xvt="" name="maincode" id="_1473669334478327">
                 <jpa:xwm/>
@@ -330,16 +331,16 @@ Shared Embeddable			homeAddress,officeAddress -&gt; Address
     </jpa:c>
     <jpa:wsl>
         <jpa:ws n="Main" id="_14904144245061">
-            <i ref="_1473668339069" x="647" y="345"/>
-            <i ref="_1473656190010" x="303" y="95"/>
-            <i ref="_1473669325246" x="848" y="178"/>
-            <i ref="_1473838040941" x="508" y="612"/>
-            <i ref="_1473838119359" x="647" y="760"/>
-            <i ref="_1473669081752" x="49" y="39"/>
-            <i ref="_1473668954925" x="12" y="408"/>
-            <i ref="_1473838115729" x="384" y="760"/>
-            <i ref="_1473838037466" x="126" y="612"/>
-            <i ref="_1473668888686" x="527" y="39"/>
+            <i ref="_1473668339069" x="643" y="341"/>
+            <i ref="_1473656190010" x="299" y="91"/>
+            <i ref="_1473669325246" x="844" y="174"/>
+            <i ref="_1473838040941" x="504" y="608"/>
+            <i ref="_1473838119359" x="643" y="756"/>
+            <i ref="_1473669081752" x="44" y="35"/>
+            <i ref="_1473668954925" x="7" y="404"/>
+            <i ref="_1473838115729" x="380" y="756"/>
+            <i ref="_1473838037466" x="122" y="608"/>
+            <i ref="_1473668888686" x="539" y="35"/>
         </jpa:ws>
         <jpa:ws n="Office" id="_149235455589028">
             <i ref="_1473656190010" x="310" y="106"/>

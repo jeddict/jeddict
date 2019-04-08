@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.jeddict.jpa.employee;
+package io.github.jeddict.jnosql.employee;
 
 import io.github.jeddict.test.BaseModelTest;
 import org.junit.jupiter.api.*;
