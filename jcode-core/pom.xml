@@ -121,6 +121,12 @@
             <artifactId>org-netbeans-modules-websvc-jaxws21</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+<!--    TODO add provided graaljs depedencies 
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-libs-graaljs</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>-->
     </dependencies>
 
 </project>

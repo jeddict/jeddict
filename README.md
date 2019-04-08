@@ -80,7 +80,14 @@ Please take a look at our [contributing](https://github.com/jeddict/jeddict/blob
 
 ## Build and run from Source
 
-You can build Jeddict using JDK 8+ and test with NetBeans IDE 8.2 :
+You can build Jeddict using JDK 8+ and test with NetBeans IDE 11.0 :
+
+### Build Apache NetBeans IDE modules and deploy to a local repository
+```bash
+git clone -b 11.0 --single-branch --depth 1 https://github.com/apache/incubator-netbeans.git
+ant -f incubator-netbeans -Dcluster.config=enterprise build-nozip build-nbms
+mvn nb-repository:populate -DforcedVersion=RELEASE110 -DnetbeansInstallDirectory=incubator-netbeans/nbbuild/netbeans -DnetbeansNbmDirectory=incubator-netbeans/nbbuild/nbms
+```
 
 ### Build
 ```bash
@@ -95,9 +102,8 @@ mvn -f "hipee" clean install
 ```
 ### Run
 ```bash
-mvn -f "jeddict" nbm:run-ide -Dnetbeans.installation="C:\Program Files\NetBeans 8.2"
+mvn -f "jeddict" nbm:run-ide
 ```
-Note: `netbeans.installation` property refers to the NetBeans IDE 8.2 path.
 
 ### Test Suite
 To setup the test suite first follow the above build instructions.

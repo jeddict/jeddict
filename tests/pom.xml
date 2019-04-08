@@ -9,7 +9,7 @@
     <artifactId>jeddict-tests</artifactId>
     <name>Jeddict Tests</name>
     <packaging>jar</packaging>
-
+    
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -77,6 +77,11 @@
             <artifactId>org-netbeans-modules-j2ee-eclipselink</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.external</groupId>
+            <artifactId>nb-javac-api</artifactId>
+            <version>RELEASE82</version>
+        </dependency>
         
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -84,14 +89,9 @@
             <version>5.2.0</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-compat</artifactId>
-            <version>3.0.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>14.0.1</version>
+            <groupId>org.jnosql.artemis</groupId>
+            <artifactId>artemis-core</artifactId>
+            <version>0.0.8</version>
         </dependency>
         <dependency>
             <groupId>org.netbeans.modules</groupId>
@@ -119,10 +119,10 @@
                 <version>2.22.0</version>
                 <configuration>
                     <printSummary>true</printSummary>
-                    <includes>
-                        <include>MapKeyModelTest*</include>
-                    </includes><!--
-                    <argLine>${argLine} -Xms256m -Xmx2048m</argLine>
+<!--                    <includes>
+                        <include>Emp*</include>
+                    </includes>-->
+                    <!--<argLine>${argLine} -Xms256m -Xmx2048m</argLine>
                     <forkCount>1</forkCount>
                     <runOrder>random</runOrder>-->
                 </configuration>

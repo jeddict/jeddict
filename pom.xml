@@ -22,9 +22,10 @@
         <module>tests</module>
     </modules>
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <netbeans.version>RELEASE82</netbeans.version>
         <root.dir>${basedir}</root.dir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <netbeans.version>RELEASE110</netbeans.version>
+        <netbeans.installation>${root.dir}/../incubator-netbeans/nbbuild/netbeans</netbeans.installation>
         <nbm.cluster>jeddict</nbm.cluster>
         <nbm.build.dir>${root.dir}/../jeddict-cluster</nbm.build.dir>
         <nbm.maven.plugin.version>4.1</nbm.maven.plugin.version>
@@ -114,19 +115,6 @@
     </repositories>
 
     <profiles>
-        <profile>
-            <id>netbeans82</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <dependencies>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>netbeans90</id>
-            <dependencies>
-            </dependencies>
-        </profile>
         <profile>
             <id>dev</id>
             <activation>

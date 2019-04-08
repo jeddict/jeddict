@@ -69,11 +69,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.github.jeddict</groupId>
-            <artifactId>jeddict-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>io.github.jeddict.modeler</groupId>
             <artifactId>modeler-properties</artifactId>
             <version>${project.version}</version>
@@ -129,7 +124,7 @@
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-java-classpath</artifactId>
             <version>${netbeans.version}</version>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-libs-javacapi</artifactId>
@@ -271,6 +266,12 @@
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-modules-j2ee-persistenceapi</artifactId>
             <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.external</groupId>
+            <artifactId>nb-javac-api</artifactId>
+            <version>RELEASE82</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
