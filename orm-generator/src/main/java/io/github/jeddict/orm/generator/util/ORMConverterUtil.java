@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import org.netbeans.editor.BaseDocument;
@@ -243,7 +242,7 @@ public class ORMConverterUtil {
         try {
             FileSystem fs = FileUtil.createMemoryFileSystem();
             FileObject root = fs.getRoot();
-            String fileName = FileUtil.findFreeFileName(root, "sample-format", ext);// NOI18N
+            String fileName = FileUtil.findFreeFileName(root, "module-info", ext);// NOI18N // workaround
             FileObject data = FileUtil.createData(root, fileName + "." + ext);// NOI18N
             Writer writer = new OutputStreamWriter(data.getOutputStream(), "UTF8");// NOI18N
             try {
@@ -302,6 +301,8 @@ public class ORMConverterUtil {
             }
             data.delete();
         } catch (BadLocationException | IOException ex) {
+            ex.printStackTrace(System.err);
+        } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
         return textToFormat;
