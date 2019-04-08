@@ -19,7 +19,7 @@ import io.github.jeddict.jpa.spec.extend.JavaClass;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
-import org.netbeans.api.db.explorer.DatabaseMetaDataTransfer.Table;
+import org.netbeans.api.db.explorer.DatabaseConnection;
 import org.netbeans.modeler.core.ModelerFile;
 
 /**
@@ -56,8 +56,9 @@ public interface JCREProcessor {
      *
      * @param modelerFile
      * @param tables
+     * @param databaseConnection
      * @param javaClass
      */
-    public void processDropedTables(ModelerFile modelerFile, List<Table> tables, Optional<JavaClass> javaClass);
+    public void processDropedTables(ModelerFile modelerFile, List<String> tables, DatabaseConnection databaseConnection, Optional<JavaClass> javaClass);
 
 }

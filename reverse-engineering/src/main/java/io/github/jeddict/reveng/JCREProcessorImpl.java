@@ -214,7 +214,7 @@ public class JCREProcessorImpl implements JCREProcessor {
 
 
     @Override
-    public void processDropedTables(ModelerFile modelerFile, List<Table> tables, Optional<JavaClass> javaClass) {
+    public void processDropedTables(ModelerFile modelerFile, List<String> tables, DatabaseConnection databaseConnection, Optional<JavaClass> javaClass) {
         try {
             if (!consent("db tables"
                     + (javaClass.isPresent() ? " in " + javaClass.get().getClazz() + " Class" : EMPTY))) {
@@ -228,20 +228,18 @@ public class JCREProcessorImpl implements JCREProcessor {
             DBSchemaManager dbschemaManager = new DBSchemaManager();
 
             SchemaElement schemaElement = null;
-            DatabaseConnection databaseConnection = null;
             GenerateTablesImpl genTables = new GenerateTablesImpl();
-            for (Table table : tables) {
-                databaseConnection = table.getDatabaseConnection();
-                schemaElement = dbschemaManager.getSchemaElement(table.getDatabaseConnection());
+            for (String table : tables) {
+                schemaElement = dbschemaManager.getSchemaElement(databaseConnection);
 //              TableElement tableElement = schemaElement.getTable(DBIdentifier.create(table.getTableName()));
 
                 genTables.addTable(
                         schemaElement.getCatalog().getName(),
                         schemaElement.getSchema().getName(),
-                        table.getTableName(),
+                        table,
                         sourceGroup.getRootFolder(),
                         packageName,
-                        EntityMember.makeClassName(table.getTableName()),
+                        EntityMember.makeClassName(table),
                         Collections.emptySet()
                 );
             }

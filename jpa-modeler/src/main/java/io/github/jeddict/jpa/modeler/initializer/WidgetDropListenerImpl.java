@@ -47,7 +47,9 @@ import java.util.ArrayList;
 import static java.util.Collections.singleton;
 import java.util.List;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
 import javax.swing.JMenuItem;
@@ -60,13 +62,23 @@ import org.netbeans.modeler.core.ModelerFile;
 import static org.netbeans.modeler.core.NBModelerUtil.drawImage;
 import static org.netbeans.modeler.core.NBModelerUtil.drawImageOnNodeWidget;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
+import org.netbeans.api.db.explorer.DatabaseConnection;
+import org.netbeans.modules.db.explorer.DatabaseConnectionAccessor;
+import org.netbeans.modules.db.explorer.node.SchemaNode;
+import org.netbeans.modules.db.explorer.node.TableListNode;
+import org.netbeans.modules.db.explorer.node.TableNode;
+import org.netbeans.modules.db.metadata.model.api.MetadataElementHandle;
+import org.netbeans.modules.db.metadata.model.api.MetadataModel;
+import org.netbeans.modules.db.metadata.model.api.MetadataModelException;
 import org.openide.ErrorManager;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataFolder;
 import org.openide.nodes.FilterNode;
+import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
+import org.openide.util.RequestProcessor;
 import org.openide.util.datatransfer.MultiTransferObject;
 import org.openide.windows.WindowManager;
 
@@ -159,8 +171,14 @@ public class WidgetDropListenerImpl implements WidgetDropListener {
         }
 
         if (isDBFlavor(transferable)) {
-            List<Table> tables = getDBTableList(transferable);
-            processor.processDropedTables(scene.getModelerFile(), tables, Optional.empty());
+            List<String> tables = getDBTableList(transferable);
+            DatabaseConnection databaseConnection = getDatabaseConnection(transferable);
+            processor.processDropedTables(
+                    scene.getModelerFile(), 
+                    tables, 
+                    databaseConnection, 
+                    Optional.empty()
+            );
         }
     }
 
@@ -214,12 +232,18 @@ public class WidgetDropListenerImpl implements WidgetDropListener {
         }
 
         if (isDBFlavor(transferable)) {
-            List<Table> tables = getDBTableList(transferable);
+            List<String> tables = getDBTableList(transferable);
+            DatabaseConnection databaseConnection = getDatabaseConnection(transferable);
             if (widget instanceof JavaClassWidget) {
                 JavaClassWidget<JavaClass> javaClassWidget = (JavaClassWidget) widget;
                 JavaClass javaClass = javaClassWidget.getBaseElementSpec();
                 if (javaClass == null || javaClass instanceof ManagedClass) {
-                    processor.processDropedTables(scene.getModelerFile(), tables, Optional.ofNullable(javaClass));
+                    processor.processDropedTables(
+                            scene.getModelerFile(),
+                            tables,
+                            databaseConnection,
+                            Optional.ofNullable(javaClass)
+                    );
                 }
             }
         }
@@ -363,17 +387,49 @@ public class WidgetDropListenerImpl implements WidgetDropListener {
             } else if ("org.netbeans.modules.db.explorer.node.TableListNode"
                     .equals(transferData.getClass().getName())
                     || "org.netbeans.modules.db.explorer.node.SchemaNode"
-                            .equals(transferData.getClass().getName())
-                    || "org.netbeans.modules.db.explorer.node.ConnectionNode"
                             .equals(transferData.getClass().getName())) {
-                return false;
+                return true;
+            } else if ("org.netbeans.modules.db.explorer.node.ConnectionNode"
+                            .equals(transferData.getClass().getName())) {
+               return false;
             }
         }
         return false;
     }
 
-    private List<Table> getDBTableList(Transferable transferable) {
-        List<Table> tables = new ArrayList<>();
+    private static final RequestProcessor RP = new RequestProcessor(WidgetDropListenerImpl.class);
+
+    private static List<org.netbeans.modules.db.metadata.model.api.Table> getTableListFromTablesNode(TableListNode tableListNode) {
+        org.netbeans.modules.db.explorer.DatabaseConnection connection = tableListNode.getLookup().lookup(org.netbeans.modules.db.explorer.DatabaseConnection.class);
+        MetadataModel metaDataModel = connection.getMetadataModel();
+        List<org.netbeans.modules.db.metadata.model.api.Table> tables = new ArrayList<>();
+        tableListNode.getChildren(); // load eagerly
+        for (Node node : tableListNode.getChildNodes()) {
+            TableNode tableNode = (TableNode) node;
+            MetadataElementHandle<org.netbeans.modules.db.metadata.model.api.Table> tableHandle
+                    = tableNode.getTableHandle();
+            try {
+                CountDownLatch latch = new CountDownLatch(1);
+                RP.post(() -> {
+                    try {
+                        metaDataModel.runReadAction(metaData -> {
+                            tables.add(tableHandle.resolve(metaData));
+                            latch.countDown();
+                        });
+                    } catch (MetadataModelException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                });
+                latch.await();
+            } catch (InterruptedException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        return tables;
+    }
+
+    private List<String> getDBTableList(Transferable transferable) {
+        List<String> tables = new ArrayList<>();
         DataFlavor[] flavors = transferable.getTransferDataFlavors();
         for (DataFlavor flavor : flavors) {
             Object transferData = null;
@@ -383,16 +439,78 @@ public class WidgetDropListenerImpl implements WidgetDropListener {
                 Exceptions.printStackTrace(ex);
             }
             if (DB_TYPE.equals(flavor.getSubType()) && PRIMARY_TYPE.equals(flavor.getPrimaryType())) {
-                tables.add((Table) transferData);
-            } else if (transferData instanceof MultiTransferObject) {
+                tables.add(((Table) transferData).getTableName());
+            } else if (nonNull(transferData) && transferData instanceof MultiTransferObject) {
                 MultiTransferObject multiTransfer = (MultiTransferObject) transferData;
                 for (int i = 0; i < multiTransfer.getCount(); i++) {
                     if (isDBFlavor(multiTransfer.getTransferableAt(i))) {
                         tables.addAll(getDBTableList(multiTransfer.getTransferableAt(i)));
                     }
                 }
+            } else if (nonNull(transferData)
+                    && "org.netbeans.modules.db.explorer.node.TableListNode"
+                            .equals(transferData.getClass().getName())) {
+                TableListNode tableListNode = (TableListNode)transferData;
+                tables.addAll(
+                        getTableListFromTablesNode(tableListNode)
+                                .stream()
+                                .map(org.netbeans.modules.db.metadata.model.api.Table::getName)
+                                .collect(toList())
+                );
+            } else if (nonNull(transferData)
+                    && "org.netbeans.modules.db.explorer.node.SchemaNode"
+                            .equals(transferData.getClass().getName())) {
+                TableListNode tableListNode = (TableListNode)((SchemaNode)transferData).getChildNodes().toArray()[0];
+                tables.addAll(
+                        getTableListFromTablesNode(tableListNode)
+                                .stream()
+                                .map(org.netbeans.modules.db.metadata.model.api.Table::getName)
+                                .collect(toList())
+                );
+                 
             }
         }
         return tables;
+    }
+    
+    private DatabaseConnection getDatabaseConnection(Transferable transferable) {
+        DataFlavor[] flavors = transferable.getTransferDataFlavors();
+        for (DataFlavor flavor : flavors) {
+            Object transferData = null;
+            try {
+                transferData = transferable.getTransferData(flavor);
+            } catch (UnsupportedFlavorException | IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+            if (DB_TYPE.equals(flavor.getSubType()) && PRIMARY_TYPE.equals(flavor.getPrimaryType())) {
+                return ((Table) transferData).getDatabaseConnection();
+            } else if (transferData instanceof MultiTransferObject) {
+                MultiTransferObject multiTransfer = (MultiTransferObject) transferData;
+                for (int i = 0; i < multiTransfer.getCount(); i++) {
+                    if (isDBFlavor(multiTransfer.getTransferableAt(i))) {
+                        return getDatabaseConnection(multiTransfer.getTransferableAt(i));
+                    }
+                }
+            } else if (nonNull(transferData)
+                    && "org.netbeans.modules.db.explorer.node.TableListNode"
+                            .equals(transferData.getClass().getName())) {
+                TableListNode tableListNode = (TableListNode) transferData;
+                return DatabaseConnectionAccessor.DEFAULT.createDatabaseConnection(
+                        tableListNode
+                                .getLookup()
+                                .lookup(org.netbeans.modules.db.explorer.DatabaseConnection.class)
+                );
+            } else if (nonNull(transferData)
+                    && "org.netbeans.modules.db.explorer.node.SchemaNode"
+                            .equals(transferData.getClass().getName())) {
+                TableListNode tableListNode = (TableListNode) ((SchemaNode) transferData).getChildNodes().toArray()[0];
+                return DatabaseConnectionAccessor.DEFAULT.createDatabaseConnection(
+                        tableListNode
+                                .getLookup()
+                                .lookup(org.netbeans.modules.db.explorer.DatabaseConnection.class)
+                );
+            }
+        }
+        return null;
     }
 }
