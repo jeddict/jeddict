@@ -13,7 +13,7 @@ import javax.persistence.Id;
 public class CardTransaction {
 
     @Id
-    private Long id;
+    private long id;
 
     @Basic
     private String comments;
@@ -21,11 +21,11 @@ public class CardTransaction {
     @Basic
     private LocalDateTime txTime;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

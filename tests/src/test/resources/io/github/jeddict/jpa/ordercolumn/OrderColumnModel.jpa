@@ -11,7 +11,7 @@
                 <jpa:xwm/>
                 <jpa:xm/>
             </jpa:basic>
-            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_1537626057948414">
+            <jpa:id attribute-type="long" v="true" xvt="" name="id" id="_1537626057948414">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:generated-value/>
@@ -26,7 +26,7 @@
                 <jpa:xm/>
                 <jpa:oc n="txTime" nu="true" in="true" up="true" cd=""/>
             </jpa:one-to-many>
-            <jpa:id attribute-type="Long" v="true" xvt="" name="ccNumber" id="_1548832578755153">
+            <jpa:id attribute-type="long" v="true" xvt="" name="ccNumber" id="_1548832578755153">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:generated-value/>
