@@ -12,7 +12,7 @@
     
     <properties>
         <root.dir>${basedir}/../</root.dir>
-        <graalvm.version>1.0.0-rc10</graalvm.version>
+        <graalvm.version>1.0.0-rc14</graalvm.version>
 
     </properties>
 
@@ -29,7 +29,7 @@
                         <publicPackage>edu.emory.mathcs.backport.java.util.*</publicPackage>   
                         <publicPackage>org.apache.velocity.*</publicPackage>  
                         <publicPackage>net.bytebuddy.*</publicPackage>   
-                        <publicPackage>org.yaml.snakeyaml.*</publicPackage>   
+                        <publicPackage>org.yaml.snakeyaml.*</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>
@@ -129,19 +129,4 @@
         </dependency>
     </dependencies>
 
-    <profiles>
-        <profile>
-            <id>netbeans82</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <dependencies>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>netbeans90</id>
-            <dependencies>
-            </dependencies>
-        </profile>
-    </profiles>
 </project>
