@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2018 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -33,6 +33,12 @@ public enum AttributeSnippetLocationType implements SnippetLocation {
     SETTER("Setter"),
     POST_SETTER("Post Setter"),
     PRE_FLUENT("Pre Fluent"),
+    PRE_ADD_HELPER("Pre Add Helper"),
+    ADD_HELPER("Add Helper"),
+    POST_ADD_HELPER("Post Add Helper"),
+    PRE_REMOVE_HELPER("Pre Remove Helper"),
+    REMOVE_HELPER("Remove Helper"),
+    POST_REMOVE_HELPER("Post Remove Helper"),
     FLUENT("Fluent"),
     IMPORT("Import");
     

@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2018 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -38,6 +38,7 @@ import static io.github.jeddict.jcode.BeanVaildationConstants.BV_CONSTRAINTS_PAC
 import static io.github.jeddict.jcode.JAXBConstants.JAXB_ANNOTATIONS;
 import static io.github.jeddict.jcode.JAXBConstants.JAXB_PACKAGE;
 import static io.github.jeddict.jcode.JPAConstants.JPA_ANNOTATIONS;
+import static io.github.jeddict.jcode.JPAConstants.NOSQL_PACKAGE;
 import static io.github.jeddict.jcode.JPAConstants.PERSISTENCE_PACKAGE;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_ANNOTATIONS;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_PACKAGE;
@@ -47,6 +48,7 @@ import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualify;
 import static io.github.jeddict.jcode.util.JavaUtil.getFieldName;
 import static io.github.jeddict.jcode.util.JavaUtil.getFieldNameFromDelegatorMethod;
 import static io.github.jeddict.jcode.util.JavaUtil.isBeanMethod;
+import static io.github.jeddict.jcode.util.JavaUtil.isHelperMethod;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.ClassAnnotation;
 import io.github.jeddict.jpa.spec.extend.ClassAnnotationLocationType;
@@ -70,12 +72,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import static java.util.Objects.nonNull;
 import java.util.Set;
 import java.util.TreeMap;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 
 /**
  *
@@ -99,7 +102,7 @@ public class JavaClassSyncHandler {
                 = javaClass.getAttributes()
                         .getAllAttribute()
                         .stream()
-                        .filter(attr -> Objects.nonNull(attr.getPreviousName()))
+                        .filter(attr -> nonNull(attr.getPreviousName()))
                         .collect(toMap(Attribute::getPreviousName, identity(), (a1, a2) -> a1));
 
         Map<String, ImportDeclaration> imports = existingSource.getImports()
@@ -160,8 +163,7 @@ public class JavaClassSyncHandler {
                             if (javaClass.getEqualsMethod().getAttributes().isEmpty()) {
                                 syncMethodSnippet(method, imports);
                             }
-                        } else if ((methodName.startsWith("add")
-                                || methodName.startsWith("remove"))
+                        } else if (isHelperMethod(methodName)
                                 && (method.getParameters().size() == 1 || method.getParameters().size() == 2)) { // delegator/helper method
                             String attributeName = getFieldNameFromDelegatorMethod(methodName);
 
@@ -183,11 +185,15 @@ public class JavaClassSyncHandler {
                             if (previousAttribute != null
                                     && previousAttribute instanceof CollectionTypeHandler
                                     && isNotBlank(((CollectionTypeHandler) previousAttribute).getCollectionImplType())) { //renamed
-                                // skip
+                                AttributeSyncHandler
+                                        .getInstance(previousAttribute)
+                                        .syncExistingSnippet(attributeName, method, imports);
                             } else if (attribute != null
                                     && attribute instanceof CollectionTypeHandler
                                     && isNotBlank(((CollectionTypeHandler) attribute).getCollectionImplType())) { // new or non-modified
-                                // skip
+                                AttributeSyncHandler
+                                        .getInstance(attribute)
+                                        .syncExistingSnippet(attributeName, method, imports);
                             } else {
                                 syncMethodSnippet(method, imports);
                             }
@@ -348,6 +354,7 @@ public class JavaClassSyncHandler {
             }
 
             if (!annotationFQN.startsWith(PERSISTENCE_PACKAGE)
+                    && !annotationFQN.startsWith(NOSQL_PACKAGE)
                     && !annotationFQN.startsWith(BV_CONSTRAINTS_PACKAGE)
                     && !annotationFQN.startsWith(JSONB_PACKAGE)
                     && !annotationFQN.startsWith(JAXB_PACKAGE)

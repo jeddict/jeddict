@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2018 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -30,8 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static io.github.jeddict.util.StringUtils.EMPTY;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 import org.openide.filesystems.FileObject;
 
 /**
@@ -113,6 +113,18 @@ public class JavaUtil {
 
     public static boolean isBeanMethod(String methodName) {
         return isGetterMethod(methodName) || isSetterMethod(methodName);
+    }
+    
+    public static boolean isAddMethod(String methodName) {
+        return methodName.startsWith("add") && methodName.length() > 3;
+    }
+
+    public static boolean isRemoveMethod(String methodName) {
+        return methodName.startsWith("remove") && methodName.length() > 6;
+    }
+
+    public static boolean isHelperMethod(String methodName) {
+        return isAddMethod(methodName) || isRemoveMethod(methodName);
     }
 
     /**
