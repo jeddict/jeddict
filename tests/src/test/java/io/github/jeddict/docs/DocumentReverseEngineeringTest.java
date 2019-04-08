@@ -31,29 +31,27 @@ public class DocumentReverseEngineeringTest extends BaseModelTest {
 
     @Test
     void testXmlReveng() throws Exception {
-        parseDocument("sample.xml");
+        validateEntity(parseDocument("sample.xml", true, true, true));
+        validateClass(parseDocument("sample.xml", false, false, false));
     }
 
     @Test
     void testJsonReveng() throws Exception {
-        parseDocument("sample.json");
+        validateEntity(parseDocument("sample.json", true, true, true));
+        validateClass(parseDocument("sample.json", false, false, false));
     }
 
     @Test
     void testYmlReveng() throws Exception {
-        parseDocument("sample.yml");
+        validateEntity(parseDocument("sample.yml", true, true, true));
+        validateClass(parseDocument("sample.yml", false, false, false));
     }
 
-    private void parseDocument(String name) throws Exception {
+    private EntityMappings parseDocument(String name, boolean jpaSupport, boolean jsonbSupport, boolean jaxbSupport) throws Exception {
         Project project = new ProjectBuilder("document-reverse-engineering-test").get();
         EntityMappings entityMappings = createEntityMappings();
 
-        boolean jpaSupport = true;
-        boolean jsonbSupport = true;
-        boolean jaxbSupport = true;
-
         String docFile = DocumentReverseEngineeringTest.class.getResource(name).toURI().getPath();
-
         DocWizardDescriptor docWizardDescriptor = new DocWizardDescriptor(
                 project,
                 docFile,
@@ -62,10 +60,10 @@ public class DocumentReverseEngineeringTest extends BaseModelTest {
                 jaxbSupport
         );
         docWizardDescriptor.generate(getProgressReporter(), entityMappings);
-        validate(entityMappings);
+        return entityMappings;
     }
 
-    private void validate(EntityMappings entityMappings) {
+    private void validateEntity(EntityMappings entityMappings) {
         assertTrue(entityMappings.findEntity("CatalogItem").isPresent());
         assertTrue(entityMappings.findEntity("ColorSwatch").isPresent());
         assertTrue(entityMappings.findEntity("Product").isPresent());
@@ -102,6 +100,49 @@ public class DocumentReverseEngineeringTest extends BaseModelTest {
                 .isPresent());
 
         assertTrue(entityMappings.findEntity("Product").get()
+                .getAttributes()
+                .findOneToMany("catalogItem")
+                .isPresent());
+
+    }
+    
+    private void validateClass(EntityMappings entityMappings) {
+        assertTrue(entityMappings.findBeanClass("CatalogItem").isPresent());
+        assertTrue(entityMappings.findBeanClass("ColorSwatch").isPresent());
+        assertTrue(entityMappings.findBeanClass("Product").isPresent());
+        assertTrue(entityMappings.findBeanClass("Size").isPresent());
+
+        assertTrue(entityMappings.findBeanClass("ColorSwatch").get()
+                .getAttributes()
+                .findBasic("image")
+                .isPresent());
+
+        assertTrue(entityMappings.findBeanClass("CatalogItem").get()
+                .getAttributes()
+                .findBasic("gender")
+                .isPresent());
+
+        assertTrue(entityMappings.findBeanClass("CatalogItem").get()
+                .getAttributes()
+                .findBasic("itemNumber")
+                .isPresent());
+
+        assertTrue(entityMappings.findBeanClass("CatalogItem").get()
+                .getAttributes()
+                .findBasic("price")
+                .isPresent());
+
+        assertTrue(entityMappings.findBeanClass("Product").get()
+                .getAttributes()
+                .findBasic("productImage")
+                .isPresent());
+
+        assertTrue(entityMappings.findBeanClass("Product").get()
+                .getAttributes()
+                .findBasic("description")
+                .isPresent());
+
+        assertTrue(entityMappings.findBeanClass("Product").get()
                 .getAttributes()
                 .findOneToMany("catalogItem")
                 .isPresent());

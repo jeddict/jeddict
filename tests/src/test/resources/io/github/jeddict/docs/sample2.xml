@@ -1,0 +1,24 @@
+<?xml version='1.0' standalone='yes'?>
+<movies>
+    <movie>
+        <title>Parser</title>
+        <characters>
+            <character>
+                <name>Ms. Coder</name>
+                <actor>Onlivia Actora</actor>
+            </character>
+            <character>
+                <name>Mr. Coder</name>
+                <actor>El Act</actor>
+            </character>
+        </characters>
+        <plot>
+            It's like, a programming language. Or is it a scripting language?
+        </plot>
+        <great-lines>
+            <line>It solves all my web problems</line>
+        </great-lines>
+        <rating type="thumbs">7</rating>
+        <rating type="stars">5</rating>
+    </movie>
+</movies>
