@@ -16,7 +16,7 @@
 package io.github.jeddict.settings.generate;
 
 import java.util.prefs.Preferences;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static io.github.jeddict.util.StringUtils.EMPTY;
 import org.openide.util.NbPreferences;
 
 public final class GenerateSettings extends javax.swing.JPanel {

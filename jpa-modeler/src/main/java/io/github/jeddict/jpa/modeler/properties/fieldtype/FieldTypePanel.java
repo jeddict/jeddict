@@ -24,7 +24,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.border.TitledBorder;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static io.github.jeddict.util.StringUtils.EMPTY;
 import io.github.jeddict.jcode.util.AttributeType;
 import static io.github.jeddict.jcode.util.AttributeType.BIGDECIMAL;
 import static io.github.jeddict.jcode.util.AttributeType.BIGINTEGER;

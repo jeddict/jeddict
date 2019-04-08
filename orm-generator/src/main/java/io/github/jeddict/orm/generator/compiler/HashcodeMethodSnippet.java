@@ -29,7 +29,7 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.Objects.nonNull;
 import java.util.Random;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 
 public class HashcodeMethodSnippet implements Snippet {
 

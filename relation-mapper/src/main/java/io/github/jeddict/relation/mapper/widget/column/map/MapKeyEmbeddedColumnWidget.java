@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.relation.mapper.widget.column.map;
 
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.relation.mapper.widget.column.embedded.EmbeddedAttributeColumnWidget;
 import io.github.jeddict.relation.mapper.spec.DBMapKeyEmbeddedColumn;
 import io.github.jeddict.relation.mapper.initializer.RelationMapperScene;

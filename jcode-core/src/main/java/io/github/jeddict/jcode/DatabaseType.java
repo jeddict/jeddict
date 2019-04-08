@@ -17,7 +17,7 @@ package io.github.jeddict.jcode;
 
 import java.util.Arrays;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import org.netbeans.api.db.explorer.DatabaseConnection;
 
 /**

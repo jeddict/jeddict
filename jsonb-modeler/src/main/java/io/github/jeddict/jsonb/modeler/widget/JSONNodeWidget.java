@@ -21,7 +21,6 @@ import java.awt.font.TextAttribute;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.jsonb.modeler.widget.context.NodeContextModel;
 import static io.github.jeddict.jsonb.modeler.properties.PropertiesHandler.getJsonbTypeAdapter;
 import static io.github.jeddict.jsonb.modeler.properties.PropertiesHandler.getJsonbTypeDeserializer;
@@ -33,9 +32,9 @@ import static io.github.jeddict.jpa.modeler.widget.JavaClassWidget.getFileObject
 import io.github.jeddict.jpa.modeler.widget.OpenSourceCodeAction;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.trim;
+import static io.github.jeddict.util.StringUtils.equalsIgnoreCase;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
+import static io.github.jeddict.util.StringUtils.trim;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
@@ -120,7 +119,7 @@ public abstract class JSONNodeWidget<E extends JSONBNode> extends FlowPinWidget<
 
     @Override
     public void setLabel(String label) {
-        if (StringUtils.isNotBlank(label)) {
+        if (isNotBlank(label)) {
             this.setPinName(this.getModelerScene().transferPropertyName(label));
         }
     }

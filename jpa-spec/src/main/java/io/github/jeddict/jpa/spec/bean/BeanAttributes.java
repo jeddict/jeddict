@@ -43,7 +43,7 @@ import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanAttributes extends Attributes<BeanClass> {

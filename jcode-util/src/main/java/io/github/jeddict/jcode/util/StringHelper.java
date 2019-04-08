@@ -16,8 +16,8 @@
 package io.github.jeddict.jcode.util;
 
 import java.util.function.Predicate;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.EMPTY;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
 public final class StringHelper {
 

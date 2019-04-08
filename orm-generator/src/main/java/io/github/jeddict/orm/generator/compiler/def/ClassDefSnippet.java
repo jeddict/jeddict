@@ -45,8 +45,8 @@ import java.util.Map;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import org.apache.commons.lang.StringUtils;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import io.github.jeddict.util.StringUtils;
+import static io.github.jeddict.util.StringUtils.EMPTY;
 
 public abstract class ClassDefSnippet implements WritableSnippet {
 

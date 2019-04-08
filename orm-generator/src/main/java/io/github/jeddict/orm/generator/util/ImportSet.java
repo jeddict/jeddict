@@ -19,7 +19,7 @@ import static io.github.jeddict.jcode.util.Constants.LANG_PACKAGE;
 import java.util.Collection;
 import java.util.TreeSet;
 import static java.util.stream.Collectors.toSet;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 
 public class ImportSet extends TreeSet<String> {
     

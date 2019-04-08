@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.jpa.spec.validator;
 
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.jpa.spec.extend.ClassMembers;
 
 public class ClassMemberValidator extends MarshalValidator<ClassMembers> {

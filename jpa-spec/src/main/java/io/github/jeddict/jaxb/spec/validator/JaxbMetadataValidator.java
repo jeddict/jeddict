@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.jaxb.spec.validator;
 
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.jaxb.spec.JaxbMetadata;
 import io.github.jeddict.jpa.spec.validator.MarshalValidator;
 

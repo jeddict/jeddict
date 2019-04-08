@@ -29,7 +29,7 @@ import java.util.function.BiFunction;
 import static java.util.stream.Collectors.toSet;
 import javax.swing.SwingUtilities;
 import javax.xml.namespace.QName;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.ModelReader;
 import org.codehaus.plexus.util.xml.Xpp3Dom;

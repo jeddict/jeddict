@@ -18,7 +18,7 @@ package io.github.jeddict.relation.mapper.properties.uniqueconstraint;
 import java.util.ArrayList;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static io.github.jeddict.util.StringUtils.EMPTY;
 import io.github.jeddict.relation.mapper.widget.table.TableWidget;
 import io.github.jeddict.relation.mapper.properties.tablemember.TableMemberPanel;
 import io.github.jeddict.relation.mapper.spec.DBTable;

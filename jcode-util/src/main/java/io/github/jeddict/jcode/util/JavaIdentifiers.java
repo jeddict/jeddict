@@ -18,7 +18,7 @@
  */
 package io.github.jeddict.jcode.util;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static io.github.jeddict.util.StringUtils.EMPTY;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Parameters;

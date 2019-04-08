@@ -16,7 +16,7 @@
 package io.github.jeddict.relation.mapper.widget.table;
 
 import java.awt.Image;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.relation.mapper.spec.DBCollectionTable;
 import io.github.jeddict.relation.mapper.spec.DBMapping;
 import io.github.jeddict.relation.mapper.initializer.RelationMapperScene;

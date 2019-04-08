@@ -19,7 +19,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
 import static javax.swing.JOptionPane.OK_OPTION;
 import javax.swing.SwingUtilities;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.jpa.modeler.widget.JavaClassWidget;
 import io.github.jeddict.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import io.github.jeddict.jpa.modeler.navigator.nodes.TreeChildNode;

@@ -29,7 +29,7 @@ import io.github.jeddict.jpa.spec.DefaultClass;
 import static java.lang.Boolean.TRUE;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.jpa.modeler.widget.CompositePKProperty;
 import io.github.jeddict.jpa.modeler.widget.EntityWidget;
 import io.github.jeddict.jpa.modeler.widget.FlowNodeWidget;

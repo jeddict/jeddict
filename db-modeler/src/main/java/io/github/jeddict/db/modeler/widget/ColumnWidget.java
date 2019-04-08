@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JMenuItem;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.jpa.modeler.widget.FlowPinWidget;
 import io.github.jeddict.jpa.modeler.rules.attribute.AttributeValidator;
 import io.github.jeddict.jpa.modeler.rules.entity.SQLKeywords;

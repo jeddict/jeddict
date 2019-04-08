@@ -17,7 +17,7 @@ package io.github.jeddict.jpa.modeler.properties.convert;
 
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.jpa.spec.Converter;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;

@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.jsonb.modeler.properties;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static io.github.jeddict.util.StringUtils.EMPTY;
 import io.github.jeddict.jcode.util.JavaIdentifiers;
 import io.github.jeddict.jpa.modeler.properties.extend.ClassSelectionPanel;
 import io.github.jeddict.jpa.spec.EntityMappings;

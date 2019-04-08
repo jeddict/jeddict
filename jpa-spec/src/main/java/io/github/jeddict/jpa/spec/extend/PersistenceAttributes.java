@@ -15,8 +15,8 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
-import org.apache.commons.lang.StringUtils;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import io.github.jeddict.util.StringUtils;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 import io.github.jeddict.db.accessor.BasicSpecAccessor;
 import io.github.jeddict.db.accessor.ElementCollectionSpecAccessor;
 import io.github.jeddict.db.accessor.EmbeddedSpecAccessor;

@@ -18,7 +18,7 @@ package io.github.jeddict.jsonb.spec;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import org.netbeans.modeler.properties.type.Embedded;
 
 /**

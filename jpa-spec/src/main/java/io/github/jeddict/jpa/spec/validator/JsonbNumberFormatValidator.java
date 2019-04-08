@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.jpa.spec.validator;
 
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.jsonb.spec.JsonbNumberFormat;
 
 public class JsonbNumberFormatValidator extends MarshalValidator<JsonbNumberFormat> {

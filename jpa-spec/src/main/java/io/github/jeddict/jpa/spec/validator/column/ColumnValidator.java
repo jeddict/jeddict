@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.jpa.spec.validator.column;
 
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.jpa.spec.Column;
 import io.github.jeddict.jpa.spec.validator.MarshalValidator;
 

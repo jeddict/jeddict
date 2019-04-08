@@ -16,7 +16,7 @@
 package io.github.jeddict.relation.mapper.initializer;
 
 import java.util.Optional;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.relation.mapper.widget.column.ForeignKeyWidget;
 import io.github.jeddict.relation.mapper.widget.api.IPrimaryKeyWidget;
 import io.github.jeddict.relation.mapper.widget.column.parent.ParentAssociationColumnWidget;

@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.jpa.spec.extend.BaseElement;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;

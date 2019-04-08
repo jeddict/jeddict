@@ -16,7 +16,7 @@
 package io.github.jeddict.db.accessor;
 
 import static java.util.stream.Collectors.toList;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import static io.github.jeddict.jcode.util.Constants.LIST_TYPE;
 import io.github.jeddict.db.accessor.spec.MapKeyAccessor;
 import io.github.jeddict.jpa.spec.JoinColumn;

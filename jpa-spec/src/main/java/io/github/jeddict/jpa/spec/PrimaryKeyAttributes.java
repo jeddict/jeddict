@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.lang.StringUtils;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import io.github.jeddict.util.StringUtils;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
 
 /**

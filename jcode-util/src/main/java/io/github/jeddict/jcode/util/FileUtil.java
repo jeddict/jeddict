@@ -45,10 +45,9 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import org.apache.commons.lang.StringUtils;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static io.github.jeddict.util.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.EMPTY;
 import org.netbeans.api.queries.FileEncodingQuery;
-//import org.netbeans.libs.freemarker.FreemarkerFactory;
 import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
@@ -187,7 +186,7 @@ public class FileUtil {
                 if (entry.getName().lastIndexOf('.') == -1) { //skip if not file
                     continue;
                 }
-                String targetPath = StringUtils.isBlank(targetFolder) ? entry.getName() : targetFolder + '/' + entry.getName();
+                String targetPath = isBlank(targetFolder) ? entry.getName() : targetFolder + '/' + entry.getName();
                 if (handler != null) {
                     handler.progress(targetPath);
                 }

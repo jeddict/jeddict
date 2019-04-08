@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.jpa.spec.validator.table;
 
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.jpa.spec.Table;
 import io.github.jeddict.jpa.spec.validator.MarshalValidator;
 

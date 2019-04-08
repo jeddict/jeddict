@@ -37,10 +37,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.lang.StringUtils;
-import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import io.github.jeddict.util.StringUtils;
+import static io.github.jeddict.util.StringUtils.equalsIgnoreCase;
+import static io.github.jeddict.util.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 
 /**
  *
@@ -294,7 +294,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     }
 
     public String getTableName() {
-        if (this.getTable() != null && StringUtils.isNotBlank(this.getTable().getName())) {
+        if (this.getTable() != null && isNotBlank(this.getTable().getName())) {
             return getTable().getName();
         } else {
             return getDefaultTableName();
@@ -777,7 +777,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
 
     public String getRootDiscriminatorColumnName() {
         DiscriminatorColumn rootDiscriminatorColumn = getRootDiscriminatorColumn();
-        if (rootDiscriminatorColumn == null || StringUtils.isBlank(rootDiscriminatorColumn.getName())) {
+        if (rootDiscriminatorColumn == null || isBlank(rootDiscriminatorColumn.getName())) {
             return "DTYPE";
         } else {
             return rootDiscriminatorColumn.getName();

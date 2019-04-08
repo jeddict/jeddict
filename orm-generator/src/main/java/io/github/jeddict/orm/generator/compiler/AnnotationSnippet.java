@@ -19,7 +19,7 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 
 public class AnnotationSnippet implements Snippet {
 

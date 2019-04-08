@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.Collections;
 import static java.util.Collections.singleton;
 import java.util.List;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 
 public class OrderBySnippet implements Snippet {
 

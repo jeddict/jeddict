@@ -20,8 +20,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
-import org.apache.commons.lang.StringUtils;
-import static org.apache.commons.lang.StringUtils.deleteWhitespace;
+import io.github.jeddict.util.StringUtils;
+import static io.github.jeddict.util.StringUtils.deleteWhitespace;
 
 /**
  *

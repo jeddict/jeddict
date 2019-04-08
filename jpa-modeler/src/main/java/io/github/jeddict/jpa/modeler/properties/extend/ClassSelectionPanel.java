@@ -16,7 +16,7 @@
 package io.github.jeddict.jpa.modeler.properties.extend;
 
 import javax.swing.JEditorPane;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.jpa.spec.extend.ReferenceClass;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;

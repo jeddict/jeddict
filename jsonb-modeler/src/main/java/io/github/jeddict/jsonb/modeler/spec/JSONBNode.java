@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.jsonb.modeler.spec;
 
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.FlowPin;
 

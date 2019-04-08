@@ -22,7 +22,7 @@ import io.github.jeddict.snippet.ClassSnippetLocationType;
 import io.github.jeddict.snippet.Snippet;
 import io.github.jeddict.snippet.SnippetLocation;
 import javax.swing.JOptionPane;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static io.github.jeddict.util.StringUtils.EMPTY;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.spec.ComboBoxValue;

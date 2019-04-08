@@ -27,7 +27,7 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.NEW_LINE;
 import java.util.Collection;
 import static java.util.Collections.singleton;
 import static java.util.Objects.nonNull;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 
 public class EqualsMethodSnippet implements Snippet {
 

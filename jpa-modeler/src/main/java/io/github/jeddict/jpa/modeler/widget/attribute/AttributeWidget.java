@@ -50,7 +50,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.lang.model.SourceVersion;
 import javax.swing.JMenuItem;
 import static javax.swing.JOptionPane.showMessageDialog;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 import org.atteo.evo.inflector.English;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;

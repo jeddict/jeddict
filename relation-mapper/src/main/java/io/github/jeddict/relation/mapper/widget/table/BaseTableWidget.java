@@ -21,7 +21,7 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.relation.mapper.spec.DBBaseTable;
 import io.github.jeddict.relation.mapper.spec.DBMapping;
 import io.github.jeddict.relation.mapper.initializer.RelationMapperScene;

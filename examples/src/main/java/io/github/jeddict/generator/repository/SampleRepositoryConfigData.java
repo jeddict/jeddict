@@ -19,7 +19,7 @@ import io.github.jeddict.jcode.LayerConfigData;
 import java.util.Collections;
 import java.util.List;
 import javax.json.bind.annotation.JsonbProperty;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 
 /**
  *

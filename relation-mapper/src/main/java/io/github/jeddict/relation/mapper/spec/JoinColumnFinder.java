@@ -17,7 +17,7 @@ package io.github.jeddict.relation.mapper.spec;
 
 import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.jpa.spec.AssociationOverride;
 import io.github.jeddict.jpa.spec.ElementCollection;
 import io.github.jeddict.jpa.spec.Entity;

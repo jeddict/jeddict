@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.relation.mapper.widget.column.parent;
 
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.relation.mapper.widget.column.ColumnWidget;
 import io.github.jeddict.relation.mapper.spec.DBParentAttributeColumn;
 import io.github.jeddict.relation.mapper.initializer.RelationMapperScene;
