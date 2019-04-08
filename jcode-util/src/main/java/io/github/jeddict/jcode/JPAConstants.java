@@ -30,6 +30,9 @@ public class JPAConstants {
     public static final String PERSISTENCE_PACKAGE_PREFIX = PERSISTENCE_PACKAGE + '.';
     public static final String PERSISTENCE_METAMODEL_PACKAGE = PERSISTENCE_PACKAGE_PREFIX + "metamodel.";
 
+    public static final String NOSQL_PACKAGE = "org.jnosql.artemis";
+    public static final String NOSQL_PACKAGE_PREFIX = NOSQL_PACKAGE + '.';
+    
     public static final String QUERY_TYPE = "Query";
     public static final String ENTITY_MANAGER = "EntityManager";
     public static final String ENTITY_MANAGER_FACTORY = "EntityManagerFactory";
@@ -49,18 +52,22 @@ public class JPAConstants {
     public static final String CONVERTS_FQN = PERSISTENCE_PACKAGE_PREFIX + CONVERTS;
     public static final String CONVERT = "Convert";
     public static final String CONVERT_FQN = PERSISTENCE_PACKAGE_PREFIX + CONVERT;
+    public static final String CONVERT_NOSQL_FQN = NOSQL_PACKAGE_PREFIX + CONVERT;
     public static final String CONVERTER = "Converter";
     public static final String CONVERTER_FQN = PERSISTENCE_PACKAGE_PREFIX + CONVERTER;
 
     //Class
     public static final String ENTITY = "Entity";
     public static final String ENTITY_FQN = PERSISTENCE_PACKAGE_PREFIX + ENTITY;
+    public static final String ENTITY_NOSQL_FQN = NOSQL_PACKAGE_PREFIX + ENTITY;
 
     public static final String EMBEDDABLE = "Embeddable";
     public static final String EMBEDDABLE_FQN = PERSISTENCE_PACKAGE_PREFIX + EMBEDDABLE;
+    public static final String EMBEDDABLE_NOSQL_FQN = NOSQL_PACKAGE_PREFIX + EMBEDDABLE;
 
     public static final String MAPPED_SUPERCLASS = "MappedSuperclass";
     public static final String MAPPED_SUPERCLASS_FQN = PERSISTENCE_PACKAGE_PREFIX + MAPPED_SUPERCLASS;
+    public static final String MAPPED_SUPERCLASS_NOSQL_FQN = NOSQL_PACKAGE_PREFIX + MAPPED_SUPERCLASS;
 
     public static final String TABLE = "Table";
     public static final String TABLE_FQN = PERSISTENCE_PACKAGE_PREFIX + TABLE;
@@ -97,6 +104,7 @@ public class JPAConstants {
     //Primary Key
     public static final String ID = "Id";
     public static final String ID_FQN = PERSISTENCE_PACKAGE_PREFIX + ID;
+    public static final String ID_NOSQL_FQN = NOSQL_PACKAGE_PREFIX + ID;
 
     public static final String EMBEDDED_ID = "EmbeddedId";
     public static final String EMBEDDED_ID_FQN = PERSISTENCE_PACKAGE_PREFIX + EMBEDDED_ID;
@@ -159,6 +167,7 @@ public class JPAConstants {
 
     public static final String COLUMN = "Column";
     public static final String COLUMN_FQN = PERSISTENCE_PACKAGE_PREFIX + COLUMN;
+    public static final String COLUMN_NOSQL_FQN = NOSQL_PACKAGE_PREFIX + COLUMN;
     public static final String ENUMERATED = "Enumerated";
     public static final String ENUMERATED_FQN = PERSISTENCE_PACKAGE_PREFIX + ENUMERATED;
     public static final String ENUM_TYPE = "EnumType";
