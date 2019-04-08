@@ -17,6 +17,7 @@ package io.github.jeddict.orm.generator.compiler.def;
 
 import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE;
 import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE_NOSQL_FQN;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.util.ImportSet;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
@@ -31,7 +32,11 @@ public class EmbeddableDefSnippet extends IdentifiableClassDefSnippet {
     @Override
     public ImportSet getImportSet() throws InvalidDataException {
         ImportSet imports = super.getImportSet();
-        imports.add(EMBEDDABLE_FQN);
+        if (isNoSQL()) {
+            imports.add(EMBEDDABLE_NOSQL_FQN);
+        } else {
+            imports.add(EMBEDDABLE_FQN);
+        }
         return imports;
     }
 }

@@ -18,16 +18,12 @@ package io.github.jeddict.orm.generator.compiler;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_SUBGRAPH;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_SUBGRAPH_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
 /**
  *
@@ -86,20 +82,12 @@ public class NamedSubgraphSnippet implements Snippet {
                     "EntityGraph data missing, Name:" + name + " NamedAttributeNode: " + namedAttributeNodes);
         }
 
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(NAMED_SUBGRAPH)
-                .append(OPEN_PARANTHESES)
-                .append(buildString("name", name));
-
-        if (classHelper.getClassName() != null) {
-            builder.append("type=");
-            builder.append(getType());
-            builder.append(COMMA);
-        }
-
-        builder.append(buildSnippets("attributeNodes", namedAttributeNodes));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                NAMED_SUBGRAPH,
+                attribute("name", name),
+                attribute("type", getType(), val -> classHelper.getClassName() != null),
+                attributes("attributeNodes", namedAttributeNodes)
+        );
     }
 
     @Override

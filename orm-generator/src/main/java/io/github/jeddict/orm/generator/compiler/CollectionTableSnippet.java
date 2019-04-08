@@ -3,9 +3,6 @@ package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.COLLECTION_TABLE;
 import static io.github.jeddict.jcode.JPAConstants.COLLECTION_TABLE_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.Collection;
 import java.util.Collections;
 import static java.util.Collections.emptySet;
@@ -82,18 +79,16 @@ public class CollectionTableSnippet implements Snippet {
             return null;
         }
 
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(COLLECTION_TABLE)
-                .append(OPEN_PARANTHESES)
-                .append(buildString("name", name))
-                .append(buildString("schema", schema))
-                .append(buildString("catalog", catalog))
-                .append(buildSnippets("uniqueConstraints", uniqueConstraints))
-                .append(buildSnippets("indexes", indices))
-                .append(buildSnippets("joinColumns", joinColumns))
-                .append(buildSnippet("foreignKey", foreignKey));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                COLLECTION_TABLE,
+                attribute("name", name),
+                attribute("schema", schema),
+                attribute("catalog", catalog),
+                attributes("uniqueConstraints", uniqueConstraints),
+                attributes("indexes", indices),
+                attributes("joinColumns", joinColumns),
+                attribute("foreignKey", foreignKey)
+        );
     }
 
     @Override

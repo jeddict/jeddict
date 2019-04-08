@@ -18,9 +18,6 @@ package io.github.jeddict.orm.generator.compiler;
 import static io.github.jeddict.jcode.JPAConstants.CONSTRUCTOR_RESULT;
 import static io.github.jeddict.jcode.JPAConstants.CONSTRUCTOR_RESULT_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,7 +25,7 @@ import static java.util.Collections.singleton;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
 public class ConstructorResultSnippet implements Snippet {
 
@@ -74,13 +71,11 @@ public class ConstructorResultSnippet implements Snippet {
             throw new InvalidDataException("ColumnResult.targetClass value must not be null");
         }
 
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(CONSTRUCTOR_RESULT)
-                .append(OPEN_PARANTHESES)
-                .append(buildExp("targetClass", getTargetClass()))
-                .append(buildSnippets("columns", columnResults));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                CONSTRUCTOR_RESULT,
+                attributeExp("targetClass", getTargetClass()),
+                attributes("columns", columnResults)
+        );
     }
 
     @Override

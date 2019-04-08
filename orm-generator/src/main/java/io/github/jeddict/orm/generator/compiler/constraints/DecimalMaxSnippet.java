@@ -23,7 +23,7 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import static java.lang.Boolean.FALSE;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
 /**
  *
@@ -51,7 +51,7 @@ public class DecimalMaxSnippet extends ConstraintSnippet<DecimalMax> {
         }
 
         builder.append(OPEN_PARANTHESES)
-                .append(buildString("value", constraint.getValue()));
+                .append(attribute("value", constraint.getValue()));
 
         if (isGenerateDefaultValue()) {
             boolean inclusive = !FALSE.equals(constraint.getInclusive());
@@ -64,7 +64,7 @@ public class DecimalMaxSnippet extends ConstraintSnippet<DecimalMax> {
                     .append(COMMA);
         }
 
-        builder.append(buildString("message", constraint.getMessage()));
+        builder.append(attribute("message", constraint.getMessage()));
 
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }

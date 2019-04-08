@@ -34,8 +34,8 @@ import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDef
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 
 public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
 
@@ -62,7 +62,7 @@ public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
         }
 
         builder.append(OPEN_PARANTHESES)
-                .append(buildExp("fetch", getFetchType()));
+                .append(attributeExp("fetch", getFetchType()));
 
         if (isGenerateDefaultValue() || optional == false) {
             builder.append("optional = ")

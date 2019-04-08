@@ -17,13 +17,9 @@ package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_VALUE;
 import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_VALUE_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import java.util.Collection;
 import static java.util.Collections.singleton;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
 public class DiscriminatorValueSnippet implements Snippet {
 
@@ -46,13 +42,10 @@ public class DiscriminatorValueSnippet implements Snippet {
         if (value == null) {
             throw new InvalidDataException("DiscriminatorValue.value must be null");
         }
-        return AT
-                + DISCRIMINATOR_VALUE
-                + OPEN_PARANTHESES
-                + QUOTE
-                + value
-                + QUOTE
-                + CLOSE_PARANTHESES;
+        return annotate(
+                DISCRIMINATOR_VALUE,
+                attribute(value)
+        );
     }
 
     @Override

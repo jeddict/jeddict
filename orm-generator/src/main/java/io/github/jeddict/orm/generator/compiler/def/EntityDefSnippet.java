@@ -17,13 +17,14 @@ package io.github.jeddict.orm.generator.compiler.def;
 
 import static io.github.jeddict.jcode.JPAConstants.ENTITY;
 import static io.github.jeddict.jcode.JPAConstants.ENTITY_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ENTITY_NOSQL_FQN;
 import io.github.jeddict.orm.generator.compiler.DiscriminatorColumnSnippet;
 import io.github.jeddict.orm.generator.compiler.DiscriminatorValueSnippet;
 import io.github.jeddict.orm.generator.compiler.InheritanceSnippet;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.util.ImportSet;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import org.apache.commons.lang.StringUtils;
+import static io.github.jeddict.util.StringUtils.isEmpty;
 
 public class EntityDefSnippet extends IdentifiableClassDefSnippet {
 
@@ -66,28 +67,37 @@ public class EntityDefSnippet extends IdentifiableClassDefSnippet {
 
     @Override
     public String getManagedType() {
-        if (StringUtils.isEmpty(entityName)) {
+        if (isEmpty(entityName)) {
             return AT + ENTITY;
         } else {
-            return AT + ENTITY + "(name=\"" + entityName + "\")";
+            if (isNoSQL()) {
+                return AT + ENTITY + wrapParantheses(attribute(entityName));
+            } else {
+                return AT + ENTITY + wrapParantheses(attribute("name", entityName));
+            }
         }
     }
 
     @Override
     public ImportSet getImportSet() throws InvalidDataException {
         ImportSet imports = super.getImportSet();
-        imports.add(ENTITY_FQN);
+        
+        if (isNoSQL()) {
+            imports.add(ENTITY_NOSQL_FQN);
+        } else {
+            imports.add(ENTITY_FQN);
 
-        if (discriminatorColumn != null) {
-            imports.addAll(discriminatorColumn.getImportSnippets());
-        }
+            if (discriminatorColumn != null) {
+                imports.addAll(discriminatorColumn.getImportSnippets());
+            }
 
-        if (discriminatorValue != null) {
-            imports.addAll(discriminatorValue.getImportSnippets());
-        }
+            if (discriminatorValue != null) {
+                imports.addAll(discriminatorValue.getImportSnippets());
+            }
 
-        if (inheritance != null) {
-            imports.addAll(inheritance.getImportSnippets());
+            if (inheritance != null) {
+                imports.addAll(inheritance.getImportSnippets());
+            }
         }
         return imports;
     }

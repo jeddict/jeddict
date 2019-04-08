@@ -85,8 +85,8 @@ public abstract class SnippetContainer<T extends Snippet> implements Snippet {
             imports.add(getContianerFQN());
         }
 
-        for (T convertSnippet : snippets) {
-            imports.addAll(convertSnippet.getImportSnippets());
+        for (T snippet : snippets) {
+            imports.addAll(snippet.getImportSnippets());
         }
 
         return imports;

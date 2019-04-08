@@ -20,10 +20,6 @@ import static io.github.jeddict.jcode.JPAConstants.LOCK_MODE_TYPE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_QUERY;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_QUERY_FQN;
 import io.github.jeddict.jpa.spec.LockModeType;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -94,26 +90,21 @@ public class NamedQuerySnippet implements Snippet {
             throw new InvalidDataException("Query data missing, Name:" + name + " Query: " + query);
         }
 
-        //remove new lines from query
-        query = query.replaceAll("\\n", " ");
-        query = query.replaceAll("\\t", " ");
+        StringBuilder builder = new StringBuilder();
 
-        StringBuilder builder = new StringBuilder(AT);
-
-        builder.append(NAMED_QUERY)
-                .append(OPEN_PARANTHESES)
-                .append(buildString("name", name))
-                .append(buildString("query", query));
+        builder.append(attribute("name", name));
+        builder.append(attribute("query", query
+                        .replaceAll("\\n", " ")
+                        .replaceAll("\\t", " "))
+                );
 
         if (lockMode != null) {
-            builder.append("lockMode=").append(LOCK_MODE_TYPE).append(".");
-            builder.append(lockMode);
-            builder.append(COMMA);
+            builder.append(attribute("lockMode", LOCK_MODE_TYPE + "." + lockMode));
         }
 
-        builder.append(buildSnippets("hints", queryHints));
+        builder.append(attributes("hints", queryHints));
 
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(NAMED_QUERY, builder.toString());
     }
 
     @Override

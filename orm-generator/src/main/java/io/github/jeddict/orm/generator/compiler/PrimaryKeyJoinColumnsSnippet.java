@@ -102,7 +102,7 @@ public class PrimaryKeyJoinColumnsSnippet implements Snippet {
             builder.append(COMMA);
         }
 
-        builder.append(buildSnippet("foreignKey", foreignKey));
+        builder.append(attribute("foreignKey", foreignKey));
 
         if (isRepeatable) {
             builder.setLength(builder.length() - 1);

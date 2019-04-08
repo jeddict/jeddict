@@ -93,7 +93,7 @@ public class JoinColumnsSnippet implements Snippet {
             builder.append(COMMA);
         }
 
-        builder.append(buildSnippet("foreignKey", foreignKey));
+        builder.append(attribute("foreignKey", foreignKey));
 
         if (containerAnnotation) {
             builder.setLength(builder.length() - 1);

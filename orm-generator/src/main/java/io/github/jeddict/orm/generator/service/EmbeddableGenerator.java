@@ -18,7 +18,7 @@ package io.github.jeddict.orm.generator.service;
 import io.github.jeddict.jpa.spec.Embeddable;
 import io.github.jeddict.jpa.spec.EmbeddableAttributes;
 import io.github.jeddict.orm.generator.compiler.def.EmbeddableDefSnippet;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 
 public class EmbeddableGenerator extends ManagedClassGenerator<EmbeddableDefSnippet> {
 
@@ -33,6 +33,7 @@ public class EmbeddableGenerator extends ManagedClassGenerator<EmbeddableDefSnip
 
     @Override
     public EmbeddableDefSnippet getClassDef() {
+        classDef.setNoSQL(embeddable.getNoSQL());
 
         //Attributes -- Method level annotations
         EmbeddableAttributes parsedEmbeddableAttributes = embeddable.getAttributes();
@@ -55,7 +56,6 @@ public class EmbeddableGenerator extends ManagedClassGenerator<EmbeddableDefSnip
         }
         classDef.setAuthor(embeddable.getAuthor());
         classDef.setXmlRootElement(embeddable.getXmlRootElement());
-        
         return classDef;
     }
 }

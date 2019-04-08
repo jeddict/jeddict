@@ -17,7 +17,7 @@ package io.github.jeddict.orm.generator.compiler;
 
 import java.util.List;
 
-public interface RelationDefSnippet extends Snippet {
+public interface RelationSnippet extends Snippet {
 
     public static final String CASCADE_ALL = "CascadeType.ALL";
     public static final String CASCADE_MERGE = "CascadeType.MERGE";

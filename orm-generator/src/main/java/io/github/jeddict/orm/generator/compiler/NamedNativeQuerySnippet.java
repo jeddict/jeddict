@@ -18,10 +18,6 @@ package io.github.jeddict.orm.generator.compiler;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_NATIVE_QUERY;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_NATIVE_QUERY_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -57,27 +53,14 @@ public class NamedNativeQuerySnippet extends NamedQuerySnippet implements Snippe
             throw new InvalidDataException("Query data missing, Name:" + name + " Query: " + query);
         }
 
-        //remove new lines & tabs from query
-        query = query.replaceAll("\\n", " ");
-        query = query.replaceAll("\\t", " ");
-
-        StringBuilder builder = new StringBuilder(AT);
-
-        builder.append(NAMED_NATIVE_QUERY)
-                .append(OPEN_PARANTHESES)
-                .append(buildString("name", name))
-                .append(buildString("query", query));
-
-        if (classHelper.getClassName() != null) {
-            builder.append("resultClass=");
-            builder.append(getResultClass());
-            builder.append(COMMA);
-        }
-
-        builder.append(buildString("resultSetMapping", resultSetMapping))
-                .append(buildSnippets("hints", queryHints));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                NAMED_NATIVE_QUERY,
+                attribute("name", name),
+                attribute("query", query.replaceAll("\\n", " ").replaceAll("\\t", " ")),
+                attributeExp("resultClass", getResultClass(), val -> classHelper.getClassName() != null),
+                attribute("resultSetMapping", resultSetMapping),
+                attributes("hints", queryHints)
+        );
     }
 
     @Override

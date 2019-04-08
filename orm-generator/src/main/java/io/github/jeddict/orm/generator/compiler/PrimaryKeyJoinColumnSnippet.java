@@ -17,13 +17,9 @@ package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.PRIMARY_KEY_JOIN_COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.PRIMARY_KEY_JOIN_COLUMN_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class PrimaryKeyJoinColumnSnippet implements Snippet {
 
@@ -73,22 +69,13 @@ public class PrimaryKeyJoinColumnSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(PRIMARY_KEY_JOIN_COLUMN);
-
-        if (isBlank(name)
-                && isBlank(referencedColumnName)
-                && isBlank(columnDefinition)) {
-            return builder.toString();
-        }
-
-        builder.append(OPEN_PARANTHESES)
-                .append(buildString("name", name))
-                .append(buildString("referencedColumnName", referencedColumnName))
-                .append(buildString("columnDefinition", columnDefinition))
-                .append(buildSnippet("foreignKey", foreignKey));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                PRIMARY_KEY_JOIN_COLUMN,
+                attribute("name", name),
+                attribute("referencedColumnName", referencedColumnName),
+                attribute("columnDefinition", columnDefinition),
+                attribute("foreignKey", foreignKey)
+        );
     }
 
     @Override

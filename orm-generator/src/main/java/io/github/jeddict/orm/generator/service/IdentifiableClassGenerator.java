@@ -53,8 +53,8 @@ import io.github.jeddict.jpa.spec.validator.TableGeneratorValidator;
 import io.github.jeddict.jpa.spec.validator.table.TableValidator;
 import io.github.jeddict.orm.generator.compiler.AssociationOverrideSnippet;
 import io.github.jeddict.orm.generator.compiler.AssociationOverridesSnippet;
-import io.github.jeddict.orm.generator.compiler.CacheableDefSnippet;
-import io.github.jeddict.orm.generator.compiler.ColumnDefSnippet;
+import io.github.jeddict.orm.generator.compiler.CacheableSnippet;
+import io.github.jeddict.orm.generator.compiler.ColumnSnippet;
 import io.github.jeddict.orm.generator.compiler.ColumnResultSnippet;
 import io.github.jeddict.orm.generator.compiler.ConstructorResultSnippet;
 import io.github.jeddict.orm.generator.compiler.EntityListenerSnippet;
@@ -64,6 +64,7 @@ import io.github.jeddict.orm.generator.compiler.FieldResultSnippet;
 import io.github.jeddict.orm.generator.compiler.ForeignKeySnippet;
 import io.github.jeddict.orm.generator.compiler.GeneratedValueSnippet;
 import io.github.jeddict.orm.generator.compiler.IdClassSnippet;
+import io.github.jeddict.orm.generator.compiler.IdSnippet;
 import io.github.jeddict.orm.generator.compiler.JoinColumnSnippet;
 import io.github.jeddict.orm.generator.compiler.JoinTableSnippet;
 import io.github.jeddict.orm.generator.compiler.NamedAttributeNodeSnippet;
@@ -85,10 +86,11 @@ import io.github.jeddict.orm.generator.compiler.SecondaryTableSnippet;
 import io.github.jeddict.orm.generator.compiler.SecondaryTablesSnippet;
 import io.github.jeddict.orm.generator.compiler.SequenceGeneratorSnippet;
 import io.github.jeddict.orm.generator.compiler.StoredProcedureParameterSnippet;
-import io.github.jeddict.orm.generator.compiler.TableDefSnippet;
+import io.github.jeddict.orm.generator.compiler.TableSnippet;
 import io.github.jeddict.orm.generator.compiler.TableGeneratorSnippet;
 import io.github.jeddict.orm.generator.compiler.TemporalSnippet;
 import io.github.jeddict.orm.generator.compiler.UniqueConstraintSnippet;
+import io.github.jeddict.orm.generator.compiler.VersionSnippet;
 import io.github.jeddict.orm.generator.compiler.def.IdentifiableClassDefSnippet;
 import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
 import static io.github.jeddict.orm.generator.service.ClassGenerator.logger;
@@ -99,7 +101,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
+import static java.util.logging.Level.WARNING;
 
 /**
  *
@@ -397,7 +399,7 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
         sortedAssociationOverrrides.addAll(associationOverrides);
         for (AssociationOverride associationOverride : sortedAssociationOverrrides) {
 
-            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(associationOverride.getJoinColumn(), false);
+            List<JoinColumnSnippet> joinColumnsList = processJoinColumns(associationOverride.getJoinColumn(), false);
             JoinTableSnippet joinTable = getJoinTable(associationOverride.getJoinTable());
 
             if ((joinTable == null || joinTable.isEmpty()) && joinColumnsList.isEmpty()) {
@@ -455,7 +457,6 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
         }
 
         VariableDefSnippet variableDef = getVariableDef(parsedEmbeddedId);
-        variableDef.setEmbeddedId(true);
         /**
          * Filter if Embeddable class is used in case of derived entities. Refer
          * : JPA Spec 2.4.1.3 Example 5(b)
@@ -466,67 +467,82 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
             variableDef.setType(parsedEmbeddedId.getAttributeType());
         }
 
-        processInternalAttributeOverride(variableDef, parsedEmbeddedId.getAttributeOverride());
+        if (!classDef.isNoSQL()) {
+            variableDef.setEmbeddedId(true);
+            processInternalAttributeOverride(variableDef, parsedEmbeddedId.getAttributeOverride());
+        }
         return variableDef;
     }
 
-    protected VariableDefSnippet processId(Id parsedId) {
-        VariableDefSnippet variableDef = getVariableDef(parsedId);
-        variableDef.setType(parsedId.getAttributeType());
-        variableDef.setPrimaryKey(true);
+    protected VariableDefSnippet processId(Id id) {
+        VariableDefSnippet variableDef = getVariableDef(id);
+        variableDef.setType(id.getAttributeType());
+        IdSnippet idSnippet = new IdSnippet();
+        idSnippet.setNoSQL(classDef.isNoSQL());
+        variableDef.setId(idSnippet);
+        Column column = id.getColumn();
 
-        Column parsedColumn = parsedId.getColumn();
+        if (!classDef.isNoSQL()) {
 
-        if (parsedColumn != null) {
-            ColumnDefSnippet columnDef = getColumnDef(parsedColumn);
-            variableDef.setColumnDef(columnDef);
-        }
-        GeneratedValue parsedGeneratedValue = parsedId.getGeneratedValue();
-        if (parsedGeneratedValue != null && parsedGeneratedValue.getStrategy() != null) {
-
-            GeneratedValueSnippet generatedValue = new GeneratedValueSnippet();
-            generatedValue.setGenerator(parsedGeneratedValue.getGenerator());
-            if (parsedGeneratedValue.getStrategy() != GenerationType.DEFAULT) {
-                generatedValue.setStrategy("GenerationType." + parsedGeneratedValue.getStrategy().value());
+            if (column != null) {
+                ColumnSnippet columnSnippet = processColumn(column);
+                variableDef.setColumn(columnSnippet);
             }
-            variableDef.setGeneratedValue(generatedValue);
+            GeneratedValue parsedGeneratedValue = id.getGeneratedValue();
+            if (parsedGeneratedValue != null && parsedGeneratedValue.getStrategy() != null) {
 
-            SequenceGenerator parsedSequenceGenerator = parsedId.getSequenceGenerator();
-            if (parsedSequenceGenerator != null) {
-                SequenceGeneratorSnippet sequenceGenerator = processSequenceGenerator(parsedSequenceGenerator);
-                variableDef.setSequenceGenerator(sequenceGenerator);
+                GeneratedValueSnippet generatedValue = new GeneratedValueSnippet();
+                generatedValue.setGenerator(parsedGeneratedValue.getGenerator());
+                if (parsedGeneratedValue.getStrategy() != GenerationType.DEFAULT) {
+                    generatedValue.setStrategy("GenerationType." + parsedGeneratedValue.getStrategy().value());
+                }
+                variableDef.setGeneratedValue(generatedValue);
+
+                SequenceGenerator parsedSequenceGenerator = id.getSequenceGenerator();
+                if (parsedSequenceGenerator != null) {
+                    SequenceGeneratorSnippet sequenceGenerator = processSequenceGenerator(parsedSequenceGenerator);
+                    variableDef.setSequenceGenerator(sequenceGenerator);
+                }
+
+                TableGenerator parsedTableGenerator = id.getTableGenerator();
+                if (parsedTableGenerator != null) {
+                    variableDef.setTableGenerator(processTableGenerator(parsedTableGenerator));
+                }
             }
 
-            TableGenerator parsedTableGenerator = parsedId.getTableGenerator();
-            if (parsedTableGenerator != null) {
-                variableDef.setTableGenerator(processTableGenerator(parsedTableGenerator));
+            TemporalType parsedTemporalType = id.getTemporal();
+            TemporalSnippet temporal = null;
+            if (parsedTemporalType != null) {
+                temporal = new TemporalSnippet();
+                temporal.setValue(parsedTemporalType);
+            }
+            variableDef.setTemporal(temporal);
+        } else {
+            if (column != null) {
+                idSnippet.setName(column.getName());
             }
         }
-
-        TemporalType parsedTemporalType = parsedId.getTemporal();
-        TemporalSnippet temporal = null;
-        if (parsedTemporalType != null) {
-            temporal = new TemporalSnippet();
-            temporal.setValue(parsedTemporalType);
-        }
-        variableDef.setTemporal(temporal);
         return variableDef;
     }
 
     protected VariableDefSnippet processVersion(Version parsedVersion) {
         VariableDefSnippet variableDef = getVariableDef(parsedVersion);
         variableDef.setType(parsedVersion.getAttributeType());
-        variableDef.setVersion(true);
-        ColumnDefSnippet columnDef = getColumnDef(parsedVersion.getColumn());
-        variableDef.setColumnDef(columnDef);
+        
+        if (!classDef.isNoSQL()) {
+            VersionSnippet version = new VersionSnippet();
+            variableDef.setVersion(version);
+            ColumnSnippet columnDef = processColumn(parsedVersion.getColumn());
+            variableDef.setColumn(columnDef);
 
-        TemporalType parsedTemporalType = parsedVersion.getTemporal();
-        TemporalSnippet temporal = null;
-        if (parsedTemporalType != null) {
-            temporal = new TemporalSnippet();
-            temporal.setValue(parsedTemporalType);
+            TemporalType parsedTemporalType = parsedVersion.getTemporal();
+            TemporalSnippet temporal = null;
+            if (parsedTemporalType != null) {
+                temporal = new TemporalSnippet();
+                temporal.setValue(parsedTemporalType);
+            }
+            variableDef.setTemporal(temporal);
         }
-        variableDef.setTemporal(temporal);
         return variableDef;
     }
 
@@ -551,7 +567,7 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
             List<PrimaryKeyJoinColumnSnippet> primaryKeyJoinColumns
                     = getPrimaryKeyJoinColumns(parsedSecondaryTable.getPrimaryKeyJoinColumn());
 
-            List<UniqueConstraintSnippet> uniqueConstraints = getUniqueConstraints(
+            List<UniqueConstraintSnippet> uniqueConstraints = processUniqueConstraints(
                     parsedSecondaryTable.getUniqueConstraint());
 
             SecondaryTableSnippet secondaryTable = new SecondaryTableSnippet();
@@ -559,9 +575,9 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
             secondaryTable.setName(parsedSecondaryTable.getName());
             secondaryTable.setSchema(parsedSecondaryTable.getSchema());
             secondaryTable.setUniqueConstraints(uniqueConstraints);
-            secondaryTable.setIndices(getIndexes(parsedSecondaryTable.getIndex()));
+            secondaryTable.setIndices(processIndexes(parsedSecondaryTable.getIndex()));
             secondaryTable.setPrimaryKeyJoinColumns(primaryKeyJoinColumns);
-            secondaryTable.setForeignKey(getForeignKey(parsedSecondaryTable.getForeignKey()));
+            secondaryTable.setForeignKey(processForeignKey(parsedSecondaryTable.getForeignKey()));
 
             classDef.getSecondaryTables().add(secondaryTable);
         }
@@ -619,8 +635,7 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
         if (found) {
             variableDef.setSequenceGenerator(sequenceGenerator);
         } else {
-            logger.log(Level.WARNING, "Ignoring : Cannot find variable for "
-                    + "Sequence generator :" + sequenceGenerator.getName());
+            logger.log(WARNING, "Ignoring : Cannot find variable for Sequence generator :{0}", sequenceGenerator.getName());
         }
     }
 
@@ -660,13 +675,13 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
             return;
         }
 
-        TableDefSnippet table = new TableDefSnippet();
+        TableSnippet table = new TableSnippet();
 
         table.setCatalog(parsedTable.getCatalog());
         table.setName(parsedTable.getName());
         table.setSchema(parsedTable.getSchema());
-        table.setUniqueConstraints(getUniqueConstraints(parsedTable.getUniqueConstraint()));
-        table.setIndices(getIndexes(parsedTable.getIndex()));
+        table.setUniqueConstraints(processUniqueConstraints(parsedTable.getUniqueConstraint()));
+        table.setIndices(processIndexes(parsedTable.getIndex()));
 
         classDef.setTableDef(table);
     }
@@ -676,7 +691,7 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
         if (cacheable == null) { //Implicit Disable (!Force Disable)
             return;
         }
-        CacheableDefSnippet snippet = new CacheableDefSnippet(cacheable);
+        CacheableSnippet snippet = new CacheableSnippet(cacheable);
         classDef.setCacheableDef(snippet);
     }
 
@@ -707,9 +722,9 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
         tableGenerator.setTable(parsedTableGenerator.getTable());
         tableGenerator.setValueColumnName(
                 parsedTableGenerator.getValueColumnName());
-        tableGenerator.setUniqueConstraints(getUniqueConstraints(
+        tableGenerator.setUniqueConstraints(processUniqueConstraints(
                 parsedTableGenerator.getUniqueConstraint()));
-        tableGenerator.setIndices(getIndexes(parsedTableGenerator.getIndex()));
+        tableGenerator.setIndices(processIndexes(parsedTableGenerator.getIndex()));
 
         return tableGenerator;
     }
@@ -741,7 +756,7 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
         if (found) {
             variableDef.setTableGenerator(tableGenerator);
         } else {
-            logger.log(Level.WARNING, "Ignoring : Cannot find variable for Table generator :{0}", tableGenerator.getName());
+            logger.log(WARNING, "Ignoring : Cannot find variable for Table generator :{0}", tableGenerator.getName());
         }
     }
 

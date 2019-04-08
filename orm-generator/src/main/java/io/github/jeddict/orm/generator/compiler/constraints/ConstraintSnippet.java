@@ -23,7 +23,7 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANT
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.Collection;
 import static java.util.Collections.singleton;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
 /**
  *
@@ -46,7 +46,7 @@ public abstract class ConstraintSnippet<T extends Constraint> implements Snippet
         }
 
         builder.append(OPEN_PARANTHESES)
-                .append(buildString("message", constraint.getMessage()));
+                .append(attribute("message", constraint.getMessage()));
 
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }

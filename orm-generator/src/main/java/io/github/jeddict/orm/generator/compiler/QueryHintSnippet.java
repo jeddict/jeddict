@@ -17,9 +17,6 @@ package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.QUERY_HINT;
 import static io.github.jeddict.jcode.JPAConstants.QUERY_HINT_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.Collection;
 import static java.util.Collections.singleton;
 
@@ -50,13 +47,11 @@ public class QueryHintSnippet implements Snippet {
             throw new InvalidDataException("name or value cannot be null");
         }
 
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(QUERY_HINT)
-                .append(OPEN_PARANTHESES)
-                .append(buildString("name", name))
-                .append(buildString("value", value));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                QUERY_HINT,
+                attribute("name", name),
+                attribute("value", value)
+        );
 
     }
 

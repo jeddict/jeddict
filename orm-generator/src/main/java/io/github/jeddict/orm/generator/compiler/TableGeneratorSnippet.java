@@ -17,10 +17,6 @@ package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.TABLE_GENERATOR;
 import static io.github.jeddict.jcode.JPAConstants.TABLE_GENERATOR_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,7 +24,7 @@ import static java.util.Collections.singleton;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
 public class TableGeneratorSnippet implements Snippet {
 
@@ -148,34 +144,20 @@ public class TableGeneratorSnippet implements Snippet {
             throw new InvalidDataException("Name is required");
         }
 
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(TABLE_GENERATOR)
-                .append(OPEN_PARANTHESES)
-                .append(buildString("name", name))
-                .append(buildString("table", table))
-                .append(buildString("schema", schema))
-                .append(buildString("catalog", catalog))
-                .append(buildString("pkColumnValue", pkColumnValue))
-                .append(buildString("valueColumnName", valueColumnName))
-                .append(buildString("pkColumnName", pkColumnName));
-
-
-        if (isGenerateDefaultValue() || allocationSize != 50) {
-            builder.append("allocationSize=")
-                    .append(allocationSize)
-                    .append(COMMA);
-        }
-
-        if (isGenerateDefaultValue() || initialValue != 0) {
-            builder.append("initialValue=")
-                    .append(initialValue)
-                    .append(COMMA);
-        }
-
-        builder.append(buildSnippets("uniqueConstraints", uniqueConstraints))
-                .append(buildSnippets("indexes", indices));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                TABLE_GENERATOR,
+                attribute("name", name),
+                attribute("table", table),
+                attribute("schema", schema),
+                attribute("catalog", catalog),
+                attribute("pkColumnValue", pkColumnValue),
+                attribute("valueColumnName", valueColumnName),
+                attribute("pkColumnName", pkColumnName),
+                attribute("allocationSize", allocationSize, val -> isGenerateDefaultValue() || val != 50),
+                attribute("initialValue", initialValue, val -> isGenerateDefaultValue() || val != 0),
+                attributes("uniqueConstraints", uniqueConstraints),
+                attributes("indexes", indices)
+        );
 
     }
 

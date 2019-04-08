@@ -18,24 +18,21 @@ package io.github.jeddict.orm.generator.compiler;
 import static io.github.jeddict.jcode.JPAConstants.ATTRIBUTE_OVERRIDE;
 import static io.github.jeddict.jcode.JPAConstants.ATTRIBUTE_OVERRIDE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.COLUMN_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static java.util.Arrays.asList;
 import java.util.Collection;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
 public class AttributeOverrideSnippet implements Snippet {
 
     private String name = null;
 
-    private ColumnDefSnippet columnDef = null;
+    private ColumnSnippet columnDef = null;
 
-    public ColumnDefSnippet getColumnDef() {
+    public ColumnSnippet getColumnDef() {
         return columnDef;
     }
 
-    public void setColumnDef(ColumnDefSnippet columnDef) {
+    public void setColumnDef(ColumnSnippet columnDef) {
         this.columnDef = columnDef;
     }
 
@@ -53,13 +50,11 @@ public class AttributeOverrideSnippet implements Snippet {
             throw new InvalidDataException("Name and ColumnDef required");
         }
 
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(ATTRIBUTE_OVERRIDE)
-                .append(OPEN_PARANTHESES)
-                .append(buildString("name", name))
-                .append(buildSnippet("column", columnDef));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                ATTRIBUTE_OVERRIDE,
+                attribute("name", name),
+                attribute("column", columnDef)
+        );
     }
 
     @Override

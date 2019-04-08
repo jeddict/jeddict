@@ -18,13 +18,10 @@ package io.github.jeddict.orm.generator.compiler;
 import static io.github.jeddict.jcode.JPAConstants.ID_CLASS;
 import static io.github.jeddict.jcode.JPAConstants.ID_CLASS_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
 public class IdClassSnippet implements Snippet {
 
@@ -48,11 +45,10 @@ public class IdClassSnippet implements Snippet {
             throw new InvalidDataException("value is a required");
         }
 
-        return AT
-                + ID_CLASS
-                + OPEN_PARANTHESES
-                + getValue()
-                + CLOSE_PARANTHESES;
+        return annotate(
+                ID_CLASS, 
+                getValue()
+        );
     }
 
     @Override

@@ -17,18 +17,15 @@ package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.COLUMN_FQN;
+import static io.github.jeddict.jcode.JPAConstants.COLUMN_NOSQL_FQN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_COLUMN_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.Collection;
 import static java.util.Collections.singleton;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
-public class ColumnDefSnippet implements Snippet {
+public class ColumnSnippet extends ORMSnippet {
 
     private boolean mapKey;
     private Boolean unique = false;
@@ -44,22 +41,27 @@ public class ColumnDefSnippet implements Snippet {
     private String table = null;
     private String name = null;
 
-    public ColumnDefSnippet(boolean mapKey) {
+    public ColumnSnippet(boolean mapKey) {
         this.mapKey = mapKey;
     }
 
-    public ColumnDefSnippet() {
+    public ColumnSnippet() {
     }
 
     public boolean isEmptyObject() {
         boolean empty = false;
         if (!isGenerateDefaultValue()) {
-            if ((name == null || name.trim().isEmpty())
-                    && (table == null || table.trim().isEmpty())
-                    && (columnDefinition == null || columnDefinition.trim().isEmpty())
-                    && unique == false && updatable == true && insertable == true && nullable == true
-                    && length == 255 && scale == 0 && precision == 0) {
-                empty = true;
+            if (noSQL) {
+                if (isBlank(name)) {
+                    empty = true;
+                }
+            } else {
+                if (isBlank(name) && isBlank(table) && isBlank(columnDefinition)
+                        && unique == false && updatable == true 
+                        && insertable == true && nullable == true
+                        && length == 255 && scale == 0 && precision == 0) {
+                    empty = true;
+                }
             }
         }
         return empty;
@@ -147,63 +149,34 @@ public class ColumnDefSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append(buildString("name", name))
-                .append(buildString("table", table));
-
-        if (isGenerateDefaultValue() || unique == true) {
-            builder.append("unique=");
-            builder.append(unique);
-            builder.append(COMMA);
+        if (!noSQL) {
+            return annotate(
+                    mapKey ? MAP_KEY_COLUMN : COLUMN,
+                    attribute("name", name),
+                    attribute("table", table),
+                    attribute("unique", unique, val -> isGenerateDefaultValue() || val == true),
+                    attribute("insertable", insertable, val -> isGenerateDefaultValue() || val == false),
+                    attribute("nullable", nullable, val -> isGenerateDefaultValue() || val == false),
+                    attribute("updatable", updatable, val -> isGenerateDefaultValue() || val == false),
+                    attribute("length", length, val -> isGenerateDefaultValue() || val != 255),
+                    attribute("scale", scale, val -> isGenerateDefaultValue() || val != 0),
+                    attribute("precision", precision, val -> isGenerateDefaultValue() || val != 0),
+                    attribute("columnDefinition", columnDefinition)
+            );
+        } else {
+            return annotate(
+                    COLUMN,
+                    attribute(name)
+            );
         }
-
-        if (isGenerateDefaultValue() || insertable == false) {
-            builder.append("insertable=");
-            builder.append(insertable);
-            builder.append(COMMA);
-        }
-
-        if (isGenerateDefaultValue() || nullable == false) {
-            builder.append("nullable=");
-            builder.append(nullable);
-            builder.append(COMMA);
-        }
-
-        if (isGenerateDefaultValue() || updatable == false) {
-            builder.append("updatable=");
-            builder.append(updatable);
-            builder.append(COMMA);
-        }
-
-        if (isGenerateDefaultValue() || length != 255) {
-            builder.append("length=")
-                    .append(length)
-                    .append(COMMA);
-        }
-
-        if (isGenerateDefaultValue() || scale != 0) {
-            builder.append("scale=")
-                    .append(scale)
-                    .append(COMMA);
-        }
-
-        if (isGenerateDefaultValue() || precision != 0) {
-            builder.append("precision=")
-                    .append(precision)
-                    .append(COMMA);
-        }
-
-        builder.append(buildString("columnDefinition", columnDefinition));
-
-        return AT + (mapKey ? MAP_KEY_COLUMN : COLUMN)
-                + (builder.length() > 1
-                ? OPEN_PARANTHESES + builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES
-                : EMPTY);
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return singleton((mapKey ? MAP_KEY_COLUMN_FQN : COLUMN_FQN));
+        if (noSQL) {
+            return singleton(COLUMN_NOSQL_FQN);
+        } else {
+            return singleton((mapKey ? MAP_KEY_COLUMN_FQN : COLUMN_FQN));
+        }
     }
 }

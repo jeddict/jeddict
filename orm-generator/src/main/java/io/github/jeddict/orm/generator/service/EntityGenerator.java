@@ -29,7 +29,7 @@ import io.github.jeddict.orm.generator.compiler.DiscriminatorValueSnippet;
 import io.github.jeddict.orm.generator.compiler.InheritanceSnippet;
 import io.github.jeddict.orm.generator.compiler.InheritanceSnippet.Type;
 import io.github.jeddict.orm.generator.compiler.def.EntityDefSnippet;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 
 public class EntityGenerator extends IdentifiableClassGenerator<EntityDefSnippet> {
 
@@ -44,43 +44,46 @@ public class EntityGenerator extends IdentifiableClassGenerator<EntityDefSnippet
 
     @Override
     public EntityDefSnippet getClassDef() {
+        classDef.setNoSQL(entity.getNoSQL());
 
-        //Classlevel annotations
-        processDiscriminatorColumn();
-        processDiscriminatorValue();
-        processInheritance();
+        if (!classDef.isNoSQL()) {
+            //Classlevel annotations
+            processDiscriminatorColumn();
+            processDiscriminatorValue();
+            processInheritance();
 
-        processIdClass(entity.getIdClass());
-        processAssociationOverrides(entity.getAssociationOverride());
-        classDef.setAttributeOverrides(processAttributeOverrides(entity.getAttributeOverride()));
+            processIdClass(entity.getIdClass());
+            processAssociationOverrides(entity.getAssociationOverride());
+            classDef.setAttributeOverrides(processAttributeOverrides(entity.getAttributeOverride()));
 
-        processSecondaryTable(entity.getSecondaryTable());
-        processPrimaryKeyJoinColumns(getPrimaryKeyJoinColumns(entity.getPrimaryKeyJoinColumn()), getForeignKey(entity.getPrimaryKeyForeignKey()));
-        
-        processSqlResultSetMapping(entity.getSqlResultSetMapping());
-        processEntityListeners(entity.getEntityListeners());
+            processSecondaryTable(entity.getSecondaryTable());
+            processPrimaryKeyJoinColumns(getPrimaryKeyJoinColumns(entity.getPrimaryKeyJoinColumn()), processForeignKey(entity.getPrimaryKeyForeignKey()));
 
-        processDefaultExcludeListeners(
-                entity.getExcludeDefaultListeners());
-        processExcludeSuperclassListeners(
-                entity.getExcludeSuperclassListeners());
-        
-        classDef.setConverts(processConverts(entity.getConverts()));
-        
-        //Table
-        processTable(entity.getTable());
-        
-        processCacheable(entity.getCacheable());
+            processSqlResultSetMapping(entity.getSqlResultSetMapping());
+            processEntityListeners(entity.getEntityListeners());
 
-        //Queries
-        processNamedQueries(entity.getNamedQuery());
-        processNamedNativeQueries(entity.getNamedNativeQuery());
+            processDefaultExcludeListeners(
+                    entity.getExcludeDefaultListeners());
+            processExcludeSuperclassListeners(
+                    entity.getExcludeSuperclassListeners());
 
-        //EntityGraphs
-        processNamedEntityGraphs(entity.getNamedEntityGraph());
+            classDef.setConverts(processConverts(entity.getConverts()));
 
-        //StoredProcedures
-        processNamedStoredProcedureQueries((EntityMappings) entity.getRootElement(), entity.getNamedStoredProcedureQuery());
+            //Table
+            processTable(entity.getTable());
+
+            processCacheable(entity.getCacheable());
+
+            //Queries
+            processNamedQueries(entity.getNamedQuery());
+            processNamedNativeQueries(entity.getNamedNativeQuery());
+
+            //EntityGraphs
+            processNamedEntityGraphs(entity.getNamedEntityGraph());
+
+            //StoredProcedures
+            processNamedStoredProcedureQueries((EntityMappings) entity.getRootElement(), entity.getNamedStoredProcedureQuery());
+        }
 
         //Attributes -- Method level annotations
         IPrimaryKeyAttributes parsedAttributes = entity.getAttributes();
@@ -101,14 +104,16 @@ public class EntityGenerator extends IdentifiableClassGenerator<EntityDefSnippet
             parsedAttributes.getTransient().forEach(this::processTransient);
         }
 
-        /**
-         * processTableGeneratorEntity() && processSequenceGeneratorEntity()
-         * depends on @GeneratedValue annotation - So process it after
-         * @GeneratedValue
-         */
-        processTableGeneratorEntity(entity.getTableGenerator());
-        processSequenceGeneratorEntity(entity.getSequenceGenerator());
-
+        if (!classDef.isNoSQL()) {
+            /**
+             * processTableGeneratorEntity() && processSequenceGeneratorEntity()
+             * depends on @GeneratedValue annotation - So process it after
+             * GeneratedValue annotation
+             */
+            processTableGeneratorEntity(entity.getTableGenerator());
+            processSequenceGeneratorEntity(entity.getSequenceGenerator());
+        }
+        
         //Class decorations
         classDef = initClassDef(packageName,entity);
         if (StringUtils.isNotBlank(entity.getDescription())) {
@@ -119,7 +124,6 @@ public class EntityGenerator extends IdentifiableClassGenerator<EntityDefSnippet
         }
         classDef.setAuthor(entity.getAuthor());
         classDef.setXmlRootElement(entity.getXmlRootElement());
-        
         return classDef;
     }
 

@@ -17,14 +17,10 @@ package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.SEQUENCE_GENERATOR;
 import static io.github.jeddict.jcode.JPAConstants.SEQUENCE_GENERATOR_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.Collection;
 import static java.util.Collections.singleton;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
 public class SequenceGeneratorSnippet implements Snippet {
 
@@ -70,41 +66,19 @@ public class SequenceGeneratorSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
         if (isBlank(name)) {
             throw new InvalidDataException("Name is required");
         }
 
-        StringBuilder builder = new StringBuilder(AT);
-
-        builder.append(SEQUENCE_GENERATOR)
-                .append(OPEN_PARANTHESES)
-                .append(buildString("name", name));
-
-        if (!isGenerateDefaultValue()) {
-            if (sequenceName == null && allocationSize == 50 && initialValue == 1) {
-                return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
-            }
-        }
-
-        builder.append(buildString("sequenceName", sequenceName));
-
-        if (isGenerateDefaultValue() || allocationSize != 50) {
-            builder.append("allocationSize=")
-                    .append(allocationSize)
-                    .append(COMMA);
-        }
-
-        if (isGenerateDefaultValue() || initialValue != 1) {
-            builder.append("initialValue=")
-                    .append(initialValue)
-                    .append(COMMA);
-        }
-
-        builder.append(buildString("catalog", catalog))
-                .append(buildString("schema", schema));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                SEQUENCE_GENERATOR,
+                attribute("name", name),
+                attribute("sequenceName", sequenceName),
+                attribute("allocationSize", allocationSize, val -> isGenerateDefaultValue() || val != 50),
+                attribute("initialValue", initialValue, val -> isGenerateDefaultValue() || val != 1),
+                attribute("catalog", catalog),
+                attribute("schema", schema)
+        );
     }
 
     @Override

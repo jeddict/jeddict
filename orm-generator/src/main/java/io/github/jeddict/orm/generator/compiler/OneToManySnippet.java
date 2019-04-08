@@ -24,7 +24,7 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.getCommaSeparatedString;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 
 public class OneToManySnippet extends MultiRelationAttributeSnippet {
 
@@ -71,8 +71,8 @@ public class OneToManySnippet extends MultiRelationAttributeSnippet {
 
         builder.append(AT).append(getType())
                 .append(OPEN_PARANTHESES)
-                .append(buildString("mappedBy", mappedBy))
-                .append(buildExp("fetch", getFetchType()));;
+                .append(attribute("mappedBy", mappedBy))
+                .append(attributeExp("fetch", getFetchType()));;
 
         if (isGenerateDefaultValue() || orphanRemoval == true) {
             builder.append("orphanRemoval = ")

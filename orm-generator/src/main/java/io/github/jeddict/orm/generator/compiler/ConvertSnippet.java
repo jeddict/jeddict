@@ -17,19 +17,16 @@ package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.CONVERT;
 import static io.github.jeddict.jcode.JPAConstants.CONVERT_FQN;
+import static io.github.jeddict.jcode.JPAConstants.CONVERT_NOSQL_FQN;
 import io.github.jeddict.jpa.spec.Convert;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 
-public class ConvertSnippet implements Snippet {
+public class ConvertSnippet extends ORMSnippet {
 
     private final ClassHelper converterClass;
     private final boolean disableConversion;
@@ -43,31 +40,27 @@ public class ConvertSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(CONVERT)
-                .append(OPEN_PARANTHESES);
-
-        if (converterClass != null) {
-            builder.append("converter=")
-                    .append(converterClass.getClassNameWithClassSuffix())
-                    .append(COMMA);
+        StringBuilder builder = new StringBuilder();
+        
+        if (isNoSQL()) {
+            builder.append(converterClass.getClassNameWithClassSuffix());
+        } else {
+            if (converterClass != null) {
+                builder.append(attributeExp("converter", converterClass.getClassNameWithClassSuffix()));
+            }
+            if (isGenerateDefaultValue() || disableConversion) {
+                builder.append(attributeExp("disableConversion", disableConversion));
+            }
+            builder.append(attribute("attributeName", attributeName));
         }
 
-        if (isGenerateDefaultValue() || disableConversion) {
-            builder.append("disableConversion=")
-                    .append(disableConversion)
-                    .append(COMMA);
-        }
-
-        builder.append(buildString("attributeName", attributeName));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(CONVERT, builder.toString());
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         Set<String> imports = new HashSet<>();
-        imports.add(CONVERT_FQN);
+          imports.add(isNoSQL() ? CONVERT_NOSQL_FQN : CONVERT_FQN);
         if (converterClass != null) {
             imports.add(converterClass.getFQClassName());
         }

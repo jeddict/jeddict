@@ -26,6 +26,7 @@ import io.github.jeddict.orm.generator.util.ImportSet;
 public class ManagedClassDefSnippet extends ClassDefSnippet implements AttributeOverridesHandler, AssociationOverridesHandler {
     private static final String JPA_TEMPLATE_FILENAME = "beanclasstemplate.ftl";
 
+    private boolean noSQL;
     private ConvertsSnippet converts;
     private AssociationOverridesSnippet associationOverrides;
     private AttributeOverridesSnippet attributeOverrides;
@@ -53,6 +54,14 @@ public class ManagedClassDefSnippet extends ClassDefSnippet implements Attribute
     @Override
     public void setAttributeOverrides(AttributeOverridesSnippet attributeOverrides) {
         this.attributeOverrides = attributeOverrides;
+    }
+
+    public boolean isNoSQL() {
+        return noSQL;
+    }
+
+    public void setNoSQL(boolean noSQL) {
+        this.noSQL = noSQL;
     }
 
     public ConvertsSnippet getConverts() {

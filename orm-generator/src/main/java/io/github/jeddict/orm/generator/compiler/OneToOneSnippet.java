@@ -35,8 +35,8 @@ import java.util.Collection;
 import static java.util.Collections.singleton;
 import java.util.HashSet;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 
 public class OneToOneSnippet extends SingleRelationAttributeSnippet {
 
@@ -91,8 +91,8 @@ public class OneToOneSnippet extends SingleRelationAttributeSnippet {
         }
 
         builder.append(OPEN_PARANTHESES)
-                .append(buildString("mappedBy", getMappedBy()))
-                .append(buildExp("fetch", getFetchType()));
+                .append(attribute("mappedBy", getMappedBy()))
+                .append(attributeExp("fetch", getFetchType()));
 
         if (isGenerateDefaultValue() || optional == false) {
             builder.append("optional = ")

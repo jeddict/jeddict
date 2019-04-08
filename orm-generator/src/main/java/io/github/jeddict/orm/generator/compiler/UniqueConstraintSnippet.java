@@ -18,9 +18,6 @@ package io.github.jeddict.orm.generator.compiler;
 import static io.github.jeddict.jcode.JPAConstants.UNIQUE_CONSTRAINT;
 import static io.github.jeddict.jcode.JPAConstants.UNIQUE_CONSTRAINT_FQN;
 import io.github.jeddict.jpa.spec.UniqueConstraint;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.Collection;
 import static java.util.Collections.singleton;
 
@@ -34,12 +31,11 @@ public class UniqueConstraintSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(UNIQUE_CONSTRAINT)
-                .append(OPEN_PARANTHESES)
-                .append(buildString("name", constraint.getName()))
-                .append(buildStrings("columnNames", constraint.getColumnName()));
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                UNIQUE_CONSTRAINT,
+                attribute("name", constraint.getName()),
+                attribute("columnNames", constraint.getColumnName())
+        );
     }
 
     @Override

@@ -17,12 +17,9 @@ package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.FIELD_RESULT;
 import static io.github.jeddict.jcode.JPAConstants.FIELD_RESULT_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.Collection;
 import static java.util.Collections.singleton;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
 public class FieldResultSnippet implements Snippet {
 
@@ -51,14 +48,11 @@ public class FieldResultSnippet implements Snippet {
             throw new InvalidDataException("name or value cannot be null");
         }
 
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(FIELD_RESULT)
-                .append(OPEN_PARANTHESES)
-                .append(buildString("name", name))
-                .append(buildString("column", column));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
-
+        return annotate(
+                FIELD_RESULT,
+                attribute("name", name),
+                attribute("column", column)
+        );
     }
 
     @Override

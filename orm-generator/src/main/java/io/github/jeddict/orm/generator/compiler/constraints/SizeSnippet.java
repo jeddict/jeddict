@@ -20,7 +20,7 @@ import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
 /**
  *
@@ -49,9 +49,9 @@ public class SizeSnippet extends ConstraintSnippet<Size> {
         }
 
         builder.append(OPEN_PARANTHESES)
-                .append(buildExp("min", constraint.getMin()))
-                .append(buildExp("max", constraint.getMax()))
-                .append(buildString("message", constraint.getMessage()));
+                .append(attributeExp("min", constraint.getMin()))
+                .append(attributeExp("max", constraint.getMax()))
+                .append(attribute("message", constraint.getMessage()));
 
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }

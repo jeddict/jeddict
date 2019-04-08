@@ -18,20 +18,17 @@ package io.github.jeddict.orm.generator.compiler;
 import static io.github.jeddict.jcode.JPAConstants.ENTITY_RESULT;
 import static io.github.jeddict.jcode.JPAConstants.ENTITY_RESULT_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
 public class EntityResultSnippet implements Snippet {
 
-    private ClassHelper classHelper = new ClassHelper();
+    private final ClassHelper classHelper = new ClassHelper();
     private String discriminatorColumn = null;
 
     private List<FieldResultSnippet> fieldResults = Collections.<FieldResultSnippet>emptyList();
@@ -85,16 +82,12 @@ public class EntityResultSnippet implements Snippet {
             throw new InvalidDataException("Entity Class missing");
         }
 
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(ENTITY_RESULT)
-                .append(OPEN_PARANTHESES);
-
-        builder.append(buildExp("entityClass", getEntityClass()))
-                .append(buildString("discriminatorColumn", discriminatorColumn))
-                .append(buildSnippets("fields", fieldResults));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
-
+        return annotate(
+                ENTITY_RESULT,
+                attributeExp("entityClass", getEntityClass()),
+                attribute("discriminatorColumn", discriminatorColumn),
+                attributes("fields", fieldResults)
+        );
     }
 
     @Override

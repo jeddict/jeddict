@@ -21,7 +21,7 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
 /**
  *
@@ -58,7 +58,7 @@ public class MinSnippet extends ConstraintSnippet<Min> {
                     .append(COMMA);
         }
 
-        builder.append(buildString("message", constraint.getMessage()));
+        builder.append(attribute("message", constraint.getMessage()));
 
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }

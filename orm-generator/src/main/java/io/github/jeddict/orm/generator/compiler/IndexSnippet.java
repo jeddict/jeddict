@@ -21,9 +21,7 @@ import io.github.jeddict.jpa.spec.Index;
 import io.github.jeddict.jpa.spec.OrderType;
 import io.github.jeddict.jpa.spec.extend.OrderbyItem;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.SPACE;
 import java.util.Collection;
@@ -45,9 +43,7 @@ public class IndexSnippet implements Snippet {
         }
 
         StringBuilder builder = new StringBuilder(AT);
-        builder.append(INDEX)
-                .append(OPEN_PARANTHESES)
-                .append(buildString("name", index.getName()));
+        builder.append(attribute("name", index.getName()));
 
         builder.append("columnList=").append(QUOTE);
         for (OrderbyItem orderbyItem : index.getColumnList()) {
@@ -60,15 +56,14 @@ public class IndexSnippet implements Snippet {
             builder.append(COMMA);
         }
         builder.setLength(builder.length() - 1);
-
         builder.append(QUOTE).append(COMMA);
 
-        if (index.isUnique() != null && index.isUnique()) {
-            builder.append("unique=true")
-                    .append(COMMA);
-        }
+        builder.append(attribute("unique", true, val -> index.isUnique() != null && index.isUnique()));
 
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                INDEX,
+                builder
+        );
     }
 
     @Override

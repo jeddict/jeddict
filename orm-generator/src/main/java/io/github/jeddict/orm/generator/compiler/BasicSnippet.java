@@ -18,18 +18,13 @@ package io.github.jeddict.orm.generator.compiler;
 import static io.github.jeddict.jcode.JPAConstants.BASIC;
 import static io.github.jeddict.jcode.JPAConstants.BASIC_FQN;
 import static io.github.jeddict.jcode.JPAConstants.FETCH_TYPE_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 
-public class BasicSnippet implements Snippet {
+public class BasicSnippet extends ORMSnippet {
 
     private String fetchType = null;
     private boolean optional = true;
@@ -55,26 +50,11 @@ public class BasicSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(BASIC);
-
-        if (!isGenerateDefaultValue()) {
-            if (optional == true && isBlank(getFetchType())) {
-                return builder.toString();
-            }
-        }
-        
-        builder.append(OPEN_PARANTHESES);
-
-        if (isGenerateDefaultValue() || optional == false) {
-            builder.append("optional=")
-                    .append(optional)
-                    .append(COMMA);
-        }
-
-        builder.append(buildExp("fetch", getFetchType()));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                BASIC,
+                attribute("optional", optional, val -> isGenerateDefaultValue() || val == false),
+                attributeExp("fetch", getFetchType())
+        );
     }
 
     @Override

@@ -17,9 +17,6 @@ package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.JOIN_TABLE;
 import static io.github.jeddict.jcode.JPAConstants.JOIN_TABLE_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.Collection;
 import java.util.Collections;
 import static java.util.Collections.emptySet;
@@ -107,28 +104,22 @@ public class JoinTableSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
         if (isEmpty()) {
             return null;
         }
 
-        StringBuilder builder = new StringBuilder();
-
-        builder.append(AT).append(JOIN_TABLE).append(OPEN_PARANTHESES);
-
-        builder.append(buildString("name", name));
-        builder.append(buildString("schema", schema));
-        builder.append(buildString("catalog", catalog));
-
-        builder.append(buildSnippets("uniqueConstraints", uniqueConstraints));
-        builder.append(buildSnippets("indexes", indices));
-        builder.append(buildSnippets("joinColumns", joinColumns));
-        builder.append(buildSnippets("inverseJoinColumns", inverseJoinColumns));
-
-        builder.append(buildSnippet("foreignKey", foreignKey));
-        builder.append(buildSnippet("inverseForeignKey", inverseForeignKey));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                JOIN_TABLE,
+                attribute("name", name),
+                attribute("schema", schema),
+                attribute("catalog", catalog),
+                attributes("uniqueConstraints", uniqueConstraints),
+                attributes("indexes", indices),
+                attributes("joinColumns", joinColumns),
+                attributes("inverseJoinColumns", inverseJoinColumns),
+                attribute("foreignKey", foreignKey),
+                attribute("inverseForeignKey", inverseForeignKey)
+        );
     }
 
     @Override

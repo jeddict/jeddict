@@ -130,20 +130,20 @@ ${varDef.getPropertyJavaDoc()}
 </#if>
 <#-- var jpa annotations start -->
 <#if classDef.getManagedType()?has_content>
-<#if varDef.isTranzient()>
-    @Transient
+<#if varDef.getTranzient()??>
+    ${varDef.getTranzient().getSnippet()}
 </#if>
-<#if varDef.isPrimaryKey()>
-    @Id
+<#if varDef.getId()??>
+    ${varDef.getId().getSnippet()}
 </#if>
-<#if varDef.getRelationDef()??>
-    ${varDef.getRelationDef().getSnippet()}
+<#if varDef.getRelation()??>
+    ${varDef.getRelation().getSnippet()}
 </#if>
 <#if varDef.getElementCollection()??>
     ${varDef.getElementCollection().getSnippet()}
 </#if>
-<#if varDef.isVersion()>
-    @Version
+<#if varDef.getVersion()??>
+    ${varDef.getVersion().getSnippet()}
 </#if>
 <#if varDef.isEmbedded()>
     @Embedded
@@ -151,8 +151,8 @@ ${varDef.getPropertyJavaDoc()}
 <#if varDef.isEmbeddedId()>
     @EmbeddedId
 </#if>
-<#if varDef.isLob()>
-    @Lob
+<#if varDef.getLob()??>
+    ${varDef.getLob().getSnippet()}
 </#if>
 <#if varDef.getBasic()??>
     ${varDef.getBasic().getSnippet()}
@@ -166,8 +166,8 @@ ${varDef.getPropertyJavaDoc()}
 <#if varDef.getSequenceGenerator()??>
     ${varDef.getSequenceGenerator().getSnippet()}
 </#if>
-<#if varDef.getColumnDef()??>
-    ${varDef.getColumnDef().getSnippet()}
+<#if varDef.getColumn()??>
+    ${varDef.getColumn().getSnippet()}
 </#if>
 <#if varDef.getOrderBy()??>
     ${varDef.getOrderBy().getSnippet()}

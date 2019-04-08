@@ -31,7 +31,7 @@ import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDef
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 
 public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefSnippet /*implements CollectionTypeHandler*/ {
 
@@ -82,8 +82,8 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
         }
 
         builder.append(OPEN_PARANTHESES)
-                .append(buildString("mappedBy", mappedBy))
-                .append(buildExp("fetch", getFetchType()));
+                .append(attribute("mappedBy", mappedBy))
+                .append(attributeExp("fetch", getFetchType()));
 
         if (isGenerateDefaultValue() && isNotBlank(getTargetEntity())) {
             builder.append("targetEntity = ")

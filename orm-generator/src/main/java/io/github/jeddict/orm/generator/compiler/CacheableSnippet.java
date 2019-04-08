@@ -22,11 +22,11 @@ import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDef
 import java.util.Collection;
 import static java.util.Collections.singleton;
 
-public class CacheableDefSnippet implements Snippet {
+public class CacheableSnippet implements Snippet {
 
     private final Boolean status;
 
-    public CacheableDefSnippet(Boolean status) {
+    public CacheableSnippet(Boolean status) {
         this.status = status;
     }
 

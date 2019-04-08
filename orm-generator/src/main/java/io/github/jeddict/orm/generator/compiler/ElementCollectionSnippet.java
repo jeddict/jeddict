@@ -18,15 +18,12 @@ package io.github.jeddict.orm.generator.compiler;
 import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION;
 import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION_FQN;
 import static io.github.jeddict.jcode.JPAConstants.FETCH_TYPE_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.NEW_LINE;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.TAB;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 
 public class ElementCollectionSnippet implements Snippet {
 
@@ -56,15 +53,12 @@ public class ElementCollectionSnippet implements Snippet {
                     .append(TAB);
         }
 
-        builder.append(AT)
-                .append(ELEMENT_COLLECTION);
-
-        if (isNotBlank(getFetchType())) {
-            builder.append(OPEN_PARANTHESES)
-                    .append("fetch=")
-                    .append(getFetchType())
-                    .append(CLOSE_PARANTHESES);
-        }
+        builder.append(
+                annotate(
+                        ELEMENT_COLLECTION, 
+                        attributeExp("fetch", getFetchType())
+                )
+        );
         return builder.toString();
     }
 

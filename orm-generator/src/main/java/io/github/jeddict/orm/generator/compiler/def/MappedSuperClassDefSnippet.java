@@ -17,6 +17,7 @@ package io.github.jeddict.orm.generator.compiler.def;
 
 import static io.github.jeddict.jcode.JPAConstants.MAPPED_SUPERCLASS;
 import static io.github.jeddict.jcode.JPAConstants.MAPPED_SUPERCLASS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.MAPPED_SUPERCLASS_NOSQL_FQN;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.util.ImportSet;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
@@ -31,7 +32,11 @@ public class MappedSuperClassDefSnippet extends IdentifiableClassDefSnippet {
     @Override
     public ImportSet getImportSet() throws InvalidDataException {
         ImportSet imports = super.getImportSet();
-        imports.add(MAPPED_SUPERCLASS_FQN);
+        if (isNoSQL()) {
+            imports.add(MAPPED_SUPERCLASS_NOSQL_FQN);
+        } else {
+            imports.add(MAPPED_SUPERCLASS_FQN);
+        }
         return imports;
     }
 }

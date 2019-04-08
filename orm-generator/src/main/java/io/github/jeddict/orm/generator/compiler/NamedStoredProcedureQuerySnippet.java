@@ -175,9 +175,9 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
         StringBuilder builder = new StringBuilder(AT);
         builder.append(NAMED_STORED_PROCEDURE_QUERY)
                 .append(OPEN_PARANTHESES)
-                .append(buildString("name", name))
-                .append(buildString("procedureName", procedureName))
-                .append(buildStrings("resultSetMappings", resultSetMappings));
+                .append(attribute("name", name))
+                .append(attribute("procedureName", procedureName))
+                .append(attribute("resultSetMappings", resultSetMappings));
 
         if (!resultClasses.isEmpty()) {
             builder.append("resultClasses=").append(OPEN_BRACES);
@@ -190,8 +190,8 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
             builder.append(COMMA);
         }
 
-        builder.append(buildSnippets("parameters", parameters))
-                .append(buildSnippets("hints", queryHints));
+        builder.append(attributes("parameters", parameters))
+                .append(attributes("hints", queryHints));
 
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }

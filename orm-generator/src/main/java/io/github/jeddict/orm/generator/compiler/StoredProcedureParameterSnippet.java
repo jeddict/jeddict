@@ -20,14 +20,10 @@ import static io.github.jeddict.jcode.JPAConstants.PARAMETER_MODE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.STORED_PROCEDURE_PARAMETER;
 import static io.github.jeddict.jcode.JPAConstants.STORED_PROCEDURE_PARAMETER_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 
 /**
  *
@@ -37,7 +33,6 @@ public class StoredProcedureParameterSnippet implements Snippet {
 
     private final ClassHelper classHelper = new ClassHelper();
     private String name;
-//    private String clazz;
     private String mode;
 
     /**
@@ -60,24 +55,12 @@ public class StoredProcedureParameterSnippet implements Snippet {
             throw new InvalidDataException("Type required");
         }
 
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(STORED_PROCEDURE_PARAMETER)
-                .append(OPEN_PARANTHESES)
-                .append(buildString("name", name));
-
-        if (isNotBlank(mode)) {
-            builder.append("mode=").append(PARAMETER_MODE).append(".");
-            builder.append(mode);
-            builder.append(COMMA);
-        }
-
-        if (classHelper.getClassName() != null) {
-            builder.append("type=");
-            builder.append(getType());
-            builder.append(COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                STORED_PROCEDURE_PARAMETER,
+                attribute("name", name),
+                attributeExp("mode", PARAMETER_MODE + "." + mode, val -> isNotBlank(mode)),
+                attributeExp("type", getType(), val -> classHelper.getClassName() != null)
+        );
     }
 
     @Override

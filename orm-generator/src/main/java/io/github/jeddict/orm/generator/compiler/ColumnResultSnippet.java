@@ -18,15 +18,11 @@ package io.github.jeddict.orm.generator.compiler;
 import static io.github.jeddict.jcode.JPAConstants.COLUMN_RESULT;
 import static io.github.jeddict.jcode.JPAConstants.COLUMN_RESULT_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 
 public class ColumnResultSnippet implements Snippet {
 
@@ -64,18 +60,11 @@ public class ColumnResultSnippet implements Snippet {
             throw new InvalidDataException("ColumnResult.name property must not be null");
         }
 
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(COLUMN_RESULT)
-                .append(OPEN_PARANTHESES)
-                .append(buildString("name", name));
-
-        if (isNotBlank(classHelper.getClassName())) {
-            builder.append("type=")
-                    .append(getType())
-                    .append(COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                COLUMN_RESULT,
+                attribute("name", name),
+                attributeExp("type", getType(), val -> isNotBlank(classHelper.getClassName()))
+        );
     }
 
     @Override

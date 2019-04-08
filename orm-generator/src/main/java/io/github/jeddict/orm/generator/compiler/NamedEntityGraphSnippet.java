@@ -17,9 +17,6 @@ package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.NAMED_ENTITY_GRAPH;
 import static io.github.jeddict.jcode.JPAConstants.NAMED_ENTITY_GRAPH_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -136,16 +133,14 @@ public class NamedEntityGraphSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(NAMED_ENTITY_GRAPH)
-                .append(OPEN_PARANTHESES)
-                .append(buildString("name", getName()))
-                .append(buildSnippets("attributeNodes", namedAttributeNodes))
-                .append(buildSnippets("subgraphs", subgraphs))
-                .append(buildSnippets("subclassSubgraphs", subclassSubgraphs))
-                .append(buildExp("includeAllAttributes", includeAllAttributes));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                NAMED_ENTITY_GRAPH,
+                attribute("name", getName()),
+                attributes("attributeNodes", namedAttributeNodes),
+                attributes("subgraphs", subgraphs),
+                attributes("subclassSubgraphs", subclassSubgraphs),
+                attributeExp("includeAllAttributes", includeAllAttributes)
+        );
     }
 
     @Override

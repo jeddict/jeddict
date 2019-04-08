@@ -23,9 +23,6 @@ import static io.github.jeddict.jcode.JPAConstants.ENUM_TYPE_STRING;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_ENUMERATED;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_ENUMERATED_FQN;
 import io.github.jeddict.jpa.spec.EnumType;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,23 +68,23 @@ public class EnumeratedSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder(AT);
-        if (mapKey) {
-            builder.append(MAP_KEY_ENUMERATED);
-        } else {
-            builder.append(ENUMERATED);
-        }
+        String enumerated = mapKey ? MAP_KEY_ENUMERATED : ENUMERATED;
         if (ENUM_TYPE_STRING.equals(value)) {
-            builder.append(OPEN_PARANTHESES)
-                    .append(ENUM_TYPE_STRING)
-                    .append(CLOSE_PARANTHESES);
+            return annotate(
+                    enumerated,
+                    attribute(ENUM_TYPE_STRING)
+            );
         } else if (isGenerateDefaultValue()
                 || ENUM_TYPE_ORDINAL.equals(value)) {
-            builder.append(OPEN_PARANTHESES)
-                    .append(ENUM_TYPE_ORDINAL)
-                    .append(CLOSE_PARANTHESES);
+            return annotate(
+                    enumerated,
+                    attribute(ENUM_TYPE_ORDINAL)
+            );
+        } else {
+            return annotate(
+                    enumerated
+            );
         }
-        return builder.toString();
     }
 
     @Override

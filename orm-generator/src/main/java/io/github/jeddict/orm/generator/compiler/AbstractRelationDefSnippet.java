@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
+public abstract class AbstractRelationDefSnippet implements RelationSnippet {
 
     private static final String CASCADE_PREFIX = "CascadeType.";
 

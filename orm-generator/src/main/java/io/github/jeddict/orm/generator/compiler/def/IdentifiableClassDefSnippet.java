@@ -17,7 +17,7 @@ package io.github.jeddict.orm.generator.compiler.def;
 
 import static io.github.jeddict.jcode.JPAConstants.EXCLUDE_DEFAULT_LISTENERS_FQN;
 import static io.github.jeddict.jcode.JPAConstants.EXCLUDE_SUPERCLASS_LISTENERS_FQN;
-import io.github.jeddict.orm.generator.compiler.CacheableDefSnippet;
+import io.github.jeddict.orm.generator.compiler.CacheableSnippet;
 import io.github.jeddict.orm.generator.compiler.EntityListenersSnippet;
 import io.github.jeddict.orm.generator.compiler.IdClassSnippet;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
@@ -28,12 +28,12 @@ import io.github.jeddict.orm.generator.compiler.NamedStoredProcedureQueriesSnipp
 import io.github.jeddict.orm.generator.compiler.PrimaryKeyJoinColumnsSnippet;
 import io.github.jeddict.orm.generator.compiler.SQLResultSetMappingsSnippet;
 import io.github.jeddict.orm.generator.compiler.SecondaryTablesSnippet;
-import io.github.jeddict.orm.generator.compiler.TableDefSnippet;
+import io.github.jeddict.orm.generator.compiler.TableSnippet;
 import io.github.jeddict.orm.generator.util.ImportSet;
 
 public class IdentifiableClassDefSnippet extends ManagedClassDefSnippet {
 
-    private TableDefSnippet tableDef;
+    private TableSnippet tableDef;
     private IdClassSnippet idClass;
     private PrimaryKeyJoinColumnsSnippet primaryKeyJoinColumns;
 
@@ -44,7 +44,7 @@ public class IdentifiableClassDefSnippet extends ManagedClassDefSnippet {
     private SQLResultSetMappingsSnippet sqlResultSetMappings;
     private EntityListenersSnippet entityListeners;
     private SecondaryTablesSnippet secondaryTables;
-    private CacheableDefSnippet cacheableDef;
+    private CacheableSnippet cacheableDef;
 
     private boolean excludeDefaultListener;
     private boolean excludeSuperClassListener;
@@ -105,11 +105,11 @@ public class IdentifiableClassDefSnippet extends ManagedClassDefSnippet {
         this.idClass = idClass;
     }
 
-    public TableDefSnippet getTableDef() {
+    public TableSnippet getTableDef() {
         return tableDef;
     }
 
-    public void setTableDef(TableDefSnippet tableDef) {
+    public void setTableDef(TableSnippet tableDef) {
         this.tableDef = tableDef;
     }
 
@@ -121,11 +121,11 @@ public class IdentifiableClassDefSnippet extends ManagedClassDefSnippet {
         this.secondaryTables = secondaryTables;
     }
 
-    public CacheableDefSnippet getCacheableDef() {
+    public CacheableSnippet getCacheableDef() {
         return cacheableDef;
     }
 
-    public void setCacheableDef(CacheableDefSnippet cacheableDef) {
+    public void setCacheableDef(CacheableSnippet cacheableDef) {
         this.cacheableDef = cacheableDef;
     }
 

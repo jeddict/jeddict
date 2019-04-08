@@ -22,7 +22,7 @@ import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
+import io.github.jeddict.util.StringUtils;
 import org.openide.util.Exceptions;
 
 public class TypeIdentifierSnippet implements Snippet {
@@ -102,8 +102,8 @@ public class TypeIdentifierSnippet implements Snippet {
                 importSnippets.add(collectionType.getFQClassName());
             }
 
-            if (variableDef.getRelationDef() != null && variableDef.getRelationDef() instanceof MultiRelationAttributeSnippet) {
-                MultiRelationAttributeSnippet multiRelationSnippet = (MultiRelationAttributeSnippet) variableDef.getRelationDef();
+            if (variableDef.getRelation() != null && variableDef.getRelation() instanceof MultiRelationAttributeSnippet) {
+                MultiRelationAttributeSnippet multiRelationSnippet = (MultiRelationAttributeSnippet) variableDef.getRelation();
 
                 ClassHelper mapKeyClassHelper = null;
                 Class _class = collectionType.getClazz();

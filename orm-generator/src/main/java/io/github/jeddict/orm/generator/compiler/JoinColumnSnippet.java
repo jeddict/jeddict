@@ -19,15 +19,10 @@ import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMN_FQN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMN_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class JoinColumnSnippet implements Snippet {
 
@@ -133,60 +128,18 @@ public class JoinColumnSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder(AT);
-        if (mapKey) {
-            builder.append(MAP_KEY_JOIN_COLUMN);
-        } else {
-            builder.append(JOIN_COLUMN);
-        }
-        
-        if (!isGenerateDefaultValue()) {
-            if (insertable == true
-                    && nullable == true
-                    && unique == false
-                    && updatable == true
-                    && isBlank(columnDefinition)
-                    && isBlank(name)
-                    && isBlank(referencedColumnName)
-                    && isBlank(table)
-                    && foreignKey==null) {
-                return builder.toString();
-            }
-        }
-
-        builder.append(OPEN_PARANTHESES)
-                .append(buildString("name", name))
-                .append(buildString("referencedColumnName", referencedColumnName))
-                .append(buildString("table", table));
-
-        if (isGenerateDefaultValue() || unique == true) {
-            builder.append("unique=");
-            builder.append(unique);
-            builder.append(COMMA);
-        }
-
-        if (isGenerateDefaultValue() || insertable == false) {
-            builder.append("insertable=");
-            builder.append(insertable);
-            builder.append(COMMA);
-        }
-
-        if (isGenerateDefaultValue() || nullable == false) {
-            builder.append("nullable=");
-            builder.append(nullable);
-            builder.append(COMMA);
-        }
-
-        if (isGenerateDefaultValue() || updatable == false) {
-            builder.append("updatable=");
-            builder.append(updatable);
-            builder.append(COMMA);
-        }
-
-        builder.append(buildSnippet("foreignKey", foreignKey))
-                .append(buildString("columnDefinition", columnDefinition));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                mapKey ? MAP_KEY_JOIN_COLUMN : JOIN_COLUMN,
+                attribute("name", name),
+                attribute("referencedColumnName", referencedColumnName),
+                attribute("table", table),
+                attribute("unique", unique, val -> isGenerateDefaultValue() || val == true),
+                attribute("insertable", insertable, val -> isGenerateDefaultValue() || val == false),
+                attribute("nullable", nullable, val -> isGenerateDefaultValue() || val == false),
+                attribute("updatable", updatable, val -> isGenerateDefaultValue() || val == false),
+                attribute("foreignKey", foreignKey),
+                attribute("columnDefinition", columnDefinition)
+        );
     }
 
     @Override

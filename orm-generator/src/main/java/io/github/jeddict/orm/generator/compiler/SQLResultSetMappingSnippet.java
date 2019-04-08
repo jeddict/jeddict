@@ -17,9 +17,6 @@ package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.SQL_RESULTSET_MAPPING;
 import static io.github.jeddict.jcode.JPAConstants.SQL_RESULTSET_MAPPING_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,7 +24,7 @@ import static java.util.Collections.singleton;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
 public class SQLResultSetMappingSnippet implements Snippet {
 
@@ -107,16 +104,13 @@ public class SQLResultSetMappingSnippet implements Snippet {
         if (isBlank(name)) {
             throw new InvalidDataException("name is null");
         }
-
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(SQL_RESULTSET_MAPPING)
-                .append(OPEN_PARANTHESES)
-                .append(buildString("name", name))
-                .append(buildSnippets("entities", entityResults))
-                .append(buildSnippets("classes", constructorResults))
-                .append(buildSnippets("columns", columnResults));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                SQL_RESULTSET_MAPPING,
+                attribute("name", name),
+                attributes("entities", entityResults),
+                attributes("classes", constructorResults),
+                attributes("columns", columnResults)
+        );
     }
 
     @Override

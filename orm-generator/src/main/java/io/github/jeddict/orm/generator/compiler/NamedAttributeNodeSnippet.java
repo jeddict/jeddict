@@ -24,7 +24,7 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTH
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import java.util.Collection;
 import static java.util.Collections.singleton;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static io.github.jeddict.util.StringUtils.isBlank;
 
 /**
  *
@@ -99,8 +99,8 @@ public class NamedAttributeNodeSnippet implements Snippet {
                 .append(QUOTE)
                 .append(COMMA);
 
-        builder.append(buildString("subgraph", getSubgraph()))
-                .append(buildString("keySubgraph", getKeySubgraph()));
+        builder.append(attribute("subgraph", getSubgraph()))
+                .append(attribute("keySubgraph", getKeySubgraph()));
 
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }

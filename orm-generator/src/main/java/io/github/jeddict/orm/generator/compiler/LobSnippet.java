@@ -15,76 +15,23 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import static io.github.jeddict.jcode.JPAConstants.BASIC;
-import static io.github.jeddict.jcode.JPAConstants.BASIC_FQN;
-import static io.github.jeddict.jcode.JPAConstants.FETCH_TYPE_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
+import static io.github.jeddict.jcode.JPAConstants.LOB;
+import static io.github.jeddict.jcode.JPAConstants.LOB_FQN;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static java.util.Collections.singleton;
 
-public class BasicSnippet implements Snippet {
 
-    private String fetchType = null;
-    private boolean optional = true;
 
-    public String getFetchType() {
-        if (fetchType != null) {
-            return "FetchType." + fetchType;
-        }
-        return fetchType;
-    }
-
-    public void setFetchType(String fetchType) {
-        this.fetchType = fetchType;
-    }
-
-    public boolean isOptional() {
-        return optional;
-    }
-
-    public void setOptional(boolean optional) {
-        this.optional = optional;
-    }
+public class LobSnippet extends ORMSnippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(BASIC);
-
-        if (!isGenerateDefaultValue()) {
-            if (optional == true && isBlank(getFetchType())) {
-                return builder.toString();
-            }
-        }
-        
-        builder.append(OPEN_PARANTHESES);
-
-        if (isGenerateDefaultValue() || optional == false) {
-            builder.append("optional=")
-                    .append(optional)
-                    .append(COMMA);
-        }
-
-        builder.append(buildExp("fetch", getFetchType()));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(LOB);
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        Set<String> imports = new HashSet<>();
-        imports.add(BASIC_FQN);
-        if (isNotBlank(getFetchType())) {
-            imports.add(FETCH_TYPE_FQN);
-        }
-        return imports;
+        return singleton(LOB_FQN);
     }
 
 }

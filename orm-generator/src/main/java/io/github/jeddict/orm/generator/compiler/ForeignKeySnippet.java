@@ -19,15 +19,11 @@ import static io.github.jeddict.jcode.JPAConstants.CONSTRAINT_MODE;
 import static io.github.jeddict.jcode.JPAConstants.CONSTRAINT_MODE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.FOREIGN_KEY;
 import static io.github.jeddict.jcode.JPAConstants.FOREIGN_KEY_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 
 public class ForeignKeySnippet implements Snippet {
 
@@ -94,29 +90,18 @@ public class ForeignKeySnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder(AT);
-
-        builder.append(FOREIGN_KEY)
-                .append(OPEN_PARANTHESES)
-                .append(buildString("name", name));
+        StringBuilder builder = new StringBuilder();
+        builder.append(attribute("name", name));
 
         if (isNotBlank(constraintMode)) {
-            builder.append("value=")
-                    .append(CONSTRAINT_MODE)
-                    .append(".")
-                    .append(constraintMode)
-                    .append(COMMA);
+            builder.append(attributeExp("value", CONSTRAINT_MODE + "." + constraintMode));
         } else if (isGenerateDefaultValue()) {
-            builder.append("value=")
-                    .append(CONSTRAINT_MODE)
-                    .append(".")
-                    .append("PROVIDER_DEFAULT")
-                    .append(COMMA);
+            builder.append(attributeExp("value", CONSTRAINT_MODE + "." + "PROVIDER_DEFAULT"));
         }
 
-        builder.append(buildString("foreignKeyDefinition", foreignKeyDefinition));
+        builder.append(attribute("foreignKeyDefinition", foreignKeyDefinition));
 
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(FOREIGN_KEY, builder);
     }
 
     @Override

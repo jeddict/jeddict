@@ -18,14 +18,10 @@ package io.github.jeddict.orm.generator.compiler;
 import static io.github.jeddict.jcode.JPAConstants.GENERATED_VALUE;
 import static io.github.jeddict.jcode.JPAConstants.GENERATED_VALUE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.GENERATION_TYPE_FQN;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 
 public class GeneratedValueSnippet implements Snippet {
 
@@ -63,18 +59,11 @@ public class GeneratedValueSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(GENERATED_VALUE);
-
-        if (isBlank(generator) && isBlank(strategy)) {
-            return builder.toString();
-        }
-
-        builder.append(OPEN_PARANTHESES)
-                .append(buildString("generator", generator))
-                .append(buildExp("strategy", strategy));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                GENERATED_VALUE,
+                attribute("generator", generator),
+                attributeExp("strategy", strategy)
+        );
     }
 
     @Override

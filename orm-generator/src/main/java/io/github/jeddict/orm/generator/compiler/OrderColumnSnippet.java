@@ -18,14 +18,9 @@ package io.github.jeddict.orm.generator.compiler;
 import static io.github.jeddict.jcode.JPAConstants.ORDER_COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.ORDER_COLUMN_FQN;
 import io.github.jeddict.jpa.spec.OrderColumn;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
-import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.Collection;
 import static java.util.Collections.singleton;
-import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class OrderColumnSnippet implements Snippet {
 
@@ -85,43 +80,14 @@ public class OrderColumnSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(ORDER_COLUMN);
-
-        if (!isGenerateDefaultValue()) {
-            if (insertable == true
-                    && nullable == true
-                    && updatable == true
-                    && isBlank(columnDefinition)
-                    && isBlank(name)) {
-                return builder.toString();
-            }
-        }
-
-        builder.append(OPEN_PARANTHESES)
-                .append(buildString("name", name));
-
-        if (isGenerateDefaultValue() || insertable == false) {
-            builder.append(" insertable=")
-                    .append(insertable)
-                    .append(COMMA);
-        }
-
-        if (isGenerateDefaultValue() || nullable == false) {
-            builder.append(" nullable=")
-                    .append(nullable)
-                    .append(COMMA);
-        }
-
-        if (isGenerateDefaultValue() || updatable == false) {
-            builder.append(" updatable=")
-                    .append(updatable)
-                    .append(COMMA);
-        }
-
-        builder.append(buildString("columnDefinition", columnDefinition));
-
-        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
+        return annotate(
+                ORDER_COLUMN,
+                attribute("name", name),
+                attribute("insertable", insertable, val -> isGenerateDefaultValue() || val == false),
+                attribute("nullable", nullable, val -> isGenerateDefaultValue() || val == false),
+                attribute("updatable", updatable, val -> isGenerateDefaultValue() || val == false),
+                attribute("columnDefinition", columnDefinition)
+        );
     }
 
     @Override

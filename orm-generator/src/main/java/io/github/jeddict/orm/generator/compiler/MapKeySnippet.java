@@ -36,7 +36,7 @@ public class MapKeySnippet implements Snippet {
     private final ClassHelper mapKeyAttributeType = new ClassHelper();
 
     //New MapKeyType - Basic
-    private ColumnDefSnippet columnSnippet;
+    private ColumnSnippet columnSnippet;
     private TemporalSnippet temporalSnippet;
     private EnumeratedSnippet enumeratedSnippet;
     
@@ -109,14 +109,14 @@ public class MapKeySnippet implements Snippet {
     /**
      * @return the mapKeyColumnSnippet
      */
-    public ColumnDefSnippet getColumnSnippet() {
+    public ColumnSnippet getColumnSnippet() {
         return columnSnippet;
     }
 
     /**
      * @param mapKeyColumnSnippet the mapKeyColumnSnippet to set
      */
-    public void setColumnSnippet(ColumnDefSnippet mapKeyColumnSnippet) {
+    public void setColumnSnippet(ColumnSnippet mapKeyColumnSnippet) {
         this.columnSnippet = mapKeyColumnSnippet;
     }
 

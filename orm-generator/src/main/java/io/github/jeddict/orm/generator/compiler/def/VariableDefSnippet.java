@@ -28,12 +28,8 @@ import static io.github.jeddict.jcode.JAXBConstants.JAXB_XML_VALUE;
 import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION_FQN;
 import static io.github.jeddict.jcode.JPAConstants.EMBEDDED_FQN;
 import static io.github.jeddict.jcode.JPAConstants.EMBEDDED_ID_FQN;
-import static io.github.jeddict.jcode.JPAConstants.ID_FQN;
-import static io.github.jeddict.jcode.JPAConstants.LOB_FQN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_FQN;
-import static io.github.jeddict.jcode.JPAConstants.TRANSIENT_FQN;
-import static io.github.jeddict.jcode.JPAConstants.VERSION_FQN;
 import static io.github.jeddict.jcode.util.AttributeType.getArrayType;
 import static io.github.jeddict.jcode.util.AttributeType.getWrapperType;
 import static io.github.jeddict.jcode.util.AttributeType.isArray;
@@ -52,6 +48,7 @@ import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.jpa.spec.extend.MapKeyHandler;
 import io.github.jeddict.jpa.spec.extend.MultiRelationAttribute;
+import io.github.jeddict.orm.generator.compiler.TransientSnippet;
 import io.github.jeddict.orm.generator.compiler.AnnotationSnippet;
 import io.github.jeddict.orm.generator.compiler.AssociationOverridesHandler;
 import io.github.jeddict.orm.generator.compiler.AssociationOverridesSnippet;
@@ -59,14 +56,16 @@ import io.github.jeddict.orm.generator.compiler.AttributeOverridesHandler;
 import io.github.jeddict.orm.generator.compiler.AttributeOverridesSnippet;
 import io.github.jeddict.orm.generator.compiler.BasicSnippet;
 import io.github.jeddict.orm.generator.compiler.CollectionTableSnippet;
-import io.github.jeddict.orm.generator.compiler.ColumnDefSnippet;
+import io.github.jeddict.orm.generator.compiler.ColumnSnippet;
 import io.github.jeddict.orm.generator.compiler.ConvertsSnippet;
 import io.github.jeddict.orm.generator.compiler.ElementCollectionSnippet;
 import io.github.jeddict.orm.generator.compiler.EnumeratedSnippet;
 import io.github.jeddict.orm.generator.compiler.GeneratedValueSnippet;
+import io.github.jeddict.orm.generator.compiler.IdSnippet;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.compiler.JoinColumnsSnippet;
 import io.github.jeddict.orm.generator.compiler.JoinTableSnippet;
+import io.github.jeddict.orm.generator.compiler.LobSnippet;
 import io.github.jeddict.orm.generator.compiler.ManyToManySnippet;
 import io.github.jeddict.orm.generator.compiler.ManyToOneSnippet;
 import io.github.jeddict.orm.generator.compiler.OneToManySnippet;
@@ -74,13 +73,13 @@ import io.github.jeddict.orm.generator.compiler.OneToOneSnippet;
 import io.github.jeddict.orm.generator.compiler.OrderBySnippet;
 import io.github.jeddict.orm.generator.compiler.OrderColumnSnippet;
 import io.github.jeddict.orm.generator.compiler.PrimaryKeyJoinColumnsSnippet;
-import io.github.jeddict.orm.generator.compiler.RelationDefSnippet;
 import io.github.jeddict.orm.generator.compiler.SequenceGeneratorSnippet;
 import io.github.jeddict.orm.generator.compiler.SingleRelationAttributeSnippet;
 import io.github.jeddict.orm.generator.compiler.Snippet;
 import io.github.jeddict.orm.generator.compiler.TableGeneratorSnippet;
 import io.github.jeddict.orm.generator.compiler.TemporalSnippet;
 import io.github.jeddict.orm.generator.compiler.TypeIdentifierSnippet;
+import io.github.jeddict.orm.generator.compiler.VersionSnippet;
 import io.github.jeddict.orm.generator.compiler.constraints.ConstraintSnippet;
 import static io.github.jeddict.orm.generator.service.ClassGenerator.buildCustomSnippet;
 import io.github.jeddict.orm.generator.util.ClassHelper;
@@ -118,10 +117,11 @@ import java.util.Set;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import org.apache.commons.lang.StringUtils;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import io.github.jeddict.util.StringUtils;
+import static io.github.jeddict.util.StringUtils.EMPTY;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 import org.openide.util.Exceptions;
+import io.github.jeddict.orm.generator.compiler.RelationSnippet;
 
 public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
@@ -138,10 +138,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
     private boolean embedded;
     private boolean embeddedId;
-    private boolean lob;
-    private boolean primaryKey;
-    private boolean tranzient;
-    private boolean version;
 
     private AccessModifierType accessModifier;
     private String name;
@@ -152,10 +148,14 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private boolean vetoableChangeSupport;
     private ClassHelper classHelper = new ClassHelper();
     private String mapKey;
+    private IdSnippet id;
+    private VersionSnippet version;
+    private LobSnippet lob;
+    private TransientSnippet tranzient;
     private BasicSnippet basic;
     private ElementCollectionSnippet elementCollection;
-    private ColumnDefSnippet columnDef;
-    private RelationDefSnippet relationDef;
+    private ColumnSnippet column;
+    private RelationSnippet relation;
     private OrderBySnippet orderBy;
     private OrderColumnSnippet orderColumn;
     private JoinColumnsSnippet joinColumns;
@@ -182,6 +182,38 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         this.attribute = attribute;
     }
 
+    public IdSnippet getId() {
+        return id;
+    }
+
+    public void setId(IdSnippet id) {
+        this.id = id;
+    }
+
+    public VersionSnippet getVersion() {
+        return version;
+    }
+
+    public void setVersion(VersionSnippet version) {
+        this.version = version;
+    }
+
+    public LobSnippet getLob() {
+        return lob;
+    }
+
+    public void setLob(LobSnippet lob) {
+        this.lob = lob;
+    }
+
+    public TransientSnippet getTranzient() {
+        return tranzient;
+    }
+
+    public void setTranzient(TransientSnippet tranzient) {
+        this.tranzient = tranzient;
+    }
+
     public BasicSnippet getBasic() {
         return basic;
     }
@@ -204,14 +236,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
     public void setEmbeddedId(boolean embeddedId) {
         this.embeddedId = embeddedId;
-    }
-
-    public boolean isLob() {
-        return lob;
-    }
-
-    public void setLob(boolean lob) {
-        this.lob = lob;
     }
 
     public String getAccessModifier() {
@@ -268,7 +292,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         }
 
         if ((this.getTypeIdentifier() == null
-                || getRelationDef() instanceof SingleRelationAttributeSnippet)
+                || getRelation() instanceof SingleRelationAttributeSnippet)
                 && functionalType) {
             if (isArray(type)) {
                 type = "Optional<" + type + '>';
@@ -281,7 +305,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
     public String getReturnValue() {
         String value = getName();
-        if ((this.getTypeIdentifier() == null || getRelationDef() instanceof SingleRelationAttributeSnippet) && functionalType) {
+        if ((this.getTypeIdentifier() == null || getRelation() instanceof SingleRelationAttributeSnippet) && functionalType) {
             value = "Optional.ofNullable(" + value + ')';
         }
         return value;
@@ -324,28 +348,12 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         this.name = name;
     }
 
-    public ColumnDefSnippet getColumnDef() {
-        return columnDef;
+    public ColumnSnippet getColumn() {
+        return column;
     }
 
-    public void setColumnDef(ColumnDefSnippet columnDef) {
-        this.columnDef = columnDef;
-    }
-
-    public boolean isTranzient() {
-        return tranzient;
-    }
-
-    public void setTranzient(boolean tranzient) {
-        this.tranzient = tranzient;
-    }
-
-    public boolean isPrimaryKey() {
-        return primaryKey;
-    }
-
-    public void setPrimaryKey(boolean primaryKey) {
-        this.primaryKey = primaryKey;
+    public void setColumn(ColumnSnippet columnDef) {
+        this.column = columnDef;
     }
 
     /**
@@ -364,20 +372,12 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         return "set";
     }
 
-    public RelationDefSnippet getRelationDef() {
-        return relationDef;
+    public RelationSnippet getRelation() {
+        return relation;
     }
 
-    public void setRelationDef(RelationDefSnippet relationType) {
-        this.relationDef = relationType;
-    }
-
-    public boolean isVersion() {
-        return version;
-    }
-
-    public void setVersion(boolean version) {
-        this.version = version;
+    public void setRelation(RelationSnippet relationType) {
+        this.relation = relationType;
     }
 
     public OrderBySnippet getOrderBy() {
@@ -491,16 +491,17 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         if (basic != null) {
             imports.addAll(basic.getImportSnippets());
         }
+
         if (elementCollection != null) {
             imports.addAll(elementCollection.getImportSnippets());
         }
 
-        if (columnDef != null) {
-            imports.addAll(columnDef.getImportSnippets());
+        if (column != null) {
+            imports.addAll(column.getImportSnippets());
         }
 
-        if (relationDef != null) {
-            imports.addAll(relationDef.getImportSnippets());
+        if (relation != null) {
+            imports.addAll(relation.getImportSnippets());
         }
 
         if (orderBy != null) {
@@ -562,20 +563,20 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             imports.add(EMBEDDED_ID_FQN);
         }
 
-        if (lob) {
-            imports.add(LOB_FQN);
+        if (lob != null) {
+            imports.addAll(lob.getImportSnippets());
+        }
+        
+        if (id != null) {
+            imports.addAll(id.getImportSnippets());
         }
 
-        if (primaryKey) {
-            imports.add(ID_FQN);
+        if (tranzient != null) {
+            imports.addAll(tranzient.getImportSnippets());
         }
 
-        if (tranzient) {
-            imports.add(TRANSIENT_FQN);
-        }
-
-        if (version) {
-            imports.add(VERSION_FQN);
+        if (version != null) {
+            imports.addAll(version.getImportSnippets());
         }
 
         if (converts != null) {
@@ -613,7 +614,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             imports.addAll(snippet.getImportSnippets());
         }
 
-        if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelationDef() != null) {
+        if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelation() != null) {
             imports.add("org.eclipse.persistence.oxm.annotations.XmlInverseReference");
         }
 
@@ -924,8 +925,8 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             snippet.append(AT + JAXB_XML_VALUE);
         } else if (getJaxbVariableType() == JaxbVariableType.XML_TRANSIENT) {
             snippet.append(AT + JAXB_XML_TRANSIENT);
-        } else if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelationDef() != null) {
-            String mappedBy = getRelationDef().getTargetField();//both side are applicable so targetField is used instead of mappedBy
+        } else if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelation() != null) {
+            String mappedBy = getRelation().getTargetField();//both side are applicable so targetField is used instead of mappedBy
             if (mappedBy != null) {
                 snippet.append(String.format(AT + JAXB_XML_INVERSE_REFERENCE + "(mappedBy=\"%s\")", mappedBy));
             }
@@ -949,27 +950,27 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
                 snippet.append(")");
             }
         } else {
-            if (isPrimaryKey()) {
+            if (getId() != null) {
 //            snippet.append("@XmlID").append(NEW_LINE).append(TAB);
-            } else if (getRelationDef() != null) {
-                if (getRelationDef() instanceof OneToOneSnippet) {
-                    OneToOneSnippet otoSnippet = (OneToOneSnippet) getRelationDef();
+            } else if (getRelation() != null) {
+                if (getRelation() instanceof OneToOneSnippet) {
+                    OneToOneSnippet otoSnippet = (OneToOneSnippet) getRelation();
                     if (otoSnippet.getMappedBy() != null && !otoSnippet.getMappedBy().trim().isEmpty()) {
                         snippet.append(AT + JAXB_XML_TRANSIENT);
                     } else {
 //                      snippet.append("@XmlIDREF").append(NEW_LINE).append(TAB);
                     }
-                } else if (getRelationDef() instanceof OneToManySnippet) {
-                    OneToManySnippet otmSnippet = (OneToManySnippet) getRelationDef();
+                } else if (getRelation() instanceof OneToManySnippet) {
+                    OneToManySnippet otmSnippet = (OneToManySnippet) getRelation();
                     if (otmSnippet.getMappedBy() != null && !otmSnippet.getMappedBy().trim().isEmpty()) {
                         snippet.append(AT + JAXB_XML_TRANSIENT);
                     } else {
 //                      snippet.append("@XmlIDREF").append(NEW_LINE).append(TAB);
                     }
-                } else if (getRelationDef() instanceof ManyToOneSnippet) {
+                } else if (getRelation() instanceof ManyToOneSnippet) {
 //                   snippet.append("@XmlIDREF").append(NEW_LINE).append(TAB);
-                } else if (getRelationDef() instanceof ManyToManySnippet) {
-                    ManyToManySnippet mtmSnippet = (ManyToManySnippet) getRelationDef();
+                } else if (getRelation() instanceof ManyToManySnippet) {
+                    ManyToManySnippet mtmSnippet = (ManyToManySnippet) getRelation();
                     if (mtmSnippet.getMappedBy() != null && !mtmSnippet.getMappedBy().trim().isEmpty()) {
                         snippet.append(AT + JAXB_XML_TRANSIENT);
                     } else {

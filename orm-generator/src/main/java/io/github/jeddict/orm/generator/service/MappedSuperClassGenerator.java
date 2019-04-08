@@ -19,7 +19,8 @@ import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.MappedSuperclass;
 import io.github.jeddict.jpa.spec.extend.IPrimaryKeyAttributes;
 import io.github.jeddict.orm.generator.compiler.def.MappedSuperClassDefSnippet;
-import org.apache.commons.lang.StringUtils;
+import static java.util.Objects.nonNull;
+import static io.github.jeddict.util.StringUtils.isNotBlank;
 
 public class MappedSuperClassGenerator extends IdentifiableClassGenerator<MappedSuperClassDefSnippet> {
 
@@ -34,27 +35,30 @@ public class MappedSuperClassGenerator extends IdentifiableClassGenerator<Mapped
 
     @Override
     public MappedSuperClassDefSnippet getClassDef() {
+        classDef.setNoSQL(mappedSuperclass.getNoSQL());
 
-        //Classlevel annotations
-        processIdClass(mappedSuperclass.getIdClass());
-        processEntityListeners(mappedSuperclass.getEntityListeners());
+        if (!classDef.isNoSQL()) {
+            //Classlevel annotations
+            processIdClass(mappedSuperclass.getIdClass());
+            processEntityListeners(mappedSuperclass.getEntityListeners());
 
-        processDefaultExcludeListeners(
-                mappedSuperclass.getExcludeDefaultListeners());
-        processExcludeSuperclassListeners(
-                mappedSuperclass.getExcludeSuperclassListeners());
-        
-        //Queries
-        processNamedQueries(mappedSuperclass.getNamedQuery());
-        processNamedNativeQueries(mappedSuperclass.getNamedNativeQuery());
-        
-        //StoredProcedures
-        processNamedStoredProcedureQueries((EntityMappings) mappedSuperclass.getRootElement(), mappedSuperclass.getNamedStoredProcedureQuery());
+            processDefaultExcludeListeners(
+                    mappedSuperclass.getExcludeDefaultListeners());
+            processExcludeSuperclassListeners(
+                    mappedSuperclass.getExcludeSuperclassListeners());
+
+            //Queries
+            processNamedQueries(mappedSuperclass.getNamedQuery());
+            processNamedNativeQueries(mappedSuperclass.getNamedNativeQuery());
+
+            //StoredProcedures
+            processNamedStoredProcedureQueries((EntityMappings) mappedSuperclass.getRootElement(), mappedSuperclass.getNamedStoredProcedureQuery());
+        }
 
         //Attributes -- Method level annotations
         IPrimaryKeyAttributes parsedAttributes = mappedSuperclass.getAttributes();
 
-        if (parsedAttributes != null) {//#ATTRIBUTE_SEQUENCE_FLOW#
+        if (nonNull(parsedAttributes)) {//#ATTRIBUTE_SEQUENCE_FLOW#
             processEmbeddedId(mappedSuperclass, parsedAttributes.getEmbeddedId());
             if (parsedAttributes.getEmbeddedId() == null) {
                 parsedAttributes.getId().forEach(this::processId);
@@ -72,7 +76,7 @@ public class MappedSuperClassGenerator extends IdentifiableClassGenerator<Mapped
 
         //Class decorations
         classDef = initClassDef(packageName,mappedSuperclass);
-        if (StringUtils.isNotBlank(mappedSuperclass.getDescription())) {
+        if (isNotBlank(mappedSuperclass.getDescription())) {
             classDef.setDescription(mappedSuperclass.getDescription());
         }
         classDef.setAuthor(mappedSuperclass.getAuthor());
