@@ -70,4 +70,9 @@ public class BeanCollectionAttribute extends BeanAttribute implements Collection
         this.collectionImplType = collectionImplType;
     }
 
+    @Override
+    public String getDataTypeLabel() {
+        return String.format("%s<%s>", getCollectionType(), getAttributeType());
+    }
+
 }

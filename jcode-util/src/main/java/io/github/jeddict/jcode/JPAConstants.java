@@ -376,6 +376,15 @@ public class JPAConstants {
             CONSTRUCTOR_RESULT
     ));
 
+    public static final Set<String> JNOSQL_ANNOTATIONS = new HashSet<>(asList(
+            ENTITY,
+            EMBEDDABLE,
+            MAPPED_SUPERCLASS,
+            ID,
+            COLUMN,
+            CONVERT
+    ));
+
 //javax.persistence.PreUpdate (implements java.lang.annotation.Annotation)
 //javax.persistence.PreRemove (implements java.lang.annotation.Annotation)
 //javax.persistence.PrePersist (implements java.lang.annotation.Annotation)

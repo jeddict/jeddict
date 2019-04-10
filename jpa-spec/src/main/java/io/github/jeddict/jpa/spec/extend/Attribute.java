@@ -1088,6 +1088,18 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
 
     /**
      * @param locationType
+     * @return the filtered snippets
+     */
+    public List<AttributeSnippet> getSnippets(AttributeSnippetLocationType locationType) {
+        return getSnippets()
+                .stream()
+                .filter(snippet -> snippet.isEnable())
+                .filter(snippet -> snippet.getLocationType() == locationType)
+                .collect(toList());
+    }
+
+    /**
+     * @param locationType
      * @param value
      * @return the filtered snippets
      */

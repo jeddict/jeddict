@@ -157,7 +157,7 @@ public abstract class PersistenceBaseAttribute extends BaseAttribute implements 
         this.column = value;
     }
     
-    public boolean isNoSQL() {
+    public boolean getNoSQL() {
         return ((ManagedClass)this.getJavaClass()).getNoSQL();
     }
     

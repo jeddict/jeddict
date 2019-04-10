@@ -66,7 +66,7 @@ public abstract class CompositionAttribute<T extends JavaClass> extends BaseAttr
         return jaxbVariableTypeList;
     }
 
-    public boolean isNoSQL() {
+    public boolean getNoSQL() {
         return ((ManagedClass) this.getJavaClass()).getNoSQL();
     }
 }

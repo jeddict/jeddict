@@ -333,7 +333,7 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
         return getTargetEntity();
     }
     
-    public boolean isNoSQL() {
+    public boolean getNoSQL() {
         return ((ManagedClass) this.getJavaClass()).getNoSQL();
     }
 

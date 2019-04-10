@@ -122,6 +122,11 @@ import static io.github.jeddict.util.StringUtils.EMPTY;
 import static io.github.jeddict.util.StringUtils.isNotBlank;
 import org.openide.util.Exceptions;
 import io.github.jeddict.orm.generator.compiler.RelationSnippet;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.ADD_HELPER;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.PRE_ADD_HELPER;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.PRE_REMOVE_HELPER;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.REMOVE_HELPER;
+import java.util.Objects;
 
 public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
@@ -1165,7 +1170,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      */
     public Map<AttributeSnippetLocationType, List<String>> getCustomSnippet() {
         if (customSnippet == null) {
-            Set<AttributeSnippet> snippets = new LinkedHashSet<>();
+            List<AttributeSnippet> snippets = new ArrayList<>();
             snippets.addAll(attribute.getSnippets());
             snippets.addAll(attribute.getRuntimeSnippets());
             customSnippet = buildCustomSnippet(snippets);
@@ -1339,18 +1344,26 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
                     "public void add%s(%s %s, %s %s) {",
                     helperMethodName, mapkeyType, mapkeyName, type, singularName
             )).append(NEW_LINE);
-            sb.append(String.format("get%s().put(%s, %s);", methodName, mapkeyName, singularName)).append(NEW_LINE);
-            if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
-                OneToMany otm = (OneToMany) attribute;
-                if (otm.getConnectedAttributeName() != null) {
-                    connectedMethodName = JavaUtil.getMethodName("set", otm.getConnectedAttributeName());
-                    sb.append(String.format("%s.%s(this);", singularName, connectedMethodName)).append(NEW_LINE);
-                }
-            } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
-                ManyToMany mtm = (ManyToMany) attribute;
-                if (mtm.getConnectedAttributeName() != null) {
-                    connectedMethodName = JavaUtil.getMethodName("get", mtm.getConnectedAttributeName());
-                    sb.append(String.format("%s.%s().add(this);", singularName, connectedMethodName)).append(NEW_LINE);
+            getCustomSnippet(PRE_ADD_HELPER.name()).forEach(sb::append);
+            if (!getCustomSnippet(ADD_HELPER.name()).isEmpty()) {
+                getCustomSnippet(ADD_HELPER.name())
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .forEach(sb::append);
+            } else {
+                sb.append(String.format("get%s().put(%s, %s);", methodName, mapkeyName, singularName)).append(NEW_LINE);
+                if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
+                    OneToMany otm = (OneToMany) attribute;
+                    if (otm.getConnectedAttributeName() != null) {
+                        connectedMethodName = JavaUtil.getMethodName("set", otm.getConnectedAttributeName());
+                        sb.append(String.format("%s.%s(this);", singularName, connectedMethodName)).append(NEW_LINE);
+                    }
+                } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
+                    ManyToMany mtm = (ManyToMany) attribute;
+                    if (mtm.getConnectedAttributeName() != null) {
+                        connectedMethodName = JavaUtil.getMethodName("get", mtm.getConnectedAttributeName());
+                        sb.append(String.format("%s.%s().add(this);", singularName, connectedMethodName)).append(NEW_LINE);
+                    }
                 }
             }
             sb.append("}").append(NEW_LINE).append(NEW_LINE);
@@ -1360,16 +1373,24 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
                     "public void remove%s(%s %s, %s %s) {",
                     helperMethodName, mapkeyType, mapkeyName, type, getSingularName()
             )).append(NEW_LINE);
-            sb.append(String.format("get%s().remove(%s);", methodName, mapkeyName)).append(NEW_LINE);
-            if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
-                OneToMany otm = (OneToMany) attribute;
-                if (otm.getConnectedAttributeName() != null) {
-                    sb.append(String.format("%s.%s(null);", singularName, connectedMethodName)).append(NEW_LINE);
-                }
-            } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
-                ManyToMany mtm = (ManyToMany) attribute;
-                if (mtm.getConnectedAttributeName() != null) {
-                    sb.append(String.format("%s.%s().remove(this);", singularName, connectedMethodName)).append(NEW_LINE);
+            getCustomSnippet(PRE_REMOVE_HELPER.name()).forEach(sb::append);
+            if (!getCustomSnippet(REMOVE_HELPER.name()).isEmpty()) {
+                getCustomSnippet(REMOVE_HELPER.name())
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .forEach(sb::append);
+            } else {
+                sb.append(String.format("get%s().remove(%s);", methodName, mapkeyName)).append(NEW_LINE);
+                if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
+                    OneToMany otm = (OneToMany) attribute;
+                    if (otm.getConnectedAttributeName() != null) {
+                        sb.append(String.format("%s.%s(null);", singularName, connectedMethodName)).append(NEW_LINE);
+                    }
+                } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
+                    ManyToMany mtm = (ManyToMany) attribute;
+                    if (mtm.getConnectedAttributeName() != null) {
+                        sb.append(String.format("%s.%s().remove(this);", singularName, connectedMethodName)).append(NEW_LINE);
+                    }
                 }
             }
             sb.append("}").append(NEW_LINE).append(NEW_LINE);
@@ -1377,18 +1398,26 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             //add
             sb.append(String.format("public void add%s(%s %s) {",
                     helperMethodName, type, singularName)).append(NEW_LINE);
-            sb.append(String.format("get%s().add(%s);", methodName, singularName)).append(NEW_LINE);
-            if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
-                OneToMany otm = (OneToMany) attribute;
-                if (otm.getConnectedAttributeName() != null) {
-                    connectedMethodName = JavaUtil.getMethodName("set", otm.getConnectedAttributeName());
-                    sb.append(String.format("%s.%s(this);", singularName, connectedMethodName)).append(NEW_LINE);
-                }
-            } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
-                ManyToMany mtm = (ManyToMany) attribute;
-                if (mtm.getConnectedAttributeName() != null) {
-                    connectedMethodName = JavaUtil.getMethodName("get", mtm.getConnectedAttributeName());
-                    sb.append(String.format("%s.%s().add(this);", singularName, connectedMethodName)).append(NEW_LINE);
+            getCustomSnippet(PRE_ADD_HELPER.name()).forEach(sb::append);
+            if(!getCustomSnippet(ADD_HELPER.name()).isEmpty()){
+                getCustomSnippet(ADD_HELPER.name())
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .forEach(sb::append);
+            } else {
+                sb.append(String.format("get%s().add(%s);", methodName, singularName)).append(NEW_LINE);
+                if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
+                    OneToMany otm = (OneToMany) attribute;
+                    if (otm.getConnectedAttributeName() != null) {
+                        connectedMethodName = JavaUtil.getMethodName("set", otm.getConnectedAttributeName());
+                        sb.append(String.format("%s.%s(this);", singularName, connectedMethodName)).append(NEW_LINE);
+                    }
+                } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
+                    ManyToMany mtm = (ManyToMany) attribute;
+                    if (mtm.getConnectedAttributeName() != null) {
+                        connectedMethodName = JavaUtil.getMethodName("get", mtm.getConnectedAttributeName());
+                        sb.append(String.format("%s.%s().add(this);", singularName, connectedMethodName)).append(NEW_LINE);
+                    }
                 }
             }
             sb.append("}").append(NEW_LINE).append(NEW_LINE);
@@ -1396,16 +1425,24 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             //remove
             sb.append(String.format("public void remove%s(%s %s) {",
                     helperMethodName, type, getSingularName())).append(NEW_LINE);
-            sb.append(String.format("get%s().remove(%s);", methodName, singularName)).append(NEW_LINE);
-            if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
-                OneToMany otm = (OneToMany) attribute;
-                if (otm.getConnectedAttributeName() != null) {
-                    sb.append(String.format("%s.%s(null);", singularName, connectedMethodName)).append(NEW_LINE);
-                }
-            } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
-                ManyToMany mtm = (ManyToMany) attribute;
-                if (mtm.getConnectedAttributeName() != null) {
-                    sb.append(String.format("%s.%s().remove(this);", singularName, connectedMethodName)).append(NEW_LINE);
+            getCustomSnippet(PRE_REMOVE_HELPER.name()).forEach(sb::append);
+            if (!getCustomSnippet(REMOVE_HELPER.name()).isEmpty()) {
+                getCustomSnippet(REMOVE_HELPER.name())
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .forEach(sb::append);
+            } else {
+                sb.append(String.format("get%s().remove(%s);", methodName, singularName)).append(NEW_LINE);
+                if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
+                    OneToMany otm = (OneToMany) attribute;
+                    if (otm.getConnectedAttributeName() != null) {
+                        sb.append(String.format("%s.%s(null);", singularName, connectedMethodName)).append(NEW_LINE);
+                    }
+                } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
+                    ManyToMany mtm = (ManyToMany) attribute;
+                    if (mtm.getConnectedAttributeName() != null) {
+                        sb.append(String.format("%s.%s().remove(this);", singularName, connectedMethodName)).append(NEW_LINE);
+                    }
                 }
             }
             sb.append("}").append(NEW_LINE).append(NEW_LINE);

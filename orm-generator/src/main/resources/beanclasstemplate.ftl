@@ -263,14 +263,18 @@ ${varDef.getGetterJavaDoc()}
 <#-- custom attribute snippet - getter -->
 <#if varDef.getCustomSnippet("GETTER")?has_content>
 <#foreach snippet in varDef.getCustomSnippet("GETTER")![]>
+    <#if snippet??>
         ${snippet}
+    </#if>
 </#foreach>
-<#elseif varDef.getImplementationType()?has_content>
+<#else>
+    <#if varDef.getImplementationType()?has_content>
         if(${varDef.name} == null) {
             ${varDef.name} = new ${varDef.getImplementationType()}<>();
         }
-</#if>
+    </#if>
         return ${varDef.returnValue};
+</#if>
 <#-- custom attribute snippet - post getter -->
 <#foreach snippet in varDef.getCustomSnippet("POST_GETTER")![]>
         ${snippet}
@@ -293,7 +297,9 @@ ${varDef.getSetterJavaDoc()}
 <#-- custom attribute snippet - setter -->
 <#if varDef.getCustomSnippet("SETTER")?has_content>
 <#foreach snippet in varDef.getCustomSnippet("SETTER")![]>
+<#if snippet??>
         ${snippet}
+</#if>
 </#foreach>
 <#else>
         this.${varDef.name} = ${varDef.name};

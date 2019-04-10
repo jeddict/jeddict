@@ -35,10 +35,8 @@ public enum AttributeSnippetLocationType implements SnippetLocation {
     PRE_FLUENT("Pre Fluent"),
     PRE_ADD_HELPER("Pre Add Helper"),
     ADD_HELPER("Add Helper"),
-    POST_ADD_HELPER("Post Add Helper"),
     PRE_REMOVE_HELPER("Pre Remove Helper"),
     REMOVE_HELPER("Remove Helper"),
-    POST_REMOVE_HELPER("Post Remove Helper"),
     FLUENT("Fluent"),
     IMPORT("Import");
     

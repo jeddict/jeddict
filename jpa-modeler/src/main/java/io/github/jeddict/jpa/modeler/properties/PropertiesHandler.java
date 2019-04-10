@@ -1113,7 +1113,8 @@ public class PropertiesHandler {
             property.setAfter("mapKeyType");
         } else {
             if (attributeWidget.getBaseElementSpec() instanceof BaseAttribute) {
-                if (attributeWidget.getBaseElementSpec() instanceof ElementCollection && ((ElementCollection) attributeWidget.getBaseElementSpec()).getConnectedClass() != null) {//SingleValueEmbeddableFlowWidget
+                if (attributeWidget.getBaseElementSpec() instanceof ElementCollection 
+                        && ((ElementCollection) attributeWidget.getBaseElementSpec()).getConnectedClass() != null) {//SingleValueEmbeddableFlowWidget
                     property.setEntityEditor(null);
                 } else if (attributeWidget.getBaseElementSpec() instanceof Embedded) {//to Disable it
                     property.setEntityEditor(null);

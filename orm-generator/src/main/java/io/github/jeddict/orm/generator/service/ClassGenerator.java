@@ -108,7 +108,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         classDef.setAnnotation(getAnnotationSnippet(javaClass.getAnnotation()));
         classDef.getAnnotation().putAll(getAnnotationSnippet(javaClass.getRuntimeAnnotation()));
 
-        Set<ClassSnippet> snippets = new LinkedHashSet<>(javaClass.getRootElement().getSnippets());
+        List<ClassSnippet> snippets = new ArrayList<>(javaClass.getRootElement().getSnippets());
         snippets.addAll(javaClass.getSnippets());
         snippets.addAll(javaClass.getRuntimeSnippets());
 
@@ -160,7 +160,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return snippetsMap;
     }
 
-    public static <T extends SnippetLocation> Map<T, List<String>> buildCustomSnippet(Set<? extends Snippet<T>> snippets) {
+    public static <T extends SnippetLocation> Map<T, List<String>> buildCustomSnippet(List<? extends Snippet<T>> snippets) {
         Map<T, List<String>> snippetsMap = new HashMap<>();
         for (Snippet<T> snippet : snippets) {
             if (snippet.isEnable()) {

@@ -25,6 +25,8 @@ import org.netbeans.modeler.specification.model.document.property.ElementPropert
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE_ICON;
+import io.github.jeddict.jpa.modeler.properties.PropertiesHandler;
+import io.github.jeddict.jpa.spec.ElementCollection;
 
 /**
  *
@@ -62,6 +64,10 @@ public class BeanCollectionAttributeWidget extends AttributeWidget<BeanCollectio
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
+
+        BeanCollectionAttribute beanCollectionAttribute = this.getBaseElementSpec();
+        set.put("ATTR_PROP", PropertiesHandler.getCollectionTypeProperty(this, beanCollectionAttribute));
+        set.put("ATTR_PROP", PropertiesHandler.getCollectionImplTypeProperty(this, beanCollectionAttribute));
     }
 
 

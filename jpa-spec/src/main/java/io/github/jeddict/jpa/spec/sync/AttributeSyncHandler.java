@@ -27,24 +27,30 @@ import static io.github.jeddict.jcode.BeanVaildationConstants.BV_ANNOTATIONS;
 import static io.github.jeddict.jcode.BeanVaildationConstants.BV_CONSTRAINTS_PACKAGE;
 import static io.github.jeddict.jcode.JAXBConstants.JAXB_ANNOTATIONS;
 import static io.github.jeddict.jcode.JAXBConstants.JAXB_PACKAGE;
+import static io.github.jeddict.jcode.JPAConstants.JNOSQL_ANNOTATIONS;
 import static io.github.jeddict.jcode.JPAConstants.JPA_ANNOTATIONS;
 import static io.github.jeddict.jcode.JPAConstants.NOSQL_PACKAGE;
 import static io.github.jeddict.jcode.JPAConstants.PERSISTENCE_PACKAGE;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_ANNOTATIONS;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_PACKAGE;
+import static io.github.jeddict.jcode.util.AttributeType.isBoolean;
 import static io.github.jeddict.jcode.util.JavaIdentifiers.isFQN;
 import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualify;
+import static io.github.jeddict.jcode.util.JavaUtil.getMethodName;
 import static io.github.jeddict.jcode.util.JavaUtil.isAddMethod;
 import static io.github.jeddict.jcode.util.JavaUtil.isBeanMethod;
 import static io.github.jeddict.jcode.util.JavaUtil.isGetterMethod;
 import static io.github.jeddict.jcode.util.JavaUtil.isHelperMethod;
+import io.github.jeddict.jcode.util.StringHelper;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.AttributeAnnotation;
 import io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType;
 import static io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType.PROPERTY;
 import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
+import static io.github.jeddict.settings.generate.GenerateSettings.getIntrospectionPrefix;
 import io.github.jeddict.snippet.AttributeSnippet;
 import io.github.jeddict.snippet.AttributeSnippetLocationType;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.ADD_HELPER;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.GETTER;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.GETTER_JAVADOC;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.GETTER_THROWS;
@@ -56,6 +62,7 @@ import static io.github.jeddict.snippet.AttributeSnippetLocationType.PRE_GETTER;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.PRE_REMOVE_HELPER;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.PRE_SETTER;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.PROPERTY_JAVADOC;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.REMOVE_HELPER;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.SETTER;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.SETTER_JAVADOC;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.SETTER_THROWS;
@@ -101,7 +108,8 @@ public class AttributeSyncHandler {
     }
 
     private void syncJavadoc(Optional<Comment> commentOpt, AttributeSnippetLocationType locationType) {
-        if (commentOpt.isPresent()) {
+        if (commentOpt.isPresent()
+                && attribute.getSnippets(locationType).isEmpty()) {
             Comment comment = commentOpt.get();
             AttributeSnippet attributeSnippet = new AttributeSnippet();
             attributeSnippet.setLocationType(locationType);
@@ -114,11 +122,13 @@ public class AttributeSyncHandler {
     }
 
     private void syncThrows(MethodDeclaration method, boolean getterMethod, Map<String, ImportDeclaration> imports) {
-        for (ReferenceType thrownException : method.getThrownExceptions()) {
-            String value = thrownException.toString();
-            AttributeSnippet attributeSnippet = new AttributeSnippet(value, getterMethod ? GETTER_THROWS : SETTER_THROWS);
-            attribute.addRuntimeSnippet(attributeSnippet);
-            addImportSnippet(value, imports);
+        if (attribute.getSnippets(getterMethod ? GETTER_THROWS : SETTER_THROWS).isEmpty()) {
+            for (ReferenceType thrownException : method.getThrownExceptions()) {
+                String value = thrownException.toString();
+                AttributeSnippet attributeSnippet = new AttributeSnippet(value, getterMethod ? GETTER_THROWS : SETTER_THROWS);
+                attribute.addRuntimeSnippet(attributeSnippet);
+                addImportSnippet(value, imports);
+            }
         }
     }
 
@@ -142,6 +152,7 @@ public class AttributeSyncHandler {
                     && !annotationFQN.startsWith(JSONB_PACKAGE)
                     && !annotationFQN.startsWith(JAXB_PACKAGE)
                     && !JPA_ANNOTATIONS.contains(annotationFQN)
+                    && !JNOSQL_ANNOTATIONS.contains(annotationFQN)
                     && !BV_ANNOTATIONS.contains(annotationFQN)
                     && !JSONB_ANNOTATIONS.contains(annotationFQN)
                     && !JAXB_ANNOTATIONS.contains(annotationFQN)) {
@@ -164,6 +175,14 @@ public class AttributeSyncHandler {
         if (!method.getBody().isPresent()) {
             return;
         }
+        List<AttributeSnippet> preSnippets = attribute.getSnippets(getterMethod ? PRE_GETTER : PRE_SETTER);
+        List<AttributeSnippet> bodySnippets = attribute.getSnippets(getterMethod ? GETTER : SETTER);
+        List<AttributeSnippet> postSnippets = attribute.getSnippets(getterMethod ? POST_GETTER : POST_SETTER);
+        if (!preSnippets.isEmpty() || !bodySnippets.isEmpty() || !postSnippets.isEmpty()) {
+            return;
+        }
+
+        boolean bodyMatched = false;
         BlockStmt block = method.getBody().get();
         AttributeSnippetLocationType locationType = getterMethod ? PRE_GETTER : PRE_SETTER;
 
@@ -192,20 +211,15 @@ public class AttributeSyncHandler {
             for (String statement : statements) {
                 if (bridgeLines.contains(deleteWhitespace(statement))) {
                     locationType = getterMethod ? POST_GETTER : POST_SETTER;
+                    bodyMatched = true;
                 } else {
-                    List<AttributeSnippet> preSnippets = attribute.getSnippets(getterMethod ? PRE_GETTER : PRE_SETTER, statement);
-                    List<AttributeSnippet> bodySnippets = attribute.getSnippets(getterMethod ? GETTER : SETTER, statement);
-                    List<AttributeSnippet> postSnippets = attribute.getSnippets(getterMethod ? POST_GETTER : POST_SETTER, statement);
-                    if (!preSnippets.isEmpty()) {
-                    } else if (!bodySnippets.isEmpty()) {
-                        locationType = getterMethod ? POST_GETTER : POST_SETTER;
-                    } else if (!postSnippets.isEmpty()) {
-                    } else {
-                        attribute.addRuntimeSnippet(new AttributeSnippet(statement, locationType));
-                        addImportSnippet(statement, imports);
-                    }
+                    attribute.addRuntimeSnippet(new AttributeSnippet(statement, locationType));
+                    addImportSnippet(statement, imports);
                 }
             }
+        }
+        if(!bodyMatched) {
+            attribute.addRuntimeSnippet(new AttributeSnippet(null, getterMethod ? GETTER : SETTER));
         }
     }
 
@@ -213,50 +227,36 @@ public class AttributeSyncHandler {
         if (!method.getBody().isPresent()) {
             return;
         }
+        List<AttributeSnippet> preSnippets = attribute.getSnippets(addMethod ? PRE_ADD_HELPER : PRE_REMOVE_HELPER);
+        List<AttributeSnippet> bodySnippets = attribute.getSnippets(addMethod ? ADD_HELPER : REMOVE_HELPER);
+        if (!preSnippets.isEmpty() || !bodySnippets.isEmpty()) {
+            return;
+        }
+
+        boolean bodyMatched = false;
         BlockStmt block = method.getBody().get();
         AttributeSnippetLocationType locationType = addMethod ? PRE_ADD_HELPER : PRE_REMOVE_HELPER;
-        
-        // do work here
 
-        String intializerLines = null; // collection default impl type null check & intializer
-        if (attribute instanceof CollectionTypeHandler
-                && isNotBlank(((CollectionTypeHandler) attribute).getCollectionImplType())) {
-            intializerLines = String.format("if\\(%s==null\\)\\{%s=new([A-Za-z]+)<>\\(\\);\\}", name, name);
-        }
+        String bridgeLine = deleteWhitespace(String.format("%s().%s(%s);",
+                getMethodName(getIntrospectionPrefix(isBoolean(attribute.getDataTypeLabel())), name),
+                addMethod ? "add" : "remove",
+                StringHelper.singularize(name)
+        ));
 
-        List<String> bridgeLines = new ArrayList<>();
-        if (addMethod) {
-            bridgeLines.add(deleteWhitespace(String.format("return %s;", name)));
-            bridgeLines.add(deleteWhitespace(String.format("return this.%s;", name)));
-        } else {
-            bridgeLines.add(deleteWhitespace(String.format("this.%s = %s;", name, name)));
-        }
         for (Node node : block.getChildNodes()) {
-            if (locationType == PRE_GETTER
-                    && intializerLines != null
-                    && deleteWhitespace(node.toString()).matches(intializerLines)) {
-                intializerLines = null;
-                continue;
-            }
-
             String[] statements = node.toString().split("\n");
             for (String statement : statements) {
-                if (bridgeLines.contains(deleteWhitespace(statement))) {
-                    locationType = addMethod ? POST_GETTER : POST_SETTER;
-                } else {
-                    List<AttributeSnippet> preSnippets = attribute.getSnippets(addMethod ? PRE_GETTER : PRE_SETTER, statement);
-                    List<AttributeSnippet> bodySnippets = attribute.getSnippets(addMethod ? GETTER : SETTER, statement);
-                    List<AttributeSnippet> postSnippets = attribute.getSnippets(addMethod ? POST_GETTER : POST_SETTER, statement);
-                    if (!preSnippets.isEmpty()) {
-                    } else if (!bodySnippets.isEmpty()) {
-                        locationType = addMethod ? POST_GETTER : POST_SETTER;
-                    } else if (!postSnippets.isEmpty()) {
-                    } else {
-                        attribute.addRuntimeSnippet(new AttributeSnippet(statement, locationType));
-                        addImportSnippet(statement, imports);
-                    }
+                if (bridgeLine.equals(deleteWhitespace(statement))) {
+                    locationType = null;
+                    bodyMatched = true;
+                } else if (locationType != null) {
+                    attribute.addRuntimeSnippet(new AttributeSnippet(statement, locationType));
+                    addImportSnippet(statement, imports);
                 }
             }
+        }
+        if(!bodyMatched) {
+            attribute.addRuntimeSnippet(new AttributeSnippet(null, addMethod ? ADD_HELPER : REMOVE_HELPER));
         }
     }
 

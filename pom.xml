@@ -7,18 +7,18 @@
     <version>5.2</version>
     <packaging>pom</packaging>
     <modules>
-        <module>jpa-modeler</module>
-        <module>collaboration</module>
+        <module>jeddict-lib</module>
         <module>jcode-core</module>
         <module>jcode-util</module>
         <module>jpa-spec</module>
+        <module>jpa-modeler</module>
         <module>orm-generator</module>
+        <module>collaboration</module>
         <module>relation-mapper</module>
         <module>jsonb-modeler</module>
         <module>db-modeler</module>
         <module>reverse-engineering</module>
         <module>installer</module>
-        <module>jeddict-lib</module>
         <module>tests</module>
     </modules>
     <properties>

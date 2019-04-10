@@ -37,12 +37,12 @@ import static io.github.jeddict.jcode.BeanVaildationConstants.BV_ANNOTATIONS;
 import static io.github.jeddict.jcode.BeanVaildationConstants.BV_CONSTRAINTS_PACKAGE;
 import static io.github.jeddict.jcode.JAXBConstants.JAXB_ANNOTATIONS;
 import static io.github.jeddict.jcode.JAXBConstants.JAXB_PACKAGE;
+import static io.github.jeddict.jcode.JPAConstants.JNOSQL_ANNOTATIONS;
 import static io.github.jeddict.jcode.JPAConstants.JPA_ANNOTATIONS;
 import static io.github.jeddict.jcode.JPAConstants.NOSQL_PACKAGE;
 import static io.github.jeddict.jcode.JPAConstants.PERSISTENCE_PACKAGE;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_ANNOTATIONS;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_PACKAGE;
-import io.github.jeddict.jcode.util.Inflector;
 import static io.github.jeddict.jcode.util.JavaIdentifiers.isFQN;
 import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualify;
 import static io.github.jeddict.jcode.util.JavaUtil.getFieldName;
@@ -59,6 +59,7 @@ import io.github.jeddict.jpa.spec.extend.IAttributes;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.jpa.spec.extend.ReferenceClass;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateFluentAPI;
+import io.github.jeddict.snippet.AttributeSnippetLocationType;
 import io.github.jeddict.snippet.ClassSnippet;
 import io.github.jeddict.snippet.ClassSnippetLocationType;
 import static io.github.jeddict.snippet.ClassSnippetLocationType.AFTER_CLASS;
@@ -71,7 +72,6 @@ import static io.github.jeddict.snippet.ClassSnippetLocationType.TYPE_JAVADOC;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import static java.util.Objects.nonNull;
 import java.util.Set;
 import java.util.TreeMap;
@@ -167,12 +167,11 @@ public class JavaClassSyncHandler {
                                 && (method.getParameters().size() == 1 || method.getParameters().size() == 2)) { // delegator/helper method
                             String attributeName = getFieldNameFromDelegatorMethod(methodName);
 
-                            String attributePluralName = Inflector.getInstance().pluralize(attributeName);
-                            if (javaClass.getRemovedAttributes().contains(attributePluralName)) {
+                            if (javaClass.getRemovedAttributes().contains(attributeName)) {
                                 continue;
                             }
-                            Attribute previousAttribute = previousAttributes.get(attributePluralName);
-                            Attribute attribute = attributes.get(attributePluralName);
+                            Attribute previousAttribute = previousAttributes.get(attributeName);
+                            Attribute attribute = attributes.get(attributeName);
 
                             if (previousAttribute == null && attribute == null) { // if helper method field name is not plural
                                 if (javaClass.getRemovedAttributes().contains(attributeName)) {
@@ -254,11 +253,17 @@ public class JavaClassSyncHandler {
     }
 
     private void syncHeader(Comment comment) {
+        if (!javaClass.getSnippets(BEFORE_PACKAGE).isEmpty()) {
+            return;
+        }
         String value = comment.toString();
         javaClass.addRuntimeSnippet(new ClassSnippet(value, BEFORE_PACKAGE));
     }
 
     private void syncJavadoc(Comment comment) {
+        if (!javaClass.getSnippets(TYPE_JAVADOC).isEmpty()) {
+            return;
+        }
         String value = comment.toString();
         if (javaClass.getDescription() == null || !value.contains(javaClass.getDescription())) {
             javaClass.addRuntimeSnippet(new ClassSnippet(value, TYPE_JAVADOC));
@@ -359,6 +364,7 @@ public class JavaClassSyncHandler {
                     && !annotationFQN.startsWith(JSONB_PACKAGE)
                     && !annotationFQN.startsWith(JAXB_PACKAGE)
                     && !JPA_ANNOTATIONS.contains(annotationFQN)
+                    && !JNOSQL_ANNOTATIONS.contains(annotationFQN)
                     && !BV_ANNOTATIONS.contains(annotationFQN)
                     && !JSONB_ANNOTATIONS.contains(annotationFQN)
                     && !JAXB_ANNOTATIONS.contains(annotationFQN)) {
@@ -379,10 +385,16 @@ public class JavaClassSyncHandler {
     }
 
     private void syncFieldSnippet(FieldDeclaration field, Map<String, ImportDeclaration> imports) {
+        if (isClassMemberSnippetExist()) {
+            return;
+        }
         syncClassSnippet(field.isStatic() ? BEFORE_FIELD : AFTER_FIELD, field.toString(), imports);
     }
 
     private void syncInitializationBlockSnippet(InitializerDeclaration initializationBlock, Map<String, ImportDeclaration> imports) {
+        if (isClassMemberSnippetExist()) {
+            return;
+        }
         syncClassSnippet(AFTER_FIELD, initializationBlock.toString(), imports);
     }
 
@@ -403,14 +415,23 @@ public class JavaClassSyncHandler {
     }
 
     private void syncMethodSnippet(MethodDeclaration method, Map<String, ImportDeclaration> imports) {
+        if (isClassMemberSnippetExist()) {
+            return;
+        }
         syncClassSnippet(AFTER_METHOD, method.toString(), imports);
     }
 
     private void syncInnerClassOrInterfaceOrEnumSnippet(BodyDeclaration<?> member, Map<String, ImportDeclaration> imports) {
+        if (isClassMemberSnippetExist()) {
+            return;
+        }
         syncClassSnippet(AFTER_METHOD, member.toString(), imports);
     }
 
     private void syncClassOrInterfaceOrEnumSnippet(TypeDeclaration<?> type, Map<String, ImportDeclaration> imports) {
+        if (!javaClass.getSnippets(AFTER_CLASS).isEmpty()) {
+            return;
+        }
         syncClassSnippet(AFTER_CLASS, type.toString(), imports);
     }
 
@@ -426,5 +447,17 @@ public class JavaClassSyncHandler {
                 .map(imports::get)
                 .map(importClass -> new ClassSnippet(importClass.getNameAsString(), IMPORT))
                 .forEach(javaClass::addRuntimeSnippet);
+    }
+
+    private boolean isClassMemberSnippetExist() {
+        return !javaClass.getSnippets(ClassSnippetLocationType.DEFAULT).isEmpty()
+                || !javaClass.getSnippets(ClassSnippetLocationType.BEFORE_FIELD).isEmpty()
+                || !javaClass.getSnippets(ClassSnippetLocationType.AFTER_FIELD).isEmpty()
+                || !javaClass.getSnippets(ClassSnippetLocationType.BEFORE_METHOD).isEmpty()
+                || !javaClass.getSnippets(ClassSnippetLocationType.AFTER_METHOD).isEmpty()
+                || !javaClass.getSnippets(AttributeSnippetLocationType.BEFORE_FIELD).isEmpty()
+                || !javaClass.getSnippets(AttributeSnippetLocationType.AFTER_FIELD).isEmpty()
+                || !javaClass.getSnippets(AttributeSnippetLocationType.BEFORE_METHOD).isEmpty()
+                || !javaClass.getSnippets(AttributeSnippetLocationType.AFTER_METHOD).isEmpty();
     }
 }

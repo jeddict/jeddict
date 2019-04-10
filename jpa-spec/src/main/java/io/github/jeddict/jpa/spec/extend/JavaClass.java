@@ -28,7 +28,10 @@ import io.github.jeddict.jsonb.spec.JsonbDateFormat;
 import io.github.jeddict.jsonb.spec.JsonbNumberFormat;
 import io.github.jeddict.jsonb.spec.JsonbTypeHandler;
 import io.github.jeddict.jsonb.spec.JsonbVisibilityHandler;
+import io.github.jeddict.snippet.AttributeSnippet;
+import io.github.jeddict.snippet.AttributeSnippetLocationType;
 import io.github.jeddict.snippet.ClassSnippet;
+import io.github.jeddict.snippet.ClassSnippetLocationType;
 import io.github.jeddict.source.ClassExplorer;
 import io.github.jeddict.source.JCRELoader;
 import io.github.jeddict.source.JavaSourceParserUtil;
@@ -42,6 +45,7 @@ import java.util.LinkedList;
 import java.util.List;
 import static java.util.Objects.nonNull;
 import java.util.Set;
+import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
@@ -668,6 +672,58 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode
             snippets = new ArrayList<>();
         }
         return snippets;
+    }
+
+    /**
+     * @param locationType
+     * @return the snippets
+     */
+    public List<ClassSnippet> getSnippets(ClassSnippetLocationType locationType) {
+        return getSnippets()
+                .stream()
+                .filter(snippet -> snippet.isEnable())
+                .filter(snippet -> snippet.getLocationType() == locationType)
+                .collect(toList());
+    }
+
+    /**
+     * @param locationType
+     * @param value
+     * @return the snippets
+     */
+    public List<ClassSnippet> getSnippets(ClassSnippetLocationType locationType, String value) {
+         return getSnippets()
+                .stream()
+                .filter(snippet -> snippet.isEnable())
+                .filter(snippet -> snippet.getLocationType() == locationType)
+                .filter(snippet -> snippet.getValue().trim().equals(value.trim()))
+                .collect(toList());
+    }
+
+    /**
+     * @param locationType
+     * @param value
+     * @return the snippets
+     */
+    public boolean containsSnippet(ClassSnippetLocationType locationType, String value) {
+        return getSnippets()
+                .stream()
+                .filter(snippet -> snippet.isEnable())
+                .filter(snippet -> snippet.getLocationType() == locationType)
+                .filter(snippet -> snippet.getValue().contains(value.trim()))
+                .findAny()
+                .isPresent();
+    }
+
+    /**
+     * @param locationType
+     * @return the snippets
+     */
+    public List<AttributeSnippet> getSnippets(AttributeSnippetLocationType locationType) {
+        return getAttributes().getAllAttribute()
+                .stream()
+                .flatMap(attr -> attr.getSnippets(locationType).stream())
+                .collect(toList());
     }
 
     /**
