@@ -652,10 +652,20 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode
      * @param locationType
      * @return the snippets
      */
-    public List<AttributeSnippet> getSnippets(AttributeSnippetLocationType locationType) {
+    public List<AttributeSnippet> getAttributeSnippets(AttributeSnippetLocationType locationType) {
         return getAttributes().getAllAttribute()
                 .stream()
                 .flatMap(attr -> attr.getSnippets(locationType).stream())
+                .collect(toList());
+    }
+
+    /**
+     * @return the snippets
+     */
+    public List<AttributeSnippet> getAttributeSnippets() {
+        return getAttributes().getAllAttribute()
+                .stream()
+                .flatMap(attr -> attr.getSnippets().stream())
                 .collect(toList());
     }
 

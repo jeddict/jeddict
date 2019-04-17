@@ -49,6 +49,7 @@ import static io.github.jeddict.jcode.util.JavaUtil.getFieldName;
 import static io.github.jeddict.jcode.util.JavaUtil.getFieldNameFromDelegatorMethod;
 import static io.github.jeddict.jcode.util.JavaUtil.isBeanMethod;
 import static io.github.jeddict.jcode.util.JavaUtil.isHelperMethod;
+import io.github.jeddict.jcode.util.StringHelper;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.ClassAnnotation;
 import io.github.jeddict.jpa.spec.extend.ClassAnnotationLocationType;
@@ -59,6 +60,7 @@ import io.github.jeddict.jpa.spec.extend.IAttributes;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.jpa.spec.extend.ReferenceClass;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateFluentAPI;
+import io.github.jeddict.snippet.AttributeSnippet;
 import io.github.jeddict.snippet.AttributeSnippetLocationType;
 import io.github.jeddict.snippet.ClassSnippet;
 import io.github.jeddict.snippet.ClassSnippetLocationType;
@@ -79,6 +81,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
 import static io.github.jeddict.util.StringUtils.isNotBlank;
+import static java.util.Objects.isNull;
 
 /**
  *
@@ -96,19 +99,24 @@ public class JavaClassSyncHandler {
         return new JavaClassSyncHandler(javaClass);
     }
 
-    public void syncExistingSnippet(CompilationUnit existingSource) {
-        Map<String, Attribute> attributes = javaClass.getAttributes().getAllAttributeMap();
-        Map<String, Attribute> previousAttributes
-                = javaClass.getAttributes()
-                        .getAllAttribute()
-                        .stream()
-                        .filter(attr -> nonNull(attr.getPreviousName()))
-                        .collect(toMap(Attribute::getPreviousName, identity(), (a1, a2) -> a1));
+    private Map<String, Attribute> getPreviousAttributes() {
+        return javaClass.getAttributes()
+                .getAllAttribute()
+                .stream()
+                .filter(attr -> nonNull(attr.getPreviousName()))
+                .collect(toMap(Attribute::getPreviousName, identity(), (a1, a2) -> a1));
+    }
 
-        Map<String, ImportDeclaration> imports = existingSource.getImports()
+    private Map<String, ImportDeclaration> getImports(CompilationUnit cu) {
+        return cu.getImports()
                 .stream()
                 .collect(toMap(importDec -> unqualify(importDec.getNameAsString()), identity(), (i1, i2) -> i1));
+    }
 
+    public void syncExistingSnippet(CompilationUnit existingSource) {
+        Map<String, Attribute> attributes = javaClass.getAttributes().getAllAttributeMap();
+        Map<String, Attribute> previousAttributes = getPreviousAttributes();
+        Map<String, ImportDeclaration> imports = getImports(existingSource);
         NodeList<TypeDeclaration<?>> types = existingSource.getTypes();
 
         for (TypeDeclaration<?> type : types) {
@@ -123,6 +131,9 @@ public class JavaClassSyncHandler {
                 syncAnnotations(rootClass.getAnnotations(), TYPE, imports);
 
                 NodeList<BodyDeclaration<?>> members = rootClass.getMembers();
+
+                BodyDeclaration<?> lastScannedMember = null;
+                Attribute lastScannedAttribute = null;
                 for (BodyDeclaration<?> member : members) {
                     if (member instanceof MethodDeclaration) {
                         MethodDeclaration method = (MethodDeclaration) member;
@@ -137,15 +148,19 @@ public class JavaClassSyncHandler {
                             Attribute previousAttribute = previousAttributes.get(attributeName);
                             Attribute attribute = attributes.get(attributeName);
                             if (previousAttribute != null) { //renamed
+                                lastScannedMember = method;
+                                lastScannedAttribute = previousAttribute;
                                 AttributeSyncHandler
                                         .getInstance(previousAttribute)
                                         .syncExistingSnippet(attributeName, method, imports);
                             } else if (attribute != null) { // new or non-modified
+                                lastScannedMember = method;
+                                lastScannedAttribute = attribute;
                                 AttributeSyncHandler
                                         .getInstance(attribute)
                                         .syncExistingSnippet(attributeName, method, imports);
                             } else {
-                                syncMethodSnippet(method, imports);
+                                syncMethodSnippet(lastScannedMember, lastScannedAttribute, method, imports);
                             }
                         } else if (methodName.equals("toString")
                                 && method.getParameters().isEmpty()) {
@@ -166,6 +181,13 @@ public class JavaClassSyncHandler {
                         } else if (isHelperMethod(methodName)
                                 && (method.getParameters().size() == 1 || method.getParameters().size() == 2)) { // delegator/helper method
                             String attributeName = getFieldNameFromDelegatorMethod(methodName);
+                            String attributePluralName = StringHelper.pluralize(attributeName);
+
+                            if (javaClass.getRemovedAttributes().contains(attributePluralName)
+                                    || nonNull(previousAttributes.get(attributePluralName))
+                                    || nonNull(attributes.get(attributePluralName))) {
+                                attributeName = attributePluralName;
+                            }
 
                             if (javaClass.getRemovedAttributes().contains(attributeName)) {
                                 continue;
@@ -184,27 +206,31 @@ public class JavaClassSyncHandler {
                             if (previousAttribute != null
                                     && previousAttribute instanceof CollectionTypeHandler
                                     && isNotBlank(((CollectionTypeHandler) previousAttribute).getCollectionImplType())) { //renamed
+                                lastScannedMember = method;
+                                lastScannedAttribute = previousAttribute;
                                 AttributeSyncHandler
                                         .getInstance(previousAttribute)
                                         .syncExistingSnippet(attributeName, method, imports);
                             } else if (attribute != null
                                     && attribute instanceof CollectionTypeHandler
                                     && isNotBlank(((CollectionTypeHandler) attribute).getCollectionImplType())) { // new or non-modified
+                                lastScannedMember = method;
+                                lastScannedAttribute = attribute;
                                 AttributeSyncHandler
                                         .getInstance(attribute)
                                         .syncExistingSnippet(attributeName, method, imports);
                             } else {
-                                syncMethodSnippet(method, imports);
+                                syncMethodSnippet(lastScannedMember, lastScannedAttribute, method, imports);
                             }
                         } else if (isFluentMethod(method)) {
                             String attributeName = method.getParameter(0).getNameAsString();
                             Attribute previousAttribute = previousAttributes.get(attributeName);
                             Attribute attribute = attributes.get(attributeName);
                             if (previousAttribute == null && attribute == null) {
-                                syncMethodSnippet(method, imports);
+                                syncMethodSnippet(lastScannedMember, lastScannedAttribute, method, imports);
                             }
                         } else {
-                            syncMethodSnippet(method, imports);
+                            syncMethodSnippet(lastScannedMember, lastScannedAttribute, method, imports);
                         }
                     } else if (member instanceof FieldDeclaration) {
                         FieldDeclaration field = (FieldDeclaration) member;
@@ -217,20 +243,24 @@ public class JavaClassSyncHandler {
                         Attribute previousAttribute = previousAttributes.get(attributeName);
                         Attribute attribute = attributes.get(attributeName);
                         if (previousAttribute != null) { //renamed
+                            lastScannedMember = field;
+                            lastScannedAttribute = previousAttribute;
                             AttributeSyncHandler
                                     .getInstance(previousAttribute)
                                     .syncExistingSnippet(attributeName, field, imports);
                         } else if (attribute != null) { // new or non-modified
+                            lastScannedMember = field;
+                            lastScannedAttribute = attribute;
                             AttributeSyncHandler
                                     .getInstance(attribute)
                                     .syncExistingSnippet(attributeName, field, imports);
                         } else {
-                            syncFieldSnippet((FieldDeclaration) member, imports);
+                            syncFieldSnippet(lastScannedMember, lastScannedAttribute, field, imports);
                         }
                     } else if (member instanceof ClassOrInterfaceDeclaration || member instanceof EnumDeclaration) {
-                        syncInnerClassOrInterfaceOrEnumSnippet(member, imports);
+                        syncInnerClassOrInterfaceOrEnumSnippet(lastScannedMember, lastScannedAttribute, member, imports);
                     } else if (member instanceof InitializerDeclaration) {
-                        syncInitializationBlockSnippet((InitializerDeclaration) member, imports);
+                        syncInitializationBlockSnippet(lastScannedMember, lastScannedAttribute, (InitializerDeclaration) member, imports);
                     } else if (member instanceof ConstructorDeclaration) {
                         syncConstructorSnippet((ConstructorDeclaration) member, imports);
                     } else {
@@ -391,11 +421,39 @@ public class JavaClassSyncHandler {
         syncClassSnippet(field.isStatic() ? BEFORE_FIELD : AFTER_FIELD, field.toString(), imports);
     }
 
+    private void syncFieldSnippet(BodyDeclaration<?> lastScannedMember, Attribute lastScannedAttribute, FieldDeclaration field, Map<String, ImportDeclaration> imports) {
+        if (lastScannedAttribute == null) {
+            syncFieldSnippet(field, imports);
+        } else {
+            if (lastScannedMember instanceof MethodDeclaration) {
+                syncAttributeSnippet(lastScannedAttribute, AttributeSnippetLocationType.AFTER_METHOD, field.toString(), imports);
+            } else if (lastScannedMember instanceof FieldDeclaration) {
+                syncAttributeSnippet(lastScannedAttribute, AttributeSnippetLocationType.AFTER_FIELD, field.toString(), imports);
+            } else {
+                syncFieldSnippet(field, imports);
+            }
+        }
+    }
+
     private void syncInitializationBlockSnippet(InitializerDeclaration initializationBlock, Map<String, ImportDeclaration> imports) {
         if (isClassMemberSnippetExist()) {
             return;
         }
         syncClassSnippet(AFTER_FIELD, initializationBlock.toString(), imports);
+    }
+
+    private void syncInitializationBlockSnippet(BodyDeclaration<?> lastScannedMember, Attribute lastScannedAttribute, InitializerDeclaration initializationBlock, Map<String, ImportDeclaration> imports) {
+        if (lastScannedAttribute == null) {
+            syncInitializationBlockSnippet(initializationBlock, imports);
+        } else {
+            if (lastScannedMember instanceof MethodDeclaration) {
+                syncAttributeSnippet(lastScannedAttribute, AttributeSnippetLocationType.AFTER_METHOD, initializationBlock.toString(), imports);
+            } else if (lastScannedMember instanceof FieldDeclaration) {
+                syncAttributeSnippet(lastScannedAttribute, AttributeSnippetLocationType.AFTER_FIELD, initializationBlock.toString(), imports);
+            } else {
+                syncInitializationBlockSnippet(initializationBlock, imports);
+            }
+        }
     }
 
     private void syncConstructorSnippet(ConstructorDeclaration constructor, Map<String, ImportDeclaration> imports) {
@@ -421,11 +479,39 @@ public class JavaClassSyncHandler {
         syncClassSnippet(AFTER_METHOD, method.toString(), imports);
     }
 
+    private void syncMethodSnippet(BodyDeclaration<?> lastScannedMember, Attribute lastScannedAttribute, MethodDeclaration method, Map<String, ImportDeclaration> imports) {
+        if (lastScannedAttribute == null) {
+            syncMethodSnippet(method, imports);
+        } else {
+            if (lastScannedMember instanceof MethodDeclaration) {
+                syncAttributeSnippet(lastScannedAttribute, AttributeSnippetLocationType.AFTER_METHOD, method.toString(), imports);
+            } else if (lastScannedMember instanceof FieldDeclaration) {
+                syncAttributeSnippet(lastScannedAttribute, AttributeSnippetLocationType.AFTER_FIELD, method.toString(), imports);
+            } else {
+                syncMethodSnippet(method, imports);
+            }
+        }
+    }
+
     private void syncInnerClassOrInterfaceOrEnumSnippet(BodyDeclaration<?> member, Map<String, ImportDeclaration> imports) {
         if (isClassMemberSnippetExist()) {
             return;
         }
         syncClassSnippet(AFTER_METHOD, member.toString(), imports);
+    }
+
+    private void syncInnerClassOrInterfaceOrEnumSnippet(BodyDeclaration<?> lastScannedMember, Attribute lastScannedAttribute, BodyDeclaration<?> member, Map<String, ImportDeclaration> imports) {
+        if (lastScannedAttribute == null) {
+            syncInnerClassOrInterfaceOrEnumSnippet(member, imports);
+        } else {
+            if (lastScannedMember instanceof MethodDeclaration) {
+                syncAttributeSnippet(lastScannedAttribute, AttributeSnippetLocationType.AFTER_METHOD, member.toString(), imports);
+            } else if (lastScannedMember instanceof FieldDeclaration) {
+                syncAttributeSnippet(lastScannedAttribute, AttributeSnippetLocationType.AFTER_FIELD, member.toString(), imports);
+            } else {
+                syncInnerClassOrInterfaceOrEnumSnippet(member, imports);
+            }
+        }
     }
 
     private void syncClassOrInterfaceOrEnumSnippet(TypeDeclaration<?> type, Map<String, ImportDeclaration> imports) {
@@ -438,6 +524,11 @@ public class JavaClassSyncHandler {
     private void syncClassSnippet(ClassSnippetLocationType locationType, String snippet, Map<String, ImportDeclaration> imports) {
         syncImportSnippet(snippet, imports);
         javaClass.addRuntimeSnippet(new ClassSnippet(snippet, locationType));
+    }
+
+    private void syncAttributeSnippet(Attribute attribute, AttributeSnippetLocationType locationType, String snippet, Map<String, ImportDeclaration> imports) {
+        syncImportSnippet(snippet, imports);
+        attribute.addRuntimeSnippet(new AttributeSnippet(snippet, locationType));
     }
 
     private void syncImportSnippet(String snippet, Map<String, ImportDeclaration> imports) {
@@ -455,9 +546,9 @@ public class JavaClassSyncHandler {
                 || !javaClass.getSnippets(ClassSnippetLocationType.AFTER_FIELD).isEmpty()
                 || !javaClass.getSnippets(ClassSnippetLocationType.BEFORE_METHOD).isEmpty()
                 || !javaClass.getSnippets(ClassSnippetLocationType.AFTER_METHOD).isEmpty()
-                || !javaClass.getSnippets(AttributeSnippetLocationType.BEFORE_FIELD).isEmpty()
-                || !javaClass.getSnippets(AttributeSnippetLocationType.AFTER_FIELD).isEmpty()
-                || !javaClass.getSnippets(AttributeSnippetLocationType.BEFORE_METHOD).isEmpty()
-                || !javaClass.getSnippets(AttributeSnippetLocationType.AFTER_METHOD).isEmpty();
+                || !javaClass.getAttributeSnippets(AttributeSnippetLocationType.BEFORE_FIELD).isEmpty()
+                || !javaClass.getAttributeSnippets(AttributeSnippetLocationType.AFTER_FIELD).isEmpty()
+                || !javaClass.getAttributeSnippets(AttributeSnippetLocationType.BEFORE_METHOD).isEmpty()
+                || !javaClass.getAttributeSnippets(AttributeSnippetLocationType.AFTER_METHOD).isEmpty();
     }
 }

@@ -177,10 +177,11 @@ public class BaseModelTest {
             existingSource = prettyPrinter.print(existingUnit);
         }
 
+        JavaClassSyncHandler
+                .getInstance(javaClass)
+                .syncExistingSnippet(existingUnit);
+
         if (fileName == null) {
-            JavaClassSyncHandler
-                    .getInstance(javaClass)
-                    .syncExistingSnippet(existingUnit);
             fileName = wrap("Reverse Engineering", FG_DARK_MAGENTA);
         } else {
             fileName = wrap(fileName, FG_DARK_BLUE);

@@ -66,6 +66,7 @@ import static io.github.jeddict.snippet.AttributeSnippetLocationType.REMOVE_HELP
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.SETTER;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.SETTER_JAVADOC;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.SETTER_THROWS;
+import io.github.jeddict.snippet.ClassSnippet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -109,7 +110,8 @@ public class AttributeSyncHandler {
 
     private void syncJavadoc(Optional<Comment> commentOpt, AttributeSnippetLocationType locationType) {
         if (commentOpt.isPresent()
-                && attribute.getSnippets(locationType).isEmpty()) {
+                && attribute.getSnippets(locationType).isEmpty()
+                && attribute.getJavaClass().getSnippets().isEmpty()) {
             Comment comment = commentOpt.get();
             AttributeSnippet attributeSnippet = new AttributeSnippet();
             attributeSnippet.setLocationType(locationType);

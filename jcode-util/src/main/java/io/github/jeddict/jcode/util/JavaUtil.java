@@ -168,7 +168,7 @@ public class JavaUtil {
         } else {
             return null;
         }
-        fieldName = StringHelper.firstLower(StringHelper.pluralize(fieldName));
+        fieldName = StringHelper.firstLower(fieldName);
         return fieldName;
     }
 
