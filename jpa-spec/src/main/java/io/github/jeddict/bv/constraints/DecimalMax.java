@@ -16,9 +16,7 @@
 package io.github.jeddict.bv.constraints;
 
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import static java.lang.Boolean.FALSE;
-import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import static io.github.jeddict.util.StringUtils.isBlank;
@@ -35,13 +33,6 @@ public class DecimalMax extends Constraint {
     
     @XmlAttribute(name = "i")
     private Boolean inclusive = true;
-
-    @Override
-    public void load(AnnotationMirror annotation) {
-        super.load(annotation);
-        this.value = JavaSourceParserUtil.findAnnotationValueAsString(annotation, "value");
-        this.inclusive = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotation, "inclusive");
-    }
 
     @Override
     public void load(AnnotationExplorer annotation) {

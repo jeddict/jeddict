@@ -16,8 +16,6 @@
 package io.github.jeddict.bv.constraints;
 
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -60,13 +58,6 @@ public class Digits extends Constraint {
      */
     public void setInteger(String integer) {
         this.integer = integer;
-    }
-
-    @Override
-    public void load(AnnotationMirror annotation) {
-        super.load(annotation);
-        this.integer = (String) JavaSourceParserUtil.findAnnotationValue(annotation, "integer");
-        this.fraction = (String) JavaSourceParserUtil.findAnnotationValue(annotation, "fraction");
     }
 
     @Override

@@ -6,12 +6,9 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDES_FQN;
-import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDE_FQN;
 import io.github.jeddict.jpa.spec.extend.JoinColumnHandler;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,8 +16,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -83,56 +78,6 @@ public class AssociationOverride implements Comparable<AssociationOverride>, Joi
     protected JoinTable joinTable;
     @XmlAttribute(name = "name", required = true)
     protected String name;
-
-    @Deprecated
-    private static AssociationOverride load(Element element, AnnotationMirror annotationMirror) {
-        AssociationOverride associationOverride = null;
-        if (annotationMirror != null) {
-            associationOverride = new AssociationOverride();
-            associationOverride.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-
-            List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "joinColumns");
-            if (joinColumnsAnnot != null) {
-                for (Object joinColumnObj : joinColumnsAnnot) {
-                    associationOverride.getJoinColumn().add(new JoinColumn().load(element, (AnnotationMirror) joinColumnObj));
-                }
-            }
-
-            AnnotationMirror joinTableAnnot = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "joinTable");
-            if (joinTableAnnot != null) {
-                associationOverride.joinTable = JoinTable.load(element, joinTableAnnot);
-            }
-            
-            AnnotationMirror foreignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKey");
-            if (foreignKeyValue != null) {
-                associationOverride.foreignKey = ForeignKey.load(element, foreignKeyValue);
-            }
-
-        }
-        return associationOverride;
-    }
-
-    @Deprecated
-    public static Set<AssociationOverride> load(Element element) {
-        Set<AssociationOverride> associationOverrides = new TreeSet<>();
-
-        AnnotationMirror associationOverridesMirror = JavaSourceParserUtil.findAnnotation(element, ASSOCIATION_OVERRIDES_FQN);
-        if (associationOverridesMirror != null) {
-            List associationOverridesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(associationOverridesMirror, "value");
-            if (associationOverridesMirrorList != null) {
-                for (Object associationOverrideObj : associationOverridesMirrorList) {
-                    associationOverrides.add(AssociationOverride.load(element, (AnnotationMirror) associationOverrideObj));
-                }
-            }
-        } else {
-            associationOverridesMirror = JavaSourceParserUtil.findAnnotation(element, ASSOCIATION_OVERRIDE_FQN);
-            if (associationOverridesMirror != null) {
-                associationOverrides.add(AssociationOverride.load(element, associationOverridesMirror));
-            }
-        }
-
-        return associationOverrides;
-    }
 
     private static AssociationOverride load(AnnotationExplorer annotation) {
         AssociationOverride associationOverride = new AssociationOverride();

@@ -6,20 +6,10 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.BASIC_FQN;
-import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION_FQN;
-import static io.github.jeddict.jcode.JPAConstants.EMBEDDED_FQN;
-import static io.github.jeddict.jcode.JPAConstants.MANY_TO_MANY_FQN;
-import static io.github.jeddict.jcode.JPAConstants.MANY_TO_ONE_FQN;
-import static io.github.jeddict.jcode.JPAConstants.ONE_TO_MANY_FQN;
-import static io.github.jeddict.jcode.JPAConstants.ONE_TO_ONE_FQN;
-import static io.github.jeddict.jcode.JPAConstants.TRANSIENT_FQN;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.PersistenceAttributes;
 import io.github.jeddict.jpa.spec.workspace.WorkSpace;
 import io.github.jeddict.source.ClassExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import static io.github.jeddict.source.JavaSourceParserUtil.getElements;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,10 +17,6 @@ import java.util.List;
 import static java.util.Objects.nonNull;
 import java.util.Optional;
 import java.util.function.Predicate;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;

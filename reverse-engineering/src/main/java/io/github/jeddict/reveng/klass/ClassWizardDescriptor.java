@@ -19,6 +19,7 @@ import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import io.github.jeddict.analytics.JeddictLogger;
 import static io.github.jeddict.jcode.util.Constants.JAVA_EXT_SUFFIX;
+import io.github.jeddict.jcode.util.JavaSourceHelper;
 import static io.github.jeddict.jcode.util.ProjectHelper.getFolderSourceGroup;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil;
 import io.github.jeddict.jpa.spec.Embeddable;
@@ -33,7 +34,6 @@ import io.github.jeddict.jpa.spec.extend.RelationAttribute;
 import io.github.jeddict.reveng.BaseWizardDescriptor;
 import static io.github.jeddict.reveng.settings.RevengPanel.isIncludeReferencedClasses;
 import io.github.jeddict.source.ClassExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.SourceExplorer;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -344,11 +344,11 @@ public final class ClassWizardDescriptor extends BaseWizardDescriptor {
         StringBuilder message = new StringBuilder();
         if (missingEntities.size() == 1) {
             title = "Conflict detected - Entity not found";
-            message.append(JavaSourceParserUtil.simpleClassName(missingEntities.get(0))).append(" Entity is ");
+            message.append(JavaSourceHelper.getSimpleClassName(missingEntities.get(0))).append(" Entity is ");
         } else {
             title = "Conflict detected - Entities not found";
             message.append("Entities ").append(
-                    missingEntities.stream().map(e -> JavaSourceParserUtil.simpleClassName(e)).collect(toList()))
+                    missingEntities.stream().map(JavaSourceHelper::getSimpleClassName).collect(toList()))
                     .append(" are ");
         }
         if (isEmpty(entityMappings.getPackage())) {

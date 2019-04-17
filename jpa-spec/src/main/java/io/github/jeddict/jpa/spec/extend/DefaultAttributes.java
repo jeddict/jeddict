@@ -17,13 +17,11 @@ package io.github.jeddict.jpa.spec.extend;
 
 import io.github.jeddict.jpa.spec.DefaultAttribute;
 import io.github.jeddict.jpa.spec.DefaultClass;
-import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.source.ClassExplorer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;

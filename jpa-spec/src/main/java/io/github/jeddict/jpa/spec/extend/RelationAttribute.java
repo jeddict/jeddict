@@ -16,31 +16,23 @@
 package io.github.jeddict.jpa.spec.extend;
 
 import io.github.jeddict.jaxb.spec.JaxbVariableType;
-import static io.github.jeddict.jcode.JPAConstants.CASCADE_TYPE_FQN;
 import static io.github.jeddict.jcode.util.JavaUtil.mergePackage;
 import io.github.jeddict.jpa.spec.AccessType;
 import io.github.jeddict.jpa.spec.CascadeType;
 import io.github.jeddict.jpa.spec.EmptyType;
 import io.github.jeddict.jpa.spec.Entity;
-import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.FetchType;
 import io.github.jeddict.jpa.spec.JoinTable;
 import io.github.jeddict.jpa.spec.ManagedClass;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
 import java.util.List;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import io.github.jeddict.util.StringUtils;
 
 /**
  *
@@ -72,48 +64,6 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
 
     @XmlAttribute(name = "access")
     protected AccessType access;
-
-    @Deprecated
-    protected void loadAttribute(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement, AnnotationMirror relationAnnotationMirror) {
-        super.loadAttribute(element, variableElement, getterElement);
-        this.joinTable = JoinTable.load(element);
-        if (StringUtils.isNotBlank((String) JavaSourceParserUtil.findAnnotationValue(relationAnnotationMirror, "mappedBy"))) {
-            setOwner(false);
-        } else {
-            setOwner(true);
-        }
-        List cascadeList = (List) JavaSourceParserUtil.findAnnotationValue(relationAnnotationMirror, "cascade");
-        if (cascadeList != null) {
-            CascadeType cascadeType = new CascadeType();
-            this.cascade = cascadeType;
-            for (Object cascadeObj : cascadeList) {
-                switch (cascadeObj.toString()) {
-                    case CASCADE_TYPE_FQN + ".ALL":
-                        cascadeType.setCascadeAll(new EmptyType());
-                        break;
-                    case CASCADE_TYPE_FQN + ".PERSIST":
-                        cascadeType.setCascadePersist(new EmptyType());
-                        break;
-                    case CASCADE_TYPE_FQN + ".MERGE":
-                        cascadeType.setCascadeMerge(new EmptyType());
-                        break;
-                    case CASCADE_TYPE_FQN + ".REMOVE":
-                        cascadeType.setCascadeRemove(new EmptyType());
-                        break;
-                    case CASCADE_TYPE_FQN + ".REFRESH":
-                        cascadeType.setCascadeRefresh(new EmptyType());
-                        break;
-                    case CASCADE_TYPE_FQN + ".DETACH":
-                        cascadeType.setCascadeDetach(new EmptyType());
-                        break;
-                    default:
-                        throw new IllegalStateException("Unknown Cascade Type : " + cascadeObj.toString());
-                }
-            }
-        }
-        this.fetch = FetchType.load(element, relationAnnotationMirror);
-        this.access = AccessType.load(element);
-    }
 
     protected void loadAttribute(MemberExplorer member, AnnotationExplorer annotation) {
         super.loadAttribute(member);

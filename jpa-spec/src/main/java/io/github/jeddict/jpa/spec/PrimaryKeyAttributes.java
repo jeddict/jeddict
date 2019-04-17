@@ -9,25 +9,12 @@ package io.github.jeddict.jpa.spec;
 import io.github.jeddict.db.accessor.EmbeddedIdSpecAccessor;
 import io.github.jeddict.db.accessor.IdSpecAccessor;
 import io.github.jeddict.db.accessor.VersionSpecAccessor;
-import static io.github.jeddict.jcode.JPAConstants.BASIC_FQN;
-import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION_FQN;
-import static io.github.jeddict.jcode.JPAConstants.EMBEDDED_FQN;
-import static io.github.jeddict.jcode.JPAConstants.EMBEDDED_ID_FQN;
-import static io.github.jeddict.jcode.JPAConstants.ID_FQN;
-import static io.github.jeddict.jcode.JPAConstants.MANY_TO_MANY_FQN;
-import static io.github.jeddict.jcode.JPAConstants.MANY_TO_ONE_FQN;
-import static io.github.jeddict.jcode.JPAConstants.ONE_TO_MANY_FQN;
-import static io.github.jeddict.jcode.JPAConstants.ONE_TO_ONE_FQN;
-import static io.github.jeddict.jcode.JPAConstants.TRANSIENT_FQN;
-import static io.github.jeddict.jcode.JPAConstants.VERSION_FQN;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.IPrimaryKeyAttributes;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.jpa.spec.extend.PersistenceAttributes;
 import io.github.jeddict.jpa.spec.workspace.WorkSpace;
 import io.github.jeddict.source.ClassExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import static io.github.jeddict.source.JavaSourceParserUtil.getElements;
 import io.github.jeddict.source.MemberExplorer;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -38,15 +25,10 @@ import static java.util.Objects.nonNull;
 import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import io.github.jeddict.util.StringUtils;
 import static io.github.jeddict.util.StringUtils.isNotBlank;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
 
@@ -108,82 +90,6 @@ public class PrimaryKeyAttributes extends PersistenceAttributes<IdentifiableClas
     @XmlElement(name = "embedded-id")
     protected EmbeddedId embeddedId;
     protected List<Version> version;
-
-    @Deprecated
-    public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
-        Set<String> mapsId = new HashSet<>();
-        VariableElement embeddedIdVariableElement = null;
-        List<Element> elements = getElements(typeElement, fieldAccess);
-
-        //this is not manadatory but provided support for blog snippet which have no method
-        if (!fieldAccess && elements.isEmpty()) {//if no elements then add all fields
-            elements.addAll(JavaSourceParserUtil.getFields(typeElement));
-        }
-        for (Element element : elements) {
-            VariableElement variableElement;
-            ExecutableElement getterElement;
-            if (element instanceof VariableElement) {
-                variableElement = (VariableElement) element;
-                getterElement = JavaSourceParserUtil.guessGetter(variableElement);
-            } else {
-                variableElement = JavaSourceParserUtil.guessField((ExecutableElement) element);
-                getterElement = (ExecutableElement) element;
-            }
-
-            if (JavaSourceParserUtil.isAnnotatedWith(element, ID_FQN)
-                    && !(JavaSourceParserUtil.isAnnotatedWith(element, ONE_TO_ONE_FQN)
-                    || JavaSourceParserUtil.isAnnotatedWith(element, MANY_TO_ONE_FQN))) {
-//                this.addId(Id.load(element, variableElement, getterElement));
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, BASIC_FQN)) {
-//                this.addBasic(Basic.load(element, variableElement, getterElement));
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, TRANSIENT_FQN)) {
-//                this.addTransient(Transient.load(element, variableElement, getterElement));
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, VERSION_FQN)) {
-//                this.addVersion(Version.load(element, variableElement, getterElement));
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, ELEMENT_COLLECTION_FQN)) {
-                this.addElementCollection(ElementCollection.load(entityMappings, element, variableElement, getterElement));
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, ONE_TO_ONE_FQN)) {
-//                OneToOne oneToOneObj = new OneToOne().load(entityMappings, element, variableElement, getterElement, null);
-//                this.addOneToOne(oneToOneObj);
-//                if (StringUtils.isNotBlank(oneToOneObj.getMapsId())) {
-//                    mapsId.add(oneToOneObj.getMapsId());
-//                } else {
-//                    mapsId.add(oneToOneObj.getName());
-//                }
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, MANY_TO_ONE_FQN)) {
-//                ManyToOne manyToOneObj = new ManyToOne().load(entityMappings, element, variableElement, getterElement, null);
-//                this.addManyToOne(manyToOneObj);
-//                if (StringUtils.isNotBlank(manyToOneObj.getMapsId())) {
-//                    mapsId.add(manyToOneObj.getMapsId());
-//                } else {
-//                    mapsId.add(manyToOneObj.getName());
-//                }
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, ONE_TO_MANY_FQN)) {
-//                OneToMany oneToManyObj = new OneToMany().load(entityMappings, element, variableElement, getterElement, null);
-//                this.addOneToMany(oneToManyObj);
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, MANY_TO_MANY_FQN)) {
-//                ManyToMany manyToManyObj = new ManyToMany().load(entityMappings, element, variableElement, getterElement, null);
-//                this.addManyToMany(manyToManyObj);
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, EMBEDDED_ID_FQN)) {
-                this.setEmbeddedId(EmbeddedId.load(entityMappings, element, variableElement, getterElement));
-                embeddedIdVariableElement = variableElement;
-            } else if (JavaSourceParserUtil.isAnnotatedWith(element, EMBEDDED_FQN)) {
-                this.addEmbedded(Embedded.load(entityMappings, element, variableElement, getterElement));
-            } else {
-//                this.addBasic(Basic.load(element, variableElement, getterElement)); //Default Annotation
-            }
-        }
-
-        if (this.getEmbeddedId() != null) {
-            for (VariableElement variableElement : JavaSourceParserUtil.getFields(JavaSourceParserUtil.getAttributeTypeElement(embeddedIdVariableElement))) {
-                if (!mapsId.contains(variableElement.getSimpleName().toString())) {
-                    ExecutableElement getterElement = JavaSourceParserUtil.guessGetter(variableElement);
-//                    this.addId(Id.load(variableElement, variableElement, getterElement));
-                }
-            }
-        }
-
-    }
 
     @Override
     public void load(ClassExplorer clazz) {

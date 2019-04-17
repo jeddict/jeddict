@@ -60,12 +60,17 @@ import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.text.NbDocument;
-import org.openide.util.Exceptions;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
+import static io.github.jeddict.jcode.util.ProjectHelper.findSourceGroupForFile;
+import javax.lang.model.element.Element;
+import org.netbeans.api.java.source.ClasspathInfo;
+import org.netbeans.api.java.source.ElementHandle;
+import org.netbeans.api.java.source.ui.ElementOpen;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -360,6 +365,39 @@ public class JavaSourceHelper {
 
     public static String getClassType(JavaSource source) throws IOException {
         return getTypeElement(source).getQualifiedName().toString();
+    }
+
+    public static void openJavaSource(FileObject fileObject, String classHandle, String attributeName) {
+        FileObject pkg = findSourceGroupForFile(fileObject).getRootFolder();
+        try {
+            JavaSource javaSource = JavaSource.create(ClasspathInfo.create(pkg));
+            javaSource.runUserActionTask(controller -> {
+                try {
+                    controller.toPhase(JavaSource.Phase.ELEMENTS_RESOLVED);
+                    TypeElement element = controller.getElements().getTypeElement(classHandle);
+                    VariableElement variableElement = getField(element, attributeName);
+                    ElementHandle<Element> elementHandle = ElementHandle.create(variableElement == null ? element : variableElement);
+                    if (element != null) {
+                        ElementOpen.open(fileObject, elementHandle);
+                    }
+                } catch (IOException t) {
+                    Exceptions.printStackTrace(t);
+                }
+            }, true);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    private static VariableElement getField(TypeElement element, String attributeName) {
+        if (attributeName != null) {
+            for (VariableElement field : JavaSourceParserUtil.getFields(element)) {
+                if (field.getSimpleName().contentEquals(attributeName)) {
+                    return field;
+                }
+            }
+        }
+        return null;
     }
 
 }

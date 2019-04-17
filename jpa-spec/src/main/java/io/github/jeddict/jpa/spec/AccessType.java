@@ -6,13 +6,9 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.ACCESS_FQN;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.Optional;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
@@ -50,20 +46,6 @@ public enum AccessType {
 
     public static AccessType getDefault() {
         return FIELD;
-    }
-
-    @Deprecated
-    public static AccessType load(Element element) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, ACCESS_FQN);
-        AccessType accessType = null;
-        if (annotationMirror != null) {
-            Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
-            if (value != null) {
-                accessType = AccessType.valueOf(value.toString());
-            }
-        }
-        return accessType;
-
     }
 
     public static AccessType load(AnnotatedMember member) {

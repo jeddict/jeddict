@@ -6,21 +6,16 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.COLLECTION_TABLE_FQN;
 import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
 import io.github.jeddict.jpa.spec.validator.table.CollectionTableValidator;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -81,49 +76,6 @@ public class CollectionTable extends Table {
     protected List<JoinColumn> joinColumn;
     @XmlElement(name = "fk")
     protected ForeignKey foreignKey;
-
-    @Deprecated
-    public static CollectionTable load(Element element, VariableElement variableElement) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, COLLECTION_TABLE_FQN);
-
-        CollectionTable collectionTable = null;
-        if (annotationMirror != null) {
-            collectionTable = new CollectionTable();
-
-            List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "joinColumns");
-            if (joinColumnsAnnot != null) {
-                for (Object joinColumnObj : joinColumnsAnnot) {
-                    collectionTable.getJoinColumn().add(new JoinColumn().load(element, (AnnotationMirror) joinColumnObj));
-                }
-            }
-
-            List uniqueConstraintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "uniqueConstraints");
-            if (uniqueConstraintsAnnot != null) {
-                for (Object uniqueConstraintsObj : uniqueConstraintsAnnot) {
-                    collectionTable.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
-                }
-            }
-
-            List indexesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "indexes");
-            if (indexesAnnot != null) {
-                for (Object indexObj : indexesAnnot) {
-                    collectionTable.getIndex().add(Index.load(element, (AnnotationMirror) indexObj));
-                }
-            }
-
-            collectionTable.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            collectionTable.catalog = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "catalog");
-            collectionTable.schema = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "schema");
-
-            AnnotationMirror foreignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKey");
-            if (foreignKeyValue != null) {
-                collectionTable.foreignKey = ForeignKey.load(element, foreignKeyValue);
-            }
-
-        }
-        return collectionTable;
-
-    }
 
     public static CollectionTable load(AnnotatedMember member) {
         CollectionTable collectionTable = null;

@@ -8,7 +8,6 @@ package io.github.jeddict.jpa.spec;
 
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -16,8 +15,6 @@ import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -80,34 +77,6 @@ public class SqlResultSetMapping {
     protected List<ColumnResult> columnResult;
     @XmlAttribute(name = "n", required = true)//(name = "name", required = true)
     protected String name;
-
-    public static SqlResultSetMapping load(Element element, AnnotationMirror annotationMirror) {
-        SqlResultSetMapping sqlResultSetMapping = null;
-        if (annotationMirror != null) {
-            sqlResultSetMapping = new SqlResultSetMapping();
-            sqlResultSetMapping.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            sqlResultSetMapping.description = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "description");
-            List entityResultList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "entities");
-            if (entityResultList != null) {
-                for (Object entityResultObj : entityResultList) {
-                    sqlResultSetMapping.getEntityResult().add(EntityResult.load(element, (AnnotationMirror) entityResultObj));
-                }
-            }
-            List constructorResultList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "classes");
-            if (constructorResultList != null) {
-                for (Object constructorResultObj : constructorResultList) {
-                    sqlResultSetMapping.getConstructorResult().add(ConstructorResult.load(element, (AnnotationMirror) constructorResultObj));
-                }
-            }
-            List columnResultList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columns");
-            if (columnResultList != null) {
-                for (Object columnResultObj : columnResultList) {
-                    sqlResultSetMapping.getColumnResult().add(ColumnResult.load(element, (AnnotationMirror) columnResultObj));
-                }
-            }
-        }
-        return sqlResultSetMapping;
-    }
 
     public static SqlResultSetMapping load(AnnotationExplorer annotation) {
         SqlResultSetMapping sqlResultSetMapping = new SqlResultSetMapping();

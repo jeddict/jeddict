@@ -9,13 +9,10 @@ package io.github.jeddict.jpa.spec;
 import io.github.jeddict.jpa.spec.extend.QueryMapping;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -68,27 +65,6 @@ public class NamedNativeQuery extends QueryMapping {
     protected String resultClass;
     @XmlAttribute(name = "result-set-mapping")
     protected String resultSetMapping;
-
-    public static NamedNativeQuery load(Element element, AnnotationMirror annotationMirror) {
-        NamedNativeQuery namedNativeQuery = null;
-        if (annotationMirror != null) {
-            namedNativeQuery = new NamedNativeQuery();
-            namedNativeQuery.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            namedNativeQuery.query = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "query");
-            Object resultClass = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "resultClass");
-            namedNativeQuery.resultClass = resultClass == null ? null : resultClass.toString();
-            Object resultSetMapping = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "resultSetMapping");
-            namedNativeQuery.resultSetMapping = resultSetMapping == null ? null : resultSetMapping.toString();
-
-            List hintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "hints");
-            if (hintsAnnot != null) {
-                for (Object hintObj : hintsAnnot) {
-                    namedNativeQuery.getHint().add(QueryHint.load(element, (AnnotationMirror) hintObj));
-                }
-            }
-        }
-        return namedNativeQuery;
-    }
 
     public static NamedNativeQuery load(AnnotationExplorer annotation) {
         NamedNativeQuery namedNativeQuery = new NamedNativeQuery();

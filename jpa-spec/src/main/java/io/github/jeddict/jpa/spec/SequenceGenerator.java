@@ -6,14 +6,10 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.SEQUENCE_GENERATOR_FQN;
 import io.github.jeddict.jpa.spec.validator.SequenceGeneratorValidator;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.Optional;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -78,23 +74,6 @@ public class SequenceGenerator {
     protected Integer initialValue;
     @XmlAttribute(name = "allocation-size")
     protected Integer allocationSize;
-
-    public static SequenceGenerator load(Element element) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, SEQUENCE_GENERATOR_FQN);
-        SequenceGenerator sequenceGenerator = null;
-        if (annotationMirror != null) {
-            sequenceGenerator = new SequenceGenerator();
-            sequenceGenerator.description = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "description");
-            sequenceGenerator.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            sequenceGenerator.sequenceName = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "sequenceName");
-            sequenceGenerator.catalog = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "catalog");
-            sequenceGenerator.schema = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "schema");
-            sequenceGenerator.initialValue = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "initialValue");
-            sequenceGenerator.allocationSize = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "allocationSize");
-        }
-        return sequenceGenerator;
-
-    }
 
     public static SequenceGenerator load(AnnotatedMember member) {
         SequenceGenerator sequenceGenerator = null;

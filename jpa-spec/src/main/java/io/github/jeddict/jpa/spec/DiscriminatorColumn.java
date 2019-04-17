@@ -6,11 +6,7 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_COLUMN_FQN;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -60,21 +56,6 @@ public class DiscriminatorColumn {
     protected String columnDefinition;
     @XmlAttribute
     protected Integer length;
-
-    @Deprecated
-    public static DiscriminatorColumn load(Element element) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, DISCRIMINATOR_COLUMN_FQN);
-        DiscriminatorColumn column = null;
-        if (annotationMirror != null) {
-            column = new DiscriminatorColumn();
-            column.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            column.discriminatorType = DiscriminatorType.load(element, annotationMirror);
-            column.columnDefinition = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columnDefinition");
-            column.length = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "length");
-        }
-        return column;
-
-    }
 
     public static DiscriminatorColumn load(AnnotationExplorer annotation) {
         DiscriminatorColumn column = new DiscriminatorColumn();

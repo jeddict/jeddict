@@ -30,10 +30,32 @@ import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
+import io.github.jeddict.bv.constraints.AssertFalse;
+import io.github.jeddict.bv.constraints.AssertTrue;
 import io.github.jeddict.bv.constraints.Constraint;
+import io.github.jeddict.bv.constraints.DecimalMax;
+import io.github.jeddict.bv.constraints.DecimalMin;
+import io.github.jeddict.bv.constraints.Digits;
+import io.github.jeddict.bv.constraints.Email;
+import io.github.jeddict.bv.constraints.Future;
+import io.github.jeddict.bv.constraints.FutureOrPresent;
+import io.github.jeddict.bv.constraints.Max;
+import io.github.jeddict.bv.constraints.Min;
+import io.github.jeddict.bv.constraints.Negative;
+import io.github.jeddict.bv.constraints.NegativeOrZero;
+import io.github.jeddict.bv.constraints.NotBlank;
+import io.github.jeddict.bv.constraints.NotEmpty;
+import io.github.jeddict.bv.constraints.NotNull;
+import io.github.jeddict.bv.constraints.Null;
+import io.github.jeddict.bv.constraints.Past;
+import io.github.jeddict.bv.constraints.PastOrPresent;
+import io.github.jeddict.bv.constraints.Positive;
+import io.github.jeddict.bv.constraints.PositiveOrZero;
+import io.github.jeddict.bv.constraints.Size;
+import io.github.jeddict.bv.constraints.Valid;
+import static io.github.jeddict.jcode.BeanVaildationConstants.BV_CONSTRAINTS_PACKAGE;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.ReferenceClass;
-import static io.github.jeddict.source.JavaSourceParserUtil.BEAN_VALIDATION_REVENG_CLASS_LIST;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import static java.util.Collections.emptyList;
@@ -43,6 +65,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
@@ -51,11 +74,27 @@ import java.util.stream.Stream;
  */
 public abstract class AnnotatedMember {
 
+    protected static final Map<String, Class<? extends Constraint>> SUPPORTED_BV_REVENG_CLASS_SET = new HashMap<>();
     protected static final Map<String, Class<? extends Constraint>> SUPPORTED_BV_REVENG_SIMPLE_CLASS_SET = new HashMap<>();
+
+    public static final Class[] BEAN_VALIDATION_REVENG_CLASS_LIST = new Class[]{
+        Valid.class,
+        AssertFalse.class, AssertTrue.class,
+        Null.class, NotNull.class,
+        NotEmpty.class, NotBlank.class,
+        Size.class, Pattern.class, Email.class,
+        DecimalMax.class, DecimalMin.class,
+        Max.class, Min.class, Digits.class,
+        Positive.class, PositiveOrZero.class,
+        Negative.class, NegativeOrZero.class,
+        Past.class, PastOrPresent.class,
+        Future.class, FutureOrPresent.class
+    };
 
     static {
         for (Class<? extends Constraint> bvClass : BEAN_VALIDATION_REVENG_CLASS_LIST) {
-            SUPPORTED_BV_REVENG_SIMPLE_CLASS_SET.put(bvClass.getSimpleName(), bvClass); // ?? fqn BEAN_VAILDATION_PACKAGE + "."
+            SUPPORTED_BV_REVENG_CLASS_SET.put(BV_CONSTRAINTS_PACKAGE + "." + bvClass.getSimpleName(), bvClass);
+            SUPPORTED_BV_REVENG_SIMPLE_CLASS_SET.put(bvClass.getSimpleName(), bvClass);
         }
     }
 

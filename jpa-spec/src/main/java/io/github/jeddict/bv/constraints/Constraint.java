@@ -16,9 +16,7 @@
 package io.github.jeddict.bv.constraints;
 
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.Objects;
-import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -89,12 +87,6 @@ public abstract class Constraint {
             return false;
         }
         return true;
-    }
-    
-    
-    public void load(AnnotationMirror annotation) {
-        this.setSelected(true);
-        this.message = JavaSourceParserUtil.findAnnotationValueAsString(annotation, "message");
     }
 
     public void load(AnnotationExplorer annotation) {

@@ -6,11 +6,9 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.JOIN_TABLE_FQN;
 import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
 import io.github.jeddict.jpa.spec.validator.table.JoinTableValidator;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -19,8 +17,6 @@ import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -107,64 +103,6 @@ public class JoinTable {
 
     @XmlTransient
     private String generatedName;
-
-    @Deprecated
-    public static JoinTable load(Element element) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, JOIN_TABLE_FQN);
-        return JoinTable.load(element, annotationMirror);
-    }
-
-    @Deprecated
-    public static JoinTable load(Element element, AnnotationMirror annotationMirror) {
-
-        JoinTable joinTable = null;
-        if (annotationMirror != null) {
-            joinTable = new JoinTable();
-
-            List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "joinColumns");
-            if (joinColumnsAnnot != null) {
-                for (Object joinColumnObj : joinColumnsAnnot) {
-                    joinTable.getJoinColumn().add(new JoinColumn().load(element, (AnnotationMirror) joinColumnObj));
-                }
-            }
-            List inverseJoinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "inverseJoinColumns");
-            if (inverseJoinColumnsAnnot != null) {
-                for (Object inverseJoinColumnsObj : inverseJoinColumnsAnnot) {
-                    joinTable.getInverseJoinColumn().add(new JoinColumn().load(element, (AnnotationMirror) inverseJoinColumnsObj));
-                }
-            }
-            List uniqueConstraintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "uniqueConstraints");
-            if (uniqueConstraintsAnnot != null) {
-                for (Object uniqueConstraintsObj : uniqueConstraintsAnnot) {
-                    joinTable.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
-                }
-            }
-
-            List indexesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "indexes");
-            if (indexesAnnot != null) {
-                for (Object indexObj : indexesAnnot) {
-                    joinTable.getIndex().add(Index.load(element, (AnnotationMirror) indexObj));
-                }
-            }
-
-            joinTable.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            joinTable.catalog = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "catalog");
-            joinTable.schema = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "schema");
-
-            AnnotationMirror foreignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKey");
-            if (foreignKeyValue != null) {
-                joinTable.foreignKey = ForeignKey.load(element, foreignKeyValue);
-            }
-
-            AnnotationMirror inverseForeignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "inverseForeignKey");
-            if (inverseForeignKeyValue != null) {
-                joinTable.inverseForeignKey = ForeignKey.load(element, inverseForeignKeyValue);
-            }
-
-        }
-        return joinTable;
-
-    }
 
     public static JoinTable load(MemberExplorer member) {
         Optional<AnnotationExplorer> annotationOpt = member.getAnnotation(javax.persistence.JoinTable.class);

@@ -16,8 +16,6 @@
 package io.github.jeddict.bv.constraints;
 
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -42,12 +40,6 @@ public class Pattern extends Constraint {
 
     public void setRegexp(String regexp) {
         this.regexp = regexp;
-    }
-
-    @Override
-    public void load(AnnotationMirror annotation) {
-        super.load(annotation);
-        this.regexp = JavaSourceParserUtil.findAnnotationValueAsString(annotation, "regexp");
     }
 
     @Override

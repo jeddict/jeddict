@@ -7,9 +7,6 @@
 package io.github.jeddict.jpa.spec;
 
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
@@ -38,18 +35,6 @@ public enum FetchType {
     EAGER("Eager");
 
     private final String value;
-
-    @Deprecated
-    public static FetchType load(Element element, AnnotationMirror annotationMirror) {
-        FetchType fetchType = null;
-        if (annotationMirror != null) {
-            Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "fetch");
-            if (value != null) {
-                fetchType = FetchType.valueOf(value.toString());
-            }
-        }
-        return fetchType;
-    }
 
     public static FetchType load(AnnotationExplorer annotation) {
         return annotation.getEnum("fetch").map(FetchType::valueOf).orElse(null);

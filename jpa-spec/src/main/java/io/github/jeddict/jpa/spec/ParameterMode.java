@@ -6,11 +6,8 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  * <p>
@@ -37,17 +34,6 @@ public enum ParameterMode {
     INOUT,
     OUT,
     REF_CURSOR;
-
-    public static ParameterMode load(Element element, AnnotationMirror annotationMirror) {
-        ParameterMode parameterMode = null;
-        if (annotationMirror != null) {
-            Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "mode");
-            if (value != null) {
-                parameterMode = ParameterMode.valueOf(value.toString());
-            }
-        }
-        return parameterMode;
-    }
 
     public String value() {
         return name();

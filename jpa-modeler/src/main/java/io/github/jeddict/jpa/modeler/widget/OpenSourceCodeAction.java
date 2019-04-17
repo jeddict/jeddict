@@ -15,30 +15,18 @@
  */
 package io.github.jeddict.jpa.modeler.widget;
 
-import io.github.jeddict.collaborate.issues.ExceptionUtils;
-import static io.github.jeddict.jcode.util.ProjectHelper.findSourceGroupForFile;
+import io.github.jeddict.jcode.util.JavaSourceHelper;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil;
-import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.function.Supplier;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
-import org.netbeans.api.java.source.ClasspathInfo;
-import org.netbeans.api.java.source.ElementHandle;
-import org.netbeans.api.java.source.JavaSource;
-import org.netbeans.api.java.source.ui.ElementOpen;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.modeler.core.ModelerFile;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
-import org.openide.util.Exceptions;
 import static org.openide.util.NbBundle.getMessage;
 
 /**
@@ -92,43 +80,8 @@ public class OpenSourceCodeAction extends WidgetAction.Adapter {
                 });
             }
         } else {
-            open(fileObject, javaClass.getFQN());
+            JavaSourceHelper.openJavaSource(fileObject, javaClass.getFQN(), attribute != null ? attribute.getName() : null);
         }
 
     }
-
-    private void open(FileObject fileObject, String classHandle) {
-        FileObject pkg = findSourceGroupForFile(fileObject).getRootFolder();
-        try {
-            JavaSource javaSource = JavaSource.create(ClasspathInfo.create(pkg));
-            javaSource.runUserActionTask(controller -> {
-                try {
-                    controller.toPhase(JavaSource.Phase.ELEMENTS_RESOLVED);
-                    TypeElement element = controller.getElements().getTypeElement(classHandle);
-                    VariableElement variableElement = getField(element, attribute);
-                    EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
-                    ElementHandle<Element> elementHandle = ElementHandle.create(variableElement == null ? element : variableElement);
-                    if (element != null) {
-                        ElementOpen.open(fileObject, elementHandle);
-                    }
-                } catch (IOException t) {
-                    ExceptionUtils.printStackTrace(t);
-                }
-            }, true);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-    }
-
-    private VariableElement getField(TypeElement element, Attribute attribute) {
-        if (attribute != null) {
-            for (VariableElement field : JavaSourceParserUtil.getFields(element)) {
-                if (field.getSimpleName().contentEquals(attribute.getName())) {
-                    return field;
-                }
-            }
-        }
-        return null;
-    }
-
 }

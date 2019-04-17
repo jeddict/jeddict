@@ -11,13 +11,10 @@ import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.QueryMapping;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -73,27 +70,6 @@ public class NamedQuery extends QueryMapping {
     @XmlElement(name = "lock-mode")
     protected LockModeType lockMode;
     protected List<QueryHint> hint;
-
-    public static NamedQuery load(Element element, AnnotationMirror annotationMirror) {
-        NamedQuery namedQuery = null;
-        if (annotationMirror != null) {
-            namedQuery = new NamedQuery();
-            namedQuery.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            namedQuery.query = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "query");
-
-            Object lockModeObj = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "lockMode");
-            if (lockModeObj != null) {
-                namedQuery.lockMode = LockModeType.valueOf(lockModeObj.toString());
-            }
-            List hintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "hints");
-            if (hintsAnnot != null) {
-                for (Object hintObj : hintsAnnot) {
-                    namedQuery.getHint().add(QueryHint.load(element, (AnnotationMirror) hintObj));
-                }
-            }
-        }
-        return namedQuery;
-    }
 
     public static NamedQuery load(AnnotationExplorer annotation) {
         NamedQuery namedQuery = new NamedQuery();

@@ -8,15 +8,9 @@ package io.github.jeddict.jpa.spec;
 
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
-import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_CLASS_FQN;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JAREAnnotationLoader;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.Optional;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.type.DeclaredType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -51,36 +45,11 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "map-key-class")
-public class MapKeyClass implements JAREAnnotationLoader {
+public class MapKeyClass {
 
     @XmlAttribute(name = "class", required = true)
     protected String clazz;
-    
-        
-    @Override
-    public MapKeyClass load(Element element, AnnotationMirror annotationMirror) {
-        if (annotationMirror == null) {
-            annotationMirror = JavaSourceParserUtil.findAnnotation(element, MAP_KEY_CLASS_FQN);
-        }
-        MapKeyClass mapKeyClass = null;
-        if (annotationMirror != null) {
-            mapKeyClass = this;
-            DeclaredType declaredType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
-            if (declaredType != null) {
-                mapKeyClass.clazz = declaredType.asElement().getSimpleName().toString();
-            }
-        }
-        return mapKeyClass;
-    }
-    
-    public static DeclaredType getDeclaredType(Element element) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, MAP_KEY_CLASS_FQN);
-        if (annotationMirror != null) {
-            return (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
-        }
-        return null;
-    }
-
+ 
     public static ResolvedReferenceTypeDeclaration getDeclaredType(MemberExplorer member) {
         Optional<ResolvedReferenceTypeDeclaration> keyTypeOpt;
         ResolvedReferenceTypeDeclaration keyType;

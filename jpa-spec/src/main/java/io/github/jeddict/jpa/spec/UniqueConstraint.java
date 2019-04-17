@@ -6,15 +6,11 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.UNIQUE_CONSTRAINT_FQN;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -68,28 +64,6 @@ public class UniqueConstraint {
 
     public UniqueConstraint(String name) {
         this.name = name;
-    }
-
-    public static UniqueConstraint load(Element element, AnnotationMirror annotationMirror) {
-        if (annotationMirror == null) {
-            annotationMirror = JavaSourceParserUtil.findAnnotation(element, UNIQUE_CONSTRAINT_FQN);
-        }
-        UniqueConstraint uniqueConstraint = null;
-        if (annotationMirror != null) {
-            uniqueConstraint = new UniqueConstraint();
-            List columnNameList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columnNames");
-            if (columnNameList != null) {
-                for (Object object : columnNameList) {
-                    String column = object.toString();
-                    if (column.length() > 2) {
-                        column = column.substring(1, column.length() - 1);
-                        uniqueConstraint.getColumnName().add(column);
-                    }
-                }
-            }
-            uniqueConstraint.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-        }
-        return uniqueConstraint;
     }
 
     public static UniqueConstraint load(AnnotationExplorer annotation) {

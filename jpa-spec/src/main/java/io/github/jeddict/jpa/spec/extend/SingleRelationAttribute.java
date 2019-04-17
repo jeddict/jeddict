@@ -17,31 +17,17 @@ package io.github.jeddict.jpa.spec.extend;
 
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import io.github.jeddict.bv.constraints.Constraint;
-import static io.github.jeddict.jcode.JPAConstants.ID_FQN;
-import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMNS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMN_FQN;
-import static io.github.jeddict.jcode.JPAConstants.MAPS_ID_FQN;
-import static io.github.jeddict.jcode.util.JavaSourceHelper.getPackageName;
-import static io.github.jeddict.jcode.util.JavaSourceHelper.getSimpleClassName;
-import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.ForeignKey;
 import io.github.jeddict.jpa.spec.IdClass;
 import io.github.jeddict.jpa.spec.IdentifiableClass;
 import io.github.jeddict.jpa.spec.JoinColumn;
 import io.github.jeddict.jpa.spec.PrimaryKeyJoinColumn;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.ErrorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
@@ -76,60 +62,6 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
     @XmlElement(name = "pk-fk")
     protected ForeignKey primaryKeyForeignKey;//REVENG PENDING
     
-
-    @Override
-    @Deprecated
-    public void loadAttribute(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement, AnnotationMirror annotationMirror) {
-        super.loadAttribute(entityMappings, element, variableElement, getterElement, annotationMirror);
-        if (JavaSourceParserUtil.isAnnotatedWith(element, ID_FQN)) {
-            this.setPrimaryKey(Boolean.TRUE);
-        }
-
-        AnnotationMirror joinColumnsAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, JOIN_COLUMNS_FQN);
-        if (joinColumnsAnnotationMirror != null) {
-            List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(joinColumnsAnnotationMirror, "value");
-            if (joinColumnsAnnot != null) {
-                for (Object joinColumnObj : joinColumnsAnnot) {
-                    this.getJoinColumn().add(new JoinColumn().load(element, (AnnotationMirror) joinColumnObj));
-                }
-            }
-        } else {
-            AnnotationMirror joinColumnAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, JOIN_COLUMN_FQN);
-            if (joinColumnAnnotationMirror != null) {
-                this.getJoinColumn().add(new JoinColumn().load(element, joinColumnAnnotationMirror));
-            }
-        }
-
-        this.optional = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "optional");
-        
-        AnnotationMirror mapsIdAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, MAPS_ID_FQN);
-        AnnotationMirror idAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, ID_FQN);
-
-        this.primaryKey = mapsIdAnnotationMirror != null || idAnnotationMirror != null;
-        if (mapsIdAnnotationMirror != null) {
-            this.mapsId = (String) JavaSourceParserUtil.findAnnotationValue(mapsIdAnnotationMirror, "value");
-        }
-        
-        AnnotationMirror foreignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKey");
-        if (foreignKeyValue != null) {
-            this.foreignKey = ForeignKey.load(element, foreignKeyValue);
-        }
-        
-        DeclaredType declaredType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "targetEntity");
-        if (declaredType == null) { 
-            if (variableElement.asType() instanceof ErrorType) { //variable => "<any>"
-                throw new TypeNotPresentException(this.name + " type not found", null);
-            }
-            String fqn = variableElement.asType().toString();
-            this.targetEntityPackage = getPackageName(fqn);
-            this.targetEntity = getSimpleClassName(fqn);
-        } else {
-            String fqn = declaredType.asElement().asType().toString();
-            this.targetEntityPackage = getPackageName(fqn);
-            this.targetEntity = getSimpleClassName(fqn);
-        }
-        
-    }
 
     @Override
     public void loadAttribute(MemberExplorer member, AnnotationExplorer annotation) {

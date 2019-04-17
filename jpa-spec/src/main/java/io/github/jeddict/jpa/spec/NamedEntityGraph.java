@@ -6,19 +6,14 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.NAMED_ENTITY_GRAPHS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.NAMED_ENTITY_GRAPH_FQN;
 import io.github.jeddict.jpa.spec.extend.DataMapping;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -75,55 +70,6 @@ public class NamedEntityGraph extends DataMapping {
     protected List<NamedSubgraph> subclassSubgraph;
     @XmlAttribute(name = "include-all-attributes")
     protected Boolean includeAllAttributes;
-
-    private static NamedEntityGraph loadEntityGraph(Element element, AnnotationMirror annotationMirror) {
-        NamedEntityGraph namedEntityGraph = null;
-        if (annotationMirror != null) {
-            namedEntityGraph = new NamedEntityGraph();
-            namedEntityGraph.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            namedEntityGraph.includeAllAttributes = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "includeAllAttributes");
-
-            List attributeNodesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "attributeNodes");
-            if (attributeNodesAnnot != null) {
-                for (Object attributeNodeObj : attributeNodesAnnot) {
-                    namedEntityGraph.getNamedAttributeNode().add(NamedAttributeNode.load(element, (AnnotationMirror) attributeNodeObj));
-                }
-            }
-            List subgraphsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "subgraphs");
-            if (subgraphsAnnot != null) {
-                for (Object subgraphObj : subgraphsAnnot) {
-                    namedEntityGraph.getSubgraph().add(NamedSubgraph.load(element, (AnnotationMirror) subgraphObj));
-                }
-            }
-            List subclassSubgraphsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "subclassSubgraphs");
-            if (subclassSubgraphsAnnot != null) {
-                for (Object subclassSubgraphObj : subclassSubgraphsAnnot) {
-                    namedEntityGraph.getSubclassSubgraph().add(NamedSubgraph.load(element, (AnnotationMirror) subclassSubgraphObj));
-                }
-            }
-        }
-        return namedEntityGraph;
-    }
-
-    public static List<NamedEntityGraph> load(Element element) {
-        List<NamedEntityGraph> namedEntityGraphs = new ArrayList<>();
-
-        AnnotationMirror namedEntityGraphsMirror = JavaSourceParserUtil.findAnnotation(element, NAMED_ENTITY_GRAPHS_FQN);
-        if (namedEntityGraphsMirror != null) {
-            List namedEntityGraphMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(namedEntityGraphsMirror, "value");
-            if (namedEntityGraphMirrorList != null) {
-                for (Object namedEntityGraphObj : namedEntityGraphMirrorList) {
-                    namedEntityGraphs.add(NamedEntityGraph.loadEntityGraph(element, (AnnotationMirror) namedEntityGraphObj));
-                }
-            }
-        } else {
-            namedEntityGraphsMirror = JavaSourceParserUtil.findAnnotation(element, NAMED_ENTITY_GRAPH_FQN);
-            if (namedEntityGraphsMirror != null) {
-                namedEntityGraphs.add(NamedEntityGraph.loadEntityGraph(element, namedEntityGraphsMirror));
-            }
-        }
-        return namedEntityGraphs;
-    }
 
     private static NamedEntityGraph load(AnnotationExplorer annotation) {
         NamedEntityGraph namedEntityGraph = new NamedEntityGraph();

@@ -6,13 +6,9 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.ENUMERATED_FQN;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.Optional;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
@@ -47,24 +43,6 @@ public enum EnumType {
 
     public static EnumType fromValue(String v) {
         return valueOf(v);
-    }
-
-    @Deprecated
-    public static EnumType load(Element element, AnnotationMirror annotationMirror) {
-        if (annotationMirror == null) {
-            annotationMirror = JavaSourceParserUtil.findAnnotation(element, ENUMERATED_FQN);
-        }
-        EnumType enumType = null;
-        if (annotationMirror != null) {
-            Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
-            if (value != null) {
-                enumType = EnumType.valueOf(value.toString());
-            } else {
-                enumType = DEFAULT;
-            }
-        }
-        return enumType;
-
     }
 
     public static EnumType load(MemberExplorer member) {

@@ -7,9 +7,6 @@
 package io.github.jeddict.jpa.spec;
 
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -65,17 +62,6 @@ public class NamedAttributeNode {
     }
 
     public NamedAttributeNode() {
-    }
-
-    public static NamedAttributeNode load(Element element, AnnotationMirror annotationMirror) {
-        NamedAttributeNode namedAttributeNode = null;
-        if (annotationMirror != null) {
-            namedAttributeNode = new NamedAttributeNode();
-            namedAttributeNode.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
-            namedAttributeNode.subgraph = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "subgraph");
-            namedAttributeNode.keySubgraph = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "keySubgraph");
-        }
-        return namedAttributeNode;
     }
 
     public static NamedAttributeNode load(AnnotationExplorer annotation) {

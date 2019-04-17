@@ -12,9 +12,6 @@ import io.github.jeddict.jpa.spec.validator.EmbeddedIdValidator;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -70,36 +67,6 @@ public class EmbeddedId extends CompositionAttribute<DefaultClass> {
     @XmlTransient
     private Attribute connectedAttribute;// To connect with relation attribute in case of derived entity Ex.5.b
     //No need to set connectedClassId because it is mapped to virtual(hidden) Embeddable not Visual Embaddable
-
-    @Deprecated
-    public static EmbeddedId load(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement) {
-        EmbeddedId embeddedId = new EmbeddedId();
-        embeddedId.loadAttribute(element, variableElement, getterElement);
-        embeddedId.getAttributeOverride().addAll(AttributeOverride.load(element));
-
-        embeddedId.access = AccessType.load(element);
-
-        //does require to save it
-//        DeclaredType declaredType = (DeclaredType) variableElement.asType();
-//
-//        Embeddable embeddableClassSpec = entityMappings.findEmbeddable(declaredType.asElement().getSimpleName().toString());
-//        if (embeddableClassSpec == null) {
-//            boolean fieldAccess = false;
-//            if (element == variableElement) {
-//                fieldAccess = true;
-//            }
-//            embeddableClassSpec = new Embeddable();
-//            TypeElement embeddableTypeElement = JavaSourceParserUtil.getAttributeTypeElement(variableElement);
-//            embeddableClassSpec.load(entityMappings, embeddableTypeElement, fieldAccess);
-//            entityMappings.addEmbeddable(embeddableClassSpec);
-//        }
-        
-        
-        
-//        embeddedId.setConnectedClass(embeddableClassSpec);//TODO Priority
-
-        return embeddedId;
-    }
 
     public static EmbeddedId load(MemberExplorer member) {
         EmbeddedId embeddedId = new EmbeddedId();

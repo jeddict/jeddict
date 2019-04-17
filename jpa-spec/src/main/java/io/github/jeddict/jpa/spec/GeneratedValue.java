@@ -6,14 +6,9 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.GENERATED_VALUE_FQN;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.Optional;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -56,22 +51,6 @@ public class GeneratedValue {
     protected GenerationType strategy;
     @XmlAttribute
     protected String generator;
-
-    @Deprecated
-    public static GeneratedValue load(Element element, VariableElement variableElement) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, GENERATED_VALUE_FQN);
-        GeneratedValue generatedValue = null;
-        if (annotationMirror != null) {
-            generatedValue = new GeneratedValue();
-            Object strategyObj = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "strategy");
-            if (strategyObj != null) {
-                generatedValue.strategy = GenerationType.valueOf(strategyObj.toString());
-            }
-            generatedValue.generator = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "generator");
-        }
-        return generatedValue;
-
-    }
 
     public static GeneratedValue load(AnnotatedMember member) {
         GeneratedValue generatedValue = null;

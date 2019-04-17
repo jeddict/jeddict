@@ -6,22 +6,17 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.INDEX_FQN;
 import io.github.jeddict.jpa.spec.extend.OrderbyItem;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import static java.util.stream.Collectors.joining;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import io.github.jeddict.util.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.tables.IndexMetadata;
 
 /**
@@ -76,31 +71,6 @@ public class Index {
 
     public Index(String name) {
         this.name = name;
-    }
-
-    @Deprecated
-    public static Index load(Element element, AnnotationMirror annotationMirror) {
-        if (annotationMirror == null) {
-            annotationMirror = JavaSourceParserUtil.findAnnotation(element, INDEX_FQN);
-        }
-        Index index = null;
-        if (annotationMirror != null) {
-            index = new Index();
-            String columnList = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columnList");
-            if (StringUtils.isNotBlank(columnList)) {
-                for (String coulmnExp : columnList.split(",")) {
-                    String[] coulmnExpParam = coulmnExp.trim().split(" ");
-                    if (coulmnExpParam.length > 1) {
-                        index.getColumnList().add(new OrderbyItem(coulmnExpParam[0], OrderType.valueOf(coulmnExpParam[1])));
-                    } else {
-                        index.getColumnList().add(new OrderbyItem(coulmnExpParam[0], null));
-                    }
-                }
-            }
-            index.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            index.unique = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "unique");
-        }
-        return index;
     }
 
     public static Index load(AnnotationExplorer annotation) {

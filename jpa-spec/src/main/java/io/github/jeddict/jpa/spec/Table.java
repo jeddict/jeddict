@@ -6,18 +6,14 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.TABLE_FQN;
 import io.github.jeddict.jpa.spec.validator.table.TableValidator;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -79,33 +75,6 @@ public class Table {
     protected String catalog;
     @XmlAttribute(name = "schema")
     protected String schema;
-
-    public static Table load(Element element) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, TABLE_FQN);
-        Table table = null;
-        if (annotationMirror != null) {
-            table = new Table();
-            List uniqueConstraintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "uniqueConstraints");
-            if (uniqueConstraintsAnnot != null) {
-                for (Object uniqueConstraintsObj : uniqueConstraintsAnnot) {
-                    table.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
-                }
-            }
-
-            List indexesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "indexes");
-            if (indexesAnnot != null) {
-                for (Object indexObj : indexesAnnot) {
-                    table.getIndex().add(Index.load(element, (AnnotationMirror) indexObj));
-                }
-            }
-
-            table.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            table.catalog = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "catalog");
-            table.schema = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "schema");
-        }
-        return table;
-
-    }
 
     public static Table load(AnnotationExplorer annotation) {
         Table table = new Table();

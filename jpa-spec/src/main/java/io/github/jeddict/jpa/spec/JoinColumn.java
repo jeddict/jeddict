@@ -6,20 +6,15 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMN_FQN;
 import io.github.jeddict.jpa.spec.extend.IJoinColumn;
 import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
 import io.github.jeddict.jpa.spec.validator.column.JoinColumnValidator;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JAREAnnotationLoader;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -70,7 +65,7 @@ import org.eclipse.persistence.internal.jpa.metadata.columns.JoinColumnMetadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "join-column")
 @XmlJavaTypeAdapter(value = JoinColumnValidator.class)
-public class JoinColumn implements JAREAnnotationLoader, IJoinColumn {
+public class JoinColumn implements IJoinColumn {
 
     @XmlAttribute(name = "name")
     protected String name;
@@ -92,32 +87,6 @@ public class JoinColumn implements JAREAnnotationLoader, IJoinColumn {
     protected String table;
     @XmlElement(name = "fk")
     private ForeignKey foreignKey;
-
-    @Override
-    @Deprecated
-    public JoinColumn load(Element element, AnnotationMirror annotationMirror) {
-       if (annotationMirror == null) {
-            annotationMirror = JavaSourceParserUtil.findAnnotation(element, JOIN_COLUMN_FQN);
-        }
-        JoinColumn joinColumn = null;
-        if (annotationMirror != null) {
-            joinColumn = this;
-            joinColumn.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            joinColumn.referencedColumnName = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "referencedColumnName");
-            joinColumn.unique = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "unique");
-            joinColumn.nullable = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "nullable");
-            joinColumn.insertable = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "insertable");
-            joinColumn.updatable = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "updatable");
-            joinColumn.columnDefinition = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columnDefinition");
-            joinColumn.table = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "table");
-
-            AnnotationMirror foreignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKey");
-            if (foreignKeyValue != null) {
-                joinColumn.foreignKey = ForeignKey.load(element, foreignKeyValue);
-            }
-        }
-        return joinColumn;
-    }
 
     public static JoinColumn load(AnnotationExplorer annotation) {
         JoinColumn joinColumn = new JoinColumn();

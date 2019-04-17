@@ -6,17 +6,12 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.NAMED_STORED_PROCEDURE_QUERIES_FQN;
-import static io.github.jeddict.jcode.JPAConstants.NAMED_STORED_PROCEDURE_QUERY_FQN;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -85,64 +80,6 @@ public class NamedStoredProcedureQuery {//TODO extend to DataMapping and remove 
     protected String name;
     @XmlAttribute(name = "pn", required = true)//(name = "procedure-name", required = true)
     protected String procedureName;
-
-    private static NamedStoredProcedureQuery loadStoredProcedureQuery(Element element, AnnotationMirror annotationMirror) {
-        NamedStoredProcedureQuery namedStoredProcedureQuery = null;
-        if (annotationMirror != null) {
-            namedStoredProcedureQuery = new NamedStoredProcedureQuery();
-            namedStoredProcedureQuery.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            namedStoredProcedureQuery.procedureName = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "procedureName");
-            List hintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "hints");
-            if (hintsAnnot != null) {
-                for (Object hintObj : hintsAnnot) {
-                    namedStoredProcedureQuery.getHint().add(QueryHint.load(element, (AnnotationMirror) hintObj));
-                }
-            }
-            List resultClassesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "resultClasses");
-            if (resultClassesAnnot != null) {
-                for (Object resultClassObj : resultClassesAnnot) {
-                    String _class = resultClassObj.toString();
-                    if (_class.contains("class")) {
-                        _class = _class.substring(0, _class.length() - 6);//remove .class
-                    }
-                    namedStoredProcedureQuery.getResultClass().add(_class);
-                }
-            }
-            List resultSetMappingsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "resultSetMappings");
-            if (resultSetMappingsAnnot != null) {
-                for (Object resultSetMappingObj : resultSetMappingsAnnot) {
-                    namedStoredProcedureQuery.getResultSetMapping().add(resultSetMappingObj.toString().replaceAll("^\"|\"$", ""));//TODO , removing /n from end of the line
-                }
-            }
-            List parametersAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "parameters");
-            if (parametersAnnot != null) {
-                for (Object parameterObj : parametersAnnot) {
-                    namedStoredProcedureQuery.getParameter().add(StoredProcedureParameter.load(element, (AnnotationMirror) parameterObj));
-                }
-            }
-        }
-        return namedStoredProcedureQuery;
-    }
-
-    public static List<NamedStoredProcedureQuery> load(Element element) {
-        List<NamedStoredProcedureQuery> namedStoredProcedureQueries = new ArrayList<>();
-
-        AnnotationMirror namedStoredProcedureQueriesMirror = JavaSourceParserUtil.findAnnotation(element, NAMED_STORED_PROCEDURE_QUERIES_FQN);
-        if (namedStoredProcedureQueriesMirror != null) {
-            List namedStoredProcedureQueryMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(namedStoredProcedureQueriesMirror, "value");
-            if (namedStoredProcedureQueryMirrorList != null) {
-                for (Object namedStoredProcedureQueryObj : namedStoredProcedureQueryMirrorList) {
-                    namedStoredProcedureQueries.add(NamedStoredProcedureQuery.loadStoredProcedureQuery(element, (AnnotationMirror) namedStoredProcedureQueryObj));
-                }
-            }
-        } else {
-            namedStoredProcedureQueriesMirror = JavaSourceParserUtil.findAnnotation(element, NAMED_STORED_PROCEDURE_QUERY_FQN);
-            if (namedStoredProcedureQueriesMirror != null) {
-                namedStoredProcedureQueries.add(NamedStoredProcedureQuery.loadStoredProcedureQuery(element, namedStoredProcedureQueriesMirror));
-            }
-        }
-        return namedStoredProcedureQueries;
-    }
 
     public static NamedStoredProcedureQuery load(AnnotationExplorer annotation) {
         NamedStoredProcedureQuery namedStoredProcedureQuery = new NamedStoredProcedureQuery();

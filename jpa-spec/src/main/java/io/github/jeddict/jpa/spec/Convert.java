@@ -6,19 +6,13 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.CONVERTS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.CONVERT_FQN;
 import io.github.jeddict.jpa.spec.validator.ConvertValidator;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.type.DeclaredType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -74,55 +68,6 @@ public class Convert implements Comparable<Convert> {
     protected String attributeName;
     @XmlAttribute(name = "d")
     protected Boolean disableConversion;
-
-    @Deprecated
-    private static Convert loadConvert(AnnotationMirror annotation, boolean mapKeyExist, boolean isMapKeyConvert) {
-        Convert convert = null;
-        if (annotation != null) {
-            convert = new Convert();
-            DeclaredType declaredType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotation, "converter");
-            if (declaredType != null) {
-                convert.converter = declaredType.toString();
-            }
-            convert.attributeName = (String) JavaSourceParserUtil.findAnnotationValue(annotation, "attributeName");
-            convert.disableConversion = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotation, "disableConversion");
-            if (mapKeyExist) {
-                if (isMapKeyConvert && (convert.attributeName == null || !convert.attributeName.startsWith("key"))) {
-                    convert = null;
-                } else if (!isMapKeyConvert && (convert.attributeName != null && convert.attributeName.startsWith("key"))) {
-                    convert = null;
-                }
-            }
-        }
-        return convert;
-    }
-
-    @Deprecated
-    public static List<Convert> load(Element element) {
-        return load(element, false, false);
-    }
-
-    @Deprecated
-    public static List<Convert> load(Element element, boolean mapKeyExist, boolean isMapKeyConvert) {
-        List<Convert> converts = new ArrayList<>();
-
-        AnnotationMirror convertsMirror = JavaSourceParserUtil.findAnnotation(element, CONVERTS_FQN);
-        if (convertsMirror != null) {
-            List convertsMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(convertsMirror, "value");
-            if (convertsMirrorList != null) {
-                for (Object associationOverrideObj : convertsMirrorList) {
-                    converts.add(Convert.loadConvert((AnnotationMirror) associationOverrideObj, mapKeyExist, isMapKeyConvert));
-                }
-            }
-        } else {
-            convertsMirror = JavaSourceParserUtil.findAnnotation(element, CONVERT_FQN);
-            if (convertsMirror != null) {
-                converts.add(Convert.loadConvert(convertsMirror, mapKeyExist, isMapKeyConvert));
-            }
-        }
-
-        return converts;
-    }
 
     public static List<Convert> load(AnnotatedMember member) {
         return load(member, false, false);

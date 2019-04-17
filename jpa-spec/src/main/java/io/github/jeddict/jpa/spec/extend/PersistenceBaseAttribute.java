@@ -22,9 +22,6 @@ import io.github.jeddict.jpa.spec.Column;
 import io.github.jeddict.jpa.spec.ManagedClass;
 import io.github.jeddict.jpa.spec.TemporalType;
 import io.github.jeddict.source.MemberExplorer;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAttribute;
 
 /**
@@ -39,15 +36,6 @@ public abstract class PersistenceBaseAttribute extends BaseAttribute implements 
     protected Column column;
     @XmlAttribute(name = "access")
     protected AccessType access;
-
-    @Override
-    protected void loadAttribute(Element element, VariableElement variableElement, ExecutableElement getterElement) {
-        super.loadAttribute(element, variableElement, getterElement);
-        this.column = new Column().load(element, null);
-        this.access = AccessType.load(element);
-        this.temporal = TemporalType.load(element, null);
-        this.setAttributeType(variableElement.asType().toString());
-    }
 
     @Override
     protected void loadAttribute(MemberExplorer member) {

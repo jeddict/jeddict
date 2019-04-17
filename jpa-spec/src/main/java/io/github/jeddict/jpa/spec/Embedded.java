@@ -12,18 +12,12 @@ import io.github.jeddict.jpa.spec.extend.CompositionAttribute;
 import io.github.jeddict.jpa.spec.extend.ConvertContainerHandler;
 import io.github.jeddict.jpa.spec.validator.override.AssociationValidator;
 import io.github.jeddict.jpa.spec.validator.override.AttributeValidator;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -89,37 +83,6 @@ public class Embedded extends CompositionAttribute<Embeddable> implements Associ
 
     public Embedded(Set<AttributeOverride> attributeOverride) {
         this.attributeOverride = attributeOverride;
-    }
-
-    @Deprecated
-    public static Embedded load(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement) {
-        Embedded embedded = new Embedded();
-        embedded.loadAttribute(element, variableElement, getterElement);
-        embedded.getAttributeOverride().addAll(AttributeOverride.load(element));
-        embedded.getAssociationOverride().addAll(AssociationOverride.load(element));
-        embedded.setAccess(AccessType.load(element));
-        DeclaredType declaredType = (DeclaredType) variableElement.asType();
-
-        Optional<Embeddable> embeddableClassSpecOpt = entityMappings.findEmbeddable(declaredType.asElement().getSimpleName().toString());
-        io.github.jeddict.jpa.spec.Embeddable embeddableClassSpec;
-        if (!embeddableClassSpecOpt.isPresent()) {
-            boolean fieldAccess = false;
-            if (element == variableElement) {
-                fieldAccess = true;
-            }
-            embeddableClassSpec = new io.github.jeddict.jpa.spec.Embeddable();
-            TypeElement embeddableTypeElement = JavaSourceParserUtil.getAttributeTypeElement(variableElement);
-            if (embeddableTypeElement == null) {
-                return null;
-            }
-            embeddableClassSpec.load(entityMappings, embeddableTypeElement, fieldAccess);
-            entityMappings.addEmbeddable(embeddableClassSpec);
-        } else {
-            embeddableClassSpec = embeddableClassSpecOpt.get();
-        }
-        embedded.setConnectedClass(embeddableClassSpec);
-        embedded.setConverts(Convert.load(element));
-        return embedded;
     }
 
     public static Embedded load(Embedded embedded, MemberExplorer member) {

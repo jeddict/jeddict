@@ -16,8 +16,6 @@
 package io.github.jeddict.bv.constraints;
 
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -60,13 +58,6 @@ public class Size extends Constraint {
      */
     public void setMax(String max) {
         this.max = max;
-    }
-
-    @Override
-    public void load(AnnotationMirror annotation) {
-        super.load(annotation);
-        this.min = (String) JavaSourceParserUtil.findAnnotationValue(annotation, "min");
-        this.max = (String) JavaSourceParserUtil.findAnnotationValue(annotation, "max");
     }
 
     @Override

@@ -6,9 +6,6 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.CACHEABLE_FQN;
-import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_VALUE_FQN;
-import static io.github.jeddict.jcode.JPAConstants.ENTITY_FQN;
 import io.github.jeddict.jpa.spec.extend.AccessTypeHandler;
 import io.github.jeddict.jpa.spec.extend.AssociationOverrideHandler;
 import io.github.jeddict.jpa.spec.extend.Attribute;
@@ -20,15 +17,12 @@ import io.github.jeddict.jpa.spec.validator.override.AssociationValidator;
 import io.github.jeddict.jpa.spec.validator.override.AttributeValidator;
 import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.ClassExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import static java.util.stream.Collectors.toSet;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.TypeElement;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -177,53 +171,8 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     private PaginationType paginationType;
 
     //ui properties end
-        
+
     @Override
-    @Deprecated
-    public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
-        super.load(entityMappings, element, fieldAccess);
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, ENTITY_FQN);
-
-        this.table = Table.load(element);
-        this.getSecondaryTable().addAll(SecondaryTable.loadTables(element));
-        this.inheritance = Inheritance.load(element);
-        AnnotationMirror annotDiscrValue = JavaSourceParserUtil.findAnnotation(element, DISCRIMINATOR_VALUE_FQN);
-        if (annotDiscrValue != null) {
-            Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
-            if (value != null) {
-                discriminatorValue = value.toString();
-            }
-        }
-        this.discriminatorColumn = DiscriminatorColumn.load(element);
-        this.tableGenerator = TableGenerator.load(element);
-        this.sequenceGenerator = SequenceGenerator.load(element);
-
-        if (annotationMirror != null) {
-            this.entityName = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-        }
-
-        AnnotationMirror cacheableAnnotation = JavaSourceParserUtil.findAnnotation(element, CACHEABLE_FQN);
-        if (cacheableAnnotation != null) {
-            Object value = JavaSourceParserUtil.findAnnotationValue(cacheableAnnotation, "value");
-            if (value == null) {
-                this.cacheable = true;
-            } else {
-                this.cacheable = (Boolean) value;
-            }
-        }
-//        AnnotationMirror primaryKeyForeignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "primaryKeyForeignKeyValue");
-//            if (primaryKeyForeignKeyValue != null) {
-//                this.primaryKeyForeignKey = ForeignKey.load(element, primaryKeyForeignKeyValue);
-//            }
-        this.convert = Convert.load(element);
-        this.primaryKeyJoinColumn = PrimaryKeyJoinColumn.load(element);
-        this.attributeOverride = AttributeOverride.load(element);
-        this.associationOverride = AssociationOverride.load(element);
-        this.namedEntityGraph = NamedEntityGraph.load(element);
-
-    }
-
-//        @Override
     public void load(ClassExplorer clazz) {
        super.load(clazz);
 
@@ -260,7 +209,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
 
         this.convert = Convert.load(clazz);
         this.primaryKeyJoinColumn = PrimaryKeyJoinColumn.load(clazz);
-        //        AnnotationMirror primaryKeyForeignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "primaryKeyForeignKeyValue");
+//            primaryKeyForeignKeyValue =  findAnnotationValue(annotationMirror, "primaryKeyForeignKeyValue");
 //            if (primaryKeyForeignKeyValue != null) {
 //                this.primaryKeyForeignKey = ForeignKey.load(element, primaryKeyForeignKeyValue);
 //            }

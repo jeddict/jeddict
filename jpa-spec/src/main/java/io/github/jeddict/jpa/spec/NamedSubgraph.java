@@ -7,13 +7,9 @@
 package io.github.jeddict.jpa.spec;
 
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.type.DeclaredType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -70,26 +66,6 @@ public class NamedSubgraph {
 
     public NamedSubgraph(String name) {
         this.name = name;
-    }
-
-    public static NamedSubgraph load(Element element, AnnotationMirror annotationMirror) {
-        NamedSubgraph namedSubgraph = null;
-        if (annotationMirror != null) {
-            namedSubgraph = new NamedSubgraph();
-            namedSubgraph.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            DeclaredType declaredType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "type");
-            if (declaredType != null) {
-                namedSubgraph.clazz = declaredType.asElement().getSimpleName().toString();
-            }
-            List attributeNodesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "attributeNodes");
-            if (attributeNodesAnnot != null) {
-                for (Object attributeNodeObj : attributeNodesAnnot) {
-                    namedSubgraph.getNamedAttributeNode().add(NamedAttributeNode.load(element, (AnnotationMirror) attributeNodeObj));
-                }
-            }
-
-        }
-        return namedSubgraph;
     }
 
     public static NamedSubgraph load(AnnotationExplorer annotation) {

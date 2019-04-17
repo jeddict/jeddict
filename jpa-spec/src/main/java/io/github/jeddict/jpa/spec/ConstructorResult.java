@@ -7,12 +7,9 @@
 package io.github.jeddict.jpa.spec;
 
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -59,23 +56,6 @@ public class ConstructorResult {
     protected List<ColumnResult> column;
     @XmlAttribute(name = "tc", required = true)//(name = "target-class", required = true)
     protected String targetClass;
-
-    @Deprecated
-    public static ConstructorResult load(Element element, AnnotationMirror annotationMirror) {
-        ConstructorResult constructorResult = null;
-        if (annotationMirror != null) {
-            constructorResult = new ConstructorResult();
-            Object targetClass = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "targetClass");
-            constructorResult.targetClass = targetClass == null ? null : targetClass.toString();
-            List columnResultList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columns");
-            if (columnResultList != null) {
-                for (Object columnResultObj : columnResultList) {
-                    constructorResult.getColumn().add(ColumnResult.load(element, (AnnotationMirror) columnResultObj));
-                }
-            }
-        }
-        return constructorResult;
-    }
 
     public static ConstructorResult load(AnnotationExplorer annotation) {
         ConstructorResult constructorResult = new ConstructorResult();

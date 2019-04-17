@@ -6,20 +6,15 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.PRIMARY_KEY_JOIN_COLUMNS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.PRIMARY_KEY_JOIN_COLUMN_FQN;
 import io.github.jeddict.jpa.spec.extend.IJoinColumn;
 import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
 import io.github.jeddict.jpa.spec.validator.column.PrimaryKeyJoinColumnValidator;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -73,43 +68,6 @@ public class PrimaryKeyJoinColumn implements IJoinColumn {
     protected String columnDefinition;
     @XmlElement(name = "fk")
     private ForeignKey foreignKey;
-    
-    private static PrimaryKeyJoinColumn load(Element element, AnnotationMirror annotationMirror) {
-        PrimaryKeyJoinColumn primaryKeyJoinColumn = null;
-        if (annotationMirror != null) {
-            primaryKeyJoinColumn = new PrimaryKeyJoinColumn();
-             primaryKeyJoinColumn.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            primaryKeyJoinColumn.referencedColumnName = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "referencedColumnName");
-            primaryKeyJoinColumn.columnDefinition = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columnDefinition");
-
-            AnnotationMirror foreignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKey");
-            if (foreignKeyValue != null) {
-                primaryKeyJoinColumn.foreignKey = ForeignKey.load(element, foreignKeyValue);
-            }
-        }
-        return primaryKeyJoinColumn;
-    }
-    
-    public static List<PrimaryKeyJoinColumn> load(Element element) {
-        List<PrimaryKeyJoinColumn> primaryKeyJoinColumns = new ArrayList<>();
-
-        AnnotationMirror attributeOverridesMirror = JavaSourceParserUtil.findAnnotation(element, PRIMARY_KEY_JOIN_COLUMNS_FQN);
-        if (attributeOverridesMirror != null) {
-            List attributeOverridesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(attributeOverridesMirror, "value");
-            if (attributeOverridesMirrorList != null) {
-                for (Object attributeOverrideObj : attributeOverridesMirrorList) {
-                    primaryKeyJoinColumns.add(PrimaryKeyJoinColumn.load(element, (AnnotationMirror) attributeOverrideObj));
-                }
-            }
-        } else {
-            attributeOverridesMirror = JavaSourceParserUtil.findAnnotation(element, PRIMARY_KEY_JOIN_COLUMN_FQN);
-            if (attributeOverridesMirror != null) {
-                primaryKeyJoinColumns.add(PrimaryKeyJoinColumn.load(element, attributeOverridesMirror));
-            }
-        }
-
-        return primaryKeyJoinColumns;
-    }
 
     private static PrimaryKeyJoinColumn load(AnnotationExplorer annotation) {
         PrimaryKeyJoinColumn primaryKeyJoinColumn = new PrimaryKeyJoinColumn();

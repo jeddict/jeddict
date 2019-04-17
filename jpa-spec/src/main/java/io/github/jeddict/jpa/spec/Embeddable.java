@@ -10,9 +10,7 @@ import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclar
 import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE_FQN;
 import io.github.jeddict.jpa.spec.extend.ReferenceClass;
 import io.github.jeddict.source.ClassExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.Optional;
-import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -64,16 +62,6 @@ import javax.xml.bind.annotation.XmlType;
 public class Embeddable extends ManagedClass<EmbeddableAttributes> {
 
     protected EmbeddableAttributes attributes;
-
-    @Override
-    @Deprecated
-    public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
-        TypeElement superClassElement = JavaSourceParserUtil.getSuperclassTypeElement(element);
-        if (!superClassElement.getQualifiedName().toString().equals("java.lang.Object")) {
-            this.setSuperclassRef(new ReferenceClass(superClassElement.toString()));
-        }
-        super.load(entityMappings, element, fieldAccess);
-    }
 
     public void load(ClassExplorer clazz) {
         Optional<ResolvedReferenceTypeDeclaration> superClassTypeOpt = clazz.getSuperClass();

@@ -15,18 +15,13 @@
  */
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.ORDER_BY_FQN;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.OrderbyItem;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -37,27 +32,6 @@ public class OrderBy {
 
     @XmlElement(name = "a")
     private List<OrderbyItem> attributes;
-
-    public static OrderBy load(Element element, VariableElement variableElement) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, ORDER_BY_FQN);
-        OrderBy orderBy = null;
-        if (annotationMirror != null) {
-            orderBy = new OrderBy();
-            String orderByExp = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
-            String[] orderByListExp = orderByExp.trim().split(",");
-            if (orderByListExp.length > 0) {
-                for (String orderbyElementExp : orderByListExp) {
-                    String[] orderByItemsExp = orderbyElementExp.trim().split(" ");
-                    if (orderByItemsExp.length == 1) {
-                        orderBy.addAttribute(new OrderbyItem(orderByItemsExp[0].trim()));
-                    } else if (orderByItemsExp.length == 2) {
-                        orderBy.addAttribute(new OrderbyItem(orderByItemsExp[0].trim(), OrderType.valueOf(orderByItemsExp[1].trim())));
-                    }
-                }
-            }
-        }
-        return orderBy;
-    }
 
     public static OrderBy load(MemberExplorer member) {
         Optional<AnnotationExplorer> orderByOpt = member.getAnnotation(javax.persistence.OrderBy.class);

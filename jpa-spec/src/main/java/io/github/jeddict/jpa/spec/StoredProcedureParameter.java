@@ -7,9 +7,6 @@
 package io.github.jeddict.jpa.spec;
 
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -61,18 +58,6 @@ public class StoredProcedureParameter {
     protected String clazz;
     @XmlAttribute(name = "m")//(name = "mode")
     protected ParameterMode mode;
-
-    public static StoredProcedureParameter load(Element element, AnnotationMirror annotationMirror) {
-        StoredProcedureParameter storedProcedureParameter = null;
-        if (annotationMirror != null) {
-            storedProcedureParameter = new StoredProcedureParameter();
-            storedProcedureParameter.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            Object clazz = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "type");
-            storedProcedureParameter.clazz = clazz == null ? null : clazz.toString();
-            storedProcedureParameter.mode = ParameterMode.load(element, annotationMirror);
-        }
-        return storedProcedureParameter;
-    }
 
     public static StoredProcedureParameter load(AnnotationExplorer annotation) {
         StoredProcedureParameter storedProcedureParameter = new StoredProcedureParameter();

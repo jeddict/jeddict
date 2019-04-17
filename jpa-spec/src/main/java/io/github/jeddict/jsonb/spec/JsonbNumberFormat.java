@@ -15,7 +15,6 @@
  */
 package io.github.jeddict.jsonb.spec;
 
-import static io.github.jeddict.jcode.JSONBConstants.JSONB_NUMBER_FORMAT_FQN;
 import static io.github.jeddict.jcode.util.AttributeType.BIGDECIMAL;
 import static io.github.jeddict.jcode.util.AttributeType.BIGINTEGER;
 import static io.github.jeddict.jcode.util.AttributeType.DOUBLE;
@@ -31,13 +30,10 @@ import static io.github.jeddict.jcode.util.AttributeType.SHORT_WRAPPER;
 import io.github.jeddict.jpa.spec.validator.JsonbNumberFormatValidator;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
@@ -53,23 +49,6 @@ public class JsonbNumberFormat extends JsonbFormat {
     @Override
     public boolean isSupportedFormat(String type) {
         return SUPPORTED_TYPE.contains(type);
-    }
-
-    public static JsonbNumberFormat load(Element element) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, JSONB_NUMBER_FORMAT_FQN);
-        JsonbNumberFormat jsonbDateFormat = null;
-        if (annotationMirror != null) {
-            jsonbDateFormat = new JsonbNumberFormat();
-            String value = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
-            if (value != null) {
-                jsonbDateFormat.setValue(value);
-            }
-            String locale = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "locale");
-            if (locale != null) {
-                jsonbDateFormat.setLocale(locale);
-            }
-        }
-        return jsonbDateFormat;
     }
 
     public static JsonbNumberFormat load(AnnotatedMember member) {

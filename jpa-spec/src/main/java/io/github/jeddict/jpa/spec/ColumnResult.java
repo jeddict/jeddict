@@ -7,9 +7,6 @@
 package io.github.jeddict.jpa.spec;
 
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -51,18 +48,6 @@ public class ColumnResult {
     protected String name;
     @XmlAttribute(name = "c")
     protected String clazz;
-
-    @Deprecated
-    public static ColumnResult load(Element element, AnnotationMirror annotationMirror) {
-        ColumnResult columnResult = null;
-        if (annotationMirror != null) {
-            columnResult = new ColumnResult();
-            columnResult.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            Object clazz = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "type");
-            columnResult.clazz = clazz == null ? null : clazz.toString();
-        }
-        return columnResult;
-    }
 
     public static ColumnResult load(AnnotationExplorer annotation) {
         ColumnResult columnResult = new ColumnResult();

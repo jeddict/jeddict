@@ -17,16 +17,7 @@ package io.github.jeddict.jpa.spec;
 
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import static io.github.jeddict.jcode.JPAConstants.ENTITY_FQN;
-import static io.github.jeddict.jcode.JPAConstants.ENTITY_LISTENERS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.EXCLUDE_DEFAULT_LISTENERS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.EXCLUDE_SUPERCLASS_LISTENERS_FQN;
 import static io.github.jeddict.jcode.JPAConstants.MAPPED_SUPERCLASS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.NAMED_NATIVE_QUERIES_FQN;
-import static io.github.jeddict.jcode.JPAConstants.NAMED_NATIVE_QUERY_FQN;
-import static io.github.jeddict.jcode.JPAConstants.NAMED_QUERIES_FQN;
-import static io.github.jeddict.jcode.JPAConstants.NAMED_QUERY_FQN;
-import static io.github.jeddict.jcode.JPAConstants.SQL_RESULTSET_MAPPINGS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.SQL_RESULTSET_MAPPING_FQN;
 import static io.github.jeddict.jpa.spec.NamedQuery.FIND_BY;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.CompositePrimaryKeyType;
@@ -40,17 +31,12 @@ import io.github.jeddict.jpa.spec.validation.adapter.CompositePrimaryKeyAdapter;
 import io.github.jeddict.settings.diagram.ClassDiagramSettings;
 import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.ClassExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import static io.github.jeddict.source.JavaSourceParserUtil.isEntity;
-import static io.github.jeddict.source.JavaSourceParserUtil.isMappedSuperclass;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -97,118 +83,6 @@ public abstract class IdentifiableClass extends ManagedClass<IPrimaryKeyAttribut
     private CompositePrimaryKeyType compositePrimaryKeyType;//custom added
     @XmlAttribute
     private String compositePrimaryKeyClass;//custom added
-
-    @Override
-    @Deprecated
-    public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
-        super.load(entityMappings, element, fieldAccess);
-        this.idClass = IdClass.load(element);
-
-        if (this.getAttributes().getEmbeddedId() != null) {
-            this.setCompositePrimaryKeyClass(this.getAttributes().getEmbeddedId().getAttributeType());
-            this.setCompositePrimaryKeyType(CompositePrimaryKeyType.EMBEDDEDID);
-        } else if (idClass != null) {
-            this.setCompositePrimaryKeyClass(this.getIdClass().getClazz());
-            this.setCompositePrimaryKeyType(CompositePrimaryKeyType.IDCLASS);
-        } else {
-            this.setCompositePrimaryKeyClass(null);
-            this.setCompositePrimaryKeyType(null);
-        }
-
-        AnnotationMirror entityListenersMirror = JavaSourceParserUtil.findAnnotation(element, ENTITY_LISTENERS_FQN);
-        if (entityListenersMirror != null) {
-            this.setEntityListeners(EntityListeners.load(element, entityListenersMirror));
-        }
-
-        AnnotationMirror excludeDefaultListenersMirror = JavaSourceParserUtil.findAnnotation(element, EXCLUDE_DEFAULT_LISTENERS_FQN);
-        if (excludeDefaultListenersMirror != null) {
-            this.setExcludeDefaultListeners(new EmptyType());
-        }
-
-        AnnotationMirror excludeSuperclassListenersMirror = JavaSourceParserUtil.findAnnotation(element, EXCLUDE_SUPERCLASS_LISTENERS_FQN);
-        if (excludeSuperclassListenersMirror != null) {
-            this.setExcludeSuperclassListeners(new EmptyType());
-        }
-
-        AnnotationMirror namedQueriesMirror = JavaSourceParserUtil.findAnnotation(element, NAMED_QUERIES_FQN);
-        if (namedQueriesMirror != null) {
-            List namedQueriesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(namedQueriesMirror, "value");
-            if (namedQueriesMirrorList != null) {
-                for (Object namedQueryObj : namedQueriesMirrorList) {
-                    this.getNamedQuery().add(NamedQuery.load(element, (AnnotationMirror) namedQueryObj));
-                }
-            }
-        } else {
-            namedQueriesMirror = JavaSourceParserUtil.findAnnotation(element, NAMED_QUERY_FQN);
-            if (namedQueriesMirror != null) {
-                this.getNamedQuery().add(NamedQuery.load(element, namedQueriesMirror));
-            }
-        }
-        AnnotationMirror namedNativeQueriesMirror = JavaSourceParserUtil.findAnnotation(element, NAMED_NATIVE_QUERIES_FQN);
-        if (namedNativeQueriesMirror != null) {
-            List namedNativeQueriesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(namedNativeQueriesMirror, "value");
-            if (namedNativeQueriesMirrorList != null) {
-                for (Object namedNativeQueryObj : namedNativeQueriesMirrorList) {
-                    this.getNamedNativeQuery().add(NamedNativeQuery.load(element, (AnnotationMirror) namedNativeQueryObj));
-                }
-            }
-        } else {
-            namedNativeQueriesMirror = JavaSourceParserUtil.findAnnotation(element, NAMED_NATIVE_QUERY_FQN);
-            if (namedNativeQueriesMirror != null) {
-                this.getNamedNativeQuery().add(NamedNativeQuery.load(element, namedNativeQueriesMirror));
-            }
-        }
-        
-        AnnotationMirror resultSetMappingsMirror = JavaSourceParserUtil.findAnnotation(element, SQL_RESULTSET_MAPPINGS_FQN);
-        if (resultSetMappingsMirror != null) {
-            List resultSetMappingsMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(resultSetMappingsMirror, "value");
-            if (resultSetMappingsMirrorList != null) {
-                for (Object resultSetMappingObj : resultSetMappingsMirrorList) {
-                    SqlResultSetMapping mapping = SqlResultSetMapping.load(element, (AnnotationMirror) resultSetMappingObj);
-                    mapping.setIdentifiableClass(this);
-                    this.getSqlResultSetMapping().add(mapping);
-                }
-            }
-        } else {
-            resultSetMappingsMirror = JavaSourceParserUtil.findAnnotation(element, SQL_RESULTSET_MAPPING_FQN);
-            if (resultSetMappingsMirror != null) {
-                SqlResultSetMapping mapping = SqlResultSetMapping.load(element, resultSetMappingsMirror);
-                mapping.setIdentifiableClass(this);
-                this.getSqlResultSetMapping().add(mapping);
-            }
-        }
-
-        this.namedStoredProcedureQuery = NamedStoredProcedureQuery.load(element);
-
-        TypeElement superClassElement = JavaSourceParserUtil.getSuperclassTypeElement(element);
-        if (!superClassElement.getQualifiedName().toString().equals("java.lang.Object")) {
-            if (isEntity(superClassElement)) {
-                Entity entitySuperclassSpec
-                        = entityMappings
-                                .findEntity(superClassElement.getSimpleName().toString())
-                                .orElseGet(() -> {
-                                    Entity entityspec = new Entity();
-                                    entityspec.load(entityMappings, superClassElement, fieldAccess);
-                                    entityMappings.addEntity(entityspec);
-                                    return entityspec;
-                                });
-                super.addSuperclass(entitySuperclassSpec);
-            } else if (isMappedSuperclass(superClassElement)) {
-                MappedSuperclass mappedSuperclassSpec
-                        = entityMappings
-                                .findMappedSuperclass(superClassElement.getSimpleName().toString())
-                                .orElseGet(() -> {
-                                    MappedSuperclass mappedSpec = new MappedSuperclass();
-                                    mappedSpec.load(entityMappings, superClassElement, fieldAccess);
-                                    entityMappings.addMappedSuperclass(mappedSpec);
-                                    return mappedSpec;
-                                });
-                super.addSuperclass(mappedSuperclassSpec);
-            } else {
-                this.setSuperclassRef(new ReferenceClass(superClassElement.toString()));
-            }
-        }
-    }
 
     @Override
     public void load(ClassExplorer clazz) {

@@ -7,11 +7,7 @@
 package io.github.jeddict.jpa.spec;
 
 import io.github.jeddict.db.metadata.InheritanceSpecMetadata;
-import static io.github.jeddict.jcode.JPAConstants.INHERITANCE_FQN;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -54,17 +50,6 @@ public class Inheritance {
 
     @XmlAttribute
     protected InheritanceType strategy;
-
-    @Deprecated
-    public static Inheritance load(Element element) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, INHERITANCE_FQN);
-        Inheritance inheritance = null;
-        if (annotationMirror != null) {
-            inheritance = new Inheritance();
-            inheritance.strategy = InheritanceType.load(element, annotationMirror);
-        }
-        return inheritance;
-    }
 
     public static Inheritance load(AnnotationExplorer annotation) {
         Inheritance inheritance = new Inheritance();

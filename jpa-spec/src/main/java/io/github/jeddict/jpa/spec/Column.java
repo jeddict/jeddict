@@ -6,16 +6,11 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.COLUMN_FQN;
 import io.github.jeddict.jpa.spec.extend.BaseElement;
 import io.github.jeddict.jpa.spec.validator.column.ColumnValidator;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JAREAnnotationLoader;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.Optional;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -66,7 +61,7 @@ import org.eclipse.persistence.internal.jpa.metadata.columns.ColumnMetadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "column")
 @XmlJavaTypeAdapter(value = ColumnValidator.class)
-public class Column extends BaseElement implements JAREAnnotationLoader {
+public class Column extends BaseElement {
 
     @XmlAttribute(name = "name")
     protected String name;
@@ -88,35 +83,6 @@ public class Column extends BaseElement implements JAREAnnotationLoader {
     protected Integer precision;
     @XmlAttribute(name = "scale")
     protected Integer scale;
-
-    @Override
-    @Deprecated
-    public Column load(Element element, AnnotationMirror annotationMirror) {
-        if (annotationMirror == null) {
-            annotationMirror = JavaSourceParserUtil.findAnnotation(element, COLUMN_FQN);
-        }
-        Column column = null;
-        if (annotationMirror != null) {
-            column = this;
-            column.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            column.unique = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "unique");
-            column.nullable = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "nullable");
-            column.insertable = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "insertable");
-            column.updatable = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "updatable");
-            column.columnDefinition = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columnDefinition");
-            column.table = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "table");
-            column.length = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "length");
-            column.precision = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "precision");
-            column.scale = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "scale");
-        }
-        return column;
-    }
-
-    @Deprecated
-    public Column load(Element element) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, COLUMN_FQN);
-        return load(element, annotationMirror);
-    }
 
     public static Column load(MemberExplorer member) {
         Column column = null;

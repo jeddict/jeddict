@@ -6,18 +6,12 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.ATTRIBUTE_OVERRIDES_FQN;
-import static io.github.jeddict.jcode.JPAConstants.ATTRIBUTE_OVERRIDE_FQN;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import static java.util.stream.Collectors.toSet;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -68,43 +62,6 @@ public class AttributeOverride implements Comparable<AttributeOverride> {
     protected Column column;
     @XmlAttribute(required = true)
     protected String name;
-
-    @Deprecated
-    private static AttributeOverride load(Element element, AnnotationMirror annotationMirror) {
-        AttributeOverride attributeOverride = null;
-        if (annotationMirror != null) {
-            attributeOverride = new AttributeOverride();
-            attributeOverride.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-
-            AnnotationMirror columnsAnnot = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "column");
-            if (columnsAnnot != null) {
-                attributeOverride.column = new Column().load(element, columnsAnnot);
-            }
-        }
-        return attributeOverride;
-    }
-
-    @Deprecated
-    public static Set<AttributeOverride> load(Element element) {
-        Set<AttributeOverride> attributeOverrides = new TreeSet<>();
-
-        AnnotationMirror attributeOverridesMirror = JavaSourceParserUtil.findAnnotation(element, ATTRIBUTE_OVERRIDES_FQN);
-        if (attributeOverridesMirror != null) {
-            List attributeOverridesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(attributeOverridesMirror, "value");
-            if (attributeOverridesMirrorList != null) {
-                for (Object attributeOverrideObj : attributeOverridesMirrorList) {
-                    attributeOverrides.add(AttributeOverride.load(element, (AnnotationMirror) attributeOverrideObj));
-                }
-            }
-        } else {
-            attributeOverridesMirror = JavaSourceParserUtil.findAnnotation(element, ATTRIBUTE_OVERRIDE_FQN);
-            if (attributeOverridesMirror != null) {
-                attributeOverrides.add(AttributeOverride.load(element, attributeOverridesMirror));
-            }
-        }
-
-        return attributeOverrides;
-    }
 
     private static AttributeOverride load(AnnotationExplorer annotation) {
         AttributeOverride attributeOverride = new AttributeOverride();

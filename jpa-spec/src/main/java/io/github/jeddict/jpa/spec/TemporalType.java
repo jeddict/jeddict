@@ -6,11 +6,7 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.TEMPORAL_FQN;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.MemberExplorer;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
@@ -45,21 +41,6 @@ public enum TemporalType {
 
     public static TemporalType fromValue(String v) {
         return valueOf(v);
-    }
-
-    public static TemporalType load(Element element, AnnotationMirror annotationMirror) {
-        if (annotationMirror == null) {
-            annotationMirror = JavaSourceParserUtil.findAnnotation(element, TEMPORAL_FQN);
-        }
-        TemporalType temporalType = null;
-        if (annotationMirror != null) {
-            Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
-            if (value != null) {
-                temporalType = TemporalType.valueOf(value.toString());
-            }
-        }
-        return temporalType;
-
     }
 
     public static TemporalType load(MemberExplorer member) {

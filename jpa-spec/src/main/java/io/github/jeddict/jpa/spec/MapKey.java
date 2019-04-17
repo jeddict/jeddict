@@ -6,14 +6,9 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_FQN;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JAREAnnotationLoader;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.Optional;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -48,24 +43,10 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "map-key")
-public class MapKey implements JAREAnnotationLoader {
+public class MapKey {
 
     @XmlAttribute
     protected String name;
-    
-    
-    @Override
-    public MapKey load(Element element, AnnotationMirror annotationMirror) {
-        if (annotationMirror == null) {
-            annotationMirror = JavaSourceParserUtil.findAnnotation(element, MAP_KEY_FQN);
-        }
-        MapKey mapKey = null;
-        if (annotationMirror != null) {
-            mapKey = this;
-            mapKey.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-        }
-        return mapKey;
-    }
 
     public static MapKey load(MemberExplorer member) {
         MapKey mapKey = null;

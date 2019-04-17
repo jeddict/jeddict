@@ -13,31 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.jeddict.source;
+package io.github.jeddict.jcode.util;
 
-import io.github.jeddict.bv.constraints.AssertFalse;
-import io.github.jeddict.bv.constraints.AssertTrue;
-import io.github.jeddict.bv.constraints.Constraint;
-import io.github.jeddict.bv.constraints.DecimalMax;
-import io.github.jeddict.bv.constraints.DecimalMin;
-import io.github.jeddict.bv.constraints.Digits;
-import io.github.jeddict.bv.constraints.Email;
-import io.github.jeddict.bv.constraints.Future;
-import io.github.jeddict.bv.constraints.FutureOrPresent;
-import io.github.jeddict.bv.constraints.Max;
-import io.github.jeddict.bv.constraints.Min;
-import io.github.jeddict.bv.constraints.Negative;
-import io.github.jeddict.bv.constraints.NegativeOrZero;
-import io.github.jeddict.bv.constraints.NotBlank;
-import io.github.jeddict.bv.constraints.NotEmpty;
-import io.github.jeddict.bv.constraints.NotNull;
-import io.github.jeddict.bv.constraints.Null;
-import io.github.jeddict.bv.constraints.Past;
-import io.github.jeddict.bv.constraints.PastOrPresent;
-import io.github.jeddict.bv.constraints.Positive;
-import io.github.jeddict.bv.constraints.PositiveOrZero;
-import io.github.jeddict.bv.constraints.Size;
-import io.github.jeddict.bv.constraints.Valid;
 import static io.github.jeddict.jcode.JPAConstants.BASIC_FQN;
 import static io.github.jeddict.jcode.JPAConstants.COLUMN_FQN;
 import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION_FQN;
@@ -56,13 +33,8 @@ import static io.github.jeddict.jcode.JPAConstants.ONE_TO_ONE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.PERSISTENCE_PACKAGE;
 import static io.github.jeddict.jcode.JPAConstants.TRANSIENT_FQN;
 import static io.github.jeddict.jcode.JPAConstants.VERSION_FQN;
-import static io.github.jeddict.jcode.util.JavaSourceHelper.getSimpleClassName;
-import io.github.jeddict.jcode.util.StringHelper;
-import io.github.jeddict.jpa.spec.Embeddable;
-import io.github.jeddict.jpa.spec.Entity;
-import io.github.jeddict.jpa.spec.EntityMappings;
-import io.github.jeddict.jpa.spec.extend.Attribute;
-import io.github.jeddict.jpa.spec.extend.annotation.Annotation;
+//import io.github.jeddict.jpa.spec.extend.Attribute;
+//import io.github.jeddict.jpa.spec.extend.annotation.Annotation;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -77,7 +49,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import static java.util.Objects.nonNull;
-import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -101,21 +72,15 @@ import org.netbeans.api.java.source.WorkingCopy;
 import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Utilities;
-import static io.github.jeddict.jcode.BeanVaildationConstants.BV_CONSTRAINTS_PACKAGE;
 
 /**
  *
  * @author Gaurav Gupta
  */
+@Deprecated
 public class JavaSourceParserUtil {
     
     private static final String CONSTANT_VAR = "^[A-Z_$][A-Z_$0-9]*$";
-    private static final Logger LOG = Logger.getLogger(JavaSourceParserUtil.class.getName());
-
-    public static String simpleClassName(String fqn) {
-        int lastDot = fqn.lastIndexOf('.');
-        return lastDot > 0 ? fqn.substring(lastDot + 1) : fqn;
-    }
 
     public static String readResource(InputStream is, String encoding) throws IOException {
         // read the config from resource first
@@ -141,43 +106,6 @@ public class JavaSourceParserUtil {
         }
     }
 
-    public static boolean isFieldAccess(TypeElement clazz) {
-        boolean fieldAccess = false;
-        boolean accessTypeDetected = false;
-        TypeElement typeElement = clazz;
-        Name qualifiedName = typeElement.getQualifiedName();
-        whileloop:
-        while (typeElement != null) {
-            if (isAnnotatedWith(typeElement, ENTITY_FQN)
-                    || isAnnotatedWith(typeElement, MAPPED_SUPERCLASS_FQN)) {
-                for (Element element : typeElement.getEnclosedElements()) {
-                    if (isAnnotatedWith(element, ID_FQN)
-                            || isAnnotatedWith(element, EMBEDDED_ID_FQN)
-                            || isAnnotatedWith(element, EMBEDDED_FQN)
-                            || isAnnotatedWith(element, BASIC_FQN)
-                            || isAnnotatedWith(element, TRANSIENT_FQN)
-                            || isAnnotatedWith(element, VERSION_FQN)
-                            || isAnnotatedWith(element, ELEMENT_COLLECTION_FQN)
-                            || isAnnotatedWith(element, ONE_TO_MANY_FQN)
-                            || isAnnotatedWith(element, MANY_TO_MANY_FQN)
-                            || isAnnotatedWith(element, ONE_TO_ONE_FQN)
-                            || isAnnotatedWith(element, MANY_TO_ONE_FQN)) {
-                        if (ElementKind.FIELD == element.getKind()) {
-                            fieldAccess = true;
-                        }
-                        accessTypeDetected = true;
-                        break whileloop;
-                    }
-                }
-            }
-            typeElement = getSuperclassTypeElement(typeElement);
-        }
-        if (!accessTypeDetected) {
-            Logger.getLogger(JavaSourceParserUtil.class.getName()).log(Level.WARNING, "Failed to detect correct access type for class: {0}", qualifiedName); // NOI18N
-        }
-        return fieldAccess;
-    }
-
     public static boolean isAnnotatedWith(Element element, String annotationFqn) {
         return findAnnotation(element, annotationFqn) != null;
     }
@@ -187,83 +115,67 @@ public class JavaSourceParserUtil {
     }
 
     //"javax.persistence|javax.xml.bind.annotation"
-    private static final Pattern JPA_PACKAGE_PATTERN = Pattern.compile(PERSISTENCE_PACKAGE);
-    public static final Class[] BEAN_VALIDATION_REVENG_CLASS_LIST = new Class[]{
-        Valid.class,
-        AssertFalse.class, AssertTrue.class,
-        Null.class, NotNull.class, NotEmpty.class, NotBlank.class,
-        Size.class, Pattern.class, Email.class,
-        DecimalMax.class, DecimalMin.class,
-        Max.class, Min.class, Digits.class, 
-        Positive.class, PositiveOrZero.class, Negative.class, NegativeOrZero.class,
-        Future.class, Past.class, FutureOrPresent.class, PastOrPresent.class};
+//    private static final Pattern JPA_PACKAGE_PATTERN = Pattern.compile(PERSISTENCE_PACKAGE);
 
-    private static final Map<String, Class<? extends Constraint>> SUPPORTED_BV_REVENG_CLASS_SET = new HashMap<>();
 
-    static {
-        for (Class<? extends Constraint> bvClass : BEAN_VALIDATION_REVENG_CLASS_LIST) {
-            SUPPORTED_BV_REVENG_CLASS_SET.put(BV_CONSTRAINTS_PACKAGE + "." + bvClass.getSimpleName(), bvClass);
-        }
-    }
-
-    public static Set<Constraint> getBeanValidation(Element element) {
-        Set<Constraint> constraints = Attribute.CONSTRAINTS_SUPPLIER.get();
-        for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
-            String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
-            Class<? extends Constraint> bvClass = SUPPORTED_BV_REVENG_CLASS_SET.get(annotationQualifiedName);
-            if (bvClass != null) {
-                Constraint constraint = null;
-                try {
-                    constraint = bvClass.newInstance();
-                } catch (InstantiationException | IllegalAccessException ex) {
-                    ex.printStackTrace();
-                    // Ignore
-                }
-                if (constraint != null) {
-                    constraint.load(annotationMirror);
-                    constraints.add(constraint);
-                }
-            }
-        }
-        return constraints;
-    }
-
-    public static <T extends Annotation> List<T> getNonEEAnnotation(Element element, Class<? extends T> type) {
-        List<T> annotations = new ArrayList<>();
-        for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
-            String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
-            Matcher matcher = JPA_PACKAGE_PATTERN.matcher(annotationQualifiedName);
-            if (!matcher.find()) {
-                if (SUPPORTED_BV_REVENG_CLASS_SET.containsKey(annotationQualifiedName)) {
-                    continue;//skip this annotation , already reveng in getBeanValidation()
-                }
-                T annotation;
-                
-                try {
-                    annotation = type.newInstance();
-                } catch(Exception e){
-                    throw new IllegalStateException(e);
-                }
-                
-//TODO parse annotation
-//        Iterator itr = annotationMirror.getElementValues().entrySet().iterator();
-//        while(itr.hasNext()){
-//            Entry entry = (Entry)itr.next();
-//            ExecutableElement executableElement = (ExecutableElement)entry.getKey();
-//            AnnotationValue annotationValue = (AnnotationValue)entry.getValue();
-//            AnnotationElement annotationElement = new AnnotationElement();
-//            annotationElement.setName(executableElement.getSimpleName().toString());
-//            annotationElement.setValue(annotationValue.getValue());
-//            annotation.addAnnotationElement(annotationElement);
+//    public static Set<Constraint> getBeanValidation(Element element) {
+//        Set<Constraint> constraints = Attribute.CONSTRAINTS_SUPPLIER.get();
+//        for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
+//            String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
+//            Class<? extends Constraint> bvClass = SUPPORTED_BV_REVENG_CLASS_SET.get(annotationQualifiedName);
+//            if (bvClass != null) {
+//                Constraint constraint = null;
+//                try {
+//                    constraint = bvClass.newInstance();
+//                } catch (InstantiationException | IllegalAccessException ex) {
+//                    ex.printStackTrace();
+//                    // Ignore
+//                }
+//                if (constraint != null) {
+//                    constraint.load(annotationMirror);
+//                    constraints.add(constraint);
+//                }
+//            }
 //        }
-//        annotation.setName(annotationMirror.getAnnotationType().toString());
-//        
-                annotation.setName(annotationMirror.toString());
-                annotations.add(annotation);
-            }
-        }
-        return annotations;
-    }
+//        return constraints;
+//    }
+
+//    public static <T extends Annotation> List<T> getNonEEAnnotation(Element element, Class<? extends T> type) {
+//        List<T> annotations = new ArrayList<>();
+//        for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
+//            String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
+//            Matcher matcher = JPA_PACKAGE_PATTERN.matcher(annotationQualifiedName);
+//            if (!matcher.find()) {
+//                if (SUPPORTED_BV_REVENG_CLASS_SET.containsKey(annotationQualifiedName)) {
+//                    continue;//skip this annotation , already reveng in getBeanValidation()
+//                }
+//                T annotation;
+//                
+//                try {
+//                    annotation = type.newInstance();
+//                } catch(Exception e){
+//                    throw new IllegalStateException(e);
+//                }
+//                
+////TODO parse annotation
+////        Iterator itr = annotationMirror.getElementValues().entrySet().iterator();
+////        while(itr.hasNext()){
+////            Entry entry = (Entry)itr.next();
+////            ExecutableElement executableElement = (ExecutableElement)entry.getKey();
+////            AnnotationValue annotationValue = (AnnotationValue)entry.getValue();
+////            AnnotationElement annotationElement = new AnnotationElement();
+////            annotationElement.setName(executableElement.getSimpleName().toString());
+////            annotationElement.setValue(annotationValue.getValue());
+////            annotation.addAnnotationElement(annotationElement);
+////        }
+////        annotation.setName(annotationMirror.getAnnotationType().toString());
+////        
+//                annotation.setName(annotationMirror.toString());
+//                annotations.add(annotation);
+//            }
+//        }
+//        return annotations;
+//    }
 
     public static AnnotationMirror findAnnotation(Element element, String annotationFqn) {
         for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
@@ -455,20 +367,20 @@ public class JavaSourceParserUtil {
                 .anyMatch(annot -> annot.contains("@lombok.Getter"));
     }
 
-    public static Embeddable loadEmbeddableClass(EntityMappings entityMappings, Element element, VariableElement variableElement, DeclaredType embeddableClass) {
-        Embeddable embeddableClassSpec;
-        Optional<Embeddable> embeddableClassSpecOpt = entityMappings.findEmbeddable(getSimpleClassName(embeddableClass.toString()));
-        if (!embeddableClassSpecOpt.isPresent()) {
-            boolean fieldAccess = element == variableElement;
-            embeddableClassSpec = new Embeddable();
-            TypeElement embeddableTypeElement = getTypeElement(embeddableClass); 
-            embeddableClassSpec.load(entityMappings, embeddableTypeElement, fieldAccess);
-            entityMappings.addEmbeddable(embeddableClassSpec);
-        } else {
-            embeddableClassSpec = embeddableClassSpecOpt.get();
-        }
-        return embeddableClassSpec;
-    }
+//    public static Embeddable loadEmbeddableClass(EntityMappings entityMappings, Element element, VariableElement variableElement, DeclaredType embeddableClass) {
+//        Embeddable embeddableClassSpec;
+//        Optional<Embeddable> embeddableClassSpecOpt = entityMappings.findEmbeddable(getSimpleClassName(embeddableClass.toString()));
+//        if (!embeddableClassSpecOpt.isPresent()) {
+//            boolean fieldAccess = element == variableElement;
+//            embeddableClassSpec = new Embeddable();
+//            TypeElement embeddableTypeElement = getTypeElement(embeddableClass); 
+//            embeddableClassSpec.load(entityMappings, embeddableTypeElement, fieldAccess);
+//            entityMappings.addEmbeddable(embeddableClassSpec);
+//        } else {
+//            embeddableClassSpec = embeddableClassSpecOpt.get();
+//        }
+//        return embeddableClassSpec;
+//    }
 
     public static boolean isMappedSuperclass(Element typeElement) {
         return nonNull(typeElement.getAnnotation(javax.persistence.MappedSuperclass.class));
@@ -482,20 +394,20 @@ public class JavaSourceParserUtil {
         return nonNull(typeElement.getAnnotation(javax.persistence.Embeddable.class));
     }
     
-    public static Entity loadEntity(EntityMappings entityMappings, Element element, VariableElement variableElement, DeclaredType entityClass) {
-        Entity entityClassSpec;
-        Optional<Entity> entityClassSpecOpt = entityMappings.findEntity(getSimpleClassName(entityClass.toString()));
-        if (!entityClassSpecOpt.isPresent()) {
-            boolean fieldAccess = element == variableElement;
-            entityClassSpec = new Entity();
-            TypeElement embeddableTypeElement = getTypeElement(entityClass);
-            entityClassSpec.load(entityMappings, embeddableTypeElement, fieldAccess);
-            entityMappings.addEntity(entityClassSpec);
-        } else {
-            entityClassSpec = entityClassSpecOpt.get();
-        }
-        return entityClassSpec;
-    }
+//    public static Entity loadEntity(EntityMappings entityMappings, Element element, VariableElement variableElement, DeclaredType entityClass) {
+//        Entity entityClassSpec;
+//        Optional<Entity> entityClassSpecOpt = entityMappings.findEntity(getSimpleClassName(entityClass.toString()));
+//        if (!entityClassSpecOpt.isPresent()) {
+//            boolean fieldAccess = element == variableElement;
+//            entityClassSpec = new Entity();
+//            TypeElement embeddableTypeElement = getTypeElement(entityClass);
+//            entityClassSpec.load(entityMappings, embeddableTypeElement, fieldAccess);
+//            entityMappings.addEntity(entityClassSpec);
+//        } else {
+//            entityClassSpec = entityClassSpecOpt.get();
+//        }
+//        return entityClassSpec;
+//    }
 
     public static boolean isNonEntityClass(TypeElement typeElement) {
         return !isEntity(typeElement) && !isMappedSuperclass(typeElement) && !isEmbeddable(typeElement);

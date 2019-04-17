@@ -6,20 +6,15 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.SECONDARY_TABLES_FQN;
-import static io.github.jeddict.jcode.JPAConstants.SECONDARY_TABLE_FQN;
 import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -80,51 +75,6 @@ public class SecondaryTable extends Table {
     protected ForeignKey primaryKeyForeignKey;//REVENG PENDING
     @XmlElement(name = "fk")
     protected ForeignKey foreignKey;//REVENG PENDING
-
-    private static SecondaryTable loadSecondaryTable(Element element, AnnotationMirror annotationMirror) {
-        SecondaryTable secondaryTable = null;
-        if (annotationMirror != null) {
-            secondaryTable = new SecondaryTable();
-            List uniqueConstraintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "uniqueConstraints");
-            if (uniqueConstraintsAnnot != null) {
-                for (Object uniqueConstraintsObj : uniqueConstraintsAnnot) {
-                    secondaryTable.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
-                }
-            }
-            
-            List indexesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "indexes");
-            if (indexesAnnot != null) {
-                for (Object indexObj : indexesAnnot) {
-                    secondaryTable.getIndex().add(Index.load(element, (AnnotationMirror) indexObj));
-                }
-            }
-
-            secondaryTable.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            secondaryTable.catalog = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "catalog");
-            secondaryTable.schema = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "schema");
-        }
-        return secondaryTable;
-    }
-
-    public static List<SecondaryTable> loadTables(Element element) {
-        List<SecondaryTable> secondaryTables = new ArrayList<>();
-
-        AnnotationMirror secondaryTablesMirror = JavaSourceParserUtil.findAnnotation(element, SECONDARY_TABLES_FQN);
-        if (secondaryTablesMirror != null) {
-            List secondaryTablesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(secondaryTablesMirror, "value");
-            if (secondaryTablesMirrorList != null) {
-                for (Object secondaryTableObj : secondaryTablesMirrorList) {
-                    secondaryTables.add(SecondaryTable.loadSecondaryTable(element, (AnnotationMirror) secondaryTableObj));
-                }
-            }
-        } else {
-            secondaryTablesMirror = JavaSourceParserUtil.findAnnotation(element, SECONDARY_TABLE_FQN);
-            if (secondaryTablesMirror != null) {
-                secondaryTables.add(SecondaryTable.loadSecondaryTable(element, secondaryTablesMirror));
-            }
-        }
-        return secondaryTables;
-    }
 
     public static SecondaryTable load(AnnotationExplorer annotation) {
         SecondaryTable secondaryTable = new SecondaryTable();

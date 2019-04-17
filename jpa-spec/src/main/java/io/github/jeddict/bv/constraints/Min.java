@@ -16,8 +16,6 @@
 package io.github.jeddict.bv.constraints;
 
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -30,12 +28,6 @@ public class Min extends Constraint {
 
     @XmlAttribute(name = "v")
     private String value;
-
-    @Override
-    public void load(AnnotationMirror annotation) {
-        super.load(annotation);
-        this.value = (String) JavaSourceParserUtil.findAnnotationValue(annotation, "value");
-    }
 
     @Override
     public void load(AnnotationExplorer annotation) {

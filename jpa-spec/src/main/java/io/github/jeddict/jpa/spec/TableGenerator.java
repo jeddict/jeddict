@@ -6,11 +6,9 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.JPAConstants.TABLE_GENERATOR_FQN;
 import io.github.jeddict.jpa.spec.validator.TableGeneratorValidator;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -18,8 +16,6 @@ import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -103,39 +99,6 @@ public class TableGenerator {
     protected Integer initialValue;
     @XmlAttribute(name = "allocation-size")
     protected Integer allocationSize;
-
-    public static TableGenerator load(Element element) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, TABLE_GENERATOR_FQN);
-        TableGenerator tableGenerator = null;
-        if (annotationMirror != null) {
-            tableGenerator = new TableGenerator();
-            tableGenerator.description = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "description");
-            List uniqueConstraintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "uniqueConstraints");
-            if (uniqueConstraintsAnnot != null) {
-                for (Object uniqueConstraintsObj : uniqueConstraintsAnnot) {
-                    tableGenerator.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
-                }
-            }
-
-            List indexesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "indexes");
-            if (indexesAnnot != null) {
-                for (Object indexObj : indexesAnnot) {
-                    tableGenerator.getIndex().add(Index.load(element, (AnnotationMirror) indexObj));
-                }
-            }
-            tableGenerator.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            tableGenerator.table = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "table");
-            tableGenerator.catalog = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "catalog");
-            tableGenerator.schema = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "schema");
-            tableGenerator.pkColumnName = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "pkColumnName");
-            tableGenerator.valueColumnName = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "valueColumnName");
-            tableGenerator.pkColumnValue = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "pkColumnValue");
-            tableGenerator.initialValue = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "initialValue");
-            tableGenerator.allocationSize = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "allocationSize");
-        }
-        return tableGenerator;
-
-    }
 
     public static TableGenerator load(AnnotatedMember member) {
         TableGenerator tableGenerator = null;

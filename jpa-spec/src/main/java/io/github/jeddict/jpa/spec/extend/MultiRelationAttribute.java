@@ -21,20 +21,12 @@ import io.github.jeddict.bv.constraints.Constraint;
 import io.github.jeddict.bv.constraints.Size;
 import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.ENTITY_FQN;
-import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_COLUMN_FQN;
-import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_ENUMERATED_FQN;
-import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMNS_FQN;
-import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMN_FQN;
-import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_TEMPORAL_FQN;
-import static io.github.jeddict.jcode.util.JavaSourceHelper.getPackageName;
-import static io.github.jeddict.jcode.util.JavaSourceHelper.getSimpleClassName;
 import static io.github.jeddict.jcode.util.JavaUtil.isMap;
 import io.github.jeddict.jpa.spec.AttributeOverride;
 import io.github.jeddict.jpa.spec.Column;
 import io.github.jeddict.jpa.spec.Convert;
 import io.github.jeddict.jpa.spec.Embeddable;
 import io.github.jeddict.jpa.spec.Entity;
-import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.EnumType;
 import io.github.jeddict.jpa.spec.ForeignKey;
 import io.github.jeddict.jpa.spec.JoinColumn;
@@ -44,11 +36,6 @@ import io.github.jeddict.jpa.spec.OrderBy;
 import io.github.jeddict.jpa.spec.OrderColumn;
 import io.github.jeddict.jpa.spec.TemporalType;
 import io.github.jeddict.source.AnnotationExplorer;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import static io.github.jeddict.source.JavaSourceParserUtil.isEmbeddable;
-import static io.github.jeddict.source.JavaSourceParserUtil.isEntity;
-import static io.github.jeddict.source.JavaSourceParserUtil.loadEmbeddableClass;
-import static io.github.jeddict.source.JavaSourceParserUtil.loadEntity;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,12 +44,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.ErrorType;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.MapKeyJoinColumn;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -145,77 +126,6 @@ public abstract class MultiRelationAttribute extends RelationAttribute
     private Embeddable mapKeyEmbeddable;
     @XmlElement(name = "mkao")
     protected Set<AttributeOverride> mapKeyAttributeOverride; 
-   
-    @Override
-    @Deprecated
-    public void loadAttribute(EntityMappings entityMappings, Element element, VariableElement variableElement, ExecutableElement getterElement, AnnotationMirror relationAnnotationMirror) {
-        super.loadAttribute(entityMappings, element, variableElement, getterElement, relationAnnotationMirror);
-
-        this.mappedBy = (String) JavaSourceParserUtil.findAnnotationValue(relationAnnotationMirror, "mappedBy");
-        this.orderBy = OrderBy.load(element, variableElement);
-        this.orderColumn = OrderColumn.load(element, variableElement);
-        this.collectionType = ((DeclaredType) variableElement.asType()).asElement().toString();
-        Class collectionTypeClass = null;
-        try {
-            collectionTypeClass = Class.forName(this.collectionType);
-        } catch (ClassNotFoundException ex) {
-        }
-        boolean mapKeyExist = collectionTypeClass != null && Map.class.isAssignableFrom(collectionTypeClass);
-
-        DeclaredType declaredType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(relationAnnotationMirror, "targetEntity");
-        if (declaredType == null) {
-            if (variableElement.asType() instanceof ErrorType) { //variable => "<any>"
-                throw new TypeNotPresentException(this.name + " type not found", null);
-            }
-            declaredType = (DeclaredType) ((DeclaredType) variableElement.asType()).getTypeArguments().get(mapKeyExist ? 1 : 0);
-        }
-        String fqn = declaredType.asElement().asType().toString();
-        this.targetEntityPackage = getPackageName(fqn);
-        this.targetEntity = getSimpleClassName(fqn);
-
-        if (mapKeyExist) {
-            this.mapKeyConvert = Convert.load(element, mapKeyExist, true);
-            this.mapKey = new MapKey().load(element, null);
-            this.mapKeyType = this.mapKey != null ? MapKeyType.EXT : MapKeyType.NEW;
-
-            DeclaredType keyDeclaredType = MapKeyClass.getDeclaredType(element);
-            if (keyDeclaredType == null) {
-                keyDeclaredType = (DeclaredType) ((DeclaredType) variableElement.asType()).getTypeArguments().get(0);
-            }
-            if (isEmbeddable(keyDeclaredType.asElement())) {
-                loadEmbeddableClass(entityMappings, element, variableElement, keyDeclaredType);
-                this.mapKeyAttributeType = getSimpleClassName(keyDeclaredType.toString());
-            } else if (isEntity(keyDeclaredType.asElement())) {
-                loadEntity(entityMappings, element, variableElement, keyDeclaredType);
-                this.mapKeyAttributeType = getSimpleClassName(keyDeclaredType.toString());
-            } else {
-                this.mapKeyAttributeType = keyDeclaredType.toString();
-            }
-
-            this.mapKeyColumn = new Column().load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_COLUMN_FQN));
-            this.mapKeyTemporal = TemporalType.load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_TEMPORAL_FQN));
-            this.mapKeyEnumerated = EnumType.load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_ENUMERATED_FQN));
-
-            AnnotationMirror joinColumnsAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, MAP_KEY_JOIN_COLUMNS_FQN);
-            if (joinColumnsAnnotationMirror != null) {
-                List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(joinColumnsAnnotationMirror, "value");
-                if (joinColumnsAnnot != null) {
-                    for (Object joinColumnObj : joinColumnsAnnot) {
-                        this.getMapKeyJoinColumn().add(new JoinColumn().load(element, (AnnotationMirror) joinColumnObj));
-                    }
-                }
-            } else {
-                AnnotationMirror joinColumnAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, MAP_KEY_JOIN_COLUMN_FQN);
-                if (joinColumnAnnotationMirror != null) {
-                    this.getMapKeyJoinColumn().add(new JoinColumn().load(element, joinColumnAnnotationMirror));
-                }
-            }
-
-            this.mapKeyForeignKey = ForeignKey.load(element, null);
-            this.getMapKeyAttributeOverride().addAll(AttributeOverride.load(element));
-
-        }
-    }
 
     @Override
     public void loadAttribute(MemberExplorer member, AnnotationExplorer annotation) {
