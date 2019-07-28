@@ -88,11 +88,6 @@
             <artifactId>org-netbeans-modules-j2ee-eclipselink</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.netbeans.external</groupId>
-            <artifactId>nb-javac-api</artifactId>
-            <version>RELEASE82</version>
-        </dependency>
         
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -176,13 +171,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <id>netbeans-modules</id>
-            <name>Repository hosting NetBeans modules</name>
-            <url>http://bits.netbeans.org/maven2/</url>
-        </repository>
-    </repositories>
 
 </project>
