@@ -12,6 +12,7 @@
         
     <properties>
         <root.dir>${basedir}/../</root.dir>
+        <graalvm.version>19.0.0</graalvm.version>
     </properties>
     
     <build>
@@ -29,12 +30,6 @@
                         <publicPackage>io.github.jeddict.jcode.ui</publicPackage>
                         <publicPackage>io.github.jeddict.jcode.parser.ejs</publicPackage>
                     </publicPackages>
-                    <moduleDependencies>
-                        <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-websvc-jaxws21</id>
-                            <type>impl</type>
-                        </dependency>
-                    </moduleDependencies>
                 </configuration>
             </plugin>
         </plugins>
@@ -117,16 +112,37 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.modules</groupId>
-            <artifactId>org-netbeans-modules-websvc-jaxws21</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>
-<!--    TODO add provided graaljs depedencies 
-        <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-libs-graaljs</artifactId>
             <version>${netbeans.version}</version>
-        </dependency>-->
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-api-scripting</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-libs-truffleapi</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-libs-graalsdk</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.graalvm.js</groupId>
+            <artifactId>js-scriptengine</artifactId>
+            <version>${graalvm.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.graalvm.sdk</groupId>
+                    <artifactId>graal-sdk</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
     </dependencies>
 
 </project>

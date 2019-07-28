@@ -31,15 +31,7 @@
                             <type>impl</type>
                         </dependency>
                         <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-j2ee-core-utilities</id>
-                            <type>impl</type>
-                        </dependency>
-                        <dependency>
                             <id>org.netbeans.modules:org-netbeans-modules-j2ee-persistenceapi</id>
-                            <type>impl</type>
-                        </dependency>
-                        <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-websvc-jaxws21</id>
                             <type>impl</type>
                         </dependency>
                     </moduleDependencies>
@@ -131,11 +123,6 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.modules</groupId>
-            <artifactId>org-netbeans-modules-j2ee-core-utilities</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-projectuiapi</artifactId>
             <version>${netbeans.version}</version>
@@ -198,11 +185,6 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-options-api</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.netbeans.modules</groupId>
-            <artifactId>org-netbeans-modules-websvc-jaxws21</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>

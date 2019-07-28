@@ -24,7 +24,7 @@
     <properties>
         <root.dir>${basedir}</root.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <netbeans.version>RELEASE110</netbeans.version>
+        <netbeans.version>RELEASE111</netbeans.version>
         <netbeans.installation>${root.dir}/../incubator-netbeans/nbbuild/netbeans</netbeans.installation>
         <nbm.cluster>jeddict</nbm.cluster>
         <nbm.build.dir>${root.dir}/../jeddict-cluster</nbm.build.dir>
@@ -105,14 +105,6 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
-    
-    <repositories>
-        <repository>
-            <id>netbeans-modules</id>
-            <name>Repository hosting NetBeans modules</name>
-            <url>http://bits.netbeans.org/maven2/</url>
-        </repository>
-    </repositories>
 
     <profiles>
         <profile>

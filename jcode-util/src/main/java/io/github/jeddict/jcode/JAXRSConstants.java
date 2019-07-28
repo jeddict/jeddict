@@ -19,19 +19,42 @@ package io.github.jeddict.jcode;
  *
  * @author Gaurav Gupta
  */
-public class JAXRSConstants {
+public interface JAXRSConstants {
 
-    public static final String REST_PACKAGE = "javax.ws.rs.";
-    public static final String BEAN_PARAM = REST_PACKAGE + "BeanParam";
-    public static final String RESPONSE = "javax.ws.rs.core.Response";
-    public static final String RESPONSE_UNQF = "Response";
-    public static final String GET_PROPERTIES = "getProperties";
-    public static final String PRE_MATCHING = "javax.ws.rs.container.PreMatching";
-    public static final String CONTAINER_REQUEST = "javax.ws.rs.container.ContainerRequestFilter";
-    public static final String CONTAINER_RESPONSE = "javax.ws.rs.container.ContainerResponseFilter";
-    public static final String CLIENT_REQUEST = "javax.ws.rs.client.ClientRequestFilter";
-    public static final String CLIENT_RESPONSE = "javax.ws.rs.client.ClientResponseFilter";
-    public static final String FORM_PARAM = "javax.ws.rs.FormParam";
-    public static final String SINGLETON_METHOD = "getSingletons";
+    String REST_API_PACKAGE = "javax.ws.rs.";
+    String BEAN_PARAM = REST_API_PACKAGE + "BeanParam";
+    String RESPONSE = "javax.ws.rs.core.Response";
+    String RESPONSE_UNQF = "Response";
+    String GET_PROPERTIES = "getProperties";
+    String PRE_MATCHING = "javax.ws.rs.container.PreMatching";
+    String CONTAINER_REQUEST = "javax.ws.rs.container.ContainerRequestFilter";
+    String CONTAINER_RESPONSE = "javax.ws.rs.container.ContainerResponseFilter";
+    String CLIENT_REQUEST = "javax.ws.rs.client.ClientRequestFilter";
+    String CLIENT_RESPONSE = "javax.ws.rs.client.ClientResponseFilter";
+    String FORM_PARAM = "javax.ws.rs.FormParam";
+    String SINGLETON_METHOD = "getSingletons";
+    String PATH_ANNOTATION = "Path";
+    String PATH_PARAM_ANNOTATION = "PathParam";
+    String QUERY_PARAM_ANNOTATION = "QueryParam";
+    String DEFAULT_VALUE_ANNOTATION = "DefaultValue";
+    String GET_ANNOTATION = "GET";
+    String POST_ANNOTATION = "POST";
+    String PUT_ANNOTATION = "PUT";
+    String DELETE_ANNOTATION = "DELETE";
+    String PRODUCE_MIME_ANNOTATION = "Produces";
+    String CONSUME_MIME_ANNOTATION = "Consumes";
+    String GET = REST_API_PACKAGE + GET_ANNOTATION;
+    String POST = REST_API_PACKAGE + POST_ANNOTATION;
+    String PUT = REST_API_PACKAGE + PUT_ANNOTATION;
+    String DELETE = REST_API_PACKAGE + DELETE_ANNOTATION;
+    String PRODUCE_MIME = REST_API_PACKAGE + PRODUCE_MIME_ANNOTATION;
+    String CONSUME_MIME = REST_API_PACKAGE + CONSUME_MIME_ANNOTATION;
+    String PATH_PARAM = REST_API_PACKAGE + PATH_PARAM_ANNOTATION;
+    String QUERY_PARAM = REST_API_PACKAGE + QUERY_PARAM_ANNOTATION;
+    String DEFAULT_VALUE = REST_API_PACKAGE + DEFAULT_VALUE_ANNOTATION;
+    String PATH = REST_API_PACKAGE + PATH_ANNOTATION;
 
+    String JAX_RS_APPLICATION_CLASS = "javax.ws.rs.core.Application";
+    String GET_CLASSES = "getClasses";
+    String GET_REST_RESOURCE_CLASSES2 = "addRestResourceClasses";
 }

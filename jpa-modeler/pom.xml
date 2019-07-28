@@ -57,10 +57,6 @@
                             <type>impl</type>
                         </dependency>
                         <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-websvc-jaxws21</id>
-                            <type>impl</type>
-                        </dependency>
-                        <dependency>
                             <id>org.netbeans.api:org-netbeans-modules-db</id>
                             <type>impl</type>
                         </dependency>
@@ -90,6 +86,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jpa-spec</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jeddict-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -276,11 +277,6 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-java-project-ui</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.netbeans.modules</groupId>
-            <artifactId>org-netbeans-modules-websvc-jaxws21</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>

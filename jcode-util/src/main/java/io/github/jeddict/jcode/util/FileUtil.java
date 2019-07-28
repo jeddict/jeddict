@@ -43,7 +43,6 @@ import java.util.zip.ZipInputStream;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import static io.github.jeddict.util.StringUtils.isBlank;
 import static io.github.jeddict.util.StringUtils.EMPTY;
@@ -53,22 +52,25 @@ import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
-import org.openide.util.LookupEvent;    
+import org.openide.util.LookupEvent; 
+import org.netbeans.api.scripting.Scripting;
 
 /**
  *
  * @author Gaurav Gupta
  */
 public class FileUtil {
-    
+
     private static final Logger LOG = Logger.getLogger(FileUtil.class.getName());
 
     private static final int DEFAULT_BUFFER_SIZE = 8192;
 
+    private static final String ENCODING_PROPERTY_NAME = "encoding"; //NOI18N
+
     public static URL getResourceURL(String resource) {
         if (resource.startsWith("/")) {
-                resource = resource.substring(1);
-            }
+            resource = resource.substring(1);
+        }
         return getLoader().getResource(resource);
     }
     
@@ -221,7 +223,7 @@ public class FileUtil {
 
     public static void expandTemplate(InputStream template, FileObject toFile, Map<String, Object> values) throws IOException {
         Charset targetEncoding = FileEncodingQuery.getEncoding(toFile);
-        if(toFile.isLocked()){
+        if (toFile.isLocked()) {
             LOG.log(Level.SEVERE, "File {0} is locked", new Object[]{toFile.getName()});
             return;
         }
@@ -302,29 +304,9 @@ public class FileUtil {
 
         return writer.toString();
     }
-    
-    private static final String ENCODING_PROPERTY_NAME = "encoding"; //NOI18N
-    private static ScriptEngineManager manager;
 
-    /**
-     * Used core method for getting {@code ScriptEngine} from {@code
-     * org.netbeans.modules.templates.ScriptingCreateFromTemplateHandler}.
-     */
     private static ScriptEngine getScriptEngine() {
-        ScriptEngine engine;
-        if (manager == null) {
-            synchronized (FileUtil.class) {
-                if (manager == null) {
-                    manager = new ScriptEngineManager();
-                }
-            }
-        }
-        engine = manager.getEngineByName("freemarker");
-//        if (engine == null) {
-//            FreemarkerFactory freemarkerFactory = new FreemarkerFactory();
-//            engine = freemarkerFactory.getScriptEngine();
-//        }
-        return engine;
+        return Scripting.createManager().getEngineByName("freemarker");
     }
 
     public static FileObject createFolder(FileObject folder, String name) throws IOException {

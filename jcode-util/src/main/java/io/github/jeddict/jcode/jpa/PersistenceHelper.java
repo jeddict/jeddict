@@ -20,12 +20,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import static java.util.Objects.nonNull;
+import org.netbeans.api.java.classpath.ClassPath;
+import org.netbeans.api.java.project.JavaProjectConstants;
 import org.netbeans.api.project.Project;
+import org.netbeans.api.project.ProjectUtils;
+import org.netbeans.api.project.SourceGroup;
+import org.netbeans.modules.j2ee.deployment.common.api.ConfigurationException;
 import org.netbeans.modules.j2ee.deployment.common.api.Datasource;
-import org.netbeans.modules.websvc.rest.spi.MiscUtilities;
-import org.netbeans.modules.websvc.rest.spi.RestSupport;
+import org.netbeans.modules.j2ee.deployment.devmodules.spi.J2eeModuleProvider;
+import org.netbeans.modules.j2ee.persistence.api.PersistenceScope;
 import org.openide.filesystems.FileObject;
+import org.openide.util.Exceptions;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -62,7 +67,7 @@ public class PersistenceHelper {
     public PersistenceHelper(Project project) {
         this.project = project;
 
-        FileObject fobj = getPersistenceXML();
+        FileObject fobj = getPersistenceXML(project);
 
         if (fobj != null) {
             helper = new DOMHelper(fobj);
@@ -91,9 +96,13 @@ public class PersistenceHelper {
                 if (nodeList.getLength() > 0) {
                     Element dsElement = (Element) nodeList.item(0);
                     String jndiName = helper.getValue(dsElement);
-                    datasource = MiscUtilities.getDatasource(project, jndiName);
+                    J2eeModuleProvider j2eeModuleProvider = (J2eeModuleProvider) project.getLookup().lookup(J2eeModuleProvider.class);
+                    try {
+                        datasource = j2eeModuleProvider.getConfigSupport().findDatasource(jndiName);
+                    } catch (ConfigurationException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
                 }
-
                 return new PersistenceUnit(puName, provider, datasource);
             }
         }
@@ -105,15 +114,33 @@ public class PersistenceHelper {
         if (helper == null) {
             return;
         }
-        RestSupport support = project.getLookup().lookup(RestSupport.class);
-        if (nonNull(support) && support.isServerTomcat()) {
-            unsetExcludeEnlistedClasses();
-            addEntityClasses(classNames);
-        }
-        if (nonNull(support) && !support.hasJTASupport()) {
+//        RestSupport support = project.getLookup().lookup(RestSupport.class);
+//        if (nonNull(support) && support.isServerTomcat()) {
+//            unsetExcludeEnlistedClasses();
+//            addEntityClasses(classNames);
+//        }
+        if (!hasJTASupport(project)) {
             switchToResourceLocalTransaction();
         }
         helper.save();
+    }
+
+    public boolean hasJTASupport(Project project) {
+        return hasResource(project, "javax/transaction/UserTransaction.class");  // NOI18N
+    }
+
+    public static boolean hasResource(Project project, String resource) {
+        SourceGroup[] sgs = ProjectUtils.getSources(project).getSourceGroups(JavaProjectConstants.SOURCES_TYPE_JAVA);
+        if (sgs.length < 1) {
+            return false;
+        }
+        FileObject sourceRoot = sgs[0].getRootFolder();
+        ClassPath classPath = ClassPath.getClassPath(sourceRoot, ClassPath.COMPILE);
+        if (classPath == null) {
+            return false;
+        }
+        FileObject resourceFile = classPath.findResource(resource);
+        return resourceFile != null;
     }
 
     private void unsetExcludeEnlistedClasses() throws IOException {
@@ -159,10 +186,10 @@ public class PersistenceHelper {
         }
     }
 
-    private FileObject getPersistenceXML() {
-        RestSupport rs = project.getLookup().lookup(RestSupport.class);
-        if (rs != null) {
-            return rs.getPersistenceXml();
+    private FileObject getPersistenceXML(Project project) {
+        PersistenceScope ps = PersistenceScope.getPersistenceScope(project.getProjectDirectory());
+        if (ps != null) {
+            return ps.getPersistenceXml();
         }
         return null;
     }

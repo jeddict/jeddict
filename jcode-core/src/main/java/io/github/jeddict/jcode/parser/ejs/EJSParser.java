@@ -15,6 +15,8 @@
  */
 package io.github.jeddict.jcode.parser.ejs;
 
+import com.oracle.truffle.js.scriptengine.GraalJSEngineFactory;
+import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 import static io.github.jeddict.jcode.util.FileUtil.copy;
 import static io.github.jeddict.jcode.util.FileUtil.loadResource;
 import static io.github.jeddict.jcode.util.FileUtil.readString;
@@ -54,6 +56,8 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Engine;
 import org.openide.util.Exceptions;
 
 public final class EJSParser {
@@ -93,13 +97,17 @@ public final class EJSParser {
     static {
         Properties props = System.getProperties();
         props.setProperty("polyglot.js.nashorn-compat", "true");
-        props.setProperty("polyglot.js.syntax-extensions", "true");
     }
     
     private ScriptEngine createEngine() {
+        // Hack until NETBEANS-2705 fixed
+        System.getProperties().setProperty("polyglot.js.nashorn-compat", "true");
         CompiledScript compiledScript;
         Bindings bindings;
-        ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("Graal.js");
+        GraalJSEngineFactory graalJSEngineFactory = new GraalJSEngineFactory();
+        ScriptEngine scriptEngine = graalJSEngineFactory.getScriptEngine();
+//      org.netbeans.api.scripting.Scripting.createManager().getEngineByName("Graal.js");
+
         try {
             if (base == null) {
                 base = readString(loadResource(TEMPLATES + "base.js"));
@@ -128,6 +136,8 @@ public final class EJSParser {
         } catch (ScriptException ex) {
             Exceptions.printStackTrace(ex);
         }
+        // Hack until NETBEANS-2705 fixed
+        System.getProperties().remove("polyglot.js.nashorn-compat");
         return scriptEngine;
     }
 
@@ -155,6 +165,8 @@ public final class EJSParser {
     }
 
     public String parse(String template) throws ScriptException {
+        // Hack until NETBEANS-2705 fixed
+        System.getProperties().setProperty("polyglot.js.nashorn-compat", "true");
         String result = null;
         try {
             if (engine == null) {
@@ -175,6 +187,8 @@ public final class EJSParser {
         } catch (NoSuchMethodException ex) {
             Exceptions.printStackTrace(ex);
         }
+        // Hack until NETBEANS-2705 fixed
+        System.getProperties().remove("polyglot.js.nashorn-compat");
         return result;
     }
 

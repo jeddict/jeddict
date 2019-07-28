@@ -60,12 +60,10 @@ import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.network.social.LinkedInSocialNetwork;
 import io.github.jeddict.network.social.TwitterSocialNetwork;
 import java.awt.event.InputEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JMenu;
@@ -90,24 +88,12 @@ import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
 import org.netbeans.modeler.widget.node.IWidget;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
-import org.netbeans.modules.j2ee.persistence.api.PersistenceLocation;
-import org.netbeans.modules.j2ee.persistence.dd.PersistenceUtils;
-import org.netbeans.modules.j2ee.persistence.dd.common.Persistence;
-import org.netbeans.modules.j2ee.persistence.provider.InvalidPersistenceXmlException;
-import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
-import static org.netbeans.modules.j2ee.persistence.provider.ProviderUtil.getDDFile;
-import static org.netbeans.modules.j2ee.persistence.provider.ProviderUtil.getPUDataObject;
 import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
 import org.netbeans.modules.openfile.OpenFile;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.awt.NotificationDisplayer;
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileSystem;
-import org.openide.filesystems.FileUtil;
-import org.openide.util.Exceptions;
 import static org.openide.util.NbBundle.getMessage;
-import org.openide.util.Parameters;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 

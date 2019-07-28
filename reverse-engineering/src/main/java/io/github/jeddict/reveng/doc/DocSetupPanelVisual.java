@@ -16,6 +16,7 @@
 package io.github.jeddict.reveng.doc;
 
 import io.github.jeddict.collaborate.issues.ExceptionUtils;
+import io.github.jeddict.jcode.util.JavaIdentifiers;
 import static io.github.jeddict.jcode.util.ProjectHelper.getFolderSourceGroup;
 import static io.github.jeddict.jcode.util.ProjectHelper.getJavaSourceGroups;
 import static io.github.jeddict.jcode.util.ProjectHelper.getPackageForFolder;
@@ -33,7 +34,6 @@ import javax.swing.text.JTextComponent;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
-import org.netbeans.modules.j2ee.core.api.support.java.JavaIdentifiers;
 import org.netbeans.modules.j2ee.persistence.wizard.fromdb.SourceGroupUISupport;
 import org.netbeans.spi.java.project.support.ui.PackageView;
 import org.netbeans.spi.project.ui.templates.support.Templates;

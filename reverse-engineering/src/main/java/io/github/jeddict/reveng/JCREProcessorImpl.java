@@ -46,7 +46,6 @@ import static javax.swing.JOptionPane.YES_OPTION;
 import static javax.swing.JOptionPane.showConfirmDialog;
 import static javax.swing.JOptionPane.showInputDialog;
 import org.netbeans.api.db.explorer.DatabaseConnection;
-import org.netbeans.api.db.explorer.DatabaseMetaDataTransfer.Table;
 import static org.netbeans.api.java.classpath.ClassPath.EMPTY;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;

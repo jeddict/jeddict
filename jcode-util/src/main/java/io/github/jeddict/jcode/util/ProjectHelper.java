@@ -37,6 +37,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import org.netbeans.api.j2ee.core.Profile;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.project.JavaProjectConstants;
 import static org.netbeans.api.java.project.JavaProjectConstants.SOURCES_TYPE_JAVA;
@@ -57,7 +58,6 @@ import org.netbeans.api.project.ui.OpenProjects;
 import org.netbeans.modules.j2ee.common.J2eeProjectCapabilities;
 import org.netbeans.modules.web.api.webmodule.WebModule;
 import org.netbeans.modules.web.api.webmodule.WebProjectConstants;
-import org.netbeans.modules.websvc.rest.spi.MiscUtilities;
 import org.netbeans.spi.java.classpath.ClassPathProvider;
 import org.netbeans.spi.java.classpath.support.ClassPathSupport;
 import org.openide.filesystems.FileObject;
@@ -82,11 +82,33 @@ public class ProjectHelper {
     public static boolean isCDIEnabled(Project project) {
         WebModule wm = WebModule.getWebModule(project.getProjectDirectory());
         if (wm != null) {
-            if (!MiscUtilities.isJavaEE6AndHigher(project)) {
+            if (!isJavaEE6AndHigher(project)) {
                 return false;
             }
             FileObject confRoot = wm.getWebInf();
             if (confRoot != null && confRoot.getFileObject("beans.xml") != null) {  //NOI18N
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if project is of Java EE 6 project type or higher
+     *
+     * @param project project instance
+     * @return true or false
+     */
+    public static boolean isJavaEE6AndHigher(Project project) {
+        WebModule webModule = WebModule.getWebModule(project.getProjectDirectory());
+        if (webModule != null) {
+            Profile profile = webModule.getJ2eeProfile();
+            if (Profile.JAVA_EE_6_WEB == profile
+                    || Profile.JAVA_EE_6_FULL == profile
+                    || Profile.JAVA_EE_7_WEB == profile
+                    || Profile.JAVA_EE_7_FULL == profile
+                    || Profile.JAVA_EE_8_WEB == profile
+                    || Profile.JAVA_EE_8_FULL == profile) {
                 return true;
             }
         }
@@ -212,11 +234,6 @@ public class ProjectHelper {
             }
         }
         return null;
-    }
-
-    
-     public static boolean isJavaEE6AndHigher(Project project) {
-        return MiscUtilities.isJavaEE6AndHigher(project);
     }
      
     public static Map<String, ?> getTemplateProperties() {
@@ -579,7 +596,7 @@ public class ProjectHelper {
 
     public static ElementHandle<TypeElement> getHandleClassName(String qualifiedClassName,
             Project project) throws IOException {
-        FileObject root = MiscUtilities.findSourceRoot(project);
+        FileObject root = findSourceRoot(project);
         ClassPathProvider provider = project.getLookup().lookup(
                 ClassPathProvider.class);
         ClassPath sourceCp = provider.findClassPath(root, ClassPath.SOURCE);
@@ -628,7 +645,7 @@ public class ProjectHelper {
                 return null;
             }
             ClassPathProvider provider = project.getLookup().lookup(ClassPathProvider.class);
-            FileObject root = MiscUtilities.findSourceRoot(project);
+            FileObject root = findSourceRoot(project);
             ClassPath sourceCp = provider.findClassPath(root, ClassPath.SOURCE);
             final ClassPath compileCp = provider.findClassPath(root, ClassPath.COMPILE);
             ClassPath bootCp = provider.findClassPath(root, ClassPath.BOOT);
@@ -809,5 +826,12 @@ public class ProjectHelper {
         return null;
     }
 
+    public static FileObject findSourceRoot(Project project) {
+        SourceGroup[] sourceGroups = ProjectUtils.getSources(project).getSourceGroups(JavaProjectConstants.SOURCES_TYPE_JAVA);
+        if (sourceGroups != null && sourceGroups.length > 0) {
+            return sourceGroups[0].getRootFolder();
+        }
+        return null;
+    }
 
 }

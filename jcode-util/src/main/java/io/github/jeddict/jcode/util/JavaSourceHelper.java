@@ -52,7 +52,6 @@ import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
 import org.netbeans.modules.editor.indent.api.Reformat;
-import org.netbeans.modules.websvc.rest.model.api.RestConstants;
 import org.openide.cookies.EditorCookie;
 import org.openide.cookies.SaveCookie;
 import org.openide.filesystems.FileObject;
@@ -65,6 +64,7 @@ import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
+import io.github.jeddict.jcode.JAXRSConstants;
 import static io.github.jeddict.jcode.util.ProjectHelper.findSourceGroupForFile;
 import javax.lang.model.element.Element;
 import org.netbeans.api.java.source.ClasspathInfo;
@@ -149,7 +149,7 @@ public class JavaSourceHelper {
         for (ExecutableElement method : methods) {
             List<? extends AnnotationMirror> anmirs = method.getAnnotationMirrors();
 
-            AnnotationMirror mirrorHttpMethod = findAnnotation(anmirs, RestConstants.GET);
+            AnnotationMirror mirrorHttpMethod = findAnnotation(anmirs, JAXRSConstants.GET);
             if (mirrorHttpMethod != null) {
                 TypeMirror tm = method.getReturnType();
                 if (tm != null && tm.getKind() == TypeKind.DECLARED) {

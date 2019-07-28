@@ -134,6 +134,7 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import io.github.jeddict.util.StringUtils;
+import java.io.FileWriter;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.modeler.config.document.IModelerDocument;
 import org.netbeans.modeler.config.document.ModelerDocumentFactory;
@@ -162,6 +163,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import static org.openide.util.NbBundle.getMessage;
@@ -1151,15 +1153,15 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
     }
 
     private static void saveFile(EntityMappings entityMappings, File file) {
-        try {
+        try(FileWriter fileWriter = new FileWriter(file)) {
             if (MODELER_MARSHALLER == null) {
                 MODELER_MARSHALLER = MODELER_CONTEXT.createMarshaller();
                 MODELER_MARSHALLER.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
                 MODELER_MARSHALLER.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd");
                 MODELER_MARSHALLER.setEventHandler(new ValidateJAXB());
             }
-            MODELER_MARSHALLER.marshal(entityMappings, file);
-        } catch (JAXBException ex) {
+            MODELER_MARSHALLER.marshal(entityMappings, fileWriter);
+        } catch (JAXBException | IOException ex) {
             ExceptionUtils.printStackTrace(ex);
         }
     }

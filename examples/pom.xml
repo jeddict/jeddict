@@ -20,14 +20,6 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
                 <extensions>true</extensions>
-                <configuration>
-                    <moduleDependencies>
-                        <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-db-metadata-model</id>
-                            <type>impl</type>
-                        </dependency>
-                    </moduleDependencies>
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -37,7 +29,7 @@
             <artifactId>jeddict-tests</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
-        </dependency>   
+        </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-annotations-common</artifactId>
@@ -52,6 +44,12 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>jcode-util</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.maven.shared</groupId>
+                    <artifactId>maven-dependency-tree</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -87,6 +85,6 @@
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-java-project-ui</artifactId>
             <version>${netbeans.version}</version>
-        </dependency>   
+        </dependency>
     </dependencies>
 </project>
