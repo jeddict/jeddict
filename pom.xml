@@ -138,5 +138,10 @@
                 https://repository.apache.org/content/repositories/orgapachenetbeans-1035
             </url>
         </repository>
+        <repository>
+            <id>netbeans-modules</id>
+            <name>Repository hosting NetBeans modules</name>
+            <url>http://bits.netbeans.org/maven2/</url>
+        </repository>
     </repositories>
 </project>

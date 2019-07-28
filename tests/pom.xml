@@ -120,6 +120,11 @@
             <artifactId>istack-commons-runtime</artifactId>
             <version>3.0.8</version>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.external</groupId>
+            <artifactId>nb-javac-api</artifactId>
+            <version>RELEASE82</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

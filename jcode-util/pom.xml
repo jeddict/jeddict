@@ -258,12 +258,5 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-    
-    <repositories>
-        <repository>
-            <id>netbeans-modules</id>
-            <name>Repository hosting NetBeans modules</name>
-            <url>http://bits.netbeans.org/maven2/</url>
-        </repository>
-    </repositories>
+
 </project>
