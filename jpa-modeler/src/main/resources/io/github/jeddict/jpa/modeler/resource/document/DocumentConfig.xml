@@ -30,7 +30,7 @@
         <document id="BeanClass" widget="io.github.jeddict.jpa.modeler.widget.BeanClassWidget" specification="io.github.jeddict.jpa.spec.bean.BeanClass"  >
             <container-document>io/github/jeddict/jpa/modeler/resource/image/java/JAVA_CLASS.png</container-document>
         </document>
-        <document id="JNoSQL_Entity" widget="io.github.jeddict.jpa.modeler.widget.EntityWidget" specification="io.github.jeddict.jpa.spec.Entity"  >
+<!--        <document id="JNoSQL_Entity" widget="io.github.jeddict.jpa.modeler.widget.EntityWidget" specification="io.github.jeddict.jpa.spec.Entity"  >
             <container-document>io/github/jeddict/jpa/modeler/resource/image/java/JNOSQL_ENTITY.png</container-document>
         </document>
         <document id="JNoSQL_MappedSuperclass" widget="io.github.jeddict.jpa.modeler.widget.MappedSuperclassWidget" specification="io.github.jeddict.jpa.spec.MappedSuperclass"  >
@@ -38,7 +38,7 @@
         </document>
         <document id="JNoSQL_Embeddable" widget="io.github.jeddict.jpa.modeler.widget.EmbeddableWidget" specification="io.github.jeddict.jpa.spec.Embeddable"  >
             <container-document>io/github/jeddict/jpa/modeler/resource/image/java/JNOSQL_EMBEDDABLE.png</container-document>
-        </document>
+        </document>-->
         <document id="Id" widget="io.github.jeddict.jpa.modeler.widget.attribute.base.IdAttributeWidget" specification="io.github.jeddict.jpa.spec.Id"  >
             <container-document>io/github/jeddict/jpa/modeler/resource/image/id-attribute.png</container-document>
         </document>

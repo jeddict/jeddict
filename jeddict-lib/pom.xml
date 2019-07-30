@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.github.jeddict</groupId>
         <artifactId>jeddict</artifactId>
-        <version>5.2</version>
+        <version>5.3</version>
     </parent>
     <artifactId>jeddict-lib</artifactId>
     <name>Jeddict Library</name>
@@ -71,7 +71,7 @@
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.8.12</version>
+            <version>1.9.15</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -95,6 +95,16 @@
             <artifactId>stax-api</artifactId>
             <version>1.0</version>
         </dependency>
+<!--        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.25</version>
+        </dependency>-->
     </dependencies>
 
 </project>

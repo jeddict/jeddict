@@ -40,6 +40,7 @@ import javax.lang.model.element.TypeElement;
 import org.netbeans.api.j2ee.core.Profile;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.project.JavaProjectConstants;
+import static org.netbeans.api.java.project.JavaProjectConstants.SOURCES_HINT_TEST;
 import static org.netbeans.api.java.project.JavaProjectConstants.SOURCES_TYPE_JAVA;
 import org.netbeans.api.java.queries.UnitTestForSourceQuery;
 import org.netbeans.api.java.source.ClassIndex;
@@ -304,7 +305,7 @@ public class ProjectHelper {
         SourceGroup[] sourceGroups = ProjectUtils.getSources(project).getSourceGroups(JavaProjectConstants.SOURCES_TYPE_JAVA);
         Set<SourceGroup> testGroups = getTestSourceGroups(sourceGroups);
         if (testGroups.isEmpty() && create) {
-            if (SourceGroupModifier.createSourceGroup(project, JavaProjectConstants.SOURCES_TYPE_JAVA, JavaProjectConstants.SOURCES_HINT_TEST) != null) {
+            if (SourceGroupModifier.createSourceGroup(project, SOURCES_TYPE_JAVA, SOURCES_HINT_TEST) != null) {
                 return getTestSourceGroups(project, false);
             } else {
                 throw new IllegalStateException("Test Source group creation failed");

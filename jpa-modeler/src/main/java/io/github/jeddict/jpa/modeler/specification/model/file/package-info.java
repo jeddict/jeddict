@@ -21,7 +21,7 @@
         description="TemplateHelp.html", 
         requireProject=false
 )
-@Messages("template_name=JPA Modeler")
+@Messages("template_name=Jeddict Modeler")
 package io.github.jeddict.jpa.modeler.specification.model.file;
 
 import org.netbeans.api.templates.TemplateRegistration;
