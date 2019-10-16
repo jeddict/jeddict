@@ -97,7 +97,7 @@
         <dependency>
             <groupId>org.jnosql.artemis</groupId>
             <artifactId>artemis-core</artifactId>
-            <version>0.0.8</version>
+            <version>0.0.9</version>
         </dependency>
         <dependency>
             <groupId>org.netbeans.modules</groupId>
