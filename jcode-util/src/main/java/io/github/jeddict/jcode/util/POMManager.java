@@ -34,7 +34,6 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.ModelReader;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.maven.NbMavenProjectImpl;
 import org.netbeans.modules.maven.api.ModelUtils;
 import org.netbeans.modules.maven.api.NbMavenProject;
 import org.netbeans.modules.maven.api.customizer.ModelHandle2;
@@ -80,7 +79,7 @@ public class POMManager extends BuildManager {
     
     private POMModel pomModel;
     
-    private NbMavenProjectImpl mavenProject;
+    private NbMavenProject mavenProject;
 
     private List<Model> sourceModels = new ArrayList<>();
     
@@ -97,8 +96,8 @@ public class POMManager extends BuildManager {
     public POMManager(Project project, boolean readonly) {
         //target    
         this.project = project;
-        mavenProject = project.getLookup().lookup(NbMavenProjectImpl.class);
-        pomFileObject = toFileObject(mavenProject.getPOMFile());
+        mavenProject = project.getLookup().lookup(NbMavenProject.class);
+        pomFileObject = toFileObject(mavenProject.getMavenProject().getFile());
         pomModel = POMModelFactory.getDefault().createFreshModel(Utilities.createModelSource(pomFileObject));
         operations = new ArrayList<>();
         if(!readonly)pomModel.startTransaction();
@@ -230,7 +229,7 @@ public class POMManager extends BuildManager {
     }
 
     public static boolean isMavenProject(Project project) {
-        return project.getLookup().lookup(NbMavenProjectImpl.class) != null;
+        return project.getLookup().lookup(NbMavenProject.class) != null;
     }
 
     private void execute() {
@@ -369,8 +368,8 @@ public class POMManager extends BuildManager {
             if (childDOM.getValue() != null) {
                 if (target instanceof Configuration) {
                     ((Configuration) target).setSimpleParameter(childDOM.getName(), childDOM.getValue());
-                } else if (target instanceof POMExtensibilityElementBase) {
-                    Optional<POMComponent> targetComponentOptioal = ((POMExtensibilityElementBase) target).getChildren()
+                } else if (target instanceof POMExtensibilityElement) {
+                    Optional<POMComponent> targetComponentOptioal = ((POMExtensibilityElement) target).getChildren()
                             .stream()
                             .filter(targetElement -> {
                                 String nodeName = targetElement.getPeer().getNodeName();
@@ -585,9 +584,9 @@ public class POMManager extends BuildManager {
     }
     
     public static void reload(Project project) {
-        NbMavenProjectImpl mavenProject = project.getLookup().lookup(NbMavenProjectImpl.class);
+        NbMavenProject mavenProject = project.getLookup().lookup(NbMavenProject.class);
         try {
-            FileObject pomFileObject = toFileObject(mavenProject.getPOMFile());
+            FileObject pomFileObject = toFileObject(mavenProject.getMavenProject().getFile());
             POMModel model = POMModelFactory.getDefault().getModel(Utilities.createModelSource(pomFileObject));
             Utilities.saveChanges(model);
         } catch (IOException ex) {
@@ -595,11 +594,11 @@ public class POMManager extends BuildManager {
         }
 
         RP.post(() -> {
-            project.getLookup().lookup(NbMavenProject.class).triggerDependencyDownload();
-            NbMavenProject.fireMavenProjectReload(mavenProject);
+            mavenProject.triggerDependencyDownload();
+            NbMavenProject.fireMavenProjectReload(project);
         });
 
-        SwingUtilities.invokeLater(() -> NbMavenProject.fireMavenProjectReload(mavenProject));
+        SwingUtilities.invokeLater(() -> NbMavenProject.fireMavenProjectReload(project));
     }
 //    
 //    public static void reloadProject(Project project){
