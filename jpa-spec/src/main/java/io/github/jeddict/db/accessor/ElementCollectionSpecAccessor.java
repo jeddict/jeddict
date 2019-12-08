@@ -28,7 +28,7 @@ import io.github.jeddict.jpa.spec.validator.override.AssociationValidator;
 import io.github.jeddict.jpa.spec.validator.override.AttributeValidator;
 import java.io.Serializable;
 
-/**
+/*
  *
  * @author Gaurav Gupta
  */
