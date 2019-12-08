@@ -6,6 +6,8 @@ package io.github.jeddict.jpa.basic;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 
@@ -17,6 +19,10 @@ public class Student {
 
     @Basic(fetch = FetchType.LAZY)
     private String name;
+
+    @Basic
+    @Enumerated(EnumType.STRING)
+    private GenderType genderType;
 
     public Long getId() {
         return id;
@@ -32,6 +38,14 @@ public class Student {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public GenderType getGenderType() {
+        return genderType;
+    }
+
+    public void setGenderType(GenderType genderType) {
+        this.genderType = genderType;
     }
 
 }

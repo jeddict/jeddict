@@ -72,13 +72,13 @@ public class EnumeratedSnippet implements Snippet {
         if (ENUM_TYPE_STRING.equals(value)) {
             return annotate(
                     enumerated,
-                    attribute(ENUM_TYPE_STRING)
+                    ENUM_TYPE_STRING
             );
         } else if (isGenerateDefaultValue()
                 || ENUM_TYPE_ORDINAL.equals(value)) {
             return annotate(
                     enumerated,
-                    attribute(ENUM_TYPE_ORDINAL)
+                    ENUM_TYPE_ORDINAL
             );
         } else {
             return annotate(

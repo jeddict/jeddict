@@ -5,11 +5,9 @@ package io.github.jeddict.jpa.employee;
 
 import java.util.Date;
 import java.util.List;
-import javax.json.bind.annotation.JsonbProperty;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -30,7 +28,6 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 
 @Entity
-@DiscriminatorColumn(length = 31)
 public class Employee {
 
     @Id
@@ -38,7 +35,6 @@ public class Employee {
     private Long id;
 
     @Basic
-    @JsonbProperty("firstame")
     private String firstName;
 
     @Basic

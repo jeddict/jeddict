@@ -10,6 +10,9 @@
             <jpa:one-to-one own="true" orp="false" optional="true" primaryKey="false" connected-entity-id="_1537615548849222" v="true" xvt="" name="locker" id="_1537615568125226">
                 <jpa:xwm/>
                 <jpa:xm/>
+                <jpa:cascade>
+                    <jpa:cascade-all/>
+                </jpa:cascade>
             </jpa:one-to-one>
             <jpa:id attribute-type="Long" v="true" xvt="" am="PROTECTED" name="id" id="_153760930699071">
                 <jpa:xwm/>

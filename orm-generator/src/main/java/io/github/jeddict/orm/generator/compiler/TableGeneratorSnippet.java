@@ -16,7 +16,9 @@
 package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.TABLE_GENERATOR;
+import static io.github.jeddict.jcode.JPAConstants.TABLE_GENERATOR_ALLOCATION_SIZE;
 import static io.github.jeddict.jcode.JPAConstants.TABLE_GENERATOR_FQN;
+import static io.github.jeddict.jcode.JPAConstants.TABLE_GENERATOR_INITIAL_VALUE;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,8 +30,8 @@ import static io.github.jeddict.util.StringUtils.isBlank;
 
 public class TableGeneratorSnippet implements Snippet {
 
-    private int allocationSize = 50;
-    private int initialValue = 0;
+    private int allocationSize = TABLE_GENERATOR_ALLOCATION_SIZE;
+    private int initialValue = TABLE_GENERATOR_INITIAL_VALUE;
 
     private String name;
     private String catalog = null;
@@ -153,8 +155,8 @@ public class TableGeneratorSnippet implements Snippet {
                 attribute("pkColumnValue", pkColumnValue),
                 attribute("valueColumnName", valueColumnName),
                 attribute("pkColumnName", pkColumnName),
-                attribute("allocationSize", allocationSize, val -> isGenerateDefaultValue() || val != 50),
-                attribute("initialValue", initialValue, val -> isGenerateDefaultValue() || val != 0),
+                attribute("allocationSize", allocationSize, val -> isGenerateDefaultValue() || val != TABLE_GENERATOR_ALLOCATION_SIZE),
+                attribute("initialValue", initialValue, val -> isGenerateDefaultValue() || val != TABLE_GENERATOR_INITIAL_VALUE),
                 attributes("uniqueConstraints", uniqueConstraints),
                 attributes("indexes", indices)
         );

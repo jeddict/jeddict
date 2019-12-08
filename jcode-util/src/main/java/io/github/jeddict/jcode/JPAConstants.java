@@ -32,7 +32,7 @@ public class JPAConstants {
 
     public static final String NOSQL_PACKAGE = "org.jnosql.artemis";
     public static final String NOSQL_PACKAGE_PREFIX = NOSQL_PACKAGE + '.';
-    
+
     public static final String QUERY_TYPE = "Query";
     public static final String ENTITY_MANAGER = "EntityManager";
     public static final String ENTITY_MANAGER_FACTORY = "EntityManagerFactory";
@@ -95,6 +95,7 @@ public class JPAConstants {
     public static final String DISCRIMINATOR_TYPE_FQN = PERSISTENCE_PACKAGE_PREFIX + DISCRIMINATOR_TYPE;
     public static final String DISCRIMINATOR_VALUE = "DiscriminatorValue";
     public static final String DISCRIMINATOR_VALUE_FQN = PERSISTENCE_PACKAGE_PREFIX + DISCRIMINATOR_VALUE;
+    public static final int DISCRIMINATOR_COLUMN_DEFAULT_LENGTH = 31;
 
     public static final String INHERITANCE = "Inheritance";
     public static final String INHERITANCE_FQN = PERSISTENCE_PACKAGE_PREFIX + INHERITANCE;
@@ -118,6 +119,11 @@ public class JPAConstants {
     public static final String TABLE_GENERATOR_FQN = PERSISTENCE_PACKAGE_PREFIX + TABLE_GENERATOR;
     public static final String SEQUENCE_GENERATOR = "SequenceGenerator";
     public static final String SEQUENCE_GENERATOR_FQN = PERSISTENCE_PACKAGE_PREFIX + SEQUENCE_GENERATOR;
+    public static final int TABLE_GENERATOR_INITIAL_VALUE = 0;
+    public static final int TABLE_GENERATOR_ALLOCATION_SIZE = 50;
+    public static final int SEQUENCE_GENERATOR_INITIAL_VALUE = 1;
+    public static final int SEQUENCE_GENERATOR_ALLOCATION_SIZE = 50;
+
     public static final String TABLE_GENERATORS = "TableGenerators";
     public static final String TABLE_GENERATORS_FQN = PERSISTENCE_PACKAGE_PREFIX + TABLE_GENERATORS;
     public static final String SEQUENCE_GENERATORS = "SequenceGenerators";
@@ -168,6 +174,7 @@ public class JPAConstants {
     public static final String COLUMN = "Column";
     public static final String COLUMN_FQN = PERSISTENCE_PACKAGE_PREFIX + COLUMN;
     public static final String COLUMN_NOSQL_FQN = NOSQL_PACKAGE_PREFIX + COLUMN;
+    public static final int COLUMN_DEFAULT_LENGTH = 255;
     public static final String ENUMERATED = "Enumerated";
     public static final String ENUMERATED_FQN = PERSISTENCE_PACKAGE_PREFIX + ENUMERATED;
     public static final String ENUM_TYPE = "EnumType";
@@ -179,6 +186,15 @@ public class JPAConstants {
     public static final String FETCH_TYPE_FQN = PERSISTENCE_PACKAGE_PREFIX + FETCH_TYPE;
     public static final String CASCADE_TYPE = "CascadeType";
     public static final String CASCADE_TYPE_FQN = PERSISTENCE_PACKAGE_PREFIX + CASCADE_TYPE;
+
+    public static final String CASCADE_ALL = CASCADE_TYPE + ".ALL";
+    public static final String CASCADE_MERGE = CASCADE_TYPE + ".MERGE";
+    public static final String CASCADE_PERSIST = CASCADE_TYPE + ".PERSIST";
+    public static final String CASCADE_REFRESH = CASCADE_TYPE + ".REFRESH";
+    public static final String CASCADE_REMOVE = CASCADE_TYPE + ".REMOVE";
+
+    public static final String FETCH_EAGER = FETCH_TYPE + ".EAGER";
+    public static final String FETCH_LAZY = FETCH_TYPE + ".LAZY";
 
     public static final String TEMPORAL = "Temporal";
     public static final String TEMPORAL_FQN = PERSISTENCE_PACKAGE_PREFIX + TEMPORAL;

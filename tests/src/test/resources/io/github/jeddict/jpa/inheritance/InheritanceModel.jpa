@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd" ptype="MONOLITH" ppkg="io.github.jeddict.jpa" epkg="inheritance" v="2.5" rws="_157578618173276" Pws="_157578618173276" cws="_157578618173276" thm="PNBColorScheme" dbthm="DBColorScheme" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_14736524804881" >
+    <jpa:entity lbl-ref="_14736561954113" compositePrimaryKeyClass="EmployeePK" abs="false" class="Employee" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473656190010">
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="firstName" id="_14736561954113">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="lastName" id="_1473669254519280">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_14736561900411">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:generated-value strategy="AUTO"/>
+            </jpa:id>
+        </jpa:attributes>
+        <jpa:inheritance strategy="JOINED"/>
+        <jpa:discriminator-value></jpa:discriminator-value>
+        <jpa:discriminator-column name="type" discriminator-type="CHAR" column-definition="" length="30"/>
+    </jpa:entity>
+    <jpa:entity lbl-ref="_14736561954113" compositePrimaryKeyClass="ContractEmployeePK" abs="false" class="ContractEmployee" superclassId="_1473656190010" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473838037466">
+        <jpa:attributes>
+            <jpa:basic attribute-type="int" v="true" xvt="" name="dailyRate" id="_1473840519647120">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+            <jpa:basic attribute-type="int" v="true" xvt="" name="term" id="_1473840541281121">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+        </jpa:attributes>
+        <jpa:nq e="false" name="ContractEmployee.findAll">
+            <jpa:query>Select e from ContractEmployee e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="ContractEmployee.findByDailyRate">
+            <jpa:query>Select c from ContractEmployee c where c.dailyRate=:dailyRate</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="ContractEmployee.findByTerm">
+            <jpa:query>Select c from ContractEmployee c where c.term=:term</jpa:query>
+        </jpa:nq>
+        <jpa:discriminator-value>1</jpa:discriminator-value>
+    </jpa:entity>
+    <jpa:entity compositePrimaryKeyClass="CompanyEmployeePK" abs="false" class="CompanyEmployee" superclassId="_1473656190010" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_157578676752432">
+        <jpa:ath>jGauravGupta</jpa:ath>
+        <jpa:attributes>
+            <jpa:basic attribute-type="String" v="true" xvt="" name="vacations" id="_157578678725736">
+                <jpa:xwm/>
+                <jpa:xm/>
+            </jpa:basic>
+        </jpa:attributes>
+        <jpa:nq e="false" name="CompanyEmployee.findAll">
+            <jpa:query>Select e from CompanyEmployee e</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="CompanyEmployee.findByVacations">
+            <jpa:query>Select c from CompanyEmployee c where c.vacations=:vacations</jpa:query>
+        </jpa:nq>
+        <jpa:discriminator-value>2</jpa:discriminator-value>
+    </jpa:entity>
+    <jpa:snp loc="BEFORE_PACKAGE" e="true">
+        /**&#xD;
+        * Inheritance Annotation&#xD;
+        */
+    </jpa:snp>
+    <jpa:wsl>
+        <jpa:ws n="Main" id="_157578618173276">
+            <i ref="_1473656190010" x="298" y="30"/>
+            <i ref="_157578676752432" x="339" y="260"/>
+            <i ref="_1473838037466" x="28" y="210"/>
+        </jpa:ws>
+    </jpa:wsl>
+</jpa:entity-mappings>

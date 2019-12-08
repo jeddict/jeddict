@@ -44,7 +44,7 @@ public class InheritanceSnippet implements Snippet {
     public String getSnippet() throws InvalidDataException {
         return annotate(
                 INHERITANCE,
-                attribute("strategy", INHERITANCE_TYPE + "." + statergy)
+                attributeExp("strategy", INHERITANCE_TYPE + "." + statergy)
         );
     }
 

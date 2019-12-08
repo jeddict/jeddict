@@ -5,7 +5,6 @@ package io.github.jeddict.jnosql.employee;
 
 import java.util.Date;
 import java.util.List;
-import javax.json.bind.annotation.JsonbProperty;
 import org.jnosql.artemis.Column;
 import org.jnosql.artemis.Entity;
 import org.jnosql.artemis.Id;
@@ -16,7 +15,6 @@ public class Employee {
     @Id
     private Long id;
 
-    @JsonbProperty("firstame")
     private String firstName;
 
     private String lastName;

@@ -19,15 +19,6 @@ import java.util.List;
 
 public interface RelationSnippet extends Snippet {
 
-    public static final String CASCADE_ALL = "CascadeType.ALL";
-    public static final String CASCADE_MERGE = "CascadeType.MERGE";
-    public static final String CASCADE_PERSIST = "CascadeType.PERSIST";
-    public static final String CASCADE_REFRESH = "CascadeType.REFRESH";
-    public static final String CASCADE_REMOVE = "CascadeType.REMOVE";
-
-    public static final String FETCH_EAGER = "FetchType.EAGER";
-    public static final String FETCH_LAZY = "FetchType.LAZY";
-
     public List<String> getCascadeTypes();
 
     public void setCascadeTypes(List<String> cascadeTypes);

@@ -15,6 +15,7 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
+import static io.github.jeddict.jcode.JPAConstants.CASCADE_TYPE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLASS_SUFFIX;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +23,7 @@ import java.util.List;
 
 public abstract class AbstractRelationDefSnippet implements RelationSnippet {
 
-    private static final String CASCADE_PREFIX = "CascadeType.";
+    private static final String CASCADE_PREFIX = CASCADE_TYPE + ".";
 
     private String fetchType;
     private String targetEntity;

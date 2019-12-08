@@ -15,6 +15,11 @@
  */
 package io.github.jeddict.orm.generator.service;
 
+import static io.github.jeddict.jcode.JPAConstants.CASCADE_ALL;
+import static io.github.jeddict.jcode.JPAConstants.CASCADE_MERGE;
+import static io.github.jeddict.jcode.JPAConstants.CASCADE_PERSIST;
+import static io.github.jeddict.jcode.JPAConstants.CASCADE_REFRESH;
+import static io.github.jeddict.jcode.JPAConstants.CASCADE_REMOVE;
 import io.github.jeddict.jpa.spec.AssociationOverride;
 import io.github.jeddict.jpa.spec.AttributeOverride;
 import io.github.jeddict.jpa.spec.Basic;
@@ -745,23 +750,23 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
         EmptyType cascadeRemove = cascadeType.getCascadeRemove();
 
         if (cascadeAll != null) {
-            cascadeTypes.add(ManyToManySnippet.CASCADE_ALL);
+            cascadeTypes.add(CASCADE_ALL);
         }
 
         if (cascadeMerge != null) {
-            cascadeTypes.add(ManyToManySnippet.CASCADE_MERGE);
+            cascadeTypes.add(CASCADE_MERGE);
         }
 
         if (cascadePersist != null) {
-            cascadeTypes.add(ManyToManySnippet.CASCADE_PERSIST);
+            cascadeTypes.add(CASCADE_PERSIST);
         }
 
         if (cascadeRefresh != null) {
-            cascadeTypes.add(ManyToManySnippet.CASCADE_REFRESH);
+            cascadeTypes.add(CASCADE_REFRESH);
         }
 
         if (cascadeRemove != null) {
-            cascadeTypes.add(ManyToManySnippet.CASCADE_REMOVE);
+            cascadeTypes.add(CASCADE_REMOVE);
         }
 
         return cascadeTypes;
