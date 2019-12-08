@@ -19,12 +19,14 @@ import static java.util.stream.Collectors.toList;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.DirectAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.ElementCollectionAccessor;
 import io.github.jeddict.db.accessor.spec.MapKeyAccessor;
+import io.github.jeddict.jcode.util.AttributeType;
 import io.github.jeddict.jpa.spec.Convert;
 import io.github.jeddict.jpa.spec.ElementCollection;
 import io.github.jeddict.jpa.spec.Inheritance;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.validator.override.AssociationValidator;
 import io.github.jeddict.jpa.spec.validator.override.AttributeValidator;
+import java.io.Serializable;
 
 /**
  *
@@ -44,7 +46,13 @@ public class ElementCollectionSpecAccessor extends ElementCollectionAccessor imp
         accessor.inherit = inherit;
         accessor.setName(elementCollection.getName());
         accessor.setAttributeType(elementCollection.getCollectionType());
-        accessor.setTargetClassName(elementCollection.getAttributeType());
+
+        String targetClass = elementCollection.getAttributeType();
+        if (elementCollection.getConnectedClass() == null
+                && !AttributeType.isJavaType(targetClass)) {
+            targetClass = Serializable.class.getName();
+        }
+        accessor.setTargetClassName(targetClass);
         
         AccessorUtil.setEnumerated((DirectAccessor)accessor,elementCollection.getEnumerated());
         AccessorUtil.setLob(accessor, elementCollection.getLob(), elementCollection.getAttributeType(), true);

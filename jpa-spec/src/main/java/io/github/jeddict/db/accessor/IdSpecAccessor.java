@@ -15,10 +15,12 @@
  */
 package io.github.jeddict.db.accessor;
 
+import io.github.jeddict.jcode.util.AttributeType;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.IdAccessor;
 import io.github.jeddict.jpa.spec.Id;
 import io.github.jeddict.jpa.spec.Inheritance;
 import io.github.jeddict.jpa.spec.extend.Attribute;
+import java.io.Serializable;
 
 /**
  *
@@ -26,7 +28,7 @@ import io.github.jeddict.jpa.spec.extend.Attribute;
  */
 public class IdSpecAccessor extends IdAccessor {
 
-    private Id id;
+    private final Id id;
     private boolean inherit;
 
     private IdSpecAccessor(Id id) {
@@ -37,7 +39,13 @@ public class IdSpecAccessor extends IdAccessor {
         IdSpecAccessor accessor = new IdSpecAccessor(id);
         accessor.inherit = inherit;
         accessor.setName(id.getName());
-        accessor.setAttributeType(id.getAttributeType());
+
+        String attributeType = id.getAttributeType();
+        if (!AttributeType.isJavaType(attributeType)) {
+            attributeType = Serializable.class.getName();
+        }
+        accessor.setAttributeType(attributeType);
+
         if (id.getColumn() != null) {
             accessor.setColumn(id.getColumn().getAccessor());
         }

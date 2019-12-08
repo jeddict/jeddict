@@ -15,11 +15,13 @@
  */
 package io.github.jeddict.db.accessor;
 
+import io.github.jeddict.jcode.util.AttributeType;
 import java.util.Collections;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.BasicAccessor;
 import io.github.jeddict.jpa.spec.Basic;
 import io.github.jeddict.jpa.spec.Inheritance;
 import io.github.jeddict.jpa.spec.extend.Attribute;
+import java.io.Serializable;
 
 /**
  *
@@ -38,8 +40,12 @@ public class BasicSpecAccessor extends BasicAccessor {
         BasicSpecAccessor accessor = new BasicSpecAccessor(basic);
         accessor.inherit = inherit;
 
-        accessor.setAttributeType(basic.getAttributeType());
-        
+        String attributeType = basic.getAttributeType();
+        if (!AttributeType.isJavaType(attributeType)) {
+            attributeType = Serializable.class.getName();
+        }
+        accessor.setAttributeType(attributeType);
+
         AccessorUtil.setEnumerated(accessor, basic.getEnumerated());
         AccessorUtil.setLob(accessor, basic.getLob(), basic.getAttributeType(), false);
         AccessorUtil.setTemporal(accessor, basic.getTemporal());

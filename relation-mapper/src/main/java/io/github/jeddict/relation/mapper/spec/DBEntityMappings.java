@@ -20,9 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
 import javax.persistence.AttributeConverter;
-import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.description.annotation.AnnotationDescription;
-import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import org.eclipse.persistence.internal.jpa.metadata.DBMetadataDescriptor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.ConverterAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EmbeddableAccessor;
@@ -110,14 +107,14 @@ public class DBEntityMappings extends XMLEntityMappings {
 
     private void createConverterClass(Converter convert, ClassLoader classLoader) {
         //create Java Class
-        Class<?> attributeConverter = new ByteBuddy()
-//                .subclass(TypeDescription.Generic.Builder.parameterizedType(AttributeConverter.class, String.class, Integer.class).build())
-                .subclass(AttributeConverter.class)
-                .name(convert.getClazz())
-                .annotateType(AnnotationDescription.Builder.ofType(javax.persistence.Converter.class).build())
-                .make()
-                .load(classLoader, ClassLoadingStrategy.Default.INJECTION)
-                .getLoaded();
+//        Class<?> attributeConverter = new ByteBuddy()
+////                .subclass(TypeDescription.Generic.Builder.parameterizedType(AttributeConverter.class, String.class, Integer.class).build())
+//                .subclass(AttributeConverter.class)
+//                .name(convert.getClazz())
+//                .annotateType(AnnotationDescription.Builder.ofType(javax.persistence.Converter.class).build())
+//                .make()
+//                .load(classLoader, ClassLoadingStrategy.Default.INJECTION)
+//                .getLoaded();
 
         //create MetadataClass
         MetadataClass metadataClass = new MetadataClass(getMetadataFactory(), convert.getClazz());

@@ -26,7 +26,6 @@
                         <publicPackage>org.h2.*</publicPackage>   
                         <publicPackage>edu.emory.mathcs.backport.java.util.*</publicPackage>   
                         <publicPackage>org.apache.velocity.*</publicPackage>  
-                        <publicPackage>net.bytebuddy.*</publicPackage>   
                         <publicPackage>org.yaml.snakeyaml.*</publicPackage>
                         <publicPackage>javax.xml.*</publicPackage>
                     </publicPackages>
@@ -68,11 +67,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>net.bytebuddy</groupId>
-            <artifactId>byte-buddy</artifactId>
-            <version>1.10.4</version>
-        </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
