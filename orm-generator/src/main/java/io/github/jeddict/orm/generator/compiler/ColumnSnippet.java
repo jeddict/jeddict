@@ -16,6 +16,7 @@
 package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.COLUMN;
+import static io.github.jeddict.jcode.JPAConstants.COLUMN_DEFAULT_LENGTH;
 import static io.github.jeddict.jcode.JPAConstants.COLUMN_FQN;
 import static io.github.jeddict.jcode.JPAConstants.COLUMN_NOSQL_FQN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_COLUMN;
@@ -35,7 +36,7 @@ public class ColumnSnippet extends ORMSnippet {
 
     private int precision = 0;
     private int scale = 0;
-    private int length = 255;
+    private int length = COLUMN_DEFAULT_LENGTH;
 
     private String columnDefinition = null;
     private String table = null;
@@ -59,7 +60,8 @@ public class ColumnSnippet extends ORMSnippet {
                 if (isBlank(name) && isBlank(table) && isBlank(columnDefinition)
                         && unique == false && updatable == true 
                         && insertable == true && nullable == true
-                        && length == 255 && scale == 0 && precision == 0) {
+                        && length == COLUMN_DEFAULT_LENGTH 
+                        && scale == 0 && precision == 0) {
                     empty = true;
                 }
             }
@@ -158,7 +160,7 @@ public class ColumnSnippet extends ORMSnippet {
                     attribute("insertable", insertable, val -> isGenerateDefaultValue() || val == false),
                     attribute("nullable", nullable, val -> isGenerateDefaultValue() || val == false),
                     attribute("updatable", updatable, val -> isGenerateDefaultValue() || val == false),
-                    attribute("length", length, val -> isGenerateDefaultValue() || val != 255),
+                    attribute("length", length, val -> isGenerateDefaultValue() || val != COLUMN_DEFAULT_LENGTH),
                     attribute("scale", scale, val -> isGenerateDefaultValue() || val != 0),
                     attribute("precision", precision, val -> isGenerateDefaultValue() || val != 0),
                     attribute("columnDefinition", columnDefinition)

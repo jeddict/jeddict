@@ -204,8 +204,6 @@ public class BaseModelTest {
                 String newSourceLine;
                 int lineNumber = 0;
                 while ((existingSourceLine = existingSourceReader.readLine()) != null && (newSourceLine = newSourceReader.readLine()) != null) {
-//                    System.out.println("new " + newSourceLine);
-//                    System.out.println("ext " + existingSourceLine);
                     ++lineNumber;
                     assertEquals(existingSourceLine, newSourceLine,
                             '\n'
@@ -217,6 +215,7 @@ public class BaseModelTest {
                             + '\n'
                             + wrap("newSourceLine : " + newSourceLine, FG_DARK_RED)
                             + '\n'
+                            + newSource
                     );
                 }
             }

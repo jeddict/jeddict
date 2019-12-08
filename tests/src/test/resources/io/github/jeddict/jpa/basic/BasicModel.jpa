@@ -7,6 +7,11 @@
                 <jpa:xwm/>
                 <jpa:xm/>
             </jpa:basic>
+            <jpa:basic attribute-type="io.github.jeddict.jpa.basic.GenderType" v="true" xvt="" name="genderType" id="_15757818271336">
+                <jpa:xwm/>
+                <jpa:xm/>
+                <jpa:enumerated>STRING</jpa:enumerated>
+            </jpa:basic>
             <jpa:id attribute-type="Long" v="true" xvt="" name="id" id="_1537626057948414">
                 <jpa:xwm/>
                 <jpa:xm/>

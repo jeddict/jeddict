@@ -16,7 +16,9 @@
 package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_COLUMN;
+import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_COLUMN_DEFAULT_LENGTH;
 import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_COLUMN_FQN;
+import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_TYPE;
 import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_TYPE_FQN;
 import io.github.jeddict.jpa.spec.DiscriminatorType;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
@@ -30,7 +32,7 @@ public class DiscriminatorColumnSnippet implements Snippet {
     private String name = null;
     private DiscriminatorType discriminatorType = null;
     private String columnDefinition = null;
-    private int length = 31;
+    private int length = DISCRIMINATOR_COLUMN_DEFAULT_LENGTH;
 
     public String getName() {
         return name;
@@ -68,21 +70,22 @@ public class DiscriminatorColumnSnippet implements Snippet {
     public String getSnippet() throws InvalidDataException {
         return annotate(
                 DISCRIMINATOR_COLUMN,
-                attribute("length", length, val -> isGenerateDefaultValue() || val != 30),
                 attribute("name", name),
-                attribute("discriminatorType", "DiscriminatorType." + discriminatorType, val -> discriminatorType != null),
+                attributeExp(
+                        "discriminatorType",
+                        DISCRIMINATOR_TYPE + "." + discriminatorType,
+                        val -> discriminatorType != null
+                ),
+                attribute("length", length, val -> isGenerateDefaultValue() || val != DISCRIMINATOR_COLUMN_DEFAULT_LENGTH),
                 attribute("columnDefinition", columnDefinition)
         );
     }
 
     public boolean isDefault() {
-        if (isBlank(name)
+        return isBlank(name)
                 && isBlank(columnDefinition)
                 && (discriminatorType == null || discriminatorType == DiscriminatorType.STRING)
-                && length == 30) {
-            return true;
-        }
-        return false;
+                && length == DISCRIMINATOR_COLUMN_DEFAULT_LENGTH;
     }
 
     @Override

@@ -24,7 +24,7 @@ Shared Embeddable			homeAddress,officeAddress -&gt; Address
 </jpa:description>
     <jpa:entity lbl-ref="_14736561954113" compositePrimaryKeyClass="EmployeePK" noSQL="true" abs="false" class="Employee" v="true" jbn="false" xre="false" m="false" rootElement="_14736524804881" id="_1473656190010">
         <jpa:attributes>
-            <jpa:basic attribute-type="String" v="true" xvt="" name="firstName" jbp="firstame" id="_14736561954113">
+            <jpa:basic attribute-type="String" v="true" xvt="" name="firstName" id="_14736561954113">
                 <jpa:xwm/>
                 <jpa:xm/>
             </jpa:basic>

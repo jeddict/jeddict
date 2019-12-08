@@ -16,7 +16,9 @@
 package io.github.jeddict.orm.generator.compiler;
 
 import static io.github.jeddict.jcode.JPAConstants.SEQUENCE_GENERATOR;
+import static io.github.jeddict.jcode.JPAConstants.SEQUENCE_GENERATOR_ALLOCATION_SIZE;
 import static io.github.jeddict.jcode.JPAConstants.SEQUENCE_GENERATOR_FQN;
+import static io.github.jeddict.jcode.JPAConstants.SEQUENCE_GENERATOR_INITIAL_VALUE;
 import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.Collection;
 import static java.util.Collections.singleton;
@@ -24,8 +26,8 @@ import static io.github.jeddict.util.StringUtils.isBlank;
 
 public class SequenceGeneratorSnippet implements Snippet {
 
-    private int allocationSize = 50;
-    private int initialValue = 1;
+    private int allocationSize = SEQUENCE_GENERATOR_ALLOCATION_SIZE;
+    private int initialValue = SEQUENCE_GENERATOR_INITIAL_VALUE;
 
     private String name = null;
     private String sequenceName = null;
@@ -74,8 +76,8 @@ public class SequenceGeneratorSnippet implements Snippet {
                 SEQUENCE_GENERATOR,
                 attribute("name", name),
                 attribute("sequenceName", sequenceName),
-                attribute("allocationSize", allocationSize, val -> isGenerateDefaultValue() || val != 50),
-                attribute("initialValue", initialValue, val -> isGenerateDefaultValue() || val != 1),
+                attribute("allocationSize", allocationSize, val -> isGenerateDefaultValue() || val != SEQUENCE_GENERATOR_ALLOCATION_SIZE),
+                attribute("initialValue", initialValue, val -> isGenerateDefaultValue() || val != SEQUENCE_GENERATOR_INITIAL_VALUE),
                 attribute("catalog", catalog),
                 attribute("schema", schema)
         );

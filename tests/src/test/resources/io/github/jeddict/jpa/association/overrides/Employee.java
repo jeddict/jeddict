@@ -3,6 +3,7 @@
  */
 package io.github.jeddict.jpa.association.overrides;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
@@ -15,7 +16,7 @@ public class Employee {
     @Id
     protected Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Locker locker;
 
     @ManyToOne
