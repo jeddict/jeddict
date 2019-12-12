@@ -9,7 +9,7 @@ jdk:
 os:
   - linux
 before_install:
-    - export travis M2_HOME=/usr/local/maven-3.6.0
+    - export travis M2_HOME=/usr/local/maven-3.6.2
 #    - curl -o $HOME/.m2/settings.xml https://raw.githubusercontent.com/jeddict/netbeans-module-repository/master/settings.xml
     - git clone https://github.com/jeddict/netbeans-modeler.git ~/builds/netbeans-modeler
     - pushd ~/builds/netbeans-modeler
