@@ -8,7 +8,7 @@
   <br>
 </h1>
 
-<h4 align="center">Java EE 8 (Jakarta EE) & MicroProfile 2.0 application generator and modeler</h4>
+<h4 align="center">Jakarta EE 8 (Java EE) & MicroProfile 3.2 application generator and modeler</h4>
 
 <p align="center">
     <a href="https://travis-ci.org/jeddict/jeddict">
