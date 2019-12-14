@@ -50,6 +50,7 @@ import static io.github.jeddict.jcode.util.JavaUtil.getFieldNameFromDelegatorMet
 import static io.github.jeddict.jcode.util.JavaUtil.isBeanMethod;
 import static io.github.jeddict.jcode.util.JavaUtil.isHelperMethod;
 import io.github.jeddict.jcode.util.StringHelper;
+import static io.github.jeddict.jcode.util.StringHelper.compareNonWhitespaces;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.ClassAnnotation;
 import io.github.jeddict.jpa.spec.extend.ClassAnnotationLocationType;
@@ -67,6 +68,7 @@ import io.github.jeddict.snippet.ClassSnippetLocationType;
 import static io.github.jeddict.snippet.ClassSnippetLocationType.AFTER_CLASS;
 import static io.github.jeddict.snippet.ClassSnippetLocationType.AFTER_FIELD;
 import static io.github.jeddict.snippet.ClassSnippetLocationType.AFTER_METHOD;
+import static io.github.jeddict.snippet.ClassSnippetLocationType.BEFORE_CLASS;
 import static io.github.jeddict.snippet.ClassSnippetLocationType.BEFORE_FIELD;
 import static io.github.jeddict.snippet.ClassSnippetLocationType.BEFORE_PACKAGE;
 import static io.github.jeddict.snippet.ClassSnippetLocationType.IMPORT;
@@ -283,18 +285,57 @@ public class JavaClassSyncHandler {
     }
 
     private void syncHeader(Comment comment) {
-        if (!javaClass.getSnippets(BEFORE_PACKAGE).isEmpty()) {
+        String value = comment.toString();
+        if (javaClass.getRootElement()
+                .getSnippets(BEFORE_PACKAGE)
+                .stream()
+                .filter(snip -> compareNonWhitespaces(snip.getValue(), value))
+                .findAny()
+                .isPresent()) {
             return;
         }
-        String value = comment.toString();
+        if (javaClass.getSnippets(BEFORE_PACKAGE)
+                .stream()
+                .filter(snip -> compareNonWhitespaces(snip.getValue(), value))
+                .findAny()
+                .isPresent()) {
+            return;
+        }
         javaClass.addRuntimeSnippet(new ClassSnippet(value, BEFORE_PACKAGE));
     }
 
     private void syncJavadoc(Comment comment) {
-        if (!javaClass.getSnippets(TYPE_JAVADOC).isEmpty()) {
+        String value = comment.toString();
+        if (javaClass.getRootElement()
+                .getSnippets(TYPE_JAVADOC)
+                .stream()
+                .filter(snip -> compareNonWhitespaces(snip.getValue(), value))
+                .findAny()
+                .isPresent()) {
             return;
         }
-        String value = comment.toString();
+        if (javaClass.getSnippets(TYPE_JAVADOC)
+                .stream()
+                .filter(snip -> compareNonWhitespaces(snip.getValue(), value))
+                .findAny()
+                .isPresent()) {
+            return;
+        }
+        if (javaClass.getRootElement()
+                .getSnippets(BEFORE_CLASS)
+                .stream()
+                .filter(snip -> compareNonWhitespaces(snip.getValue(), value))
+                .findAny()
+                .isPresent()) {
+            return;
+        }
+        if (javaClass.getSnippets(BEFORE_CLASS)
+                .stream()
+                .filter(snip -> compareNonWhitespaces(snip.getValue(), value))
+                .findAny()
+                .isPresent()) {
+            return;
+        }
         if (javaClass.getDescription() == null || !value.contains(javaClass.getDescription())) {
             javaClass.addRuntimeSnippet(new ClassSnippet(value, TYPE_JAVADOC));
         }

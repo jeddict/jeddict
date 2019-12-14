@@ -1745,6 +1745,18 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     /**
+     * @param locationType
+     * @return the snippets
+     */
+    public List<ClassSnippet> getSnippets(ClassSnippetLocationType locationType) {
+        return getSnippets()
+                .stream()
+                .filter(snippet -> snippet.isEnable())
+                .filter(snippet -> snippet.getLocationType() == locationType)
+                .collect(toList());
+    }
+
+    /**
      * @param snippets the snippets to set
      */
     public void setSnippets(List<ClassSnippet> snippets) {

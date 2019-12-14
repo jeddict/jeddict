@@ -262,4 +262,10 @@ public final class StringHelper {
     public static String padLeft(String s, int n) {
         return String.format("%1$" + n + "s", s);
     }
+
+    public static boolean compareNonWhitespaces(String v1, String v2) {
+        return v1 != null && v2 != null
+                && v1.replaceAll("\\s+", "")
+                        .equals(v2.replaceAll("\\s+", ""));
+    }
 }
