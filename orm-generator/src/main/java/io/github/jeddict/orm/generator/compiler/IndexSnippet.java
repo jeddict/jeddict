@@ -42,9 +42,16 @@ public class IndexSnippet implements Snippet {
             throw new InvalidDataException("Missing Index columnList");
         }
 
-        StringBuilder builder = new StringBuilder(AT);
-        builder.append(attribute("name", index.getName()));
-
+        return annotate(
+                INDEX,
+                attribute("name", index.getName()),
+                getColumnList(),
+                attribute("unique", true, val -> index.isUnique() != null && index.isUnique())
+        );
+    }
+    
+    private String getColumnList() {
+        StringBuilder builder = new StringBuilder();
         builder.append("columnList=").append(QUOTE);
         for (OrderbyItem orderbyItem : index.getColumnList()) {
             String property = orderbyItem.getProperty();
@@ -57,13 +64,7 @@ public class IndexSnippet implements Snippet {
         }
         builder.setLength(builder.length() - 1);
         builder.append(QUOTE).append(COMMA);
-
-        builder.append(attribute("unique", true, val -> index.isUnique() != null && index.isUnique()));
-
-        return annotate(
-                INDEX,
-                builder
-        );
+        return builder.toString();
     }
 
     @Override
