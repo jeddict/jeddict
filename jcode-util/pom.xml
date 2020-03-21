@@ -26,23 +26,7 @@
                     </publicPackages>
                     <moduleDependencies>
                         <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-maven-model</id>
-                            <type>impl</type>
-                        </dependency>
-                        <dependency>
                             <id>org.netbeans.modules:org-netbeans-modules-maven</id>
-                            <type>impl</type>
-                        </dependency>
-                        <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-maven-embedder</id>
-                            <type>impl</type>
-                        </dependency>
-                        <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-j2ee-persistence</id>
-                            <type>impl</type>
-                        </dependency>
-                        <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-j2ee-common</id>
                             <type>impl</type>
                         </dependency>
                         <dependency>
@@ -64,6 +48,11 @@
         <dependency>
             <groupId>io.github.jeddict.modeler</groupId>
             <artifactId>modeler-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jeddict.modeler</groupId>
+            <artifactId>modeler-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
         

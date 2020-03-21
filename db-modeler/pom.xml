@@ -26,10 +26,6 @@
                              <id>org.netbeans.api:org-netbeans-modules-db</id>
                              <type>impl</type>
                          </dependency>
-                         <dependency>
-                             <id>org.netbeans.modules:org-netbeans-modules-db-metadata-model</id>
-                             <type>impl</type>
-                         </dependency>
                     </moduleDependencies>
                 </configuration>
             </plugin>
@@ -99,7 +95,7 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.modules</groupId>
+            <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-db-metadata-model</artifactId>
             <version>${netbeans.version}</version>
         </dependency>

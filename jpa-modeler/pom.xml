@@ -40,15 +40,7 @@
                             <id>org.netbeans.modules:org-netbeans-modules-db-core</id>
                             <type>impl</type>
                         </dependency>
-                        <dependency>
-                             <id>org.netbeans.modules:org-netbeans-modules-db-metadata-model</id>
-                            <type>impl</type>
-                        </dependency>
-                        <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-utilities</id>
-                            <type>impl</type>
-                        </dependency>
-                        <dependency>
+                         <dependency>
                             <id>org.netbeans.modules:org-netbeans-modules-j2ee-persistence</id>
                             <type>impl</type>
                         </dependency>
@@ -225,7 +217,7 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.modules</groupId>
+            <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-db-metadata-model</artifactId>
             <version>${netbeans.version}</version>
         </dependency>

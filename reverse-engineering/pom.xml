@@ -23,14 +23,6 @@
                 <configuration>
                     <moduleDependencies>
                         <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-j2ee-persistence</id>
-                            <type>impl</type>
-                        </dependency>
-                        <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-dbschema</id>
-                            <type>impl</type>
-                        </dependency>
-                        <dependency>
                             <id>org.netbeans.modules:org-netbeans-modules-j2ee-persistenceapi</id>
                             <type>impl</type>
                         </dependency>
