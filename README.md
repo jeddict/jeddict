@@ -80,14 +80,14 @@ Please take a look at our [contributing](https://github.com/jeddict/jeddict/blob
 
 ## Build and run from Source
 
-You can build Jeddict using JDK 8+ and test with NetBeans IDE 11.1 :
+You can build Jeddict using JDK 8+ and test with NetBeans IDE 11.3 :
 
 <!--( 
 ### Build Apache NetBeans IDE modules and deploy to a local repository
 ```bash
-git clone -b 11.0 --single-branch --depth 1 https://github.com/apache/incubator-netbeans.git
+git clone -b 11.3 --single-branch --depth 1 https://github.com/apache/incubator-netbeans.git
 ant -f incubator-netbeans -Dcluster.config=enterprise build-nozip build-nbms
-mvn nb-repository:populate -DforcedVersion=RELEASE110 -DnetbeansInstallDirectory=incubator-netbeans/nbbuild/netbeans -DnetbeansNbmDirectory=incubator-netbeans/nbbuild/nbms
+mvn nb-repository:populate -DforcedVersion=RELEASE113 -DnetbeansInstallDirectory=incubator-netbeans/nbbuild/netbeans -DnetbeansNbmDirectory=incubator-netbeans/nbbuild/nbms
 ```
 )--> 
 
@@ -104,7 +104,7 @@ mvn -f "hipee" clean install
 ```
 ### Run
 ```bash
-mvn -f "jeddict" nbm:run-ide -Dnetbeans.installation=<path-to-netbeans-11.1-home-directory>
+mvn -f "jeddict" nbm:run-ide -Dnetbeans.installation=<path-to-netbeans-11.3-home-directory>
 ```
 ** `netbeans.installation` property can be added to maven settings.xml file.
 
