@@ -31,7 +31,6 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.Comment;
-import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.TypeParameter;
@@ -85,10 +84,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
 import static io.github.jeddict.util.StringUtils.isNotBlank;
-import java.lang.reflect.InvocationTargetException;
-import static java.util.Objects.isNull;
 import java.util.Optional;
-import org.openide.util.Exceptions;
 
 /**
  *
@@ -296,7 +292,7 @@ public class JavaClassSyncHandler {
                 .stream()
                 .filter(snip -> {
                     Optional<CompilationUnit> parsed = new JavaParser().parse(snip.getValue()).getResult();
-                    return (!parsed.isEmpty() && compareNonWhitespaces(parsed.get().toString(), value))
+                    return (parsed.isPresent()&& compareNonWhitespaces(parsed.get().toString(), value))
                             || compareNonWhitespaces(snip.getValue(), value);
                 })
                 .findAny()
