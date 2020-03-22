@@ -19,6 +19,6 @@
 
         }
 )
-package io.github.jeddict.jpa.spec.extend;
+package io.github.jeddict.jsonb.spec;
 
 import javax.xml.bind.annotation.XmlNs;
