@@ -1,15 +1,19 @@
 <#-- custom snippet - before package -->
+<#if classDef.getCustomSnippet("BEFORE_PACKAGE")?has_content>
 <#foreach snippet in classDef.getCustomSnippet("BEFORE_PACKAGE")![]>
 ${snippet}
 ${n}</#foreach>
+</#if>
 <#-- Package Name definition -->
 <#if classDef.getPackageName()?has_content>
     package ${classDef.getPackageName()};
 </#if>
 <#-- custom snippet - after package -->
+<#if classDef.getCustomSnippet("AFTER_PACKAGE")?has_content>
 <#foreach snippet in classDef.getCustomSnippet("AFTER_PACKAGE")![]>
 ${snippet} 
 ${n}</#foreach>
+</#if>
 <#-- import statements -->
 <#foreach importStatement in classDef.getImportSnippets()![]>
 ${importStatement}
@@ -29,9 +33,11 @@ ${snippet}
 ${classDef.getJavaDoc()}
 </#if>
 <#-- custom class snippet - before class -->
+<#if classDef.getCustomSnippet("BEFORE_CLASS")?has_content>
 <#foreach snippet in classDef.getCustomSnippet("BEFORE_CLASS")![]>
 ${snippet} 
 ${n}</#foreach>
+</#if>
 <#-- jaxb annotations -->
 <#if classDef.isJaxbSupport()>
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -116,15 +122,19 @@ ${annotation.getSnippet()}
 public<#if classDef.isAbstractClass()> abstract</#if> class ${classDef.getClassName()}<#if classDef.isTypeParameterExist()><${classDef.getTypeParameterList()}></#if><#if classDef.getSuperClassName()??> extends ${classDef.getSuperClassName()}</#if><#if classDef.isInterfaceExist()> implements ${classDef.getUnqualifiedInterfaceList()}</#if> { 
 
 <#-- custom class snippet - before field -->
+<#if classDef.getCustomSnippet("BEFORE_FIELD")?has_content>
 <#foreach snippet in classDef.getCustomSnippet("BEFORE_FIELD")![]>
     ${snippet} 
 ${n}</#foreach>
+</#if>
 <#-- member variables -->
 <#foreach varDef in classDef.getVariableDefs()>
 <#-- custom attribute snippet - before field -->
+<#if varDef.getCustomSnippet("BEFORE_FIELD")?has_content>
 <#foreach snippet in varDef.getCustomSnippet("BEFORE_FIELD")![]>
     ${snippet} 
 ${n}</#foreach>
+</#if>
 <#if varDef.isPropertyJavaDocExist()>
 ${varDef.getPropertyJavaDoc()}
 </#if>
@@ -223,29 +233,37 @@ ${varDef.getAttributeOverrides().getSnippet()}
 <#-- $varDef.type => $varDef.getTypeIdentifier().getConstraintVariableType() ## to resolve problem Collection => Collection<Entity> -->    
     ${varDef.accessModifier} ${varDef.constraintType} ${varDef.name}<#if varDef.getDefaultValue()?has_content> = ${varDef.getDefaultValue()}</#if>;
 <#-- custom attribute snippet - after field -->
+<#if varDef.getCustomSnippet("AFTER_FIELD")?has_content>
 <#foreach snippet in varDef.getCustomSnippet("AFTER_FIELD")![]>
     ${snippet} 
 ${n}</#foreach>
+</#if>
 </#foreach>
 <#-- custom class snippet - after field -->
+<#if classDef.getCustomSnippet("AFTER_FIELD")?has_content>
 <#foreach snippet in classDef.getCustomSnippet("AFTER_FIELD")![]>
     ${snippet}
 ${n}</#foreach>
+</#if>
 
 <#-- Constructor -->
 <#foreach constructor in classDef.getConstructors()>
     ${constructor.getSnippet()}
 ${n}</#foreach>
 <#-- custom class snippet - before method -->
+<#if classDef.getCustomSnippet("BEFORE_METHOD")?has_content>
 <#foreach snippet in classDef.getCustomSnippet("BEFORE_METHOD")![]>
     ${snippet}
 ${n}</#foreach>
+</#if>
 <#-- getter/setter -->
 <#foreach varDef in classDef.getVariableDefs()>
 <#-- custom attribute snippet - before method -->
+<#if varDef.getCustomSnippet("BEFORE_METHOD")?has_content>
 <#foreach snippet in varDef.getCustomSnippet("BEFORE_METHOD")![]>
     ${snippet}
 ${n}</#foreach>
+</#if>
 <#--  getter -->
 <#if varDef.isGetterJavaDocExist()>
 ${varDef.getGetterJavaDoc()}
@@ -257,9 +275,11 @@ ${varDef.getGetterJavaDoc()}
 <#assign methodPrefix = varDef.getGetterMethodPrefix()>
     public ${varDef.returnType} ${methodPrefix}${method}() <#if varDef.isGetterThrows()> ${varDef.getGetterThrowsSnippet()} </#if> {
 <#-- custom attribute snippet - pre getter -->
+<#if varDef.getCustomSnippet("PRE_GETTER")?has_content>
 <#foreach snippet in varDef.getCustomSnippet("PRE_GETTER")![]>
         ${snippet}
 </#foreach>
+</#if>
 <#-- custom attribute snippet - getter -->
 <#if varDef.getCustomSnippet("GETTER")?has_content>
 <#foreach snippet in varDef.getCustomSnippet("GETTER")![]>
@@ -276,9 +296,11 @@ ${varDef.getGetterJavaDoc()}
         return ${varDef.returnValue};
 </#if>
 <#-- custom attribute snippet - post getter -->
+<#if varDef.getCustomSnippet("POST_GETTER")?has_content>
 <#foreach snippet in varDef.getCustomSnippet("POST_GETTER")![]>
         ${snippet}
 </#foreach>
+</#if>
     }
 
 <#-- setter -->
@@ -291,9 +313,11 @@ ${varDef.getSetterJavaDoc()}
 <#assign methodPrefix = varDef.getSetterMethodPrefix()>
     public void ${methodPrefix}${method}(${varDef.type} ${varDef.name}) <#if varDef.isSetterThrows()> ${varDef.getSetterThrowsSnippet()} </#if>{
 <#-- custom attribute snippet - pre setter -->
+<#if varDef.getCustomSnippet("PRE_SETTER")?has_content>
 <#foreach snippet in varDef.getCustomSnippet("PRE_SETTER")![]>
         ${snippet}
 </#foreach>
+</#if>
 <#-- custom attribute snippet - setter -->
 <#if varDef.getCustomSnippet("SETTER")?has_content>
 <#foreach snippet in varDef.getCustomSnippet("SETTER")![]>
@@ -305,9 +329,11 @@ ${varDef.getSetterJavaDoc()}
         this.${varDef.name} = ${varDef.name};
 </#if>
 <#-- custom attribute snippet - post setter -->
+<#if varDef.getCustomSnippet("POST_SETTER")?has_content>
 <#foreach snippet in varDef.getCustomSnippet("POST_SETTER")![]>
         ${snippet}
 </#foreach>
+</#if>
     }
 
 <#-- fluent -->
@@ -321,9 +347,11 @@ ${varDef.getFluentJavaDoc()}
 <#assign fluentMethod = varDef.fluentMethodName>
     public ${classDef.getClassName()} ${fluentMethod}(${varDef.type} ${varDef.name}) {
 <#-- custom attribute snippet - pre fluent -->
+<#if varDef.getCustomSnippet("PRE_FLUENT")?has_content>
 <#foreach snippet in varDef.getCustomSnippet("PRE_FLUENT")>
         ${snippet}
 ${n}</#foreach>
+</#if>
 <#-- custom attribute snippet - fluent -->
 <#if varDef.getCustomSnippet("FLUENT")?has_content>
 <#foreach snippet in varDef.getCustomSnippet("FLUENT")![]>
@@ -340,14 +368,18 @@ ${n}</#foreach>
     ${varDef.getHelperMethodSnippet()}
 </#if>
 <#-- custom attribute snippet - after method -->
+<#if varDef.getCustomSnippet("AFTER_METHOD")?has_content>
 <#foreach snippet in varDef.getCustomSnippet("AFTER_METHOD")![]>
     ${snippet}
 ${n}</#foreach>
+</#if>
 </#foreach>
 <#-- custom class snippet - after method -->
+<#if classDef.getCustomSnippet("AFTER_METHOD")?has_content>
 <#foreach snippet in classDef.getCustomSnippet("AFTER_METHOD")![]>
     ${snippet}
 ${n}</#foreach>
+</#if>
 <#-- hashcode, equals and toString method -->
 <#if classDef.getEqualsMethod()??>
     @Override
@@ -368,11 +400,15 @@ ${n}</#if>
     }
 ${n}</#if>
 <#-- custom class snippet - default -->
+<#if classDef.getCustomSnippet("DEFAULT")?has_content>
 <#foreach snippet in classDef.getCustomSnippet("DEFAULT")![]>
     ${snippet}
 ${n}</#foreach>
+</#if>
 }
 <#-- custom class snippet - after class -->
+<#if classDef.getCustomSnippet("AFTER_CLASS")?has_content>
 <#foreach snippet in classDef.getCustomSnippet("AFTER_CLASS")![]>
 ${snippet} 
 ${n}</#foreach>
+</#if>
