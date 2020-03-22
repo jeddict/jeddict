@@ -11,6 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 public class Department {
 

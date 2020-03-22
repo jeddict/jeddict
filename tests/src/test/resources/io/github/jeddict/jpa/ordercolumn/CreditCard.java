@@ -11,6 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 public class CreditCard {
 

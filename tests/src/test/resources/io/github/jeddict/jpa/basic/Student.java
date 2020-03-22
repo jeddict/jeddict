@@ -11,6 +11,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 public class Student {
 

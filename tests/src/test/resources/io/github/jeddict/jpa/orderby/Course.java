@@ -11,6 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderBy;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 public class Course {
 

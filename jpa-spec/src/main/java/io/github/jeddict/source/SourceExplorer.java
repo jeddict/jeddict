@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2020 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,6 +16,7 @@
 package io.github.jeddict.source;
 
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
@@ -52,7 +53,7 @@ public class SourceExplorer {
 
     private final EntityMappings entityMappings;
 
-    boolean includeReference;
+    private final boolean includeReference;
 
     private final FileObject sourceRoot;
 
@@ -61,6 +62,8 @@ public class SourceExplorer {
     private final List<ClassExplorer> classes = new ArrayList<>();
 
     private final List<String> missingClasses = new ArrayList<>();
+
+    private final JavaParser javaParser;
 
     public SourceExplorer(
             FileObject sourceRoot,
@@ -71,6 +74,7 @@ public class SourceExplorer {
         this.entityMappings = entityMappings;
         this.includeReference = includeReference;
         this.selectedClasses = selectedClasses.stream().map(JavaIdentifiers::unqualify).collect(toSet());
+        this.javaParser = new JavaParser();
         configureJavaParser(sourceRoot);
     }
 
@@ -89,7 +93,7 @@ public class SourceExplorer {
 
         // Configure JavaParser to use type resolution
         JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
-        JavaParser.getStaticConfiguration().setSymbolResolver(symbolSolver);
+        javaParser.getParserConfiguration().setSymbolResolver(symbolSolver);
     }
 
     public Optional<CompilationUnit> createCompilationUnit(String clazzFQN) throws FileNotFoundException {
@@ -99,7 +103,8 @@ public class SourceExplorer {
 
     public Optional<CompilationUnit> createCompilationUnit(FileObject classFile) throws FileNotFoundException {
         if (classFile != null) {
-            return Optional.of(JavaParser.parse(FileUtil.toFile(classFile)));
+            ParseResult<CompilationUnit> parseResult = javaParser.parse(FileUtil.toFile(classFile));
+            return parseResult.getResult();
         }
         return Optional.empty();
     }

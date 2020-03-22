@@ -12,6 +12,9 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 public class Person {
 

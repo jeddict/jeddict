@@ -12,6 +12,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderColumn;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 public class Course {
 

@@ -6,6 +6,9 @@ package io.github.jeddict.jpa.collection.table;
 import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 
+/**
+ * @author jGauravGupta
+ */
 @Embeddable
 public class Address {
 

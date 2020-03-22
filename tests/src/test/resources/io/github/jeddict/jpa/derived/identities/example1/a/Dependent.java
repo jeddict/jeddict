@@ -10,6 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 @IdClass(DependentId.class)
 public class Dependent {

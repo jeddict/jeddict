@@ -10,6 +10,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 @AssociationOverride(name = "address", joinColumns = @JoinColumn(name = "ADDR_ID"))
 public class PartTimeEmployee extends Employee {

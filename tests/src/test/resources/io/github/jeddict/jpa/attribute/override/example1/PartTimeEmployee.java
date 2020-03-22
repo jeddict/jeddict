@@ -9,6 +9,9 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 @AttributeOverride(name = "address", column = @Column(name = "ADDR"))
 public class PartTimeEmployee extends Employee {

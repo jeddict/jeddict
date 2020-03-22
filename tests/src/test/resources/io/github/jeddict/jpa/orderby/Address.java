@@ -8,6 +8,9 @@ import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 
+/**
+ * @author jGauravGupta
+ */
 @Embeddable
 public class Address {
 

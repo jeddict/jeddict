@@ -9,6 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 @IdClass(PersonId.class)
 public class Person {

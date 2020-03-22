@@ -10,6 +10,9 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 public class Student {
 

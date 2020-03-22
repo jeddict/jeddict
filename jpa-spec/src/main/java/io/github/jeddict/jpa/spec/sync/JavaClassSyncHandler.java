@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2020 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,6 +15,7 @@
  */
 package io.github.jeddict.jpa.spec.sync;
 
+import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
@@ -30,6 +31,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.TypeParameter;
@@ -83,7 +85,10 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
 import static io.github.jeddict.util.StringUtils.isNotBlank;
+import java.lang.reflect.InvocationTargetException;
 import static java.util.Objects.isNull;
+import java.util.Optional;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -289,7 +294,11 @@ public class JavaClassSyncHandler {
         if (javaClass.getRootElement()
                 .getSnippets(BEFORE_PACKAGE)
                 .stream()
-                .filter(snip -> compareNonWhitespaces(snip.getValue(), value))
+                .filter(snip -> {
+                    Optional<CompilationUnit> parsed = new JavaParser().parse(snip.getValue()).getResult();
+                    return (!parsed.isEmpty() && compareNonWhitespaces(parsed.get().toString(), value))
+                            || compareNonWhitespaces(snip.getValue(), value);
+                })
                 .findAny()
                 .isPresent()) {
             return;
@@ -372,7 +381,7 @@ public class JavaClassSyncHandler {
         for (TypeParameter typeParameter : typeParameters) {
             String value = typeParameter.toString();
             javaClass.addRuntimeTypeParameter(value);
-            syncImportSnippet(value, imports);;
+            syncImportSnippet(value, imports);
         }
     }
 

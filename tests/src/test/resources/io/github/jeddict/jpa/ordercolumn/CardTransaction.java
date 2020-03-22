@@ -9,6 +9,9 @@ import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 public class CardTransaction {
 

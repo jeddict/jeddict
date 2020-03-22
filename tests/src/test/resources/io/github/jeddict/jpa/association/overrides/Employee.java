@@ -10,6 +10,9 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 import javax.persistence.Version;
 
+/**
+ * @author jGauravGupta
+ */
 @MappedSuperclass
 public class Employee {
 

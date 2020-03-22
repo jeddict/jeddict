@@ -12,6 +12,9 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 @IdClass(DependentId.class)
 public class Dependent {

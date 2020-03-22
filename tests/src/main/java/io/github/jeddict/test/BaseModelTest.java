@@ -172,7 +172,7 @@ public class BaseModelTest {
         try (InputStream existingSourceStream
                 = this.getClass().getResourceAsStream(javaClass.getClazz() + JAVA_EXT_SUFFIX)) {
             existingSource = readString(existingSourceStream);
-            existingUnit = JavaParser.parse(existingSource);
+            existingUnit = new JavaParser().parse(existingSource).getResult().get();
             assertNotNull(existingUnit);
             existingSource = prettyPrinter.print(existingUnit);
         }
@@ -192,7 +192,7 @@ public class BaseModelTest {
             classDef.setJaxbSupport(entityMappings.getJaxbSupport());
             newSource = classDef.getSnippet();
             assertNotNull(newSource);
-            newUnit = JavaParser.parse(newSource);
+            newUnit = new JavaParser().parse(newSource).getResult().get();
             assertNotNull(newUnit);
             newSource = prettyPrinter.print(newUnit);
 

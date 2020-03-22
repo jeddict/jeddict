@@ -8,6 +8,9 @@ import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 @Cacheable
 public class CacheableEnable {

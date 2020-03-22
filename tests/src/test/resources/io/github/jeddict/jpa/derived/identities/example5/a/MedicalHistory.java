@@ -11,6 +11,9 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 @IdClass(PersonId.class)
 public class MedicalHistory {

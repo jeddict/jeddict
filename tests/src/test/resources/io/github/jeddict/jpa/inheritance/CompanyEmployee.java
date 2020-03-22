@@ -7,6 +7,9 @@ import javax.persistence.Basic;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 @DiscriminatorValue("2")
 public class CompanyEmployee extends Employee {

@@ -3,6 +3,9 @@ package io.github.jeddict.bean;
 
 import java.util.Objects;
 
+/**
+ * @author jGauravGupta
+ */
 public class Student extends Object implements Cloneable {
 
     // before field snippet 

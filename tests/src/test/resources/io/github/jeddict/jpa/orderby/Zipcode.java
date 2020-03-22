@@ -7,6 +7,9 @@ package io.github.jeddict.jpa.orderby;
 import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 
+/**
+ * @author jGauravGupta
+ */
 @Embeddable
 public class Zipcode {
 

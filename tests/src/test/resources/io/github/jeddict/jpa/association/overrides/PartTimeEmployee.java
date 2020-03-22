@@ -8,6 +8,9 @@ import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 @AssociationOverride(name = "address", joinColumns = @JoinColumn(name = "ADDR_ID"))
 @AssociationOverride(name = "locker", joinColumns = @JoinColumn(name = "LCKR_ID"))

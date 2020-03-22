@@ -11,6 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 public class Dependent {
 

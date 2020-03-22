@@ -8,6 +8,9 @@ package io.github.jeddict.jpa.derived.identities.example6.a;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 public class Person {
 

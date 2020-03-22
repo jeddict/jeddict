@@ -11,6 +11,9 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 
+/**
+ * @author jGauravGupta
+ */
 @Entity
 public class WealthyPerson extends Person {
 
