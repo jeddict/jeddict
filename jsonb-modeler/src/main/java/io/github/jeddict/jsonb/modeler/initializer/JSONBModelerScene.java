@@ -23,7 +23,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import static javax.json.bind.config.PropertyNamingStrategy.IDENTITY;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import org.eclipse.yasson.internal.model.customization.naming.DefaultNamingStrategies;
 import io.github.jeddict.jsonb.modeler.widget.BranchNodeWidget;
 import io.github.jeddict.jsonb.modeler.widget.DocumentWidget;
 import io.github.jeddict.jsonb.modeler.widget.GeneralizationFlowWidget;
@@ -37,6 +36,7 @@ import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jsonb.spec.PropertyNamingStrategy;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
 import io.github.jeddict.jpa.modeler.initializer.JSONBUtil;
+import org.eclipse.yasson.internal.model.customization.StrategiesProvider;
 import org.netbeans.modeler.actions.IEventListener;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.scene.vmd.DefaultPModelerScene;
@@ -211,7 +211,7 @@ public class JSONBModelerScene extends DefaultPModelerScene<JSONBMapping> {
 
     public String transferPropertyName(String name) {
         PropertyNamingStrategy namingStrategy = getBaseElementSpec().getEntityMappings().getJsonbPropertyNamingStrategy();
-        javax.json.bind.config.PropertyNamingStrategy namingStrategyInstance = DefaultNamingStrategies.getStrategy(namingStrategy != null ? namingStrategy.name() : IDENTITY);
+        javax.json.bind.config.PropertyNamingStrategy namingStrategyInstance = StrategiesProvider.getPropertyNamingStrategy(namingStrategy != null ? namingStrategy.name() : IDENTITY);
         return namingStrategyInstance.translateName(name);
     }
 }
