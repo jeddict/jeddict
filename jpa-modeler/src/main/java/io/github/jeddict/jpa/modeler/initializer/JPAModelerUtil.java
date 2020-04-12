@@ -134,7 +134,12 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import io.github.jeddict.util.StringUtils;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.modeler.config.document.IModelerDocument;
 import org.netbeans.modeler.config.document.ModelerDocumentFactory;
@@ -461,8 +466,15 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
         return getEntityMapping(new StreamSource(reader));
     }
 
-    public static EntityMappings getEntityMapping(File file) throws JAXBException {
-        return getEntityMapping(new StreamSource(file));
+    public static EntityMappings getEntityMapping(File file) throws JAXBException, IOException {
+        String content = filterLegacyContent(Files.readString(file.toPath()));
+        return getEntityMapping(new StringReader(content));
+    }
+
+    public static String filterLegacyContent(String content) {
+        return content
+                .replaceAll("<jpa:", "<")
+                .replaceAll("</jpa:", "</");
     }
 
     private static void cleanUnMarshaller() {
@@ -490,6 +502,8 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
                 } else {
                     throw ex;
                 }
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
             }
             if (entityMappings == null) {
                 ElementConfigFactory elementConfigFactory = modelerFile.getModelerDiagramModel().getElementConfigFactory();
@@ -1157,7 +1171,6 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
             if (MODELER_MARSHALLER == null) {
                 MODELER_MARSHALLER = MODELER_CONTEXT.createMarshaller();
                 MODELER_MARSHALLER.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-                MODELER_MARSHALLER.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd");
                 MODELER_MARSHALLER.setEventHandler(new ValidateJAXB());
             }
             MODELER_MARSHALLER.marshal(entityMappings, fileWriter);
@@ -1172,7 +1185,6 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
             if (MODELER_MARSHALLER == null) {
                 MODELER_MARSHALLER = MODELER_CONTEXT.createMarshaller();
                 MODELER_MARSHALLER.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-                MODELER_MARSHALLER.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd");
                 MODELER_MARSHALLER.setEventHandler(new ValidateJAXB());
             }
             MODELER_MARSHALLER.marshal(entityMappings, sw);
@@ -1266,7 +1278,6 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
             if (MODELER_MARSHALLER == null) {
                 MODELER_MARSHALLER = MODELER_CONTEXT.createMarshaller();
                 MODELER_MARSHALLER.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-                MODELER_MARSHALLER.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd");
                 MODELER_MARSHALLER.setEventHandler(new ValidateJAXB());
             }
             StringWriter sw = new StringWriter();
