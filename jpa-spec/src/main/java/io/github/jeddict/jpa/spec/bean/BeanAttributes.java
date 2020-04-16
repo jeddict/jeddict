@@ -16,11 +16,13 @@
 package io.github.jeddict.jpa.spec.bean;
 
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import static io.github.jeddict.jcode.util.AttributeType.STRING;
 import static io.github.jeddict.jcode.util.AttributeType.Type.OTHER;
 import static io.github.jeddict.jcode.util.AttributeType.getArrayType;
 import static io.github.jeddict.jcode.util.AttributeType.getType;
 import static io.github.jeddict.jcode.util.AttributeType.isArray;
+import static io.github.jeddict.jcode.util.AttributeType.isGenericType;
 import static io.github.jeddict.jcode.util.AttributeType.isJavaType;
 import io.github.jeddict.jcode.util.JavaIdentifiers;
 import io.github.jeddict.jpa.spec.ManagedClass;
@@ -73,11 +75,15 @@ public class BeanAttributes extends Attributes<BeanClass> {
 
             boolean elementCollectionType = false;
             boolean relationType = false;
-            Optional<ResolvedReferenceTypeDeclaration> typeArgument = Optional.empty();
+            Optional<ResolvedTypeDeclaration> typeArgument = Optional.empty();
+            String typeArgumentPlain = STRING;
             if (collectionType || mapType) {
                 if (!member.getTypeArguments().isEmpty()) {
                     typeArgument = member.getTypeArgumentDeclaration(mapType ? 1 : 0);
-                    if (isJavaType(typeArgument.get().getClassName())) {
+                    if (typeArgument.isPresent()) {
+                        typeArgumentPlain = typeArgument.get().isType() ? typeArgument.get().asType().getName() : typeArgument.get().getClassName();
+                    }
+                    if (isJavaType(typeArgumentPlain) || isGenericType(typeArgumentPlain)) {
                         elementCollectionType = true;
                     } else {
                         relationType = true;
@@ -85,7 +91,7 @@ public class BeanAttributes extends Attributes<BeanClass> {
                 } else {
                     elementCollectionType = true;
                 }
-            } else if (!isJavaType(type)) {
+            } else if (!isJavaType(type) && !isGenericType(type)) {
                 relationType = true;
             }
 
@@ -99,13 +105,11 @@ public class BeanAttributes extends Attributes<BeanClass> {
             } else if (elementCollectionType) {
                 this.findElementCollection(member.getFieldName())
                         .orElseGet(() -> {
-                    BeanCollectionAttribute elementCollection = new BeanCollectionAttribute();
-                    this.addElementCollection(elementCollection);
-                    return elementCollection;
+                            BeanCollectionAttribute elementCollection = new BeanCollectionAttribute();
+                            this.addElementCollection(elementCollection);
+                            return elementCollection;
                         })
-                        .load(member,
-                                typeArgument.isPresent() ? typeArgument.get().getClassName() : STRING
-                        );
+                        .load(member, typeArgumentPlain);
             } else if (relationType) {
                 if (collectionType || mapType) {
                     if (typeArgument.isPresent()) {

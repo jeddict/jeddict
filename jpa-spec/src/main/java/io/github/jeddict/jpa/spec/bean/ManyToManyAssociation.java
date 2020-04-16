@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.jpa.spec.bean;
 
-import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.Optional;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 public class ManyToManyAssociation extends MultiAssociationAttribute {
 
-    public static ManyToManyAssociation load(ManyToManyAssociation attribute, MemberExplorer member, ResolvedReferenceTypeDeclaration type) {
+    public static ManyToManyAssociation load(ManyToManyAssociation attribute, MemberExplorer member, ResolvedTypeDeclaration type) {
         attribute.loadAttribute(member);
         attribute.setCollectionType(member.getType());
 

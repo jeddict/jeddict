@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
-import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import io.github.jeddict.bv.constraints.Constraint;
 import io.github.jeddict.jpa.spec.ForeignKey;
 import io.github.jeddict.jpa.spec.IdClass;
@@ -80,8 +80,8 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
 
         annotation.getAnnotation("foreignKey").map(ForeignKey::load).ifPresent(this::setForeignKey);
 
-        Optional<ResolvedReferenceTypeDeclaration> targetEntityOpt = annotation.getResolvedClass("targetEntity");
-        ResolvedReferenceTypeDeclaration type;
+        Optional<ResolvedTypeDeclaration> targetEntityOpt = annotation.getResolvedClass("targetEntity");
+        ResolvedTypeDeclaration type;
         if (targetEntityOpt.isPresent()) {
             type = targetEntityOpt.get();
         } else {

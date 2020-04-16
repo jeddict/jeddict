@@ -19,6 +19,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
@@ -111,7 +112,7 @@ public class SourceExplorer {
 
     public Optional<ClassExplorer> createClass(String clazzFQN) throws FileNotFoundException {
         Optional<CompilationUnit> cuOpt = createCompilationUnit(clazzFQN);
-        if (cuOpt.isPresent()) {
+        if (cuOpt.isPresent() && cuOpt.get().getPrimaryType().isPresent()) {
             ClassExplorer clazz = new ClassExplorer(this, cuOpt.get());
             this.addClass(clazz);
             return Optional.of(clazz);
@@ -212,7 +213,7 @@ public class SourceExplorer {
         return mappedSuperclassOpt;
     }
 
-    public Optional<BeanClass> findBeanClass(ResolvedReferenceTypeDeclaration type) {
+    public Optional<BeanClass> findBeanClass(ResolvedTypeDeclaration type) {
         Optional<BeanClass> beanClassOpt = entityMappings.findBeanClass(type.getClassName());
         if (!beanClassOpt.isPresent()
                 && (isIncludeReference() || isSelectedClass(type.getClassName()))) {

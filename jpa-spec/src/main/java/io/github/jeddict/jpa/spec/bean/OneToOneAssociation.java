@@ -30,12 +30,17 @@ public class OneToOneAssociation extends SingleAssociationAttribute {
     public static OneToOneAssociation load(OneToOneAssociation attribute, MemberExplorer member) {
         attribute.loadAttribute(member);
 
-        Optional<BeanClass> beanClassOpt = member.getSource().findBeanClass(member.getTypeDeclaration());
-        if (!beanClassOpt.isPresent()) {
+        try {
+            Optional<BeanClass> beanClassOpt = member.getSource().findBeanClass(member.getTypeDeclaration());
+            if (!beanClassOpt.isPresent()) {
+                return null;
+            }
+            attribute.setConnectedClass(beanClassOpt.get());
+            return attribute;
+        } catch (UnsupportedOperationException uoe) {
+            // skip generic
             return null;
         }
-        attribute.setConnectedClass(beanClassOpt.get());
-        return attribute;
     }
 
 }

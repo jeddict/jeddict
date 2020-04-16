@@ -6,7 +6,7 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import io.github.jeddict.source.ClassExplorer;
 import java.util.Optional;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -50,7 +50,7 @@ public class IdClass {
 
     public static IdClass load(ClassExplorer clazz) {
         IdClass idClass = null;
-        Optional<ResolvedReferenceTypeDeclaration> idClazzNameOpt = clazz
+        Optional<ResolvedTypeDeclaration> idClazzNameOpt = clazz
                 .getResolvedClassAttribute(javax.persistence.IdClass.class, "value");
         if (idClazzNameOpt.isPresent()) {
             idClass = new IdClass();

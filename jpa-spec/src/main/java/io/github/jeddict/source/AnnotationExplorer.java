@@ -17,7 +17,7 @@ package io.github.jeddict.source;
 
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import io.github.jeddict.jpa.spec.extend.ReferenceClass;
 import static io.github.jeddict.source.AnnotatedMember.*;
 import static java.util.Collections.singletonList;
@@ -70,14 +70,14 @@ public class AnnotationExplorer {
         return getLongAttribute(annotationExpr, attributeName);
     }
 
-    public Optional<ResolvedReferenceTypeDeclaration> getResolvedClass(String attributeName) {
+    public Optional<ResolvedTypeDeclaration> getResolvedClass(String attributeName) {
         return getResolvedClassAttribute(annotationExpr, attributeName);
     }
 
     public Optional<String> getClassName(String attributeName) {
         try {
             return getResolvedClassAttribute(annotationExpr, attributeName)
-                    .map(ResolvedReferenceTypeDeclaration::getQualifiedName);
+                    .map(ResolvedTypeDeclaration::getQualifiedName);
         } catch (Exception e) {
             return getTypeClassAttribute(annotationExpr, attributeName)
                     .map(Type::toString);

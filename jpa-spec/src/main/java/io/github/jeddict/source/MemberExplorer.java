@@ -25,6 +25,7 @@ import com.github.javaparser.ast.expr.LiteralStringValueExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithAnnotations;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
@@ -113,27 +114,31 @@ public class MemberExplorer extends AnnotatedMember {
         for (Pair<ResolvedTypeParameterDeclaration, ResolvedType> pair : getReferenceType().getTypeParametersMap()) {
             if (pair.b.isReferenceType()) {
                 args.add(pair.b.asReferenceType().getQualifiedName());
+            } else if (pair.b.isTypeVariable()) { // generics
+                args.add(pair.b.asTypeVariable().describe());
             }
         }
         return args;
     }
 
-    public Optional<ResolvedReferenceTypeDeclaration> getTypeArgumentDeclaration(int index) {
+    public Optional<ResolvedTypeDeclaration> getTypeArgumentDeclaration(int index) {
         if (index < 0) {
             throw new IllegalStateException("index value must be positive");
         }
-        List<ResolvedReferenceTypeDeclaration> declarations = getTypeArgumentDeclarations();
+        List<ResolvedTypeDeclaration> declarations = getTypeArgumentDeclarations();
         if (!declarations.isEmpty() && declarations.size() >= index) {
             return Optional.of(declarations.get(index));
         }
         return Optional.empty();
     }
 
-    public List<ResolvedReferenceTypeDeclaration> getTypeArgumentDeclarations() {
-        List<ResolvedReferenceTypeDeclaration> declarations = new ArrayList<>();
+    public List<ResolvedTypeDeclaration> getTypeArgumentDeclarations() {
+        List<ResolvedTypeDeclaration> declarations = new ArrayList<>();
         for (Pair<ResolvedTypeParameterDeclaration, ResolvedType> pair : getReferenceType().getTypeParametersMap()) {
             if (pair.b.isReferenceType()) {
                 declarations.add(pair.b.asReferenceType().getTypeDeclaration());
+            } else if (pair.b.isTypeVariable()) { // generics
+                declarations.add(pair.b.asTypeVariable().asTypeParameter());
             } // isTypeVariable()asTypeParameter()
         }
         return declarations;

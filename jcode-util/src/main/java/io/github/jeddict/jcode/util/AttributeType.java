@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import io.github.jeddict.util.StringUtils;
+import static java.util.stream.Collectors.toMap;
 
 /**
  *
@@ -119,7 +120,10 @@ public class AttributeType {
         }
     }
 
-    private static final Map<String, String> PRIMITIVE_DATA_TYPES = WRAPPER_DATA_TYPES.entrySet().stream().collect(Collectors.toMap(Entry::getValue, Entry::getKey));
+    private static final Map<String, String> PRIMITIVE_DATA_TYPES
+            = WRAPPER_DATA_TYPES.entrySet()
+                    .stream()
+                    .collect(toMap(Entry::getValue, Entry::getKey));
 
     public static String getWrapperType(String primitiveType) {
         boolean array = false;
@@ -153,6 +157,11 @@ public class AttributeType {
                 || type.startsWith("java.util")
                 || type.startsWith("java.sql")
                 || type.startsWith("java.time");
+    }
+
+    public static boolean isGenericType(String type) {
+        return type.length() == 1 
+                && Character.isUpperCase(type.charAt(0));
     }
 
     public static Type getType(String type) {

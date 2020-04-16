@@ -8,6 +8,7 @@ package io.github.jeddict.jpa.spec;
 
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import io.github.jeddict.bv.constraints.Constraint;
 import io.github.jeddict.bv.constraints.Size;
 import io.github.jeddict.jaxb.spec.JaxbVariableType;
@@ -257,8 +258,8 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
         }
         boolean mapKeyExist = collectionTypeClass != null && Map.class.isAssignableFrom(collectionTypeClass);
 
-        Optional<ResolvedReferenceTypeDeclaration> targetTypeOpt = annotation.getResolvedClass("targetClass");
-        ResolvedReferenceTypeDeclaration targetType;
+        Optional<ResolvedTypeDeclaration> targetTypeOpt = annotation.getResolvedClass("targetClass");
+        ResolvedTypeDeclaration targetType;
         if (targetTypeOpt.isPresent()) {
             targetType = targetTypeOpt.get();
         } else {
@@ -271,8 +272,9 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
             }
         }
 
-        if (targetType.hasDirectlyAnnotation(EMBEDDABLE_FQN)) {
-            Optional<Embeddable> embeddableOpt = member.getSource().findEmbeddable(targetType);
+        if (targetType instanceof ResolvedReferenceTypeDeclaration 
+                && ((ResolvedReferenceTypeDeclaration)targetType).hasDirectlyAnnotation(EMBEDDABLE_FQN)) {
+            Optional<Embeddable> embeddableOpt = member.getSource().findEmbeddable(((ResolvedReferenceTypeDeclaration)targetType));
             if (!embeddableOpt.isPresent()) {
                 return null;
             }
@@ -287,19 +289,22 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
             elementCollection.mapKey = MapKey.load(member);
             elementCollection.mapKeyType = elementCollection.mapKey != null ? MapKeyType.EXT : MapKeyType.NEW;
 
-            ResolvedReferenceTypeDeclaration keyType = MapKeyClass.getDeclaredType(member);
-            if (keyType.hasDirectlyAnnotation(EMBEDDABLE_FQN)) {
-                Optional<Embeddable> embeddableOpt = member.getSource().findEmbeddable(keyType);
-                if (!embeddableOpt.isPresent()) {
-                    return null;
+            ResolvedTypeDeclaration keyType = MapKeyClass.getDeclaredType(member);
+            if (keyType instanceof ResolvedReferenceTypeDeclaration) {
+                ResolvedReferenceTypeDeclaration refKeyType = (ResolvedReferenceTypeDeclaration) keyType;
+                if (refKeyType.hasDirectlyAnnotation(EMBEDDABLE_FQN)) {
+                    Optional<Embeddable> embeddableOpt = member.getSource().findEmbeddable(refKeyType);
+                    if (!embeddableOpt.isPresent()) {
+                        return null;
+                    }
+                    elementCollection.mapKeyAttributeType = embeddableOpt.get().getClazz(); //TODO set Embeddable
+                } else if (refKeyType.hasDirectlyAnnotation(ENTITY_FQN)) {
+                    Optional<Entity> entityOpt = member.getSource().findEntity(refKeyType);
+                    if (!entityOpt.isPresent()) {
+                        return null;
+                    }
+                    elementCollection.mapKeyAttributeType = entityOpt.get().getClazz(); //TODO set Entity
                 }
-                elementCollection.mapKeyAttributeType = embeddableOpt.get().getClazz(); //TODO set Embeddable
-            } else if (keyType.hasDirectlyAnnotation(ENTITY_FQN)) {
-                Optional<Entity> entityOpt = member.getSource().findEntity(keyType);
-                if (!entityOpt.isPresent()) {
-                    return null;
-                }
-                elementCollection.mapKeyAttributeType = entityOpt.get().getClazz(); //TODO set Entity
             } else {
                 elementCollection.mapKeyAttributeType = keyType.getQualifiedName();
             }

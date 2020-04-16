@@ -27,7 +27,7 @@ import com.github.javaparser.ast.expr.StringLiteralExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithAnnotations;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
 import io.github.jeddict.bv.constraints.AssertFalse;
@@ -321,13 +321,13 @@ public abstract class AnnotatedMember {
                 .map(ClassExpr::getType);
     }
 
-    public Optional<ResolvedReferenceTypeDeclaration> getResolvedClassAttribute(Class<? extends Annotation> annotationClass, String attributeName) {
+    public Optional<ResolvedTypeDeclaration> getResolvedClassAttribute(Class<? extends Annotation> annotationClass, String attributeName) {
         return getAnnotatedMember()
                 .getAnnotationByClass(annotationClass)
                 .flatMap(exp -> getResolvedClassAttribute(exp, attributeName));
     }
 
-    static Optional<ResolvedReferenceTypeDeclaration> getResolvedClassAttribute(AnnotationExpr annotationExpr, String attributeName) {
+    static Optional<ResolvedTypeDeclaration> getResolvedClassAttribute(AnnotationExpr annotationExpr, String attributeName) {
         return getTypeClassAttribute(annotationExpr, attributeName)
                 .map(Type::resolve)
                 .map(ResolvedType::asReferenceType)
@@ -343,7 +343,7 @@ public abstract class AnnotatedMember {
     static Optional<String> getClassNameAttribute(AnnotationExpr annotationExpr, String attributeName) {
         try {
             return getResolvedClassAttribute(annotationExpr, attributeName)
-                    .map(ResolvedReferenceTypeDeclaration::getQualifiedName);
+                    .map(ResolvedTypeDeclaration::getQualifiedName);
         } catch (Exception e) {
             return getTypeClassAttribute(annotationExpr, attributeName)
                     .map(Type::toString);

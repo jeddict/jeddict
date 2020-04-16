@@ -17,6 +17,7 @@ package io.github.jeddict.jpa.spec.extend;
 
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import io.github.jeddict.bv.constraints.Constraint;
 import io.github.jeddict.bv.constraints.Size;
 import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE_FQN;
@@ -143,8 +144,8 @@ public abstract class MultiRelationAttribute extends RelationAttribute
         }
         boolean mapKeyExist = collectionTypeClass != null && Map.class.isAssignableFrom(collectionTypeClass);
 
-        Optional<ResolvedReferenceTypeDeclaration> targetEntityOpt = annotation.getResolvedClass("targetEntity");
-        ResolvedReferenceTypeDeclaration targetEntityValue;
+        Optional<ResolvedTypeDeclaration> targetEntityOpt = annotation.getResolvedClass("targetEntity");
+        ResolvedTypeDeclaration targetEntityValue;
         if (targetEntityOpt.isPresent()) {
             targetEntityValue = targetEntityOpt.get();
         } else {
@@ -164,19 +165,22 @@ public abstract class MultiRelationAttribute extends RelationAttribute
             this.mapKey = MapKey.load(member);
             this.mapKeyType = this.mapKey != null ? MapKeyType.EXT : MapKeyType.NEW;
 
-            ResolvedReferenceTypeDeclaration keyType = MapKeyClass.getDeclaredType(member);
-            if (keyType.hasDirectlyAnnotation(EMBEDDABLE_FQN)) {
-                Optional<Embeddable> embeddableOpt = member.getSource().findEmbeddable(keyType);
-                if (!embeddableOpt.isPresent()) {
-                    throw new IllegalStateException("Embeddable Not found " + keyType.getQualifiedName());
+            ResolvedTypeDeclaration keyType = MapKeyClass.getDeclaredType(member);
+            if (keyType instanceof ResolvedReferenceTypeDeclaration) {
+                ResolvedReferenceTypeDeclaration refKeyType = (ResolvedReferenceTypeDeclaration) keyType;
+                if (refKeyType.hasDirectlyAnnotation(EMBEDDABLE_FQN)) {
+                    Optional<Embeddable> embeddableOpt = member.getSource().findEmbeddable(refKeyType);
+                    if (!embeddableOpt.isPresent()) {
+                        throw new IllegalStateException("Embeddable Not found " + keyType.getQualifiedName());
+                    }
+                    this.mapKeyAttributeType = embeddableOpt.get().getClazz(); //TODO set Embeddable
+                } else if (refKeyType.hasDirectlyAnnotation(ENTITY_FQN)) {
+                    Optional<Entity> entityOpt = member.getSource().findEntity(refKeyType);
+                    if (!entityOpt.isPresent()) {
+                        throw new IllegalStateException("Entity Not found " + keyType.getQualifiedName());
+                    }
+                    this.mapKeyAttributeType = entityOpt.get().getClazz(); //TODO set Entity
                 }
-                this.mapKeyAttributeType = embeddableOpt.get().getClazz(); //TODO set Embeddable
-            } else if (keyType.hasDirectlyAnnotation(ENTITY_FQN)) {
-                Optional<Entity> entityOpt = member.getSource().findEntity(keyType);
-                if (!entityOpt.isPresent()) {
-                    throw new IllegalStateException("Entity Not found " + keyType.getQualifiedName());
-                }
-                this.mapKeyAttributeType = entityOpt.get().getClazz(); //TODO set Entity
             } else {
                 this.mapKeyAttributeType = keyType.getQualifiedName();
             }
