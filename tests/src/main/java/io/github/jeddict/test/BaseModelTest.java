@@ -79,6 +79,7 @@ import org.netbeans.api.project.Project;
 import org.netbeans.modules.j2ee.persistence.wizard.jpacontroller.ProgressReporter;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
 
 
@@ -284,6 +285,8 @@ public class BaseModelTest {
             fail(fileName + " file jaxb parsing error", ex);
         } catch (URISyntaxException ex) {
             fail(fileName + " file uri syntax error", ex);
+        } catch (IOException ex) {
+            fail(fileName, ex);
         }
         throw new IllegalStateException("Unable to load file : " + fileName);
     }

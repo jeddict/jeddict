@@ -28,6 +28,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import static java.util.Objects.nonNull;
@@ -55,6 +57,7 @@ import org.openide.loaders.DataFolder;
 import org.openide.util.NbBundle;
 import static org.openide.util.NbBundle.getMessage;
 import org.openide.util.RequestProcessor;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.filterLegacyContent;
 
 @TemplateRegistration(
         folder = "Persistence",
@@ -202,9 +205,10 @@ public final class DocWizardDescriptor extends BaseWizardDescriptor {
 
     public EntityMappings generate(final ProgressReporter reporter, final EntityMappings entityMappings) throws FileNotFoundException, IOException, ProcessInterruptedException {
         this.reporter = reporter;
-        File file = new File(docFileLocation);
-        Reader reader = new FileReader(file);
-        return parser.generateModel(entityMappings, reader);
+        String content = JPAModelerUtil.filterLegacyContent(
+                Files.readString(new File(docFileLocation).toPath())
+        );
+        return parser.generateModel(entityMappings, new StringReader(content));
     }
 
     public static int getProgressStepCount(int baseCount) {

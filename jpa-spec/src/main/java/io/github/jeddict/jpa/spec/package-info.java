@@ -5,18 +5,12 @@
 // Generated on: 2014.01.21 at 01:52:19 PM IST
 //
 @javax.xml.bind.annotation.XmlSchema(
-        namespace = "http://java.sun.com/xml/ns/persistence/orm",
         elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
         xmlns = {
             @XmlNs(prefix = "xs",
                     namespaceURI = "http://www.w3.org/2001/XMLSchema"),
-             @XmlNs(prefix = "xsi",
-                    namespaceURI = "http://www.w3.org/2001/XMLSchema-instance"),
-            @XmlNs(prefix = "java",
-                    namespaceURI = "http://jcp.org/en/jsr/detail?id=270"),
-            @XmlNs(prefix = "jpa",
-                    namespaceURI = "http://java.sun.com/xml/ns/persistence/orm")
-
+            @XmlNs(prefix = "xsi",
+                    namespaceURI = "http://www.w3.org/2001/XMLSchema-instance")
         }
 )
 package io.github.jeddict.jpa.spec;
