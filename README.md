@@ -29,6 +29,9 @@
     <a href="https://opensource.org/licenses/Apache-2.0">
         <img src="https://img.shields.io/badge/license-Apache%202.0-green.svg" alt="Apache 2.0 License">
     </a>
+    <a href='https://sourcespy.com/github/jeddictjeddict/' title='SourceSpy Dashboard'>
+        <img src='https://sourcespy.com/shield.svg'/>
+    </a>
 </p>
 
 ## Key Features
