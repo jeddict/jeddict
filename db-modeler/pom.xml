@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.github.jeddict</groupId>
         <artifactId>jeddict</artifactId>
-        <version>5.4.1</version>
+        <version>5.4.2</version>
     </parent>
     <artifactId>db-modeler</artifactId>
     <name>DB Modeler</name>
