@@ -102,6 +102,7 @@ public final class EJSParser {
     private ScriptEngine createEngine() {
         // Hack until NETBEANS-2705 fixed
         System.getProperties().setProperty("polyglot.js.nashorn-compat", "true");
+        System.getProperties().setProperty("js.global-arguments", "true");
         CompiledScript compiledScript;
         Bindings bindings;
         GraalJSEngineFactory graalJSEngineFactory = new GraalJSEngineFactory();
