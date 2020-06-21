@@ -17,6 +17,7 @@ package io.github.jeddict.reveng.doc;
 
 import io.github.jeddict.analytics.JeddictLogger;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.filterLegacyContent;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.reveng.BaseWizardDescriptor;
 import static io.github.jeddict.reveng.doc.DocSetupPanelVisual.JAXB_SUPPORT;
@@ -25,10 +26,9 @@ import static io.github.jeddict.reveng.doc.DocSetupPanelVisual.JSONB_SUPPORT;
 import static io.github.jeddict.reveng.doc.DocSetupPanelVisual.JSON_FILE;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,7 +57,6 @@ import org.openide.loaders.DataFolder;
 import org.openide.util.NbBundle;
 import static org.openide.util.NbBundle.getMessage;
 import org.openide.util.RequestProcessor;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.filterLegacyContent;
 
 @TemplateRegistration(
         folder = "Persistence",
@@ -206,7 +205,7 @@ public final class DocWizardDescriptor extends BaseWizardDescriptor {
     public EntityMappings generate(final ProgressReporter reporter, final EntityMappings entityMappings) throws FileNotFoundException, IOException, ProcessInterruptedException {
         this.reporter = reporter;
         String content = JPAModelerUtil.filterLegacyContent(
-                Files.readString(new File(docFileLocation).toPath())
+                new String(Files.readAllBytes(new File(docFileLocation).toPath()), StandardCharsets.UTF_8)
         );
         return parser.generateModel(entityMappings, new StringReader(content));
     }

@@ -138,6 +138,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.netbeans.api.visual.widget.Widget;
@@ -467,7 +468,7 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
     }
 
     public static EntityMappings getEntityMapping(File file) throws JAXBException, IOException {
-        String content = filterLegacyContent(Files.readString(file.toPath()));
+        String content = filterLegacyContent(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8));
         return getEntityMapping(new StringReader(content));
     }
 
