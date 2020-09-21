@@ -109,7 +109,9 @@ public class ProjectHelper {
                     || Profile.JAVA_EE_7_WEB == profile
                     || Profile.JAVA_EE_7_FULL == profile
                     || Profile.JAVA_EE_8_WEB == profile
-                    || Profile.JAVA_EE_8_FULL == profile) {
+                    || Profile.JAVA_EE_8_FULL == profile
+                    || Profile.JAKARTA_EE_8_WEB == profile
+                    || Profile.JAKARTA_EE_8_FULL == profile) {
                 return true;
             }
         }
