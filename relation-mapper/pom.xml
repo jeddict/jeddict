@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.github.jeddict</groupId>
         <artifactId>jeddict</artifactId>
-        <version>5.4.2</version>
+        <version>5.4.3</version>
     </parent>
     <artifactId>relation-mapper</artifactId>
     <name>Relation Mapper</name>
