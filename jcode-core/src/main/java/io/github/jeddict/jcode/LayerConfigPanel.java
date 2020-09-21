@@ -16,6 +16,8 @@
 package io.github.jeddict.jcode;
 
 import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.lang.reflect.ParameterizedType;
 import javax.swing.JComboBox;
@@ -92,10 +94,17 @@ public abstract class LayerConfigPanel<T extends LayerConfigData> extends Panel 
         }
     };
 
+    ActionListener actionListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            changeSupport.fireChange();
+        }
+    };
+
     protected void addChangeListener(JComponent component) {
         if (component instanceof JComboBox) {
             ((JComboBox) component).getEditor().getEditorComponent().addKeyListener(keyAdapter);
-            ((JTextComponent) ((JComboBox) component).getEditor().getEditorComponent()).getDocument().addDocumentListener(documentListener);
+            ((JComboBox) component).addActionListener(actionListener);
         } else if (component instanceof JTextComponent) {
             ((JTextComponent) component).addKeyListener(keyAdapter);
             ((JTextComponent) component).getDocument().addDocumentListener(documentListener);
