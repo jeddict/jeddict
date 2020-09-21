@@ -76,20 +76,24 @@ public class DBEntityMappings extends XMLEntityMappings {
                 .stream()
                 .map(Converter::getAccessor)
                 .collect(toList()));
+        setConverterAccessors(new ArrayList<>());
         setConverters(new ArrayList<>());
-        setTypeConverters(new ArrayList<>());
-        setObjectTypeConverters(new ArrayList<>());
-//        setSerializedConverters(new ArrayList<>()); // uncomment on upgrade to eclipselink v2.7.2+
+        setSequenceGenerators(new ArrayList<>());
+        setSqlResultSetMappings(new ArrayList<>());
         setStructConverters(new ArrayList<>());
         setTableGenerators(new ArrayList<>());
+        setTenantDiscriminatorColumns(new ArrayList<>());
+        setTypeConverters(new ArrayList<>());
+        setSerializedConverters(new ArrayList<>());
+        setUnionPartitioning(new ArrayList<>());
         setUuidGenerators(new ArrayList<>());
-        setSequenceGenerators(new ArrayList<>());
+        setValuePartitioning(new ArrayList<>());
+        setObjectTypeConverters(new ArrayList<>());
         setPartitioning(new ArrayList<>());
         setReplicationPartitioning(new ArrayList<>());
         setRoundRobinPartitioning(new ArrayList<>());
         setPinnedPartitioning(new ArrayList<>());
         setRangePartitioning(new ArrayList<>());
-        setValuePartitioning(new ArrayList<>());
         setHashPartitioning(new ArrayList<>());
         setNamedQueries(new ArrayList<>());
         setNamedNativeQueries(new ArrayList<>());
@@ -97,7 +101,6 @@ public class DBEntityMappings extends XMLEntityMappings {
         setNamedStoredFunctionQueries(new ArrayList<>());
         setNamedPLSQLStoredFunctionQueries(new ArrayList<>());
         setNamedPLSQLStoredProcedureQueries(new ArrayList<>());
-        setSqlResultSetMappings(new ArrayList<>());
         setOracleArrayTypes(new ArrayList<>());
         setOracleObjectTypes(new ArrayList<>());
         setPLSQLTables(new ArrayList<>());
