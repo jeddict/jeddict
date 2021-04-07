@@ -118,7 +118,7 @@
         <dependency>
             <groupId>com.sun.istack</groupId>
             <artifactId>istack-commons-runtime</artifactId>
-            <version>3.0.11</version>
+            <version>4.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.netbeans.external</groupId>
