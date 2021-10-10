@@ -251,7 +251,7 @@
         <dependency>
             <groupId>com.dukescript.nbjavac</groupId>
             <artifactId>nb-javac</artifactId>
-            <version>16.0.0.0</version>
+            <version>17.0.0.0</version>
             <classifier>api</classifier>
             <scope>provided</scope>
         </dependency>
