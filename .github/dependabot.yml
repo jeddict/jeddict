@@ -1,0 +1,32 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: com.h2database:h2
+    versions:
+    - "> 1.0.60, < 2"
+  - dependency-name: com.sun.xml.bind:jaxb-impl
+    versions:
+    - ">= 2.3.a, < 2.4"
+  - dependency-name: org.jacoco:jacoco-maven-plugin
+    versions:
+    - "> 0.8.2, < 0.9"
+  - dependency-name: com.github.javaparser:javaparser-symbol-solver-core
+    versions:
+    - 3.18.0
+    - 3.19.0
+    - 3.20.0
+  - dependency-name: org.graalvm.js:js-scriptengine
+    versions:
+    - 21.0.0
+    - 21.0.0.2
+  - dependency-name: com.sun.xml.bind:jaxb-impl
+    versions:
+    - 3.0.0
+  - dependency-name: com.sun.istack:istack-commons-runtime
+    versions:
+    - 4.0.0

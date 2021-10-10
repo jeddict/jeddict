@@ -37,7 +37,7 @@
                     </publicPackages>
                     <moduleDependencies>
                         <dependency>
-                            <id>org.netbeans.modules:org-netbeans-modules-db-core</id>
+                            <id>org.netbeans.api:org-netbeans-modules-db-core</id>
                             <type>impl</type>
                         </dependency>
                          <dependency>
@@ -212,7 +212,7 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.modules</groupId>
+            <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-db-core</artifactId>
             <version>${netbeans.version}</version>
         </dependency>

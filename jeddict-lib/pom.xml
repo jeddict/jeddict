@@ -38,7 +38,7 @@
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-symbol-solver-core</artifactId>
-            <version>3.22.1</version>
+            <version>3.23.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.j2objc</groupId>
@@ -76,7 +76,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.27</version>
+            <version>1.29</version>
         </dependency>
         
         <dependency>
