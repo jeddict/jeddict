@@ -121,9 +121,10 @@
             <version>3.0.11</version>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.external</groupId>
-            <artifactId>nb-javac-api</artifactId>
-            <version>RELEASE802</version>
+            <groupId>com.dukescript.nbjavac</groupId>
+            <artifactId>nb-javac</artifactId>
+            <version>17.0.0.0</version>
+            <classifier>api</classifier>
         </dependency>
     </dependencies>
     <build>
