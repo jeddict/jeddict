@@ -15,6 +15,7 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import io.github.jeddict.bv.constraints.Constraint;
 import io.github.jeddict.jpa.spec.ForeignKey;
@@ -80,16 +81,17 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
 
         annotation.getAnnotation("foreignKey").map(ForeignKey::load).ifPresent(this::setForeignKey);
 
-        Optional<ResolvedTypeDeclaration> targetEntityOpt = annotation.getResolvedClass("targetEntity");
-        ResolvedTypeDeclaration type;
+        Optional<ResolvedReferenceTypeDeclaration> targetEntityOpt = annotation.getResolvedClass("targetEntity");
+        ResolvedTypeDeclaration type = null;
         if (targetEntityOpt.isPresent()) {
             type = targetEntityOpt.get();
-        } else {
-            type = member.getTypeDeclaration();
+        } else if (member.getTypeDeclaration().isPresent()) {
+            type = member.getTypeDeclaration().get();
         }
-
-        this.targetEntityPackage = type.getPackageName();
-        this.targetEntity = type.getClassName();
+        if (type != null) {
+            this.targetEntityPackage = type.getPackageName();
+            this.targetEntity = type.getClassName();
+        }
         this.primaryKeyJoinColumn = PrimaryKeyJoinColumn.load(member);
     }
 

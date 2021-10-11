@@ -27,6 +27,7 @@ import com.github.javaparser.ast.expr.StringLiteralExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithAnnotations;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
@@ -321,17 +322,17 @@ public abstract class AnnotatedMember {
                 .map(ClassExpr::getType);
     }
 
-    public Optional<ResolvedTypeDeclaration> getResolvedClassAttribute(Class<? extends Annotation> annotationClass, String attributeName) {
+    public Optional<ResolvedReferenceTypeDeclaration> getResolvedClassAttribute(Class<? extends Annotation> annotationClass, String attributeName) {
         return getAnnotatedMember()
                 .getAnnotationByClass(annotationClass)
                 .flatMap(exp -> getResolvedClassAttribute(exp, attributeName));
     }
 
-    static Optional<ResolvedTypeDeclaration> getResolvedClassAttribute(AnnotationExpr annotationExpr, String attributeName) {
+    static Optional<ResolvedReferenceTypeDeclaration> getResolvedClassAttribute(AnnotationExpr annotationExpr, String attributeName) {
         return getTypeClassAttribute(annotationExpr, attributeName)
                 .map(Type::resolve)
                 .map(ResolvedType::asReferenceType)
-                .map(ResolvedReferenceType::getTypeDeclaration);
+                .flatMap(ResolvedReferenceType::getTypeDeclaration);
     }
 
     public Optional<String> getClassNameAttribute(Class<? extends Annotation> annotationClass, String attributeName) {

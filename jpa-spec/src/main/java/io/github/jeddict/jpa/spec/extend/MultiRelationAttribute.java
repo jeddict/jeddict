@@ -144,14 +144,14 @@ public abstract class MultiRelationAttribute extends RelationAttribute
         }
         boolean mapKeyExist = collectionTypeClass != null && Map.class.isAssignableFrom(collectionTypeClass);
 
-        Optional<ResolvedTypeDeclaration> targetEntityOpt = annotation.getResolvedClass("targetEntity");
+        Optional<ResolvedReferenceTypeDeclaration> targetEntityOpt = annotation.getResolvedClass("targetEntity");
         ResolvedTypeDeclaration targetEntityValue;
         if (targetEntityOpt.isPresent()) {
             targetEntityValue = targetEntityOpt.get();
         } else {
-            targetEntityOpt = member.getTypeArgumentDeclaration(mapKeyExist ? 1 : 0);
-            if (targetEntityOpt.isPresent()) {
-                targetEntityValue = targetEntityOpt.get();
+            Optional<ResolvedTypeDeclaration> targetEntityOpt2 = member.getTypeArgumentDeclaration(mapKeyExist ? 1 : 0);
+            if (targetEntityOpt2.isPresent()) {
+                targetEntityValue = targetEntityOpt2.get();
                 this.setValueConstraints(member.getTypeArgumentBeanValidationConstraints(mapKeyExist ? 1 : 0));
             } else {
                 throw new UnsolvedSymbolException("targetEntity or generic type not defined in relation attribute '" + member.getFieldName() + "'");

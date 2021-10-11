@@ -258,14 +258,14 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
         }
         boolean mapKeyExist = collectionTypeClass != null && Map.class.isAssignableFrom(collectionTypeClass);
 
-        Optional<ResolvedTypeDeclaration> targetTypeOpt = annotation.getResolvedClass("targetClass");
+        Optional<ResolvedReferenceTypeDeclaration> targetTypeOpt = annotation.getResolvedClass("targetClass");
         ResolvedTypeDeclaration targetType;
         if (targetTypeOpt.isPresent()) {
             targetType = targetTypeOpt.get();
         } else {
-            targetTypeOpt = member.getTypeArgumentDeclaration(mapKeyExist ? 1 : 0);
-            if (targetTypeOpt.isPresent()) {
-                targetType = targetTypeOpt.get();
+            Optional<ResolvedTypeDeclaration> targetTypeOpt2 = member.getTypeArgumentDeclaration(mapKeyExist ? 1 : 0);
+            if (targetTypeOpt2.isPresent()) {
+                targetType = targetTypeOpt2.get();
                 elementCollection.setValueConstraints(member.getTypeArgumentBeanValidationConstraints(mapKeyExist ? 1 : 0));
             } else {
                 throw new UnsolvedSymbolException("targetClass or generic type not defined in ElementCollection attribute '" + member.getFieldName() + "'");

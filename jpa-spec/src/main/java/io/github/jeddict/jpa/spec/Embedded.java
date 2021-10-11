@@ -91,8 +91,10 @@ public class Embedded extends CompositionAttribute<Embeddable> implements Associ
         embedded.getAssociationOverride().addAll(AssociationOverride.load(member));
         embedded.setAccess(AccessType.load(member));
 
-        ResolvedReferenceTypeDeclaration type = member.getTypeDeclaration();
-        Optional<Embeddable> embeddableOpt = member.getSource().findEmbeddable(type);
+        if (!member.getTypeDeclaration().isPresent()) {
+            return null;
+        }
+        Optional<Embeddable> embeddableOpt = member.getSource().findEmbeddable(member.getTypeDeclaration().get());
         if (!embeddableOpt.isPresent()) {
             return null;
         }

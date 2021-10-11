@@ -91,14 +91,13 @@ public class ClassExplorer extends AnnotatedMember {
     }
 
     public Optional<ResolvedReferenceTypeDeclaration> getSuperClass() {
-        ResolvedReferenceTypeDeclaration superClassType = null;
         if (type instanceof ClassOrInterfaceDeclaration) {
             ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) type;
             if (!clazz.getExtendedTypes().isEmpty()) {
-                superClassType = clazz.getExtendedTypes().get(0).resolve().asReferenceType().getTypeDeclaration();
+                return clazz.getExtendedTypes().get(0).resolve().asReferenceType().getTypeDeclaration();
             }
         }
-        return Optional.ofNullable(superClassType);
+        return Optional.empty();
     }
 
     public Boolean isFieldAccess() {

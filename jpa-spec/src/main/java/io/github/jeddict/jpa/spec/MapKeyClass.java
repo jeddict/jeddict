@@ -7,6 +7,7 @@
 package io.github.jeddict.jpa.spec;
 
 import com.github.javaparser.resolution.UnsolvedSymbolException;
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.MemberExplorer;
@@ -55,7 +56,7 @@ public class MapKeyClass {
         ResolvedTypeDeclaration keyType;
         Optional<AnnotationExplorer> mapKeyClassOpt = member.getAnnotation(javax.persistence.MapKeyClass.class);
         if (mapKeyClassOpt.isPresent()) {
-            Optional<ResolvedTypeDeclaration> mapKeyClassValueOpt = mapKeyClassOpt.get().getResolvedClass("value");
+            Optional<ResolvedReferenceTypeDeclaration> mapKeyClassValueOpt = mapKeyClassOpt.get().getResolvedClass("value");
             if (mapKeyClassValueOpt.isPresent()) {
                 keyType = mapKeyClassValueOpt.get();
             } else {

@@ -31,7 +31,10 @@ public class OneToOneAssociation extends SingleAssociationAttribute {
         attribute.loadAttribute(member);
 
         try {
-            Optional<BeanClass> beanClassOpt = member.getSource().findBeanClass(member.getTypeDeclaration());
+            if(!member.getTypeDeclaration().isPresent()) {
+                return null;
+            }
+            Optional<BeanClass> beanClassOpt = member.getSource().findBeanClass(member.getTypeDeclaration().get());
             if (!beanClassOpt.isPresent()) {
                 return null;
             }
