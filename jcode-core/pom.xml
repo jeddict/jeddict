@@ -12,7 +12,7 @@
         
     <properties>
         <root.dir>${basedir}/../</root.dir>
-        <graalvm.version>21.2.0</graalvm.version>
+        <graalvm.version>22.1.0</graalvm.version>
     </properties>
     
     <build>
