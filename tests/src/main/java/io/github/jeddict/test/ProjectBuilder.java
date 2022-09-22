@@ -117,7 +117,7 @@ public class ProjectBuilder extends NbTestCase {
             + "  <properties>\n"
             + "      <maven.compiler.source>1.8</maven.compiler.source>\n"
             + "      <maven.compiler.target>1.8</maven.compiler.target>\n"
-            + "      <version.jakartaee>8.0.0</version.jakartaee>"
+            + "      <version.jakartaee>10.0.0</version.jakartaee>"
             + "  </properties>\n"
             + "  <dependencies>\n"
             + "      <dependency>\n"

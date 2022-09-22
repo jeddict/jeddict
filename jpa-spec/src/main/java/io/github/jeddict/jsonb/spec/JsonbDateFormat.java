@@ -38,7 +38,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -58,7 +58,7 @@ public class JsonbDateFormat extends JsonbFormat {
 
     public static JsonbDateFormat load(AnnotatedMember member) {
         JsonbDateFormat jsonbDateFormat = null;
-        Optional<AnnotationExplorer> annotationOpt = member.getAnnotation(javax.json.bind.annotation.JsonbDateFormat.class);
+        Optional<AnnotationExplorer> annotationOpt = member.getAnnotation(jakarta.json.bind.annotation.JsonbDateFormat.class);
         if (annotationOpt.isPresent()) {
             AnnotationExplorer annotation = annotationOpt.get();
             jsonbDateFormat = new JsonbDateFormat();

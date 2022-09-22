@@ -83,7 +83,7 @@ public class QueryHintPanel extends EntityComponent<QueryHint> {
         name_LayeredPane.add(name_Label, java.awt.BorderLayout.WEST);
 
         name_Combobox.setEditable(true);
-        name_Combobox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "","javax.persistence.lock.timeout", "javax.persistence.query.timeout", "javax.persistence.cache.retrieveMode", "javax.persistence.cache.storeMode", "javax.persistence.loadgraph", "javax.persistence.fetchgraph"}));
+        name_Combobox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "","jakarta.persistence.lock.timeout", "jakarta.persistence.query.timeout", "jakarta.persistence.cache.retrieveMode", "jakarta.persistence.cache.storeMode", "jakarta.persistence.loadgraph", "jakarta.persistence.fetchgraph"}));
         name_Combobox.setToolTipText(org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.name_Combobox.toolTipText")); // NOI18N
         name_LayeredPane.add(name_Combobox, java.awt.BorderLayout.CENTER);
 

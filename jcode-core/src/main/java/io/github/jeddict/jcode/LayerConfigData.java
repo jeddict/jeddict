@@ -17,7 +17,7 @@ package io.github.jeddict.jcode;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.json.bind.annotation.JsonbTransient;
+import jakarta.json.bind.annotation.JsonbTransient;
 
 /**
  *

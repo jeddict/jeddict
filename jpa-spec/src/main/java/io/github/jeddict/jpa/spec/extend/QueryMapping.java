@@ -16,7 +16,7 @@
 package io.github.jeddict.jpa.spec.extend;
 
 import java.util.regex.Pattern;
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElement;
 import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.settings.diagram.ClassDiagramSettings;
 

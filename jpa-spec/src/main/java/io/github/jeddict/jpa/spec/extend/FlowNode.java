@@ -16,7 +16,7 @@
 package io.github.jeddict.jpa.spec.extend;
 
 import java.util.List;
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import org.netbeans.modeler.specification.model.document.core.IFlowNode;
 
 /**

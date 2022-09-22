@@ -23,14 +23,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import static java.util.stream.Collectors.toSet;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlIDREF;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import io.github.jeddict.util.StringUtils;
 import static io.github.jeddict.util.StringUtils.equalsIgnoreCase;
 import static io.github.jeddict.util.StringUtils.isBlank;
@@ -176,25 +176,25 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     public void load(ClassExplorer clazz) {
        super.load(clazz);
 
-        AnnotationExplorer annotation = clazz.getAnnotation(javax.persistence.Entity.class).get();
+        AnnotationExplorer annotation = clazz.getAnnotation(jakarta.persistence.Entity.class).get();
         annotation.getString("name").ifPresent(this::setEntityName);
 
-        Optional<AnnotationExplorer> tableOpt = clazz.getAnnotation(javax.persistence.Table.class);
+        Optional<AnnotationExplorer> tableOpt = clazz.getAnnotation(jakarta.persistence.Table.class);
         if (tableOpt.isPresent()) {
             this.table = Table.load(tableOpt.get());
         }
 
         this.secondaryTable = SecondaryTable.load(clazz);
 
-        Optional<AnnotationExplorer> inheritanceOpt = clazz.getAnnotation(javax.persistence.Inheritance.class);
+        Optional<AnnotationExplorer> inheritanceOpt = clazz.getAnnotation(jakarta.persistence.Inheritance.class);
         if (inheritanceOpt.isPresent()) {
             this.inheritance = Inheritance.load(inheritanceOpt.get());
         }
 
-        clazz.getStringAttribute(javax.persistence.DiscriminatorValue.class, "value")
+        clazz.getStringAttribute(jakarta.persistence.DiscriminatorValue.class, "value")
                 .ifPresent(this::setDiscriminatorValue);
 
-        Optional<AnnotationExplorer> discriminatorColumnOpt = clazz.getAnnotation(javax.persistence.DiscriminatorColumn.class);
+        Optional<AnnotationExplorer> discriminatorColumnOpt = clazz.getAnnotation(jakarta.persistence.DiscriminatorColumn.class);
         if (discriminatorColumnOpt.isPresent()) {
             this.discriminatorColumn = DiscriminatorColumn.load(discriminatorColumnOpt.get());
         }
@@ -202,7 +202,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         this.tableGenerator = TableGenerator.load(clazz);
         this.sequenceGenerator = SequenceGenerator.load(clazz);
 
-        Optional<AnnotationExplorer> cacheableOpt = clazz.getAnnotation(javax.persistence.Cacheable.class);
+        Optional<AnnotationExplorer> cacheableOpt = clazz.getAnnotation(jakarta.persistence.Cacheable.class);
         if (cacheableOpt.isPresent()) {
             this.cacheable = cacheableOpt.get().getBoolean("value").orElse(true);
         }

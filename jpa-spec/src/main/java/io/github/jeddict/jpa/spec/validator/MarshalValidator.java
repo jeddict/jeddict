@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.jpa.spec.validator;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  *

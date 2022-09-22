@@ -16,14 +16,14 @@
 package io.github.jeddict.jpa.spec.extend;
 
 import java.util.regex.Pattern;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import io.github.jeddict.util.StringUtils;
 import io.github.jeddict.jcode.util.StringHelper;
 import io.github.jeddict.settings.diagram.ClassDiagramSettings;
 import static io.github.jeddict.jpa.spec.NamedQuery.FIND_BY;
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElement;
 
 /**
  *

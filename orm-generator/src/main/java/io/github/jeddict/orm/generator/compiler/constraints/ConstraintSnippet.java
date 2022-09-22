@@ -53,7 +53,7 @@ public abstract class ConstraintSnippet<T extends Constraint> implements Snippet
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return singleton("javax.validation.constraints." + getAPI());
+        return singleton("jakarta.validation.constraints." + getAPI());
     } 
    
     protected abstract String getAPI();

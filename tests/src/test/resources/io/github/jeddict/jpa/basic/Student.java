@@ -4,12 +4,12 @@
  */
 package io.github.jeddict.jpa.basic;
 
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
 
 /**
  * @author jGauravGupta

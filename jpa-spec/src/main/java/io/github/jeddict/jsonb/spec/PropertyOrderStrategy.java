@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.jsonb.spec;
 
-import javax.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlEnum;
 import org.netbeans.modeler.properties.type.Enumy;
 
 /**

@@ -11,11 +11,11 @@ import io.github.jeddict.jpa.spec.validator.column.ColumnValidator;
 import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.Optional;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.ColumnMetadata;
 
 /**
@@ -86,7 +86,7 @@ public class Column extends BaseElement {
 
     public static Column load(MemberExplorer member) {
         Column column = null;
-        Optional<AnnotationExplorer> annotationOpt = member.getAnnotation(javax.persistence.Column.class);
+        Optional<AnnotationExplorer> annotationOpt = member.getAnnotation(jakarta.persistence.Column.class);
         if (annotationOpt.isPresent()) {
             column = load(annotationOpt.get());
         }
@@ -95,7 +95,7 @@ public class Column extends BaseElement {
 
     public static Column loadMapKey(MemberExplorer member) {
         Column column = null;
-        Optional<AnnotationExplorer> annotationOpt = member.getAnnotation(javax.persistence.MapKeyColumn.class);
+        Optional<AnnotationExplorer> annotationOpt = member.getAnnotation(jakarta.persistence.MapKeyColumn.class);
         if (annotationOpt.isPresent()) {
             column = load(annotationOpt.get());
         }

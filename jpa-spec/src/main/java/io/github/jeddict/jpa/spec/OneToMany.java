@@ -12,12 +12,12 @@ import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -105,7 +105,7 @@ public class OneToMany extends MultiRelationAttribute implements JoinColumnHandl
     protected Boolean orphanRemoval;
 
     public OneToMany load(MemberExplorer member) {
-        AnnotationExplorer annotation = member.getAnnotation(javax.persistence.OneToMany.class).get();
+        AnnotationExplorer annotation = member.getAnnotation(jakarta.persistence.OneToMany.class).get();
         super.loadAttribute(member, annotation);
 
         this.getJoinColumn().addAll(JoinColumn.load(member));

@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -53,7 +53,7 @@ public class JsonbNumberFormat extends JsonbFormat {
 
     public static JsonbNumberFormat load(AnnotatedMember member) {
         JsonbNumberFormat jsonbNumberFormat = null;
-        Optional<AnnotationExplorer> annotationOpt = member.getAnnotation(javax.json.bind.annotation.JsonbNumberFormat.class);
+        Optional<AnnotationExplorer> annotationOpt = member.getAnnotation(jakarta.json.bind.annotation.JsonbNumberFormat.class);
         if (annotationOpt.isPresent()) {
             AnnotationExplorer annotation = annotationOpt.get();
             jsonbNumberFormat = new JsonbNumberFormat();

@@ -15,12 +15,12 @@ import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlIDREF;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -103,7 +103,7 @@ public class SqlResultSetMapping {
 
     public static Set<SqlResultSetMapping> load(AnnotatedMember member) {
         Set<SqlResultSetMapping> sqlResultSetMappings = new LinkedHashSet<>();
-        Optional<AnnotationExplorer> sqlResultSetMappingsOpt = member.getAnnotation(javax.persistence.SqlResultSetMappings.class);
+        Optional<AnnotationExplorer> sqlResultSetMappingsOpt = member.getAnnotation(jakarta.persistence.SqlResultSetMappings.class);
         if (sqlResultSetMappingsOpt.isPresent()) {
             sqlResultSetMappings.addAll(
                     sqlResultSetMappingsOpt.get()
@@ -114,7 +114,7 @@ public class SqlResultSetMapping {
         }
 
         sqlResultSetMappings.addAll(
-                member.getRepeatableAnnotations(javax.persistence.SqlResultSetMapping.class)
+                member.getRepeatableAnnotations(jakarta.persistence.SqlResultSetMapping.class)
                         .map(SqlResultSetMapping::load)
                         .collect(toCollection(LinkedHashSet::new))
         );

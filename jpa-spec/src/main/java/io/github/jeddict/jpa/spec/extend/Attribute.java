@@ -103,13 +103,13 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlElements;
+import jakarta.xml.bind.annotation.XmlTransient;
 import io.github.jeddict.util.StringUtils;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.type.Embedded;
@@ -341,22 +341,22 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
 //            this.setFunctionalType(getterElement.getReturnType().toString().startsWith(Optional.class.getCanonicalName()));
 //        }
         Optional<AnnotationExplorer> jsonbPropertyOptional
-                = member.getAnnotation(javax.json.bind.annotation.JsonbProperty.class);
+                = member.getAnnotation(jakarta.json.bind.annotation.JsonbProperty.class);
         if (jsonbPropertyOptional.isPresent()) {
             AnnotationExplorer jsonbPropertyAnnotation = jsonbPropertyOptional.get();
             jsonbPropertyAnnotation.getBoolean("nillable").ifPresent(this::setJsonbNillable);
             jsonbPropertyAnnotation.getString("value").ifPresent(this::setJsonbProperty);
         }
 
-        this.jsonbTransient = member.isAnnotationPresent(javax.json.bind.annotation.JsonbTransient.class);
+        this.jsonbTransient = member.isAnnotationPresent(jakarta.json.bind.annotation.JsonbTransient.class);
         this.jsonbDateFormat = JsonbDateFormat.load(member);
         this.jsonbNumberFormat = JsonbNumberFormat.load(member);
 
-        member.getReferenceClassAttribute(javax.json.bind.annotation.JsonbTypeAdapter.class, "value")
+        member.getReferenceClassAttribute(jakarta.json.bind.annotation.JsonbTypeAdapter.class, "value")
                 .ifPresent(this::setJsonbTypeAdapter);
-        member.getReferenceClassAttribute(javax.json.bind.annotation.JsonbTypeSerializer.class, "value")
+        member.getReferenceClassAttribute(jakarta.json.bind.annotation.JsonbTypeSerializer.class, "value")
                 .ifPresent(this::setJsonbTypeSerializer);
-        member.getReferenceClassAttribute(javax.json.bind.annotation.JsonbTypeDeserializer.class, "value")
+        member.getReferenceClassAttribute(jakarta.json.bind.annotation.JsonbTypeDeserializer.class, "value")
                 .ifPresent(this::setJsonbTypeDeserializer);
     }
 

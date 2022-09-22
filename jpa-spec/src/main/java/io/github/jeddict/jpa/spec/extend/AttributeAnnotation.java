@@ -16,7 +16,7 @@
 package io.github.jeddict.jpa.spec.extend;
 
 import io.github.jeddict.jpa.spec.extend.annotation.Annotation;
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAttribute;
 
 /**
  *

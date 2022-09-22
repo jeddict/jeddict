@@ -21,8 +21,8 @@ package io.github.jeddict.jcode;
  */
 public class SecurityConstants {
 
-    public static final String EMBEDDED_IDENTITY_STORE_DEFINITION = "javax.security.identitystore.annotation.EmbeddedIdentityStoreDefinition";
-    public static final String CREDENTIALS = "javax.security.identitystore.annotation.Credentials";
+    public static final String EMBEDDED_IDENTITY_STORE_DEFINITION = "jakarta.security.identitystore.annotation.EmbeddedIdentityStoreDefinition";
+    public static final String CREDENTIALS = "jakarta.security.identitystore.annotation.Credentials";
     public static final String CALLER_NAME = "callerName";
     public static final String PASSWORD = "password";
     public static final String DEFAULT_CREDENTIALS = "user";

@@ -17,8 +17,8 @@ package io.github.jeddict.jpa.spec.extend;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlIDREF;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlIDREF;
 import io.github.jeddict.jaxb.spec.JaxbVariableType;
 import io.github.jeddict.jpa.spec.ManagedClass;
 

@@ -17,8 +17,8 @@ package io.github.jeddict.bv.constraints;
 
 import io.github.jeddict.source.AnnotationExplorer;
 import static java.lang.Boolean.FALSE;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import static io.github.jeddict.util.StringUtils.isBlank;
 
 /**

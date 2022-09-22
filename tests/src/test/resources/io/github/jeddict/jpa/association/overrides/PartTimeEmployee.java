@@ -3,10 +3,10 @@
  */
 package io.github.jeddict.jpa.association.overrides;
 
-import javax.persistence.AssociationOverride;
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
+import jakarta.persistence.AssociationOverride;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 
 /**
  * @author jGauravGupta

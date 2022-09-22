@@ -16,12 +16,12 @@ import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.sequencing.TableGeneratorMetadata;
 
 /**
@@ -102,7 +102,7 @@ public class TableGenerator {
 
     public static TableGenerator load(AnnotatedMember member) {
         TableGenerator tableGenerator = null;
-        Optional<AnnotationExplorer> tableGeneratorOpt = member.getAnnotation(javax.persistence.TableGenerator.class);
+        Optional<AnnotationExplorer> tableGeneratorOpt = member.getAnnotation(jakarta.persistence.TableGenerator.class);
         if (tableGeneratorOpt.isPresent()) {
             tableGenerator = new TableGenerator();
             AnnotationExplorer annotation = tableGeneratorOpt.get();

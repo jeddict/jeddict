@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.github.jeddict</groupId>
         <artifactId>jeddict</artifactId>
-        <version>5.4.4</version>
+        <version>6.0</version>
     </parent>
     <artifactId>jpa-modeler</artifactId>
     <name>JPA Modeler</name>
@@ -17,7 +17,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>org.apache.netbeans.utilities</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
@@ -83,6 +83,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jeddict-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jeddict.modeler</groupId>
+            <artifactId>modeler-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

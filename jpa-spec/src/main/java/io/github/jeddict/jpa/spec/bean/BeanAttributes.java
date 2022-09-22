@@ -40,9 +40,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import static java.util.stream.Collectors.toList;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
 import io.github.jeddict.util.StringUtils;
 
 @XmlAccessorType(XmlAccessType.FIELD)

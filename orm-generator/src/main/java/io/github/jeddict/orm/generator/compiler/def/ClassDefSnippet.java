@@ -524,7 +524,7 @@ public abstract class ClassDefSnippet implements WritableSnippet {
         }
 
         if (isJaxbSupport()) {
-            imports.add("javax.xml.bind.annotation.*");
+            imports.add("jakarta.xml.bind.annotation.*");
         }
 
         return imports;

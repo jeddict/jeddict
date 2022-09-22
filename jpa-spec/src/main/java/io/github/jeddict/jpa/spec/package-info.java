@@ -4,8 +4,8 @@
 // Any modifications to this file will be lost upon recompilation of the source schema.
 // Generated on: 2014.01.21 at 01:52:19 PM IST
 //
-@javax.xml.bind.annotation.XmlSchema(
-        elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
+@jakarta.xml.bind.annotation.XmlSchema(
+        elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED,
         xmlns = {
             @XmlNs(prefix = "xs",
                     namespaceURI = "http://www.w3.org/2001/XMLSchema"),
@@ -15,4 +15,4 @@
 )
 package io.github.jeddict.jpa.spec;
 
-import javax.xml.bind.annotation.XmlNs;
+import jakarta.xml.bind.annotation.XmlNs;

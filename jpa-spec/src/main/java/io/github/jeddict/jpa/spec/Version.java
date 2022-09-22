@@ -9,9 +9,9 @@ package io.github.jeddict.jpa.spec;
 import io.github.jeddict.jpa.spec.extend.AccessTypeHandler;
 import io.github.jeddict.jpa.spec.extend.PersistenceBaseAttribute;
 import io.github.jeddict.source.MemberExplorer;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  *

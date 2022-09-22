@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toList;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.converters.ConvertMetadata;
 import org.eclipse.persistence.internal.jpa.metadata.converters.ConverterMetadata;
 
@@ -75,7 +75,7 @@ public class Convert implements Comparable<Convert> {
 
     public static List<Convert> load(AnnotatedMember member, boolean mapKeyExist, boolean isMapKeyConvert) {
         List<Convert> converts = new ArrayList<>();
-        Optional<AnnotationExplorer> convertsOpt = member.getAnnotation(javax.persistence.Converts.class);
+        Optional<AnnotationExplorer> convertsOpt = member.getAnnotation(jakarta.persistence.Converts.class);
         if (convertsOpt.isPresent()) {
             converts.addAll(
                     convertsOpt.get()
@@ -85,7 +85,7 @@ public class Convert implements Comparable<Convert> {
             );
         } else {
             converts.addAll(
-                    member.getRepeatableAnnotations(javax.persistence.Convert.class)
+                    member.getRepeatableAnnotations(jakarta.persistence.Convert.class)
                             .map(convertAnnot -> Convert.load(convertAnnot, mapKeyExist, isMapKeyConvert))
                             .collect(toList())
             );

@@ -18,7 +18,7 @@ package io.github.jeddict.generator.repository;
 import io.github.jeddict.jcode.LayerConfigData;
 import java.util.Collections;
 import java.util.List;
-import javax.json.bind.annotation.JsonbProperty;
+import jakarta.json.bind.annotation.JsonbProperty;
 import io.github.jeddict.util.StringUtils;
 
 /**

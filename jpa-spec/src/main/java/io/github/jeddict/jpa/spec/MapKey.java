@@ -9,10 +9,10 @@ package io.github.jeddict.jpa.spec;
 import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.Optional;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -50,7 +50,7 @@ public class MapKey {
 
     public static MapKey load(MemberExplorer member) {
         MapKey mapKey = null;
-        Optional<AnnotationExplorer> mapkeyOpt = member.getAnnotation(javax.persistence.MapKey.class);
+        Optional<AnnotationExplorer> mapkeyOpt = member.getAnnotation(jakarta.persistence.MapKey.class);
         if (mapkeyOpt.isPresent()) {
             mapKey = new MapKey();
             mapkeyOpt.get()

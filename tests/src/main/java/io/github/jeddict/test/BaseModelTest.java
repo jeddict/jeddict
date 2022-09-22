@@ -52,6 +52,7 @@ import io.github.jeddict.orm.generator.service.EntityGenerator;
 import io.github.jeddict.orm.generator.service.MappedSuperClassGenerator;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 import io.github.jeddict.reveng.klass.ClassWizardDescriptor;
+import jakarta.xml.bind.JAXBException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -71,7 +72,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import javax.xml.bind.JAXBException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -79,7 +79,6 @@ import org.netbeans.api.project.Project;
 import org.netbeans.modules.j2ee.persistence.wizard.jpacontroller.ProgressReporter;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
-import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
 
 

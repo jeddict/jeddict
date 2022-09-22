@@ -5,8 +5,8 @@
  */
 package io.github.jeddict.jpa.derived.identities.example3.a;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
 
 /**
  * @author jGauravGupta

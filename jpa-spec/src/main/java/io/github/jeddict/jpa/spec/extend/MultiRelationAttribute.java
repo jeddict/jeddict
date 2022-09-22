@@ -45,13 +45,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.MapKeyJoinColumn;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.MapKeyJoinColumn;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlIDREF;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
 import io.github.jeddict.util.StringUtils;
 
 /**
@@ -190,7 +190,7 @@ public abstract class MultiRelationAttribute extends RelationAttribute
             this.mapKeyEnumerated = EnumType.loadMapKey(member);
             this.mapKeyJoinColumn = JoinColumn.loadMapKey(member);
 
-            member.getAnnotation(javax.persistence.ForeignKey.class)
+            member.getAnnotation(jakarta.persistence.ForeignKey.class)
                     .map(ForeignKey::load)
                     .ifPresent(this::setMapKeyForeignKey);
             this.mapKeyAttributeOverride = AttributeOverride.load(member);

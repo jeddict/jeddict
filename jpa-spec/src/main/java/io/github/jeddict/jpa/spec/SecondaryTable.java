@@ -15,10 +15,10 @@ import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.internal.jpa.metadata.columns.PrimaryKeyForeignKeyMetadata;
 import org.eclipse.persistence.internal.jpa.metadata.tables.SecondaryTableMetadata;
 
@@ -98,7 +98,7 @@ public class SecondaryTable extends Table {
 
     public static List<SecondaryTable> load(AnnotatedMember member) {
         List<SecondaryTable> secondaryTables = new ArrayList<>();
-        Optional<AnnotationExplorer> secondaryTablesOpt = member.getAnnotation(javax.persistence.SecondaryTables.class);
+        Optional<AnnotationExplorer> secondaryTablesOpt = member.getAnnotation(jakarta.persistence.SecondaryTables.class);
         if (secondaryTablesOpt.isPresent()) {
             secondaryTables.addAll(
                     secondaryTablesOpt.get()
@@ -109,7 +109,7 @@ public class SecondaryTable extends Table {
         }
 
         secondaryTables.addAll(
-                member.getRepeatableAnnotations(javax.persistence.SecondaryTable.class)
+                member.getRepeatableAnnotations(jakarta.persistence.SecondaryTable.class)
                         .map(SecondaryTable::load)
                         .collect(toList())
         );

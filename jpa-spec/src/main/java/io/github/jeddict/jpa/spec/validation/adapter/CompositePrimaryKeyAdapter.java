@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.jpa.spec.validation.adapter;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import io.github.jeddict.jpa.spec.extend.CompositePrimaryKeyType;
 
 public class CompositePrimaryKeyAdapter extends XmlAdapter<String, CompositePrimaryKeyType> {

@@ -103,7 +103,7 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
             return false;
         }
 
-        final String notNullAnnotation = "javax.validation.constraints.NotNull";    //NOI18N
+        final String notNullAnnotation = "jakarta.validation.constraints.NotNull";    //NOI18N
         Sources sources = ProjectUtils.getSources(project);
         SourceGroup groups[] = sources.getSourceGroups(JavaProjectConstants.SOURCES_TYPE_JAVA);
         if (groups == null || groups.length < 1) {
@@ -513,7 +513,7 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
             ClassPath classPath = ClassPath.getClassPath(packageFO, ClassPath.COMPILE);
 
             if (classPath != null) {
-                if (classPath.findResource("javax/persistence/EntityManager.class") == null) { // NOI18N
+                if (classPath.findResource("jakarta/persistence/EntityManager.class") == null) { // NOI18N
                     // initialize the provider list lazily
                     if (providers == null) {
                         providers = PersistenceLibrarySupport.getProvidersFromLibraries();

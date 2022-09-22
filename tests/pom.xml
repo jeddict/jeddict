@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.github.jeddict</groupId>
         <artifactId>jeddict</artifactId>
-        <version>5.4.4</version>
+        <version>6.0</version>
     </parent>
     <artifactId>jeddict-tests</artifactId>
     <name>Jeddict Tests</name>
@@ -135,7 +135,7 @@
                 <configuration combine.self="override" />
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>org.apache.netbeans.utilities</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
                 <configuration>
                     <skipNbm>true</skipNbm>

@@ -9,10 +9,10 @@ package io.github.jeddict.jpa.spec;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import io.github.jeddict.source.ClassExplorer;
 import java.util.Optional;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -51,7 +51,7 @@ public class IdClass {
     public static IdClass load(ClassExplorer clazz) {
         IdClass idClass = null;
         Optional<ResolvedReferenceTypeDeclaration> idClazzNameOpt = clazz
-                .getResolvedClassAttribute(javax.persistence.IdClass.class, "value");
+                .getResolvedClassAttribute(jakarta.persistence.IdClass.class, "value");
         if (idClazzNameOpt.isPresent()) {
             idClass = new IdClass();
             idClass.clazz = idClazzNameOpt.get().getClassName();

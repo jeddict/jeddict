@@ -22,7 +22,7 @@ import io.github.jeddict.jpa.spec.Column;
 import io.github.jeddict.jpa.spec.ManagedClass;
 import io.github.jeddict.jpa.spec.TemporalType;
 import io.github.jeddict.source.MemberExplorer;
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAttribute;
 
 /**
  *

@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.jpa.spec.extend.adapter;
 
-import javax.xml.bind.annotation.XmlAnyElement;
+import jakarta.xml.bind.annotation.XmlAnyElement;
 
 public class AdaptedMap {
 

@@ -3,8 +3,8 @@
  */
 package io.github.jeddict.jpa.employee;
 
-import javax.persistence.Basic;
-import javax.persistence.Entity;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Entity;
 
 @Entity
 public class PartTimeEmployee extends CompanyEmployee {

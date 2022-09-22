@@ -13,10 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toList;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -80,7 +80,7 @@ public class NamedNativeQuery extends QueryMapping {
 
     public static List<NamedNativeQuery> load(AnnotatedMember member) {
         List<NamedNativeQuery> namedNativeQueries = new ArrayList<>();
-        Optional<AnnotationExplorer> namedNativeQueriesOpt = member.getAnnotation(javax.persistence.NamedNativeQueries.class);
+        Optional<AnnotationExplorer> namedNativeQueriesOpt = member.getAnnotation(jakarta.persistence.NamedNativeQueries.class);
         if (namedNativeQueriesOpt.isPresent()) {
             namedNativeQueries.addAll(
                     namedNativeQueriesOpt.get()
@@ -91,7 +91,7 @@ public class NamedNativeQuery extends QueryMapping {
         }
 
         namedNativeQueries.addAll(
-                member.getRepeatableAnnotations(javax.persistence.NamedNativeQuery.class)
+                member.getRepeatableAnnotations(jakarta.persistence.NamedNativeQuery.class)
                         .map(NamedNativeQuery::load)
                         .collect(toList())
         );

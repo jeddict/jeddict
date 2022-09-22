@@ -55,7 +55,7 @@ public class PackageInfoClassDefSnippet extends ClassDefSnippet {
     public ImportSet getImportSet() throws InvalidDataException {
         ImportSet imports = new ImportSet();
         if (isJaxbMetadataExist()) {
-            imports.add("javax.xml.bind.annotation.*");
+            imports.add("jakarta.xml.bind.annotation.*");
         }
         for (Snippet snippet : getJSONBSnippets()) {
             imports.addAll(snippet.getImportSnippets());

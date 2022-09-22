@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.github.jeddict</groupId>
         <artifactId>jeddict</artifactId>
-        <version>5.4.4</version>
+        <version>6.0</version>
     </parent>
     <artifactId>jpa-spec</artifactId>
     <name>JPA Specification</name>
@@ -17,7 +17,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>org.apache.netbeans.utilities</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
@@ -31,8 +31,8 @@
                         <publicPackage>io.github.jeddict.settings.*</publicPackage>
                         <publicPackage>io.github.jeddict.settings</publicPackage>
                         <publicPackage>io.github.jeddict.snippet</publicPackage>
-                        <publicPackage>javax.persistence.*</publicPackage>
-                        <publicPackage>javax.validation.*</publicPackage>
+                        <publicPackage>jakarta.persistence.*</publicPackage>
+                        <publicPackage>jakarta.validation.*</publicPackage>
                         <publicPackage>org.eclipse.persistence.*</publicPackage>
                     </publicPackages>
                 </configuration>
@@ -44,6 +44,11 @@
         <dependency>
             <groupId>io.github.jeddict</groupId>
             <artifactId>jeddict-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jeddict.modeler</groupId>
+            <artifactId>modeler-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

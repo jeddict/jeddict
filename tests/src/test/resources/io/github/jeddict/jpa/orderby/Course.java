@@ -4,12 +4,12 @@
  */
 package io.github.jeddict.jpa.orderby;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OrderBy;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.OrderBy;
 
 /**
  * @author jGauravGupta

@@ -29,9 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 import static io.github.jeddict.util.StringUtils.EMPTY;
 
 /**
@@ -71,8 +71,8 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
         this.getJoinColumn().addAll(JoinColumn.load(member));
         annotation.getBoolean("optional").ifPresent(this::setOptional);
 
-        Optional<AnnotationExplorer> idAnnotationOpt = member.getAnnotation(javax.persistence.Id.class);
-        Optional<AnnotationExplorer> mapsIdAnnotationOpt = member.getAnnotation(javax.persistence.MapsId.class);
+        Optional<AnnotationExplorer> idAnnotationOpt = member.getAnnotation(jakarta.persistence.Id.class);
+        Optional<AnnotationExplorer> mapsIdAnnotationOpt = member.getAnnotation(jakarta.persistence.MapsId.class);
         this.primaryKey = idAnnotationOpt.isPresent() || mapsIdAnnotationOpt.isPresent();
 
         if (mapsIdAnnotationOpt.isPresent()) {

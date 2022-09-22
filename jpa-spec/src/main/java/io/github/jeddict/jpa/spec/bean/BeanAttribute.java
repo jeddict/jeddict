@@ -17,9 +17,9 @@ package io.github.jeddict.jpa.spec.bean;
 
 import io.github.jeddict.jpa.spec.extend.BaseAttribute;
 import io.github.jeddict.source.MemberExplorer;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanAttribute extends BaseAttribute {

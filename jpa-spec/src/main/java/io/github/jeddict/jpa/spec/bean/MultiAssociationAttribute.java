@@ -21,7 +21,7 @@ import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAttribute;
 
 /**
  *

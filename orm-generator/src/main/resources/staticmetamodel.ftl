@@ -3,7 +3,7 @@
 package ${classDef.getPackageName()};
 </#if>
 <#-- import statements -->
-import javax.persistence.metamodel.StaticMetamodel;
+import jakarta.persistence.metamodel.StaticMetamodel;
 <#foreach importStatement in classDef.getImportSnippets()![]>
 ${importStatement}
 </#foreach>

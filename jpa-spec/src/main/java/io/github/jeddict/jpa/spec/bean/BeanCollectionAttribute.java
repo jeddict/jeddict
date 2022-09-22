@@ -18,7 +18,7 @@ package io.github.jeddict.jpa.spec.bean;
 import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAttribute;
 
 public class BeanCollectionAttribute extends BeanAttribute implements CollectionTypeHandler {
 

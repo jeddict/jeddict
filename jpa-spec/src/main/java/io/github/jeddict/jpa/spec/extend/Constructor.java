@@ -19,9 +19,9 @@ import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualify;
 import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualifyGeneric;
 import java.util.Objects;
 import static java.util.stream.Collectors.joining;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import io.github.jeddict.util.StringUtils;
 
 /**

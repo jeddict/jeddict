@@ -49,7 +49,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Optional;
 import java.util.function.Consumer;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import org.netbeans.modeler.core.exception.ProcessInterruptedException;
 import org.openide.util.Exceptions;
 import static org.openide.util.NbBundle.getMessage;

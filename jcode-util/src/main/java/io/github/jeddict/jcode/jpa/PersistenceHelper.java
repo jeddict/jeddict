@@ -126,7 +126,7 @@ public class PersistenceHelper {
     }
 
     public boolean hasJTASupport(Project project) {
-        return hasResource(project, "javax/transaction/UserTransaction.class");  // NOI18N
+        return hasResource(project, "jakarta/transaction/UserTransaction.class");  // NOI18N
     }
 
     public static boolean hasResource(Project project, String resource) {

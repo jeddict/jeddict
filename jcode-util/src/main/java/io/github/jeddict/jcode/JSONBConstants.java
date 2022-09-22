@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class JSONBConstants {
 
-    public static final String JSONB_PACKAGE = "javax.json.bind";
+    public static final String JSONB_PACKAGE = "jakarta.json.bind";
     public static final String JSONB_ANNOTATION_PACKAGE = JSONB_PACKAGE + ".annotation";
     public static final String JSONB_ANNOTATION_PACKAGE_PREFIX = JSONB_ANNOTATION_PACKAGE + '.';
 

@@ -19,7 +19,7 @@ import io.github.jeddict.jpa.spec.extend.IPersistenceAttributes;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.source.ClassExplorer;
 import java.util.Set;
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAttribute;
 
 public abstract class ManagedClass<T extends IPersistenceAttributes> extends JavaClass<T> {
 

@@ -8,7 +8,7 @@
   <br>
 </h1>
 
-<h4 align="center">Jakarta EE 8 (Java EE) & MicroProfile 3.2 application generator and modeler</h4>
+<h4 align="center">Jakarta EE 10 (Java EE) & MicroProfile 5.0 application generator and modeler</h4>
 
 <p align="center">
     <a href="https://travis-ci.org/jeddict/jeddict">
@@ -33,8 +33,8 @@
 
 ## Key Features
 
-##### 1) [JPA 2.2 source generation](http://jeddict.github.io/tutorial/page.html?l=QuickStart)
-##### 2) Java EE 8 / MicroProfile full-stack application generator
+##### 1) [JPA 3.1 source generation](http://jeddict.github.io/tutorial/page.html?l=QuickStart)
+##### 2) Jakarta EE 10 / MicroProfile full-stack application generator
  - ###### [Monolith](https://jeddict.github.io/page.html?l=tutorial/Monolith)
  - ###### [MicroService](https://jeddict.github.io/page.html?l=tutorial/MicroService)
 ##### 3) Visualize architecture

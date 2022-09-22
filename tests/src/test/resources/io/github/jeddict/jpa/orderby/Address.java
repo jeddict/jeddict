@@ -4,9 +4,9 @@
  */
 package io.github.jeddict.jpa.orderby;
 
-import javax.persistence.Basic;
-import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
 
 /**
  * @author jGauravGupta

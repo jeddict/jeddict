@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 import org.eclipse.persistence.internal.jpa.metadata.DBMetadataDescriptor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.ConverterAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EmbeddableAccessor;
@@ -114,7 +114,7 @@ public class DBEntityMappings extends XMLEntityMappings {
 ////                .subclass(TypeDescription.Generic.Builder.parameterizedType(AttributeConverter.class, String.class, Integer.class).build())
 //                .subclass(AttributeConverter.class)
 //                .name(convert.getClazz())
-//                .annotateType(AnnotationDescription.Builder.ofType(javax.persistence.Converter.class).build())
+//                .annotateType(AnnotationDescription.Builder.ofType(jakarta.persistence.Converter.class).build())
 //                .make()
 //                .load(classLoader, ClassLoadingStrategy.Default.INJECTION)
 //                .getLoaded();

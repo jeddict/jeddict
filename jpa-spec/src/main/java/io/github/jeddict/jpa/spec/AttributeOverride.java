@@ -12,11 +12,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import static java.util.stream.Collectors.toSet;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -73,7 +73,7 @@ public class AttributeOverride implements Comparable<AttributeOverride> {
     public static Set<AttributeOverride> load(AnnotatedMember member) {
         Set<AttributeOverride> attributeOverrides = new TreeSet<>();
 
-        Optional<AnnotationExplorer> attrOverridesOpt = member.getAnnotation(javax.persistence.AttributeOverrides.class);
+        Optional<AnnotationExplorer> attrOverridesOpt = member.getAnnotation(jakarta.persistence.AttributeOverrides.class);
         if (attrOverridesOpt.isPresent()) {
             attributeOverrides.addAll(
                     attrOverridesOpt.get()
@@ -84,7 +84,7 @@ public class AttributeOverride implements Comparable<AttributeOverride> {
         }
 
         attributeOverrides.addAll(
-                member.getRepeatableAnnotations(javax.persistence.AttributeOverride.class)
+                member.getRepeatableAnnotations(jakarta.persistence.AttributeOverride.class)
                         .map(AttributeOverride::load)
                         .collect(toSet())
         );

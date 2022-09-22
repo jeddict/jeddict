@@ -3,9 +3,9 @@
  */
 package io.github.jeddict.jpa.cacheable;
 
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 /**
  * @author jGauravGupta

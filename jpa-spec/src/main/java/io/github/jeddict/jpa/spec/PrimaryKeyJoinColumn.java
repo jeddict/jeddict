@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toList;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.PrimaryKeyJoinColumnMetadata;
 /**
  *
@@ -81,7 +81,7 @@ public class PrimaryKeyJoinColumn implements IJoinColumn {
     public static List<PrimaryKeyJoinColumn> load(AnnotatedMember member) {
         List<PrimaryKeyJoinColumn> primaryKeyJoinColumns = new ArrayList<>();
 
-        Optional<AnnotationExplorer> primaryKeyJoinColumnsOpt = member.getAnnotation(javax.persistence.PrimaryKeyJoinColumns.class);
+        Optional<AnnotationExplorer> primaryKeyJoinColumnsOpt = member.getAnnotation(jakarta.persistence.PrimaryKeyJoinColumns.class);
         if (primaryKeyJoinColumnsOpt.isPresent()) {
             primaryKeyJoinColumns.addAll(
                     primaryKeyJoinColumnsOpt.get()
@@ -91,7 +91,7 @@ public class PrimaryKeyJoinColumn implements IJoinColumn {
             );
         } else {
             primaryKeyJoinColumns.addAll(
-                    member.getRepeatableAnnotations(javax.persistence.PrimaryKeyJoinColumn.class)
+                    member.getRepeatableAnnotations(jakarta.persistence.PrimaryKeyJoinColumn.class)
                             .map(PrimaryKeyJoinColumn::load)
                             .collect(toList())
             );

@@ -4,8 +4,8 @@
  */
 package io.github.jeddict.jpa.attribute.override.example2;
 
-import javax.persistence.Basic;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Embeddable;
 
 /**
  * @author jGauravGupta

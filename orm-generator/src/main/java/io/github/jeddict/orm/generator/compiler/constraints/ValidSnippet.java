@@ -37,7 +37,7 @@ public class ValidSnippet extends ConstraintSnippet<Valid> {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return singleton("javax.validation." + getAPI());
+        return singleton("jakarta.validation." + getAPI());
     }
 
 }

@@ -12,10 +12,10 @@ import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.Optional;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -54,7 +54,7 @@ public class MapKeyClass {
     public static ResolvedTypeDeclaration getDeclaredType(MemberExplorer member) {
         Optional<ResolvedTypeDeclaration> keyTypeOpt;
         ResolvedTypeDeclaration keyType;
-        Optional<AnnotationExplorer> mapKeyClassOpt = member.getAnnotation(javax.persistence.MapKeyClass.class);
+        Optional<AnnotationExplorer> mapKeyClassOpt = member.getAnnotation(jakarta.persistence.MapKeyClass.class);
         if (mapKeyClassOpt.isPresent()) {
             Optional<ResolvedReferenceTypeDeclaration> mapKeyClassValueOpt = mapKeyClassOpt.get().getResolvedClass("value");
             if (mapKeyClassValueOpt.isPresent()) {

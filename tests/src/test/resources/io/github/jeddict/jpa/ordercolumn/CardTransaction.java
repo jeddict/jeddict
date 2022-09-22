@@ -4,10 +4,10 @@
  */
 package io.github.jeddict.jpa.ordercolumn;
 
+import jakarta.persistence.Basic;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import java.time.LocalDateTime;
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.Id;
 
 /**
  * @author jGauravGupta
