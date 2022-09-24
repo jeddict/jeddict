@@ -81,8 +81,8 @@ public class PersistenceXMLGenerator implements IPersistenceXMLGenerator{
                     punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_2_1.PersistenceUnit();
                 } else if (Persistence.VERSION_2_0.equals(version)) {
                     punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_2_0.PersistenceUnit();
-                } else {//currently default 1.0
-                    punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_1_0.PersistenceUnit();
+                } else {
+                    punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_2_1.PersistenceUnit();
                 }
                 Properties properties = punit.newProperties();
                 punit.setProperties(properties);

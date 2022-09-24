@@ -4,7 +4,7 @@
     <groupId>io.github.jeddict</groupId>
     <artifactId>jeddict</artifactId>
     <name>Jeddict</name>
-    <version>6.0</version>
+    <version>6.0.1</version>
     <packaging>pom</packaging>
     <modules>
         <module>jeddict-lib</module>
@@ -28,7 +28,7 @@
         <netbeans.installation>${root.dir}/../incubator-netbeans/nbbuild/netbeans</netbeans.installation>
         <nbm.cluster>jeddict</nbm.cluster>
         <nbm.build.dir>${root.dir}/../jeddict-cluster</nbm.build.dir>
-        <nbm.maven.plugin.version>4.7</nbm.maven.plugin.version>
+        <nbm.maven.plugin.version>4.8</nbm.maven.plugin.version>
     </properties>
     
     <build>
@@ -47,6 +47,7 @@
                     <cluster>${nbm.cluster}</cluster>
                     <nbmBuildDir>${nbm.build.dir}</nbmBuildDir>
                     <clusterBuildDir>${nbm.build.dir}/clusters</clusterBuildDir>
+                    <!--<codeNameBase>io.github.jeddict</codeNameBase>-->
                 </configuration>
             </plugin>
             <plugin>

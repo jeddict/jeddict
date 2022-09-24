@@ -131,7 +131,7 @@ public final class GenerateSettings extends javax.swing.JPanel {
         if (javaxNamespace.isSelected()) {
             syncExistingSourceCodeComp.setSelected(false);
             syncExistingSourceCode = false;
-            JOptionPane.showMessageDialog(null, "Sync with existing source will disabled on using legacy namespace javax.*", "Sync with existing source", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Sync with existing source will be disabled on using legacy namespace javax.*", "Sync with existing source", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_javaxNamespaceActionPerformed
 
