@@ -46,6 +46,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import static io.github.jeddict.util.StringUtils.isBlank;
 import static io.github.jeddict.util.StringUtils.EMPTY;
+import java.util.prefs.Preferences;
 import org.netbeans.api.queries.FileEncodingQuery;
 import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
@@ -54,6 +55,7 @@ import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent; 
 import org.netbeans.api.scripting.Scripting;
+import org.openide.util.NbPreferences;
 
 /**
  *
@@ -250,7 +252,11 @@ public class FileUtil {
             bind.putAll(values);
         }
         bind.put(ENCODING_PROPERTY_NAME, targetEncoding.name());
-
+        boolean enableJavaxNamespace = NbPreferences.root().getBoolean("enableJavaxNamespace", Boolean.FALSE);
+        Writer mainWriter = writer;
+        if (enableJavaxNamespace) {
+            writer = new StringWriter();
+        }
         try {
             eng.getContext().setWriter(writer);
             eng.eval(reader);
@@ -260,6 +266,10 @@ public class FileUtil {
             if (reader != null) {
                 reader.close();
             }
+        }
+        if (enableJavaxNamespace) {
+            String result = writer.toString().replaceAll("jakarta.", "javax.");
+            mainWriter.append(result);
         }
     }
     

@@ -17,6 +17,7 @@ package io.github.jeddict.settings.generate;
 
 import java.util.prefs.Preferences;
 import static io.github.jeddict.util.StringUtils.EMPTY;
+import javax.swing.JOptionPane;
 import org.openide.util.NbPreferences;
 
 public final class GenerateSettings extends javax.swing.JPanel {
@@ -44,6 +45,7 @@ public final class GenerateSettings extends javax.swing.JPanel {
         setterJavaDocComp = new javax.swing.JCheckBox();
         getterJavaDocComp = new javax.swing.JCheckBox();
         fluentAPIJavaDocComp = new javax.swing.JCheckBox();
+        javaxNamespace = new javax.swing.JCheckBox();
 
         rootLayeredPane.setLayout(new java.awt.GridLayout(9, 1, 0, 2));
 
@@ -101,6 +103,15 @@ public final class GenerateSettings extends javax.swing.JPanel {
 
         rootLayeredPane.add(javaDocPanel);
 
+        org.openide.awt.Mnemonics.setLocalizedText(javaxNamespace, org.openide.util.NbBundle.getMessage(GenerateSettings.class, "GenerateSettings.javaxNamespace.text")); // NOI18N
+        javaxNamespace.setToolTipText(org.openide.util.NbBundle.getMessage(GenerateSettings.class, "GenerateSettings.javaxNamespace.toolTipText")); // NOI18N
+        javaxNamespace.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                javaxNamespaceActionPerformed(evt);
+            }
+        });
+        rootLayeredPane.add(javaxNamespace);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -116,6 +127,14 @@ public final class GenerateSettings extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void javaxNamespaceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_javaxNamespaceActionPerformed
+        if (javaxNamespace.isSelected()) {
+            syncExistingSourceCodeComp.setSelected(false);
+            syncExistingSourceCode = false;
+            JOptionPane.showMessageDialog(null, "Sync with existing source will disabled on using legacy namespace javax.*", "Sync with existing source", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_javaxNamespaceActionPerformed
+
     void load() {
         syncExistingSourceCodeComp.setSelected(isSyncExistingSourceCode());
         propertyJavaDocComp.setSelected(isPropertyJavaDoc());
@@ -126,6 +145,7 @@ public final class GenerateSettings extends javax.swing.JPanel {
         fluentAPIPrefixComp.setText(getFluentAPIPrefix());
         generateDefaultValueComp.setSelected(isGenerateDefaultValue());
         enableIntrospectionComp.setSelected(isIntrospectionEnabled());
+        javaxNamespace.setSelected(isJavaxNamespaceEnabled());
     }
 
     void store() {
@@ -138,6 +158,7 @@ public final class GenerateSettings extends javax.swing.JPanel {
         pref.put("fluentAPIPrefix", fluentAPIPrefixComp.getText());
         pref.putBoolean("generateDefaultValue", generateDefaultValueComp.isSelected());
         pref.putBoolean("enableIntrospection", enableIntrospectionComp.isSelected());
+        pref.putBoolean("enableJavaxNamespace", javaxNamespace.isSelected());
 
         syncExistingSourceCode = null;
         propertyJavaDoc = null;
@@ -148,6 +169,7 @@ public final class GenerateSettings extends javax.swing.JPanel {
         fluentAPIPrefix = null;
         generateDefaultValue = null;
         enableIntrospection = null;
+        enableJavaxNamespace = null;
     }
 
     private static Boolean syncExistingSourceCode;
@@ -159,6 +181,7 @@ public final class GenerateSettings extends javax.swing.JPanel {
     private static String fluentAPIPrefix;
     private static Boolean generateDefaultValue;
     private static Boolean enableIntrospection;
+    private static Boolean enableJavaxNamespace;
 
     public static boolean isSyncExistingSourceCode() {
         if (syncExistingSourceCode == null) {
@@ -227,6 +250,13 @@ public final class GenerateSettings extends javax.swing.JPanel {
         }
         return enableIntrospection;
     }
+    
+    public static boolean isJavaxNamespaceEnabled() {
+        if (enableJavaxNamespace == null) {
+            enableJavaxNamespace = pref.getBoolean("enableJavaxNamespace", Boolean.FALSE);
+        }
+        return enableJavaxNamespace;
+    }
 
     public static void setIntrospectionEnabled(boolean status) {
         enableIntrospection = status;
@@ -246,7 +276,7 @@ public final class GenerateSettings extends javax.swing.JPanel {
         return true;
     }
 
-    private static final Preferences pref = NbPreferences.forModule(GenerateSettings.class);
+    private static final Preferences pref = NbPreferences.root();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox enableIntrospectionComp;
     private javax.swing.JCheckBox fluentAPIJavaDocComp;
@@ -260,6 +290,7 @@ public final class GenerateSettings extends javax.swing.JPanel {
     private javax.swing.JLabel javaDoc_Label;
     private javax.swing.JLayeredPane javadocSetting_LayeredPane;
     private javax.swing.JLayeredPane javaseWrapperPanel1;
+    private javax.swing.JCheckBox javaxNamespace;
     private javax.swing.JCheckBox propertyJavaDocComp;
     private javax.swing.JLayeredPane rootLayeredPane;
     private javax.swing.JCheckBox setterJavaDocComp;
