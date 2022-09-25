@@ -34,6 +34,7 @@ public enum GenerationType {
     TABLE,
     SEQUENCE,
     IDENTITY,
+    UUID,
     AUTO,
     DEFAULT;
 

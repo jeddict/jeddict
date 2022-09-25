@@ -27,6 +27,7 @@ public class GeneratedValueSnippet implements Snippet {
 
     public static final String AUTO = "GenerationType.AUTO";
     public static final String IDENTITY = "GenerationType.IDENTITY";
+    public static final String UUID = "GenerationType.UUID";
     public static final String SEQUENCE = "GenerationType.SEQUENCE";
     public static final String TABLE = "GenerationType.TABLE";
 
@@ -80,6 +81,7 @@ public class GeneratedValueSnippet implements Snippet {
         Set<String> strategyTypes = new HashSet<>();
         strategyTypes.add(AUTO);
         strategyTypes.add(IDENTITY);
+        strategyTypes.add(UUID);
         strategyTypes.add(SEQUENCE);
         strategyTypes.add(TABLE);
         return strategyTypes;

@@ -42,6 +42,7 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
             new Property(GenerationType.DEFAULT, "Default"),
             new Property(GenerationType.AUTO, "Auto"),
             new Property(GenerationType.IDENTITY, "Identity"),
+            new Property(GenerationType.UUID, "UUID"),
             new Property(GenerationType.SEQUENCE, "Sequence"),
             new Property(GenerationType.TABLE, "Table")
         };
