@@ -33,7 +33,7 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
 @org.netbeans.modeler.specification.annotaton.DiagramModel(
         id = "JPA",
         name = "JPA 3.1 Specification",
-        version = "6.0.1",
+        version = "6.1.0",
         architectureVersion = "1.4",
         modelerUtil = JPAModelerUtil.class,
         modelerScene = JPAModelerScene.class,
