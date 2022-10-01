@@ -25,6 +25,5 @@ jobs:
     - uses: actions/checkout@master
       with:
         name: jeddict/netbeans-modeler
-        ref: refs/heads/release
     - name: Build with Maven
       run: mvn -B package --file pom.xml
