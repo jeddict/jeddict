@@ -135,11 +135,6 @@
         </dependency>
         <dependency>
             <groupId>org.netbeans.modules</groupId>
-            <artifactId>org-netbeans-modules-maven-embedder</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-modules-j2ee-persistence</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
