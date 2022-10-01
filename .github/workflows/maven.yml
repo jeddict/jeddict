@@ -24,6 +24,7 @@ jobs:
         cache: maven
     - uses: actions/checkout@master
       with:
+        repository: jeddict/netbeans-modeler
         name: jeddict/netbeans-modeler
     - name: Build with Maven
       run: mvn -B package --file pom.xml
