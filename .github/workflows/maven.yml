@@ -26,7 +26,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B install --file pom.xml
     - uses: actions/checkout@v3
     - name: Set up JDK 11 Jeddict
       uses: actions/setup-java@v3
