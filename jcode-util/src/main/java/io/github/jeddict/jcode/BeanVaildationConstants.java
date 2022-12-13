@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a
@@ -25,11 +25,11 @@ import java.util.Set;
  */
 public class BeanVaildationConstants {
 
-    public static final String BV_CONSTRAINTS_PACKAGE = "javax.validation.constraints";
-    public static final String CONSTRAINT_VIOLATION = "javax.validation.ConstraintViolation";
-    public static final String VALIDATE_ON_EXECUTION = "javax.validation.executable.ValidateOnExecution";
-    public static final String EXECUTABLE_TYPE = "javax.validation.executable.ExecutableType";
-    public static final String BV_PACKAGE_PREFIX = "javax.validation.";
+    public static final String BV_CONSTRAINTS_PACKAGE = "jakarta.validation.constraints";
+    public static final String CONSTRAINT_VIOLATION = "jakarta.validation.ConstraintViolation";
+    public static final String VALIDATE_ON_EXECUTION = "jakarta.validation.executable.ValidateOnExecution";
+    public static final String EXECUTABLE_TYPE = "jakarta.validation.executable.ExecutableType";
+    public static final String BV_PACKAGE_PREFIX = "jakarta.validation.";
 
     public static final String ASSERT_FALSE = "AssertFalse";
     public static final String ASSERT_TRUE = "AssertTrue";

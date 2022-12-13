@@ -9,10 +9,10 @@ package io.github.jeddict.jpa.spec;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
 import java.util.Optional;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.internal.jpa.metadata.sequencing.GeneratedValueMetadata;
 
 /**
@@ -54,7 +54,7 @@ public class GeneratedValue {
 
     public static GeneratedValue load(AnnotatedMember member) {
         GeneratedValue generatedValue = null;
-        Optional<AnnotationExplorer> generatedValueOpt = member.getAnnotation(javax.persistence.GeneratedValue.class);
+        Optional<AnnotationExplorer> generatedValueOpt = member.getAnnotation(jakarta.persistence.GeneratedValue.class);
         if (generatedValueOpt.isPresent()) {
             generatedValue = new GeneratedValue();
             AnnotationExplorer annotation = generatedValueOpt.get();

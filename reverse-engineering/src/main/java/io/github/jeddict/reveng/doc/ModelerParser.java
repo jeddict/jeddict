@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -49,7 +49,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Optional;
 import java.util.function.Consumer;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import org.netbeans.modeler.core.exception.ProcessInterruptedException;
 import org.openide.util.Exceptions;
 import static org.openide.util.NbBundle.getMessage;

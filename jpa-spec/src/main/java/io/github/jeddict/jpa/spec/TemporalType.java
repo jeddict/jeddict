@@ -7,8 +7,8 @@
 package io.github.jeddict.jpa.spec;
 
 import io.github.jeddict.source.MemberExplorer;
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * <p>
@@ -45,14 +45,14 @@ public enum TemporalType {
 
     public static TemporalType load(MemberExplorer member) {
         return member
-                .getEnumAttribute(javax.persistence.Temporal.class, "value")
+                .getEnumAttribute(jakarta.persistence.Temporal.class, "value")
                 .map(TemporalType::valueOf)
                 .orElse(null);
     }
 
     public static TemporalType loadMapKey(MemberExplorer member) {
         return member
-                .getEnumAttribute(javax.persistence.MapKeyTemporal.class, "value")
+                .getEnumAttribute(jakarta.persistence.MapKeyTemporal.class, "value")
                 .map(TemporalType::valueOf)
                 .orElse(null);
     }

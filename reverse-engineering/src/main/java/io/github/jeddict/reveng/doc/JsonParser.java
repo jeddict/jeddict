@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -29,15 +29,15 @@ import io.github.jeddict.jpa.spec.extend.JavaClass;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.function.Consumer;
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonNumber;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.JsonString;
-import javax.json.JsonValue;
-import static javax.json.JsonValue.ValueType.FALSE;
-import static javax.json.JsonValue.ValueType.TRUE;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonString;
+import jakarta.json.JsonValue;
+import static jakarta.json.JsonValue.ValueType.FALSE;
+import static jakarta.json.JsonValue.ValueType.TRUE;
 import org.netbeans.modeler.core.exception.ProcessInterruptedException;
 import static org.openide.util.NbBundle.getMessage;
 

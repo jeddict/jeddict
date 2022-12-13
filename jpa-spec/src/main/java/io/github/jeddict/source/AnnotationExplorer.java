@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,6 +17,7 @@ package io.github.jeddict.source;
 
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import io.github.jeddict.jpa.spec.extend.ReferenceClass;
 import static io.github.jeddict.source.AnnotatedMember.*;
@@ -70,7 +71,7 @@ public class AnnotationExplorer {
         return getLongAttribute(annotationExpr, attributeName);
     }
 
-    public Optional<ResolvedTypeDeclaration> getResolvedClass(String attributeName) {
+    public Optional<ResolvedReferenceTypeDeclaration> getResolvedClass(String attributeName) {
         return getResolvedClassAttribute(annotationExpr, attributeName);
     }
 

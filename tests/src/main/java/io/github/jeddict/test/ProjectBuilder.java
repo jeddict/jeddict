@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -117,7 +117,7 @@ public class ProjectBuilder extends NbTestCase {
             + "  <properties>\n"
             + "      <maven.compiler.source>1.8</maven.compiler.source>\n"
             + "      <maven.compiler.target>1.8</maven.compiler.target>\n"
-            + "      <version.jakartaee>8.0.0</version.jakartaee>"
+            + "      <version.jakartaee>10.0.0</version.jakartaee>"
             + "  </properties>\n"
             + "  <dependencies>\n"
             + "      <dependency>\n"

@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.github.jeddict</groupId>
         <artifactId>jeddict</artifactId>
-        <version>5.4.4</version>
+        <version>6.1.0</version>
     </parent>
     <artifactId>jeddict-tests</artifactId>
     <name>Jeddict Tests</name>
@@ -92,7 +92,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.7.0</version>
+            <version>5.8.2</version>
         </dependency>
         <dependency>
             <groupId>org.jnosql.artemis</groupId>
@@ -113,17 +113,18 @@
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>2.2.5-2</version>
+            <version>3.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.sun.istack</groupId>
             <artifactId>istack-commons-runtime</artifactId>
-            <version>3.0.11</version>
+            <version>4.0.1</version>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.external</groupId>
-            <artifactId>nb-javac-api</artifactId>
-            <version>RELEASE802</version>
+            <groupId>com.dukescript.nbjavac</groupId>
+            <artifactId>nb-javac</artifactId>
+            <version>17.0.0.0</version>
+            <classifier>api</classifier>
         </dependency>
     </dependencies>
     <build>
@@ -134,7 +135,7 @@
                 <configuration combine.self="override" />
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>org.apache.netbeans.utilities</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
                 <configuration>
                     <skipNbm>true</skipNbm>

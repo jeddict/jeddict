@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -91,14 +91,13 @@ public class ClassExplorer extends AnnotatedMember {
     }
 
     public Optional<ResolvedReferenceTypeDeclaration> getSuperClass() {
-        ResolvedReferenceTypeDeclaration superClassType = null;
         if (type instanceof ClassOrInterfaceDeclaration) {
             ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) type;
             if (!clazz.getExtendedTypes().isEmpty()) {
-                superClassType = clazz.getExtendedTypes().get(0).resolve().asReferenceType().getTypeDeclaration();
+                return clazz.getExtendedTypes().get(0).resolve().asReferenceType().getTypeDeclaration();
             }
         }
-        return Optional.ofNullable(superClassType);
+        return Optional.empty();
     }
 
     public Boolean isFieldAccess() {
@@ -179,18 +178,18 @@ public class ClassExplorer extends AnnotatedMember {
 
         if (isEntity() || isMappedSuperclass() || isEmbeddable()) {
             for (BodyDeclaration<?> member : members) {
-                if (member.isAnnotationPresent(javax.persistence.Id.class)
-                        || member.isAnnotationPresent(javax.persistence.Basic.class)
-                        || member.isAnnotationPresent(javax.persistence.Transient.class)
-                        || member.isAnnotationPresent(javax.persistence.Version.class)
-                        || member.isAnnotationPresent(javax.persistence.ElementCollection.class)
-                        || member.isAnnotationPresent(javax.persistence.Embedded.class)
-                        || member.isAnnotationPresent(javax.persistence.EmbeddedId.class)
-                        || member.isAnnotationPresent(javax.persistence.OneToMany.class)
-                        || member.isAnnotationPresent(javax.persistence.OneToOne.class)
-                        || member.isAnnotationPresent(javax.persistence.ManyToMany.class)
-                        || member.isAnnotationPresent(javax.persistence.ManyToOne.class)
-                        || member.isAnnotationPresent(javax.persistence.Column.class)) {
+                if (member.isAnnotationPresent(jakarta.persistence.Id.class)
+                        || member.isAnnotationPresent(jakarta.persistence.Basic.class)
+                        || member.isAnnotationPresent(jakarta.persistence.Transient.class)
+                        || member.isAnnotationPresent(jakarta.persistence.Version.class)
+                        || member.isAnnotationPresent(jakarta.persistence.ElementCollection.class)
+                        || member.isAnnotationPresent(jakarta.persistence.Embedded.class)
+                        || member.isAnnotationPresent(jakarta.persistence.EmbeddedId.class)
+                        || member.isAnnotationPresent(jakarta.persistence.OneToMany.class)
+                        || member.isAnnotationPresent(jakarta.persistence.OneToOne.class)
+                        || member.isAnnotationPresent(jakarta.persistence.ManyToMany.class)
+                        || member.isAnnotationPresent(jakarta.persistence.ManyToOne.class)
+                        || member.isAnnotationPresent(jakarta.persistence.Column.class)) {
                     if (member instanceof FieldDeclaration) {
                         fieldAccessValue = true;
                     }
@@ -230,15 +229,15 @@ public class ClassExplorer extends AnnotatedMember {
     }
 
     public boolean isMappedSuperclass() {
-        return type.isAnnotationPresent(javax.persistence.MappedSuperclass.class);
+        return type.isAnnotationPresent(jakarta.persistence.MappedSuperclass.class);
     }
 
     public boolean isEntity() {
-        return type.isAnnotationPresent(javax.persistence.Entity.class);
+        return type.isAnnotationPresent(jakarta.persistence.Entity.class);
     }
 
     public boolean isEmbeddable() {
-        return type.isAnnotationPresent(javax.persistence.Embeddable.class);
+        return type.isAnnotationPresent(jakarta.persistence.Embeddable.class);
     }
 
     public boolean isClass() {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a
@@ -21,9 +21,9 @@ package io.github.jeddict.jcode;
  */
 public class CDIConstants {
 
-    public static final String INJECT = "javax.inject.Inject";
-    public static final String PRODUCES = "javax.enterprise.inject.Produces";
-    public static final String INJECTION_POINT = "javax.enterprise.inject.spi.InjectionPoint";
-    public static final String APPLICATION_SCOPED = "javax.enterprise.context.ApplicationScoped";
-    public static final String OBSERVES = "javax.enterprise.event.Observes";
+    public static final String INJECT = "jakarta.inject.Inject";
+    public static final String PRODUCES = "jakarta.enterprise.inject.Produces";
+    public static final String INJECTION_POINT = "jakarta.enterprise.inject.spi.InjectionPoint";
+    public static final String APPLICATION_SCOPED = "jakarta.enterprise.context.ApplicationScoped";
+    public static final String OBSERVES = "jakarta.enterprise.event.Observes";
 }

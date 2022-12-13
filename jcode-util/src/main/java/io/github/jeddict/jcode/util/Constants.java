@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -22,9 +22,9 @@ public class Constants {
     public static final String WEB_INF = "WEB-INF";
     public static final String META_INF = "META-INF";
     public static final String LOGGER = "java.util.logging.Logger";
-    public static final String POST_CONSTRUCT = "javax.annotation.PostConstruct";
+    public static final String POST_CONSTRUCT = "jakarta.annotation.PostConstruct";
 
-    public static final String NAMED = "javax.inject.Named";
+    public static final String NAMED = "jakarta.inject.Named";
     public static final String RESOURCE_SUFFIX = "Resource";
 
     public static final String XML_TRANSIENT_ANNOTATION = "XmlTransient";
@@ -32,7 +32,7 @@ public class Constants {
     public static final String XML_ELEMENT_ANNOTATION = "XmlElement";
     public static final String XML_ATTRIBUTE_ANNOTATION = "XmlAttribute";
     public static final String URI_TYPE = "java.net.URI";
-    public static final String XML_ANNOTATION_PACKAGE = "javax.xml.bind.annotation.";
+    public static final String XML_ANNOTATION_PACKAGE = "jakarta.xml.bind.annotation.";
     public static final String XML_ROOT_ELEMENT = XML_ANNOTATION_PACKAGE + XML_ROOT_ELEMENT_ANNOTATION;
     public static final String XML_ELEMENT = XML_ANNOTATION_PACKAGE + XML_ELEMENT_ANNOTATION;
     public static final String XML_ATTRIBUTE = XML_ANNOTATION_PACKAGE + XML_ATTRIBUTE_ANNOTATION;
@@ -48,7 +48,7 @@ public class Constants {
     public static final String ARRAY_LIST_TYPE = "java.util.ArrayList";
     public static final String HASH_SET_TYPE = "java.util.HashSet";
 
-    public static final String REQUEST_SCOPE = "javax.enterprise.context.RequestScoped";
+    public static final String REQUEST_SCOPE = "jakarta.enterprise.context.RequestScoped";
 
     public static final Modifier[] PUBLIC = new Modifier[]{Modifier.PUBLIC};
     public static final Modifier[] PRIVATE = new Modifier[]{Modifier.PRIVATE};

@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -26,7 +26,7 @@ import java.util.Set;
 public class JPAConstants {
 
     //Misc
-    public static final String PERSISTENCE_PACKAGE = "javax.persistence";
+    public static final String PERSISTENCE_PACKAGE = "jakarta.persistence";
     public static final String PERSISTENCE_PACKAGE_PREFIX = PERSISTENCE_PACKAGE + '.';
     public static final String PERSISTENCE_METAMODEL_PACKAGE = PERSISTENCE_PACKAGE_PREFIX + "metamodel.";
 
@@ -401,15 +401,15 @@ public class JPAConstants {
             CONVERT
     ));
 
-//javax.persistence.PreUpdate (implements java.lang.annotation.Annotation)
-//javax.persistence.PreRemove (implements java.lang.annotation.Annotation)
-//javax.persistence.PrePersist (implements java.lang.annotation.Annotation)
-//javax.persistence.PostUpdate (implements java.lang.annotation.Annotation)
-//javax.persistence.PostRemove (implements java.lang.annotation.Annotation)
-//javax.persistence.PostPersist (implements java.lang.annotation.Annotation)
-//javax.persistence.PostLoad (implements java.lang.annotation.Annotation)
-//javax.persistence.PersistenceUnits (implements java.lang.annotation.Annotation)
-//javax.persistence.PersistenceUnit (implements java.lang.annotation.Annotation)
-//javax.persistence.PersistenceProperty (implements java.lang.annotation.Annotation)
-//javax.persistence.PersistenceContexts (implements java.lang.annotation.Annotation)
+//jakarta.persistence.PreUpdate (implements java.lang.annotation.Annotation)
+//jakarta.persistence.PreRemove (implements java.lang.annotation.Annotation)
+//jakarta.persistence.PrePersist (implements java.lang.annotation.Annotation)
+//jakarta.persistence.PostUpdate (implements java.lang.annotation.Annotation)
+//jakarta.persistence.PostRemove (implements java.lang.annotation.Annotation)
+//jakarta.persistence.PostPersist (implements java.lang.annotation.Annotation)
+//jakarta.persistence.PostLoad (implements java.lang.annotation.Annotation)
+//jakarta.persistence.PersistenceUnits (implements java.lang.annotation.Annotation)
+//jakarta.persistence.PersistenceUnit (implements java.lang.annotation.Annotation)
+//jakarta.persistence.PersistenceProperty (implements java.lang.annotation.Annotation)
+//jakarta.persistence.PersistenceContexts (implements java.lang.annotation.Annotation)
 }

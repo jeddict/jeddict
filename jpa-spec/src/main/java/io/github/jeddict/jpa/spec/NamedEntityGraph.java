@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -97,7 +97,7 @@ public class NamedEntityGraph extends DataMapping {
     public static List<NamedEntityGraph> load(AnnotatedMember member) {
         List<NamedEntityGraph> namedEntityGraphs = new ArrayList<>();
 
-        Optional<AnnotationExplorer> namedEntityGraphsOpt = member.getAnnotation(javax.persistence.NamedEntityGraphs.class);
+        Optional<AnnotationExplorer> namedEntityGraphsOpt = member.getAnnotation(jakarta.persistence.NamedEntityGraphs.class);
         if (namedEntityGraphsOpt.isPresent()) {
             namedEntityGraphs.addAll(
                     namedEntityGraphsOpt.get()
@@ -108,7 +108,7 @@ public class NamedEntityGraph extends DataMapping {
         }
 
         namedEntityGraphs.addAll(
-                member.getRepeatableAnnotations(javax.persistence.NamedEntityGraph.class)
+                member.getRepeatableAnnotations(jakarta.persistence.NamedEntityGraph.class)
                         .map(NamedEntityGraph::load)
                         .collect(toSet())
         );

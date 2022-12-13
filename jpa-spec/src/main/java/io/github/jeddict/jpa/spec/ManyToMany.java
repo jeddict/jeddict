@@ -9,10 +9,10 @@ package io.github.jeddict.jpa.spec;
 import io.github.jeddict.jpa.spec.extend.MultiRelationAttribute;
 import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.MemberExplorer;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -81,7 +81,7 @@ import javax.xml.bind.annotation.XmlType;
 public class ManyToMany extends MultiRelationAttribute {
 
     public ManyToMany load(MemberExplorer member) {
-        AnnotationExplorer annotation = member.getAnnotation(javax.persistence.ManyToMany.class).get();
+        AnnotationExplorer annotation = member.getAnnotation(jakarta.persistence.ManyToMany.class).get();
         super.loadAttribute(member, annotation);
         return this;
     }

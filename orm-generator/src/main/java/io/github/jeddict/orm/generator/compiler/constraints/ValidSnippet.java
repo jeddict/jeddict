@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -37,7 +37,7 @@ public class ValidSnippet extends ConstraintSnippet<Valid> {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return singleton("javax.validation." + getAPI());
+        return singleton("jakarta.validation." + getAPI());
     }
 
 }

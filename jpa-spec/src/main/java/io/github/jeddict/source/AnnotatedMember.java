@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -27,6 +27,7 @@ import com.github.javaparser.ast.expr.StringLiteralExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithAnnotations;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
@@ -321,17 +322,17 @@ public abstract class AnnotatedMember {
                 .map(ClassExpr::getType);
     }
 
-    public Optional<ResolvedTypeDeclaration> getResolvedClassAttribute(Class<? extends Annotation> annotationClass, String attributeName) {
+    public Optional<ResolvedReferenceTypeDeclaration> getResolvedClassAttribute(Class<? extends Annotation> annotationClass, String attributeName) {
         return getAnnotatedMember()
                 .getAnnotationByClass(annotationClass)
                 .flatMap(exp -> getResolvedClassAttribute(exp, attributeName));
     }
 
-    static Optional<ResolvedTypeDeclaration> getResolvedClassAttribute(AnnotationExpr annotationExpr, String attributeName) {
+    static Optional<ResolvedReferenceTypeDeclaration> getResolvedClassAttribute(AnnotationExpr annotationExpr, String attributeName) {
         return getTypeClassAttribute(annotationExpr, attributeName)
                 .map(Type::resolve)
                 .map(ResolvedType::asReferenceType)
-                .map(ResolvedReferenceType::getTypeDeclaration);
+                .flatMap(ResolvedReferenceType::getTypeDeclaration);
     }
 
     public Optional<String> getClassNameAttribute(Class<? extends Annotation> annotationClass, String attributeName) {

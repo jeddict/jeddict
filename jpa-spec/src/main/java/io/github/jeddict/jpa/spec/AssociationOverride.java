@@ -16,11 +16,11 @@ import java.util.Set;
 import java.util.TreeSet;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -98,7 +98,7 @@ public class AssociationOverride implements Comparable<AssociationOverride>, Joi
     public static Set<AssociationOverride> load(AnnotatedMember member) {
         Set<AssociationOverride> associationOverrides = new TreeSet<>();
 
-        Optional<AnnotationExplorer> assocOverridesOpt = member.getAnnotation(javax.persistence.AssociationOverrides.class);
+        Optional<AnnotationExplorer> assocOverridesOpt = member.getAnnotation(jakarta.persistence.AssociationOverrides.class);
         if (assocOverridesOpt.isPresent()) {
             associationOverrides.addAll(
                     assocOverridesOpt.get()
@@ -109,7 +109,7 @@ public class AssociationOverride implements Comparable<AssociationOverride>, Joi
         }
 
         associationOverrides.addAll(
-                member.getRepeatableAnnotations(javax.persistence.AssociationOverride.class)
+                member.getRepeatableAnnotations(jakarta.persistence.AssociationOverride.class)
                         .map(AssociationOverride::load)
                         .collect(toSet())
         );

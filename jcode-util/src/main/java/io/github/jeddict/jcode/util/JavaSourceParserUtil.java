@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -114,7 +114,7 @@ public class JavaSourceParserUtil {
         return findAnnotation(element, annotationFqn);
     }
 
-    //"javax.persistence|javax.xml.bind.annotation"
+    //"jakarta.persistence|jakarta.xml.bind.annotation"
 //    private static final Pattern JPA_PACKAGE_PATTERN = Pattern.compile(PERSISTENCE_PACKAGE);
 
 
@@ -383,15 +383,15 @@ public class JavaSourceParserUtil {
 //    }
 
     public static boolean isMappedSuperclass(Element typeElement) {
-        return nonNull(typeElement.getAnnotation(javax.persistence.MappedSuperclass.class));
+        return nonNull(typeElement.getAnnotation(jakarta.persistence.MappedSuperclass.class));
     }
 
     public static boolean isEntity(Element typeElement) {
-        return nonNull(typeElement.getAnnotation(javax.persistence.Entity.class));
+        return nonNull(typeElement.getAnnotation(jakarta.persistence.Entity.class));
     }
 
     public static boolean isEmbeddable(Element typeElement) {
-        return nonNull(typeElement.getAnnotation(javax.persistence.Embeddable.class));
+        return nonNull(typeElement.getAnnotation(jakarta.persistence.Embeddable.class));
     }
     
 //    public static Entity loadEntity(EntityMappings entityMappings, Element element, VariableElement variableElement, DeclaredType entityClass) {

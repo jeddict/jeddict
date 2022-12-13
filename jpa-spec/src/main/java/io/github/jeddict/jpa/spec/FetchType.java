@@ -7,8 +7,8 @@
 package io.github.jeddict.jpa.spec;
 
 import io.github.jeddict.source.AnnotationExplorer;
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * <p>

@@ -42,17 +42,17 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.MapKeyJoinColumn;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.MapKeyJoinColumn;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlIDREF;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
 import io.github.jeddict.util.StringUtils;
 
 /**
@@ -233,7 +233,7 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
     protected Set<AttributeOverride> mapKeyAttributeOverride;
 
     public static ElementCollection load(ElementCollection elementCollection, MemberExplorer member) {
-        AnnotationExplorer annotation = member.getAnnotation(javax.persistence.ElementCollection.class).get();
+        AnnotationExplorer annotation = member.getAnnotation(jakarta.persistence.ElementCollection.class).get();
         elementCollection.loadAttribute(member);
         elementCollection.column = Column.load(member);
         elementCollection.temporal = TemporalType.load(member);
@@ -258,14 +258,14 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
         }
         boolean mapKeyExist = collectionTypeClass != null && Map.class.isAssignableFrom(collectionTypeClass);
 
-        Optional<ResolvedTypeDeclaration> targetTypeOpt = annotation.getResolvedClass("targetClass");
+        Optional<ResolvedReferenceTypeDeclaration> targetTypeOpt = annotation.getResolvedClass("targetClass");
         ResolvedTypeDeclaration targetType;
         if (targetTypeOpt.isPresent()) {
             targetType = targetTypeOpt.get();
         } else {
-            targetTypeOpt = member.getTypeArgumentDeclaration(mapKeyExist ? 1 : 0);
-            if (targetTypeOpt.isPresent()) {
-                targetType = targetTypeOpt.get();
+            Optional<ResolvedTypeDeclaration> targetTypeOpt2 = member.getTypeArgumentDeclaration(mapKeyExist ? 1 : 0);
+            if (targetTypeOpt2.isPresent()) {
+                targetType = targetTypeOpt2.get();
                 elementCollection.setValueConstraints(member.getTypeArgumentBeanValidationConstraints(mapKeyExist ? 1 : 0));
             } else {
                 throw new UnsolvedSymbolException("targetClass or generic type not defined in ElementCollection attribute '" + member.getFieldName() + "'");
@@ -314,7 +314,7 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
             elementCollection.mapKeyEnumerated = EnumType.loadMapKey(member);
             elementCollection.mapKeyJoinColumn = JoinColumn.loadMapKey(member);
 
-            member.getAnnotation(javax.persistence.ForeignKey.class)
+            member.getAnnotation(jakarta.persistence.ForeignKey.class)
                     .map(ForeignKey::load)
                     .ifPresent(elementCollection::setMapKeyForeignKey);
             elementCollection.mapKeyAttributeOverride = AttributeOverride.load(member);

@@ -6,8 +6,8 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * <p>
@@ -34,6 +34,7 @@ public enum GenerationType {
     TABLE,
     SEQUENCE,
     IDENTITY,
+    UUID,
     AUTO,
     DEFAULT;
 

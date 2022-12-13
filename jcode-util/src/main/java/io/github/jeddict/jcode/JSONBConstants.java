@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class JSONBConstants {
 
-    public static final String JSONB_PACKAGE = "javax.json.bind";
+    public static final String JSONB_PACKAGE = "jakarta.json.bind";
     public static final String JSONB_ANNOTATION_PACKAGE = JSONB_PACKAGE + ".annotation";
     public static final String JSONB_ANNOTATION_PACKAGE_PREFIX = JSONB_ANNOTATION_PACKAGE + '.';
 

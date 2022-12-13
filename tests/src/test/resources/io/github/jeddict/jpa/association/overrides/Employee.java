@@ -3,12 +3,12 @@
  */
 package io.github.jeddict.jpa.association.overrides;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToOne;
-import javax.persistence.Version;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Version;
 
 /**
  * @author jGauravGupta

@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -45,13 +45,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.MapKeyJoinColumn;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.MapKeyJoinColumn;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlIDREF;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
 import io.github.jeddict.util.StringUtils;
 
 /**
@@ -144,14 +144,14 @@ public abstract class MultiRelationAttribute extends RelationAttribute
         }
         boolean mapKeyExist = collectionTypeClass != null && Map.class.isAssignableFrom(collectionTypeClass);
 
-        Optional<ResolvedTypeDeclaration> targetEntityOpt = annotation.getResolvedClass("targetEntity");
+        Optional<ResolvedReferenceTypeDeclaration> targetEntityOpt = annotation.getResolvedClass("targetEntity");
         ResolvedTypeDeclaration targetEntityValue;
         if (targetEntityOpt.isPresent()) {
             targetEntityValue = targetEntityOpt.get();
         } else {
-            targetEntityOpt = member.getTypeArgumentDeclaration(mapKeyExist ? 1 : 0);
-            if (targetEntityOpt.isPresent()) {
-                targetEntityValue = targetEntityOpt.get();
+            Optional<ResolvedTypeDeclaration> targetEntityOpt2 = member.getTypeArgumentDeclaration(mapKeyExist ? 1 : 0);
+            if (targetEntityOpt2.isPresent()) {
+                targetEntityValue = targetEntityOpt2.get();
                 this.setValueConstraints(member.getTypeArgumentBeanValidationConstraints(mapKeyExist ? 1 : 0));
             } else {
                 throw new UnsolvedSymbolException("targetEntity or generic type not defined in relation attribute '" + member.getFieldName() + "'");
@@ -190,7 +190,7 @@ public abstract class MultiRelationAttribute extends RelationAttribute
             this.mapKeyEnumerated = EnumType.loadMapKey(member);
             this.mapKeyJoinColumn = JoinColumn.loadMapKey(member);
 
-            member.getAnnotation(javax.persistence.ForeignKey.class)
+            member.getAnnotation(jakarta.persistence.ForeignKey.class)
                     .map(ForeignKey::load)
                     .ifPresent(this::setMapKeyForeignKey);
             this.mapKeyAttributeOverride = AttributeOverride.load(member);

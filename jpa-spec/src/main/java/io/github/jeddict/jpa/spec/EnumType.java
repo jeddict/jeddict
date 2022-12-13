@@ -9,8 +9,8 @@ package io.github.jeddict.jpa.spec;
 import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.Optional;
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * <p>
@@ -46,7 +46,7 @@ public enum EnumType {
     }
 
     public static EnumType load(MemberExplorer member) {
-        Optional<AnnotationExplorer> enumeratedOpt = member.getAnnotation(javax.persistence.Enumerated.class);
+        Optional<AnnotationExplorer> enumeratedOpt = member.getAnnotation(jakarta.persistence.Enumerated.class);
         if (enumeratedOpt.isPresent()) {
             AnnotationExplorer annotation = enumeratedOpt.get();
             return annotation.getEnum("value")
@@ -57,7 +57,7 @@ public enum EnumType {
     }
 
     public static EnumType loadMapKey(MemberExplorer member) {
-        Optional<AnnotationExplorer> enumeratedOpt = member.getAnnotation(javax.persistence.MapKeyEnumerated.class);
+        Optional<AnnotationExplorer> enumeratedOpt = member.getAnnotation(jakarta.persistence.MapKeyEnumerated.class);
         if (enumeratedOpt.isPresent()) {
             AnnotationExplorer annotation = enumeratedOpt.get();
             return annotation.getEnum("value")

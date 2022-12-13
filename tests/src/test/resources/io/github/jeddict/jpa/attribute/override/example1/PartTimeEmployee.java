@@ -4,10 +4,10 @@
  */
 package io.github.jeddict.jpa.attribute.override.example1;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 
 /**
  * @author jGauravGupta

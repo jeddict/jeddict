@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.github.jeddict</groupId>
         <artifactId>jeddict</artifactId>
-        <version>5.4.4</version>
+        <version>6.1.0</version>
     </parent>
     <artifactId>jcode-util</artifactId>
     <name>jCode Util</name>
@@ -17,7 +17,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>org.apache.netbeans.utilities</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
@@ -57,6 +57,12 @@
         <dependency>
             <groupId>io.github.jeddict.modeler</groupId>
             <artifactId>modeler-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>io.github.jeddict</groupId>
+            <artifactId>jeddict-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
         
@@ -125,11 +131,6 @@
         <dependency>
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-modules-maven</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.netbeans.modules</groupId>
-            <artifactId>org-netbeans-modules-maven-embedder</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
@@ -248,11 +249,11 @@
             <artifactId>org-netbeans-api-scripting</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
-        
-         <dependency>
-            <groupId>org.netbeans.external</groupId>
-            <artifactId>nb-javac-api</artifactId>
-            <version>RELEASE802</version>
+        <dependency>
+            <groupId>com.dukescript.nbjavac</groupId>
+            <artifactId>nb-javac</artifactId>
+            <version>17.0.0.0</version>
+            <classifier>api</classifier>
             <scope>provided</scope>
         </dependency>
     </dependencies>

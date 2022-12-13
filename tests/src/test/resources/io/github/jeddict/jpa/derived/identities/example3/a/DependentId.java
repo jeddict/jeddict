@@ -1,8 +1,5 @@
 package io.github.jeddict.jpa.derived.identities.example2.a;
 
-import java.io.Serializable;
-import java.util.Objects;
-
 public class DependentId implements Serializable {
 
     private String name;

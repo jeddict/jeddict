@@ -7,14 +7,15 @@
 package io.github.jeddict.jpa.spec;
 
 import com.github.javaparser.resolution.UnsolvedSymbolException;
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.MemberExplorer;
 import java.util.Optional;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -53,9 +54,9 @@ public class MapKeyClass {
     public static ResolvedTypeDeclaration getDeclaredType(MemberExplorer member) {
         Optional<ResolvedTypeDeclaration> keyTypeOpt;
         ResolvedTypeDeclaration keyType;
-        Optional<AnnotationExplorer> mapKeyClassOpt = member.getAnnotation(javax.persistence.MapKeyClass.class);
+        Optional<AnnotationExplorer> mapKeyClassOpt = member.getAnnotation(jakarta.persistence.MapKeyClass.class);
         if (mapKeyClassOpt.isPresent()) {
-            Optional<ResolvedTypeDeclaration> mapKeyClassValueOpt = mapKeyClassOpt.get().getResolvedClass("value");
+            Optional<ResolvedReferenceTypeDeclaration> mapKeyClassValueOpt = mapKeyClassOpt.get().getResolvedClass("value");
             if (mapKeyClassValueOpt.isPresent()) {
                 keyType = mapKeyClassValueOpt.get();
             } else {

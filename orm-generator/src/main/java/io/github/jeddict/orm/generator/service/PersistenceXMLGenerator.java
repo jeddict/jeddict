@@ -36,14 +36,16 @@ import org.netbeans.modules.j2ee.persistence.dd.common.Persistence;
 import org.netbeans.modules.j2ee.persistence.dd.common.PersistenceUnit;
 import org.netbeans.modules.j2ee.persistence.dd.common.Properties;
 import org.netbeans.modules.j2ee.persistence.dd.common.Property;
+import org.netbeans.modules.j2ee.persistence.provider.InvalidPersistenceXmlException;
 import static org.netbeans.modules.j2ee.persistence.provider.Provider.TABLE_GENERATION_CREATE;
 import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
 import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
 import org.netbeans.modules.j2ee.persistence.wizard.Util;
+import org.netbeans.modules.maven.NbMavenProjectImpl;
 import org.openide.util.lookup.ServiceProvider;
 
 @ServiceProvider(service = IPersistenceXMLGenerator.class)
-public class PersistenceXMLGenerator implements IPersistenceXMLGenerator{
+public class PersistenceXMLGenerator implements IPersistenceXMLGenerator {
 
     private static final Logger LOGGER = ORMConvLogger.getLogger(PersistenceXMLGenerator.class);
 
@@ -51,13 +53,13 @@ public class PersistenceXMLGenerator implements IPersistenceXMLGenerator{
     @Override
     public void generatePersistenceXML(
             ITaskSupervisor task,
-            Project project, 
-            SourceGroup sourceGroup, 
-            EntityMappings entityMappings, 
+            Project project,
+            SourceGroup sourceGroup,
+            EntityMappings entityMappings,
             List<String> classNames) {
         String puName = entityMappings.getPersistenceUnitName();
-        String puProvider = entityMappings.getPersistenceProviderType()!=null?entityMappings.getPersistenceProviderType().getProviderClass():PersistenceProviderType.ECLIPSELINK.getProviderClass();
-        
+        String puProvider = entityMappings.getPersistenceProviderType() != null ? entityMappings.getPersistenceProviderType().getProviderClass() : PersistenceProviderType.ECLIPSELINK.getProviderClass();
+
         if (!entityMappings.getGeneratePersistenceUnit()) {
             return;
         }
@@ -81,8 +83,8 @@ public class PersistenceXMLGenerator implements IPersistenceXMLGenerator{
                     punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_2_1.PersistenceUnit();
                 } else if (Persistence.VERSION_2_0.equals(version)) {
                     punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_2_0.PersistenceUnit();
-                } else {//currently default 1.0
-                    punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_1_0.PersistenceUnit();
+                } else {
+                    punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_2_1.PersistenceUnit();
                 }
                 Properties properties = punit.newProperties();
                 punit.setProperties(properties);
@@ -131,7 +133,25 @@ public class PersistenceXMLGenerator implements IPersistenceXMLGenerator{
             }
             pud.save();
         } catch (Exception ex) {
+            // temp fallback
+            if (ex instanceof InvalidPersistenceXmlException) {
+                replaceDefaultPersistenceUnitName(project, entityMappings);
+            }
             LOGGER.log(Level.SEVERE, "compiler_error", ex);
+        }
+    }
+
+    private void replaceDefaultPersistenceUnitName(Project project, EntityMappings entityMappings) {
+        if (project instanceof NbMavenProjectImpl) {
+            NbMavenProjectImpl nbproject = (NbMavenProjectImpl) project;
+            Path parent = Paths.get(nbproject.getResources(false)[0]);
+            Path file = parent.resolve("META-INF").resolve("persistence.xml");
+            try ( Stream<String> stream = Files.lines(file, StandardCharsets.UTF_8)) {
+                List<String> list = stream.map(line -> line.replace("my_persistence_unit", entityMappings.getPersistenceUnitName())).collect(Collectors.toList());
+                Files.write(file, list, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                LOGGER.log(Level.WARNING, "persistence.xml", e);
+            }
         }
     }
 

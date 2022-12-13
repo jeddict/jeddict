@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import static javax.json.bind.config.PropertyNamingStrategy.IDENTITY;
+import static jakarta.json.bind.config.PropertyNamingStrategy.IDENTITY;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import io.github.jeddict.jsonb.modeler.widget.BranchNodeWidget;
@@ -211,7 +211,7 @@ public class JSONBModelerScene extends DefaultPModelerScene<JSONBMapping> {
 
     public String transferPropertyName(String name) {
         PropertyNamingStrategy namingStrategy = getBaseElementSpec().getEntityMappings().getJsonbPropertyNamingStrategy();
-        javax.json.bind.config.PropertyNamingStrategy namingStrategyInstance = StrategiesProvider.getPropertyNamingStrategy(namingStrategy != null ? namingStrategy.name() : IDENTITY);
+        jakarta.json.bind.config.PropertyNamingStrategy namingStrategyInstance = StrategiesProvider.getPropertyNamingStrategy(namingStrategy != null ? namingStrategy.name() : IDENTITY);
         return namingStrategyInstance.translateName(name);
     }
 }

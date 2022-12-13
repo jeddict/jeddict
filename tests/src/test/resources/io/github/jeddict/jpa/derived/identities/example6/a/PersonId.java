@@ -1,9 +1,8 @@
 package io.github.jeddict.jpa.derived.identities.example6.a;
 
+import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
-
-import javax.persistence.Embeddable;
 
 @Embeddable
 public class PersonId implements Serializable {

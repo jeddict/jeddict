@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -32,8 +32,8 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
 )
 @org.netbeans.modeler.specification.annotaton.DiagramModel(
         id = "JPA",
-        name = "JPA 2.2 Specification",
-        version = "5.4.4",
+        name = "JPA 3.1 Specification",
+        version = "6.1.0",
         architectureVersion = "1.4",
         modelerUtil = JPAModelerUtil.class,
         modelerScene = JPAModelerScene.class,

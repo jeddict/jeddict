@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -36,7 +36,7 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
         modelerUtil = JSONBModelerUtil.class,
         modelerScene = JSONBModelerScene.class,
         relationValidator = RelationValidator.class,
-        version = "5.4.4",
+        version = "6.1.0",
         architectureVersion = "1.4"
 )
 @org.openide.util.lookup.ServiceProvider(service = JSONBModeler.class)

@@ -16,11 +16,11 @@ import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.tables.CollectionTableMetadata;
 
 /**
@@ -79,7 +79,7 @@ public class CollectionTable extends Table {
 
     public static CollectionTable load(AnnotatedMember member) {
         CollectionTable collectionTable = null;
-        Optional<AnnotationExplorer> collectionTableOpt = member.getAnnotation(javax.persistence.CollectionTable.class);
+        Optional<AnnotationExplorer> collectionTableOpt = member.getAnnotation(jakarta.persistence.CollectionTable.class);
         if (collectionTableOpt.isPresent()) {
             collectionTable = new CollectionTable();
             AnnotationExplorer annotation = collectionTableOpt.get();

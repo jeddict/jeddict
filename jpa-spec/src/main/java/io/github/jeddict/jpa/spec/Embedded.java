@@ -18,13 +18,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import io.github.jeddict.util.StringUtils;
 
 /**
@@ -91,8 +91,10 @@ public class Embedded extends CompositionAttribute<Embeddable> implements Associ
         embedded.getAssociationOverride().addAll(AssociationOverride.load(member));
         embedded.setAccess(AccessType.load(member));
 
-        ResolvedReferenceTypeDeclaration type = member.getTypeDeclaration();
-        Optional<Embeddable> embeddableOpt = member.getSource().findEmbeddable(type);
+        if (!member.getTypeDeclaration().isPresent()) {
+            return null;
+        }
+        Optional<Embeddable> embeddableOpt = member.getSource().findEmbeddable(member.getTypeDeclaration().get());
         if (!embeddableOpt.isPresent()) {
             return null;
         }

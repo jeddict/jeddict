@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -126,7 +126,7 @@ public class PersistenceHelper {
     }
 
     public boolean hasJTASupport(Project project) {
-        return hasResource(project, "javax/transaction/UserTransaction.class");  // NOI18N
+        return hasResource(project, "jakarta/transaction/UserTransaction.class");  // NOI18N
     }
 
     public static boolean hasResource(Project project, String resource) {

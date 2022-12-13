@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class JAXBConstants {
 
-    public static final String JAXB_PACKAGE = "javax.xml.bind";
+    public static final String JAXB_PACKAGE = "jakarta.xml.bind";
     public static final String JAXB_ANNOTATION_PACKAGE = JAXB_PACKAGE + ".annotation";
     public static final String JAXB_ANNOTATION_PACKAGE_PREFIX = JAXB_ANNOTATION_PACKAGE + '.';
 

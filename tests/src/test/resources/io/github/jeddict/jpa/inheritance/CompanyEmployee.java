@@ -3,9 +3,9 @@
  */
 package io.github.jeddict.jpa.inheritance;
 
-import javax.persistence.Basic;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import jakarta.persistence.Basic;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 
 /**
  * @author jGauravGupta

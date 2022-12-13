@@ -10,11 +10,11 @@
     <class>io.github.jeddict.jpa.mapkey.example2.Department</class>
     <class>io.github.jeddict.jpa.mapkey.example2.Employee</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:derby://localhost:1527/sample"/>
-      <property name="javax.persistence.jdbc.password" value="app"/>
-      <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver"/>
-      <property name="javax.persistence.jdbc.user" value="app"/>
-      <property name="javax.persistence.schema-generation.database.action" value="create"/>
+      <property name="jakarta.persistence.jdbc.url" value="jdbc:derby://localhost:1527/sample"/>
+      <property name="jakarta.persistence.jdbc.password" value="app"/>
+      <property name="jakarta.persistence.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver"/>
+      <property name="jakarta.persistence.jdbc.user" value="app"/>
+      <property name="jakarta.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
 </persistence>

@@ -10,11 +10,11 @@ import io.github.jeddict.jpa.spec.validator.SequenceGeneratorValidator;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
 import java.util.Optional;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.sequencing.SequenceGeneratorMetadata;
 
 /**
@@ -77,7 +77,7 @@ public class SequenceGenerator {
 
     public static SequenceGenerator load(AnnotatedMember member) {
         SequenceGenerator sequenceGenerator = null;
-        Optional<AnnotationExplorer> sequenceGeneratorOpt = member.getAnnotation(javax.persistence.SequenceGenerator.class);
+        Optional<AnnotationExplorer> sequenceGeneratorOpt = member.getAnnotation(jakarta.persistence.SequenceGenerator.class);
         if (sequenceGeneratorOpt.isPresent()) {
             sequenceGenerator = new SequenceGenerator();
             AnnotationExplorer annotation = sequenceGeneratorOpt.get();

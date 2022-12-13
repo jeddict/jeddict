@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,6 +15,7 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import io.github.jeddict.bv.constraints.Constraint;
 import io.github.jeddict.jpa.spec.ForeignKey;
@@ -28,9 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 import static io.github.jeddict.util.StringUtils.EMPTY;
 
 /**
@@ -70,8 +71,8 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
         this.getJoinColumn().addAll(JoinColumn.load(member));
         annotation.getBoolean("optional").ifPresent(this::setOptional);
 
-        Optional<AnnotationExplorer> idAnnotationOpt = member.getAnnotation(javax.persistence.Id.class);
-        Optional<AnnotationExplorer> mapsIdAnnotationOpt = member.getAnnotation(javax.persistence.MapsId.class);
+        Optional<AnnotationExplorer> idAnnotationOpt = member.getAnnotation(jakarta.persistence.Id.class);
+        Optional<AnnotationExplorer> mapsIdAnnotationOpt = member.getAnnotation(jakarta.persistence.MapsId.class);
         this.primaryKey = idAnnotationOpt.isPresent() || mapsIdAnnotationOpt.isPresent();
 
         if (mapsIdAnnotationOpt.isPresent()) {
@@ -80,16 +81,17 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
 
         annotation.getAnnotation("foreignKey").map(ForeignKey::load).ifPresent(this::setForeignKey);
 
-        Optional<ResolvedTypeDeclaration> targetEntityOpt = annotation.getResolvedClass("targetEntity");
-        ResolvedTypeDeclaration type;
+        Optional<ResolvedReferenceTypeDeclaration> targetEntityOpt = annotation.getResolvedClass("targetEntity");
+        ResolvedTypeDeclaration type = null;
         if (targetEntityOpt.isPresent()) {
             type = targetEntityOpt.get();
-        } else {
-            type = member.getTypeDeclaration();
+        } else if (member.getTypeDeclaration().isPresent()) {
+            type = member.getTypeDeclaration().get();
         }
-
-        this.targetEntityPackage = type.getPackageName();
-        this.targetEntity = type.getClassName();
+        if (type != null) {
+            this.targetEntityPackage = type.getPackageName();
+            this.targetEntity = type.getClassName();
+        }
         this.primaryKeyJoinColumn = PrimaryKeyJoinColumn.load(member);
     }
 

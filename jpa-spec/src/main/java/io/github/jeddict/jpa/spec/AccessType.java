@@ -9,8 +9,8 @@ package io.github.jeddict.jpa.spec;
 import io.github.jeddict.source.AnnotatedMember;
 import io.github.jeddict.source.AnnotationExplorer;
 import java.util.Optional;
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * <p>
@@ -49,7 +49,7 @@ public enum AccessType {
     }
 
     public static AccessType load(AnnotatedMember member) {
-        Optional<AnnotationExplorer> accessOpt = member.getAnnotation(javax.persistence.Access.class);
+        Optional<AnnotationExplorer> accessOpt = member.getAnnotation(jakarta.persistence.Access.class);
         if (accessOpt.isPresent()) {
             return accessOpt.get()
                     .getEnum("value")

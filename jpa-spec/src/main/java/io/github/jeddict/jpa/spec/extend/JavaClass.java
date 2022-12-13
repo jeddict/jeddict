@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -39,14 +39,14 @@ import java.util.List;
 import static java.util.Objects.nonNull;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlIDREF;
+import jakarta.xml.bind.annotation.XmlTransient;
 import org.netbeans.api.java.source.JavaSource;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.type.Embedded;
@@ -188,22 +188,22 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode
 
         this.jsonbNumberFormat = JsonbNumberFormat.load(clazz);
 
-        clazz.getBooleanAttribute(javax.json.bind.annotation.JsonbNillable.class, "value")
+        clazz.getBooleanAttribute(jakarta.json.bind.annotation.JsonbNillable.class, "value")
                 .ifPresent(this::setJsonbNillable);
 
-        clazz.getReferenceClassAttribute(javax.json.bind.annotation.JsonbTypeAdapter.class, "value")
+        clazz.getReferenceClassAttribute(jakarta.json.bind.annotation.JsonbTypeAdapter.class, "value")
                 .ifPresent(this::setJsonbTypeAdapter);
 
-        clazz.getReferenceClassAttribute(javax.json.bind.annotation.JsonbTypeSerializer.class, "value")
+        clazz.getReferenceClassAttribute(jakarta.json.bind.annotation.JsonbTypeSerializer.class, "value")
                 .ifPresent(this::setJsonbTypeSerializer);
 
-        clazz.getReferenceClassAttribute(javax.json.bind.annotation.JsonbTypeDeserializer.class, "value")
+        clazz.getReferenceClassAttribute(jakarta.json.bind.annotation.JsonbTypeDeserializer.class, "value")
                 .ifPresent(this::setJsonbTypeDeserializer);
 
-        clazz.getReferenceClassAttribute(javax.json.bind.annotation.JsonbVisibility.class, "value")
+        clazz.getReferenceClassAttribute(jakarta.json.bind.annotation.JsonbVisibility.class, "value")
                 .ifPresent(this::setJsonbVisibility);
 
-        if (clazz.getAnnotation(javax.xml.bind.annotation.XmlRootElement.class).isPresent()) {
+        if (clazz.getAnnotation(jakarta.xml.bind.annotation.XmlRootElement.class).isPresent()) {
             this.xmlRootElement = true;
         }
 

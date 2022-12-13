@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -111,7 +111,11 @@ public class ProjectHelper {
                     || Profile.JAVA_EE_8_WEB == profile
                     || Profile.JAVA_EE_8_FULL == profile
                     || Profile.JAKARTA_EE_8_WEB == profile
-                    || Profile.JAKARTA_EE_8_FULL == profile) {
+                    || Profile.JAKARTA_EE_8_FULL == profile
+                    || Profile.JAKARTA_EE_9_WEB == profile
+                    || Profile.JAKARTA_EE_9_FULL == profile
+                    || Profile.JAKARTA_EE_9_1_WEB == profile
+                    || Profile.JAKARTA_EE_9_1_FULL == profile) {
                 return true;
             }
         }

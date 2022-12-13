@@ -11,10 +11,10 @@ import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE_FQN;
 import io.github.jeddict.jpa.spec.extend.ReferenceClass;
 import io.github.jeddict.source.ClassExplorer;
 import java.util.Optional;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  *

@@ -25,10 +25,10 @@ import static java.util.Objects.nonNull;
 import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 import static io.github.jeddict.util.StringUtils.isNotBlank;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
 
@@ -98,40 +98,40 @@ public class PrimaryKeyAttributes extends PersistenceAttributes<IdentifiableClas
         MemberExplorer embeddedIdMember = null;
 
         for (MemberExplorer member : members) {
-            if (member.isAnnotationPresent(javax.persistence.Id.class)
-                    && !(member.isAnnotationPresent(javax.persistence.OneToOne.class)
-                    || member.isAnnotationPresent(javax.persistence.ManyToOne.class))) {
+            if (member.isAnnotationPresent(jakarta.persistence.Id.class)
+                    && !(member.isAnnotationPresent(jakarta.persistence.OneToOne.class)
+                    || member.isAnnotationPresent(jakarta.persistence.ManyToOne.class))) {
                 this.findId(member.getFieldName())
                         .orElseGet(() -> {
                             Id id = new Id();
                             this.addId(id);
                             return id;
                         }).load(member);
-            } else if (member.isAnnotationPresent(javax.persistence.Version.class)) {
+            } else if (member.isAnnotationPresent(jakarta.persistence.Version.class)) {
                 this.findVersion(member.getFieldName())
                         .orElseGet(() -> {
                             Version version = new Version();
                             this.addVersion(version);
                             return version;
                         }).load(member);
-            } else if (member.isAnnotationPresent(javax.persistence.EmbeddedId.class)) {
+            } else if (member.isAnnotationPresent(jakarta.persistence.EmbeddedId.class)) {
                 this.setEmbeddedId(EmbeddedId.load(member));
                 embeddedIdMember = member;
-            } else if (member.isAnnotationPresent(javax.persistence.Basic.class)) {
+            } else if (member.isAnnotationPresent(jakarta.persistence.Basic.class)) {
                 this.findBasic(member.getFieldName())
                         .orElseGet(() -> {
                             Basic basic = new Basic();
                             this.addBasic(basic);
                             return basic;
                         }).load(member);
-            } else if (member.isAnnotationPresent(javax.persistence.Transient.class)) {
+            } else if (member.isAnnotationPresent(jakarta.persistence.Transient.class)) {
                 this.findTransient(member.getFieldName())
                         .orElseGet(() -> {
                             Transient _transient = new Transient();
                             this.addTransient(_transient);
                             return _transient;
                         }).load(member);
-            } else if (member.isAnnotationPresent(javax.persistence.ElementCollection.class)) {
+            } else if (member.isAnnotationPresent(jakarta.persistence.ElementCollection.class)) {
                 Optional<ElementCollection> elementCollectionOpt = this.findElementCollection(member.getFieldName());
                 if (elementCollectionOpt.isPresent()) {
                     ElementCollection.load(elementCollectionOpt.get(), member);
@@ -141,7 +141,7 @@ public class PrimaryKeyAttributes extends PersistenceAttributes<IdentifiableClas
                         this.addElementCollection(elementCollection);
                     }
                 }
-            } else if (member.isAnnotationPresent(javax.persistence.OneToOne.class)) {
+            } else if (member.isAnnotationPresent(jakarta.persistence.OneToOne.class)) {
                 OneToOne oneToOne = this.findOneToOne(member.getFieldName())
                         .orElseGet(() -> {
                             OneToOne oneToOneObj = new OneToOne();
@@ -154,7 +154,7 @@ public class PrimaryKeyAttributes extends PersistenceAttributes<IdentifiableClas
                 } else {
                     mapsId.add(oneToOne.getName());
                 }
-            } else if (member.isAnnotationPresent(javax.persistence.ManyToOne.class)) {
+            } else if (member.isAnnotationPresent(jakarta.persistence.ManyToOne.class)) {
                 ManyToOne manyToOne = this.findManyToOne(member.getFieldName())
                         .orElseGet(() -> {
                             ManyToOne manyToOneObj = new ManyToOne();
@@ -167,21 +167,21 @@ public class PrimaryKeyAttributes extends PersistenceAttributes<IdentifiableClas
                 } else {
                     mapsId.add(manyToOne.getName());
                 }
-            } else if (member.isAnnotationPresent(javax.persistence.OneToMany.class)) {
+            } else if (member.isAnnotationPresent(jakarta.persistence.OneToMany.class)) {
                 this.findOneToMany(member.getFieldName())
                         .orElseGet(() -> {
                     OneToMany oneToMany = new OneToMany();
                     this.addOneToMany(oneToMany);
                     return oneToMany;
                         }).load(member);
-            } else if (member.isAnnotationPresent(javax.persistence.ManyToMany.class)) {
+            } else if (member.isAnnotationPresent(jakarta.persistence.ManyToMany.class)) {
                 this.findManyToMany(member.getFieldName())
                         .orElseGet(() -> {
                     ManyToMany manyToMany = new ManyToMany();
                     this.addManyToMany(manyToMany);
                     return manyToMany;
                         }).load(member);
-            } else if (member.isAnnotationPresent(javax.persistence.Embedded.class)) {
+            } else if (member.isAnnotationPresent(jakarta.persistence.Embedded.class)) {
                 Optional<Embedded> embeddedOpt = this.findEmbedded(member.getFieldName());
                 if (embeddedOpt.isPresent()) {
                     Embedded.load(embeddedOpt.get(), member);

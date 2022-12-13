@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.concurrent.Callable;
 import javax.swing.text.Document;
 import org.netbeans.api.editor.mimelookup.MimeLookup;
-
 import org.netbeans.modules.parsing.api.Snapshot;
 import org.netbeans.modules.parsing.api.Source;
 import org.netbeans.modules.parsing.impl.Schedulers;

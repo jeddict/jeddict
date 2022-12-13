@@ -3,7 +3,7 @@
 Jeddict Notice
 ===========================================================================
 
-Copyright 2013-2017 the original authors from the Jeddict project.
+Copyright 2013-2022 the original authors from the Jeddict project.
 
 For more information on the Jeddict project, see https://jeddict.github.io/
 

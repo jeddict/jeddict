@@ -9,10 +9,10 @@ package io.github.jeddict.jpa.spec;
 import io.github.jeddict.jpa.spec.extend.SingleRelationAttribute;
 import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.MemberExplorer;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -64,7 +64,7 @@ import javax.xml.bind.annotation.XmlType;
 public class ManyToOne extends SingleRelationAttribute {
 
     public ManyToOne load(MemberExplorer member) {
-        AnnotationExplorer annotation = member.getAnnotation(javax.persistence.ManyToOne.class).get();
+        AnnotationExplorer annotation = member.getAnnotation(jakarta.persistence.ManyToOne.class).get();
         super.loadAttribute(member, annotation);
         return this;
     }

@@ -3,13 +3,13 @@
  */
 package io.github.jeddict.jpa.collection.table;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.AttributeOverride;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
 
 /**
  * @author jGauravGupta

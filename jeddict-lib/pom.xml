@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.github.jeddict</groupId>
         <artifactId>jeddict</artifactId>
-        <version>5.4.4</version>
+        <version>6.1.0</version>
     </parent>
     <artifactId>jeddict-lib</artifactId>
     <name>Jeddict Library</name>
@@ -17,7 +17,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>org.apache.netbeans.utilities</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
@@ -28,6 +28,8 @@
                         <publicPackage>org.apache.velocity.*</publicPackage>  
                         <publicPackage>org.yaml.snakeyaml.*</publicPackage>
                         <publicPackage>javax.xml.*</publicPackage>
+                        <publicPackage>org.slf4j.*</publicPackage>
+                        <publicPackage>jakarta.persistence.*</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>
@@ -38,7 +40,7 @@
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-symbol-solver-core</artifactId>
-            <version>3.15.21</version>
+            <version>3.24.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.j2objc</groupId>
@@ -49,7 +51,7 @@
                     <artifactId>jsr305</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.codehaus.mojo</groupId>
+                    <groupId>org.apache.netbeans.utilities</groupId>
                     <artifactId>animal-sniffer-annotations</artifactId>
                 </exclusion>
                 <exclusion>
@@ -76,7 +78,13 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.27</version>
+            <version>1.32</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.1.0-RC2</version>
         </dependency>
         
         <dependency>
@@ -89,7 +97,7 @@
             <artifactId>stax-api</artifactId>
             <version>1.0</version>
         </dependency>
-<!--        <dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.25</version>
@@ -98,7 +106,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.25</version>
-        </dependency>-->
+        </dependency>
     </dependencies>
 
 </project>

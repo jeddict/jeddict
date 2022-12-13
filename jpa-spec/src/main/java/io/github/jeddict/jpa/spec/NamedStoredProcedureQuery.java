@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toList;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -98,7 +98,7 @@ public class NamedStoredProcedureQuery {//TODO extend to DataMapping and remove 
 
     public static List<NamedStoredProcedureQuery> load(AnnotatedMember member) {
         List<NamedStoredProcedureQuery> namedStoredProcedureQueries = new ArrayList<>();
-        Optional<AnnotationExplorer> namedStoredProcedureQueriesOpt = member.getAnnotation(javax.persistence.NamedStoredProcedureQueries.class);
+        Optional<AnnotationExplorer> namedStoredProcedureQueriesOpt = member.getAnnotation(jakarta.persistence.NamedStoredProcedureQueries.class);
         if (namedStoredProcedureQueriesOpt.isPresent()) {
             namedStoredProcedureQueries.addAll(
                     namedStoredProcedureQueriesOpt.get()
@@ -109,7 +109,7 @@ public class NamedStoredProcedureQuery {//TODO extend to DataMapping and remove 
         }
 
         namedStoredProcedureQueries.addAll(
-                member.getRepeatableAnnotations(javax.persistence.NamedStoredProcedureQuery.class)
+                member.getRepeatableAnnotations(jakarta.persistence.NamedStoredProcedureQuery.class)
                         .map(NamedStoredProcedureQuery::load)
                         .collect(toList())
         );

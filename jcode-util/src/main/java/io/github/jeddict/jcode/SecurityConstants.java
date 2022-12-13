@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a
@@ -21,8 +21,8 @@ package io.github.jeddict.jcode;
  */
 public class SecurityConstants {
 
-    public static final String EMBEDDED_IDENTITY_STORE_DEFINITION = "javax.security.identitystore.annotation.EmbeddedIdentityStoreDefinition";
-    public static final String CREDENTIALS = "javax.security.identitystore.annotation.Credentials";
+    public static final String EMBEDDED_IDENTITY_STORE_DEFINITION = "jakarta.security.identitystore.annotation.EmbeddedIdentityStoreDefinition";
+    public static final String CREDENTIALS = "jakarta.security.identitystore.annotation.Credentials";
     public static final String CALLER_NAME = "callerName";
     public static final String PASSWORD = "password";
     public static final String DEFAULT_CREDENTIALS = "user";

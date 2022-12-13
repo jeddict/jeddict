@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toList;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.JoinColumnMetadata;
 
 /**
@@ -104,7 +104,7 @@ public class JoinColumn implements IJoinColumn {
 
     public static List<JoinColumn> load(AnnotatedMember member) {
         List<JoinColumn> joinColumns = new ArrayList<>();
-        Optional<AnnotationExplorer> joinColumnsOpt = member.getAnnotation(javax.persistence.JoinColumns.class);
+        Optional<AnnotationExplorer> joinColumnsOpt = member.getAnnotation(jakarta.persistence.JoinColumns.class);
         if (joinColumnsOpt.isPresent()) {
             joinColumns.addAll(
                     joinColumnsOpt.get()
@@ -115,7 +115,7 @@ public class JoinColumn implements IJoinColumn {
         }
 
         joinColumns.addAll(
-                member.getRepeatableAnnotations(javax.persistence.JoinColumn.class)
+                member.getRepeatableAnnotations(jakarta.persistence.JoinColumn.class)
                         .map(JoinColumn::load)
                         .collect(toList())
         );
@@ -125,7 +125,7 @@ public class JoinColumn implements IJoinColumn {
 
     public static List<JoinColumn> loadMapKey(AnnotatedMember member) {
         List<JoinColumn> joinColumns = new ArrayList<>();
-        Optional<AnnotationExplorer> joinColumnsOpt = member.getAnnotation(javax.persistence.MapKeyJoinColumns.class);
+        Optional<AnnotationExplorer> joinColumnsOpt = member.getAnnotation(jakarta.persistence.MapKeyJoinColumns.class);
         if (joinColumnsOpt.isPresent()) {
             joinColumns.addAll(
                     joinColumnsOpt.get()
@@ -136,7 +136,7 @@ public class JoinColumn implements IJoinColumn {
         }
 
         joinColumns.addAll(
-                member.getRepeatableAnnotations(javax.persistence.MapKeyJoinColumn.class)
+                member.getRepeatableAnnotations(jakarta.persistence.MapKeyJoinColumn.class)
                         .map(JoinColumn::load)
                         .collect(toList())
         );

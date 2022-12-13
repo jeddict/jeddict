@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -135,8 +135,8 @@ public class MemberExplorer extends AnnotatedMember {
     public List<ResolvedTypeDeclaration> getTypeArgumentDeclarations() {
         List<ResolvedTypeDeclaration> declarations = new ArrayList<>();
         for (Pair<ResolvedTypeParameterDeclaration, ResolvedType> pair : getReferenceType().getTypeParametersMap()) {
-            if (pair.b.isReferenceType()) {
-                declarations.add(pair.b.asReferenceType().getTypeDeclaration());
+            if (pair.b.isReferenceType() && pair.b.asReferenceType().getTypeDeclaration().isPresent()) {
+                declarations.add(pair.b.asReferenceType().getTypeDeclaration().get());
             } else if (pair.b.isTypeVariable()) { // generics
                 declarations.add(pair.b.asTypeVariable().asTypeParameter());
             } // isTypeVariable()asTypeParameter()
@@ -144,7 +144,7 @@ public class MemberExplorer extends AnnotatedMember {
         return declarations;
     }
 
-    public ResolvedReferenceTypeDeclaration getTypeDeclaration() {
+    public Optional<ResolvedReferenceTypeDeclaration> getTypeDeclaration() {
         return getReferenceType().getTypeDeclaration();
     }
 

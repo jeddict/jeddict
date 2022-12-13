@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2019 the original author or authors from the Jeddict project (https://jeddict.github.io/).
+ * Copyright 2013-2022 the original author or authors from the Jeddict project (https://jeddict.github.io/).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -37,10 +37,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 public abstract class IdentifiableClass extends ManagedClass<IPrimaryKeyAttributes> implements PrimaryKeyContainer {
 
@@ -107,17 +107,17 @@ public abstract class IdentifiableClass extends ManagedClass<IPrimaryKeyAttribut
             this.setCompositePrimaryKeyType(null);
         }
 
-        Optional<AnnotationExplorer> entityListenersOpt = clazz.getAnnotation(javax.persistence.EntityListeners.class);
+        Optional<AnnotationExplorer> entityListenersOpt = clazz.getAnnotation(jakarta.persistence.EntityListeners.class);
         if (entityListenersOpt.isPresent()) {
             this.entityListeners = EntityListeners.load(entityListenersOpt.get());
         }
 
-        Optional<AnnotationExplorer> excludeDefaultListenersOpt = clazz.getAnnotation(javax.persistence.ExcludeDefaultListeners.class);
+        Optional<AnnotationExplorer> excludeDefaultListenersOpt = clazz.getAnnotation(jakarta.persistence.ExcludeDefaultListeners.class);
         if (excludeDefaultListenersOpt.isPresent()) {
             this.excludeDefaultListeners = new EmptyType();
         }
 
-        Optional<AnnotationExplorer> excludeSuperclassListenersOpt = clazz.getAnnotation(javax.persistence.ExcludeSuperclassListeners.class);
+        Optional<AnnotationExplorer> excludeSuperclassListenersOpt = clazz.getAnnotation(jakarta.persistence.ExcludeSuperclassListeners.class);
         if (excludeSuperclassListenersOpt.isPresent()) {
             this.excludeSuperclassListeners = new EmptyType();
         }
