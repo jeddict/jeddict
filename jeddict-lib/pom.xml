@@ -40,7 +40,7 @@
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-symbol-solver-core</artifactId>
-            <version>3.24.2</version>
+            <version>3.24.9</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.j2objc</groupId>
