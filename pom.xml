@@ -4,7 +4,7 @@
     <groupId>io.github.jeddict</groupId>
     <artifactId>jeddict</artifactId>
     <name>Jeddict</name>
-    <version>6.1.0</version>
+    <version>6.3.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>jeddict-lib</module>
@@ -24,7 +24,7 @@
     <properties>
         <root.dir>${basedir}</root.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <netbeans.version>RELEASE150</netbeans.version>
+        <netbeans.version>RELEASE170</netbeans.version>
         <netbeans.installation>${root.dir}/../incubator-netbeans/nbbuild/netbeans</netbeans.installation>
         <nbm.cluster>jeddict</nbm.cluster>
         <nbm.build.dir>${root.dir}/../jeddict-cluster</nbm.build.dir>
