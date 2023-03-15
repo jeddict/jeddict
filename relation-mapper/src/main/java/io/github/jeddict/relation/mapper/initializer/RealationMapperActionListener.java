@@ -43,7 +43,7 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
         modelerScene = RelationMapperScene.class,
         relationValidator = RelationValidator.class,
         modelerDiagramEngine = RelationMapperDiagramEngine.class,
-        version = "6.1.0",
+        version = "6.3.0",
         architectureVersion = "1.4"
 )
 @org.openide.util.lookup.ServiceProvider(service = RelationMapper.class)

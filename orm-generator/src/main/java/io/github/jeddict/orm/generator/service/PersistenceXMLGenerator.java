@@ -27,9 +27,17 @@ import io.github.jeddict.jcode.task.ITaskSupervisor;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.orm.generator.IPersistenceXMLGenerator;
 import io.github.jeddict.orm.generator.util.ORMConvLogger;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.modules.j2ee.persistence.dd.common.Persistence;
@@ -41,7 +49,7 @@ import static org.netbeans.modules.j2ee.persistence.provider.Provider.TABLE_GENE
 import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
 import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
 import org.netbeans.modules.j2ee.persistence.wizard.Util;
-import org.netbeans.modules.maven.NbMavenProjectImpl;
+import org.netbeans.modules.maven.api.NbMavenProject;
 import org.openide.util.lookup.ServiceProvider;
 
 @ServiceProvider(service = IPersistenceXMLGenerator.class)
@@ -142,17 +150,19 @@ public class PersistenceXMLGenerator implements IPersistenceXMLGenerator {
     }
 
     private void replaceDefaultPersistenceUnitName(Project project, EntityMappings entityMappings) {
-        if (project instanceof NbMavenProjectImpl) {
-            NbMavenProjectImpl nbproject = (NbMavenProjectImpl) project;
-            Path parent = Paths.get(nbproject.getResources(false)[0]);
-            Path file = parent.resolve("META-INF").resolve("persistence.xml");
-            try ( Stream<String> stream = Files.lines(file, StandardCharsets.UTF_8)) {
-                List<String> list = stream.map(line -> line.replace("my_persistence_unit", entityMappings.getPersistenceUnitName())).collect(Collectors.toList());
-                Files.write(file, list, StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                LOGGER.log(Level.WARNING, "persistence.xml", e);
-            }
+      // Use NbMavenProject not NbMavenProjectImpl
+      NbMavenProject mavenProject = project.getLookup().lookup(NbMavenProject.class);
+      
+      if ( mavenProject != null ) {
+        Path parent = Paths.get(mavenProject.getResources(false)[0]);
+        Path file = parent.resolve("META-INF").resolve("persistence.xml");
+        try (Stream<String> stream = Files.lines(file, StandardCharsets.UTF_8)) {
+          List<String> list = stream.map(line -> line.replace("my_persistence_unit", entityMappings.getPersistenceUnitName())).collect(Collectors.toList());
+          Files.write(file, list, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+          LOGGER.log(Level.WARNING, "persistence.xml", e);
         }
+      }
     }
 
 }
