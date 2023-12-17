@@ -87,6 +87,11 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-api-visual</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.15</version>

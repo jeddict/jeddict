@@ -26,7 +26,15 @@
                             <id>org.netbeans.modules:org-netbeans-modules-j2ee-persistence</id>
                             <type>impl</type>
                         </dependency>
+                        <dependency>
+                            <id>org.netbeans.modules:org-netbeans-modules-maven</id>
+                            <type>impl</type>
+                        </dependency>
                     </moduleDependencies>
+                    
+                <publicPackages> 
+                    <publicPackage>org.netbeans.modules.maven</publicPackage>
+                </publicPackages>
                 </configuration>
             </plugin>
         </plugins>
@@ -118,6 +126,11 @@
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util-lookup</artifactId>
             <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-maven</artifactId>
+            <version>${netbeans.version}</version> <!-- Specify the version if necessary -->
         </dependency>
         <dependency>
             <groupId>org.netbeans.modules</groupId>

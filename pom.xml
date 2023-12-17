@@ -24,11 +24,11 @@
     <properties>
         <root.dir>${basedir}</root.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <netbeans.version>RELEASE150</netbeans.version>
+        <netbeans.version>RELEASE200</netbeans.version>
         <netbeans.installation>${root.dir}/../incubator-netbeans/nbbuild/netbeans</netbeans.installation>
         <nbm.cluster>jeddict</nbm.cluster>
         <nbm.build.dir>${root.dir}/../jeddict-cluster</nbm.build.dir>
-        <nbm.maven.plugin.version>4.8</nbm.maven.plugin.version>
+        <nbm.maven.plugin.version>14.0</nbm.maven.plugin.version>
     </properties>
     
     <build>
@@ -53,7 +53,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>3.11.0</version>
                 <configuration>
                     <source>11</source>
                     <target>11</target>
@@ -80,7 +80,7 @@
                         <dependency>
                             <groupId>org.apache.maven.shared</groupId>
                             <artifactId>maven-dependency-analyzer</artifactId>
-                            <version>1.12.0</version>
+                            <version>1.13.2</version>
                         </dependency>
                     </dependencies>
                 </plugin>

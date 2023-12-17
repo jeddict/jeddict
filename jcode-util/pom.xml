@@ -132,6 +132,12 @@
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-modules-maven</artifactId>
             <version>${netbeans.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.mastfrog</groupId>
+                    <artifactId>nbstubs</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.netbeans.modules</groupId>
@@ -248,13 +254,6 @@
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-scripting</artifactId>
             <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dukescript.nbjavac</groupId>
-            <artifactId>nb-javac</artifactId>
-            <version>17.0.0.0</version>
-            <classifier>api</classifier>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 

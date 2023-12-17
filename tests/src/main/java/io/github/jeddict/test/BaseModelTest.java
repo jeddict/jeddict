@@ -79,6 +79,7 @@ import org.netbeans.api.project.Project;
 import org.netbeans.modules.j2ee.persistence.wizard.jpacontroller.ProgressReporter;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.util.BaseUtilities;
 import org.openide.util.Utilities;
 
 
@@ -253,7 +254,7 @@ public class BaseModelTest {
                 FileObject classPackage = getFileObject(src, packageName, "\\.");
 
                 classFqns.add(packageName + '.' + clazz);
-                File classFile = Utilities.toFile(this.getClass().getResource(clazz + JAVA_EXT_SUFFIX).toURI());
+                File classFile = BaseUtilities.toFile(this.getClass().getResource(clazz + JAVA_EXT_SUFFIX).toURI());
                 FileObject classFileObject = FileUtil.toFileObject(classFile);
                 classFileObject.copy(classPackage, clazz, JAVA_EXT);
             }
@@ -278,7 +279,7 @@ public class BaseModelTest {
         try {
             URL resource = this.getClass().getResource(fileName);
             assertNotNull(resource, fileName + " not found");
-            File file = Utilities.toFile(resource.toURI());
+            File file = BaseUtilities.toFile(resource.toURI());
             return getEntityMapping(file);
         } catch (JAXBException ex) {
             fail(fileName + " file jaxb parsing error", ex);
