@@ -115,7 +115,9 @@ public class ProjectHelper {
                     || Profile.JAKARTA_EE_9_WEB == profile
                     || Profile.JAKARTA_EE_9_FULL == profile
                     || Profile.JAKARTA_EE_9_1_WEB == profile
-                    || Profile.JAKARTA_EE_9_1_FULL == profile) {
+                    || Profile.JAKARTA_EE_9_1_FULL == profile
+                    || Profile.JAKARTA_EE_10_WEB == profile
+                    || Profile.JAKARTA_EE_10_FULL == profile) {
                 return true;
             }
         }

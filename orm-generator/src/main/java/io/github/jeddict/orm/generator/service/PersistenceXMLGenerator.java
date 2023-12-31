@@ -86,12 +86,18 @@ public class PersistenceXMLGenerator implements IPersistenceXMLGenerator {
                 }
             }
             if (!existFile) {
-                if (Persistence.VERSION_2_1.equals(version)) {
+                if (Persistence.VERSION_3_1.equals(version)) {
+                    punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_3_1.PersistenceUnit();
+                } else if (Persistence.VERSION_3_0.equals(version)) {
+                    punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_3_0.PersistenceUnit();
+                } else if (Persistence.VERSION_2_2.equals(version)) {
+                    punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_2_2.PersistenceUnit();
+                } else if (Persistence.VERSION_2_1.equals(version)) {
                     punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_2_1.PersistenceUnit();
                 } else if (Persistence.VERSION_2_0.equals(version)) {
                     punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_2_0.PersistenceUnit();
                 } else {
-                    punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_2_1.PersistenceUnit();
+                    punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_3_1.PersistenceUnit();
                 }
                 Properties properties = punit.newProperties();
                 punit.setProperties(properties);
