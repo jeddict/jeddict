@@ -30,6 +30,7 @@ import io.github.jeddict.jpa.spec.extend.RelationAttribute;
 import io.github.jeddict.orm.generator.service.ClassGenerator;
 import io.github.jeddict.orm.generator.util.ClassHelper;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClassDefSnippet> {
 
@@ -50,7 +51,6 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
         if (variableDef == null) {
             variableDef = new MetamodelVariableDefSnippet(attr);
             variableDef.setName(attr.getName());
-//            variableDef.setAnnotation(attr.getAnnotation());
             variables.put(attr.getName(), variableDef);
         }
         return variableDef;
@@ -141,7 +141,7 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
 
         classDef.setVariableDefs(new ArrayList<>(variables.values()));
         classDef.setClassName(classHelper.getFQClassName());
-
+        classDef.setAuthor(managedClass.getAuthor());
         classDef.setPackageName(classHelper.getPackageName());
 
         classDef.getEntityClassHelper().setClassName(managedClass.getClazz());

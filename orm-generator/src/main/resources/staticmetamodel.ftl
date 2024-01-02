@@ -9,7 +9,7 @@ ${importStatement}
 </#foreach>
 /**
  *
- * @author ${author}
+ * @author ${classDef.getAuthor()}
  */
 <#assign class = ".class">
 @StaticMetamodel(${classDef.getValue()}${class})

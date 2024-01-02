@@ -595,12 +595,14 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             imports.addAll(associationOverrides.getImportSnippets());
         }
 
-        for (AnnotationSnippet snippet : this.getAnnotation()
-                .values()
-                .stream()
-                .flatMap(annot -> annot.stream())
-                .collect(toList())) {
-            imports.addAll(snippet.getImportSnippets());
+        if (this.getAnnotation() != null) {
+            for (AnnotationSnippet snippet : this.getAnnotation()
+                    .values()
+                    .stream()
+                    .flatMap(annot -> annot.stream())
+                    .collect(toList())) {
+                imports.addAll(snippet.getImportSnippets());
+            }
         }
 
         for (ConstraintSnippet snippet : this.getAttributeConstraints()) {
@@ -615,23 +617,27 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             imports.addAll(snippet.getImportSnippets());
         }
 
-        for (Snippet snippet : this.getJSONBSnippets()) {
-            imports.addAll(snippet.getImportSnippets());
+        if (this.getJSONBSnippets() != null) {
+            for (Snippet snippet : this.getJSONBSnippets()) {
+                imports.addAll(snippet.getImportSnippets());
+            }
         }
 
         if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelation() != null) {
             imports.add("org.eclipse.persistence.oxm.annotations.XmlInverseReference");
         }
 
-        List<String> customImportSnippets = getCustomSnippet().get(IMPORT);
-        if (customImportSnippets != null) {
-            imports.addAll(
-                    customImportSnippets
-                            .stream()
-                            .filter(snippet -> !snippet.startsWith("import"))
-                            .filter(snippet -> !snippet.startsWith(";"))
-                            .collect(toSet())
-            );
+        if (getCustomSnippet() != null) {
+            List<String> customImportSnippets = getCustomSnippet().get(IMPORT);
+            if (customImportSnippets != null) {
+                imports.addAll(
+                        customImportSnippets
+                                .stream()
+                                .filter(snippet -> !snippet.startsWith("import"))
+                                .filter(snippet -> !snippet.startsWith(";"))
+                                .collect(toSet())
+                );
+            }
         }
 
         return imports;

@@ -498,29 +498,35 @@ public abstract class ClassDefSnippet implements WritableSnippet {
             }
         }
 
-        for (AnnotationSnippet snippet : this.getAnnotation()
-                .values()
-                .stream()
-                .flatMap(annot -> annot.stream())
-                .collect(toList())) {
-            imports.addAll(snippet.getImportSnippets());
+        if (this.getAnnotation() != null) {
+            for (AnnotationSnippet snippet : this.getAnnotation()
+                    .values()
+                    .stream()
+                    .flatMap(annot -> annot.stream())
+                    .collect(toList())) {
+                imports.addAll(snippet.getImportSnippets());
+            }
         }
 
         imports.addAll(this.getInterfaces().stream().collect(toList()));
 
-        for (Snippet snippet : this.getJSONBSnippets()) {
-            imports.addAll(snippet.getImportSnippets());
+        if (this.getJSONBSnippets() != null) {
+            for (Snippet snippet : this.getJSONBSnippets()) {
+                imports.addAll(snippet.getImportSnippets());
+            }
         }
 
-        List<String> customImportSnippets = getCustomSnippet().get(IMPORT);
-        if (customImportSnippets != null) {
-            imports.addAll(
-                    customImportSnippets
-                            .stream()
-                            .filter(snippet -> !snippet.startsWith("import"))
-                            .filter(snippet -> !snippet.startsWith(";"))
-                            .collect(toSet())
-            );
+        if (getCustomSnippet() != null) {
+            List<String> customImportSnippets = getCustomSnippet().get(IMPORT);
+            if (customImportSnippets != null) {
+                imports.addAll(
+                        customImportSnippets
+                                .stream()
+                                .filter(snippet -> !snippet.startsWith("import"))
+                                .filter(snippet -> !snippet.startsWith(";"))
+                                .collect(toSet())
+                );
+            }
         }
 
         if (isJaxbSupport()) {
