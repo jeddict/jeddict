@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.github.jeddict</groupId>
         <artifactId>jeddict</artifactId>
-        <version>6.2.0</version>
+        <version>6.3.1</version>
     </parent>
     <artifactId>jpa-modeler</artifactId>
     <name>JPA Modeler</name>
