@@ -36,7 +36,7 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
         modelerUtil = JSONBModelerUtil.class,
         modelerScene = JSONBModelerScene.class,
         relationValidator = RelationValidator.class,
-        version = "6.4.0",
+        version = "6.5.0",
         architectureVersion = "1.4"
 )
 @org.openide.util.lookup.ServiceProvider(service = JSONBModeler.class)

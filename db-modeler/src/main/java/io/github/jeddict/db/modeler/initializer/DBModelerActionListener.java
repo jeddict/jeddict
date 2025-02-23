@@ -40,7 +40,7 @@ import org.openide.nodes.Node;
         modelerScene = DBModelerScene.class,
         relationValidator = RelationValidator.class, 
         modelerDiagramEngine = DBDiagramEngine.class,
-        version = "6.4.0",
+        version = "6.5.0",
         architectureVersion = "1.0"
 )
 public class DBModelerActionListener extends ModelerFileActionListener {

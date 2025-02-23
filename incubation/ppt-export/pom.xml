@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.github.jeddict</groupId>
         <artifactId>incubation</artifactId>
-        <version>6.4.0</version>
+        <version>6.5.0</version>
     </parent>
     <artifactId>ppt-export</artifactId>
     <packaging>nbm</packaging>

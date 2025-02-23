@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.github.jeddict</groupId>
         <artifactId>jeddict</artifactId>
-        <version>6.4.0</version>
+        <version>6.5.0</version>
     </parent>
     <artifactId>orm-generator</artifactId>
     <name>ORM Generator</name>
